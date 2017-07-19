@@ -27,11 +27,20 @@ Includes = \
 
 Libraries = \
     boost_date_time \
+    boost_system \
     cactus_uhal_log \
     cactus_uhal_uhal
 
 LibraryPaths = \
   $(CACTUS_ROOT)/lib 
+
+ExecutableLibraries = ${Libraries} \
+	${Library} \
+    boost_filesystem
+
+LibraryPaths = \
+	${CACTUS_ROOT}/lib \
+	${PDT_ROOT}/core/lib
 
 include ${PDT_ROOT}/config/mfRules.mk
 include ${PDT_ROOT}/config/mfRPMRules.mk

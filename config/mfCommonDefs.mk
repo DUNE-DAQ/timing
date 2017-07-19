@@ -7,6 +7,7 @@ export BUILD_HOME
 
 # PDT_SYSROOT
 PDT_SYSROOT = /opt/pdt
+DEBUG ?= 1
 
 
 # OS identification
