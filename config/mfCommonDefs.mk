@@ -5,8 +5,9 @@ $(info Using BUILD_HOME=${BUILD_HOME})
 
 export BUILD_HOME
 
-# Cactus config. This section shall be sources from /opt/pdf/config
-PDT_SYSROOT ?= /opt/pdt
+# PDT_SYSROOT
+PDT_SYSROOT = /opt/pdt
+
 
 # OS identification
 PDT_PLATFORM=$(shell /usr/bin/python -c "import platform; print platform.platform()")
@@ -22,16 +23,19 @@ else ifeq ($(UNAME),Darwin)
     PDT_OS=osx
 endif
 
-$(info OS detected: $(PDT_OS))
+$(info Detected OS $(PDT_OS))
 
-## Environment
-# Make sure $PDT_SYSROOT/lib is present in LD_LIBRARY_PATH
+# Environment
+# Ensure that $CACTUS_ROOT/lib is present in LD_LIBRARY_PATH
 
-ifeq ($(findstring $(PDT_SYSROOT)/lib,$(LD_LIBRARY_PATH)),)
-    $(info PDT_SYSROOT/lib added to LD_LIBRARY_PATH)
-    LD_LIBRARY_PATH:=$(PDT_SYSROOT)/lib:$(LD_LIBRARY_PATH)
+# Cactus config. This section shall be sources from /opt/pdf/config
+CACTUS_ROOT ?= /opt/cactus
+
+ifeq ($(findstring $(CACTUS_ROOT)/lib,$(LD_LIBRARY_PATH)),)
+    $(info CACTUS_ROOT/lib added to LD_LIBRARY_PATH)
+    LD_LIBRARY_PATH:=$(CACTUS_ROOT)/lib:$(LD_LIBRARY_PATH)
 else
-    $(info PDT_SYSROOT already in LD_LIBRARY_PATH)
+    $(info CACTUS_ROOT already in LD_LIBRARY_PATH)
 endif
 
 export LD_LIBRARY_PATH
@@ -45,6 +49,10 @@ LD:=g++
 
 ## Tools
 MakeDir=mkdir -p
+Cp=cp
+RpmBuild=rpmbuild
+Sed=sed
+
 
 # Formatting
 At_0 := @
@@ -66,6 +74,18 @@ LD = ${LD_${VERBOSE}}
 
 MakeDir_Actual := ${MakeDir}
 MakeDir = ${At} ${MakeDir_Actual}
+
+Cp_Actual := ${Cp}
+Cp = ${At} ${Cp_Actual}
+
+RpmBuild_Actual := ${RpmBuild}
+RpmBuild_0 = @echo -e "-> Building ${ColorGreen}RPM${ColorNone}..."; ${RpmBuild_Actual}
+RpmBuild_1 = ${RpmBuild_Actual}
+RpmBuild = ${At} ${RpmBuild_${VERBOSE}}
+
+Sed_Actual := ${Sed}
+Sed = ${At} ${Sed_Actual}
+
 
 ## Python
 PYTHON_VERSION ?= $(shell python -c "import distutils.sysconfig;print distutils.sysconfig.get_python_version()")

@@ -35,7 +35,7 @@ _setup_update:
 	sed -i 's#__packagename__#${PackageName}#' ${RPMBUILD_DIR}/${PackageName}.py
 	sed -i 's#__version__#$(PACKAGE_VER_MAJOR).$(PACKAGE_VER_MINOR).$(PACKAGE_VER_PATCH)#' ${RPMBUILD_DIR}/${PackageName}.py
 	sed -i 's#__release__#${PACKAGE_RELEASE}.${PDT_OS}#' ${RPMBUILD_DIR}/${PackageName}.py
-	sed -i 's#__prefix__#${PDT_ROOT}#' ${RPMBUILD_DIR}/${PackageName}.py
+	sed -i 's#__prefix__#${PDT_SYSROOT}#' ${RPMBUILD_DIR}/${PackageName}.py
 	sed -i 's#__packagedir__#${PackagePath}#' ${RPMBUILD_DIR}/${PackageName}.py
 	sed -i 's#__os__#${PDT_OS}#' ${RPMBUILD_DIR}/${PackageName}.py
 	sed -i 's#__platform__#None#' ${RPMBUILD_DIR}/${PackageName}.py
