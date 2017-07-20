@@ -36,7 +36,13 @@ const uint32_t I2CBaseNode::kReadFromSlaveCmd = 0x20; // 1 << 5
 const uint32_t I2CBaseNode::kWriteToSlaveCmd = 0x10; // 1 << 4
 const uint32_t I2CBaseNode::kAckCmd = 0x08; // 1 << 3
 const uint32_t I2CBaseNode::kInterruptAck = 0x01; // 1
-                                                  // 
+
+
+    // recvdack = 0x1 << 7
+    // busy = 0x1 << 6
+    // arblost = 0x1 << 5
+    // inprogress = 0x1 << 1
+    // interrupt = 0x1
 //-----------------------------------------------------------------------------
 I2CBaseNode::I2CBaseNode(const uhal::Node& aNode) : uhal::Node(aNode) {
     constructor();
@@ -52,6 +58,7 @@ void I2CBaseNode::constructor() {
     // target frequency 100 kHz to play it safe (first revision of i2c standard),
     // but e.g. the SI5326 clock chip on the MP7 can do up to 400 kHz
     mClockPrescale = 0x40;
+    // mClockPrescale = 0x100;
     
     // Build the list of slaves
     // Loop over node parameters. Each parameter becomes a slave node.
@@ -100,20 +107,50 @@ I2CBaseNode::getSlaveAddress(const std::string& name) const {
 //-----------------------------------------------------------------------------
 uint8_t
 I2CBaseNode::readI2C(uint8_t aSlaveAddress, uint32_t i2cAddress) const {
-    // write one word containing the address
-    std::vector<uint8_t> array(1, i2cAddress & 0x7f);
-    this->writeBlockI2C(aSlaveAddress, array);
-    // request the content at the specific address
-    return this->readBlockI2C(aSlaveAddress, 1) [0];
+    // // write one word containing the address
+    // std::vector<uint8_t> array(1, i2cAddress & 0x7f);
+    // this->writeBlockI2C(aSlaveAddress, array);
+    // // request the content at the specific address
+    // return this->readBlockI2C(aSlaveAddress, 1) [0];
+    return this->readI2CArray(aSlaveAddress, i2cAddress, 1)[0];
 }
 //-----------------------------------------------------------------------------
  
 
 //-----------------------------------------------------------------------------
-void I2CBaseNode::writeI2C(uint8_t aSlaveAddress, uint32_t i2cAddress, uint32_t data) const {
-    std::vector<uint8_t> block(2);
+void
+I2CBaseNode::writeI2C(uint8_t aSlaveAddress, uint32_t i2cAddress, uint8_t aData) const {
+    // std::vector<uint8_t> block(2);
+    // block[0] = (i2cAddress & 0xff);
+    // block[1] = (aData & 0xff);
+    // this->writeBlockI2C(aSlaveAddress, block);
+
+    this->writeI2CArray( aSlaveAddress, i2cAddress, {aData});
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+std::vector<uint8_t>
+I2CBaseNode::readI2CArray(uint8_t aSlaveAddress, uint32_t i2cAddress, uint32_t aNumWords) const {
+    // write one word containing the address
+    std::vector<uint8_t> array(1, i2cAddress & 0x7f);
+    this->writeBlockI2C(aSlaveAddress, array);
+    // request the content at the specific address
+    return this->readBlockI2C(aSlaveAddress, aNumWords);
+}
+//-----------------------------------------------------------------------------
+ 
+
+//-----------------------------------------------------------------------------
+void
+I2CBaseNode::writeI2CArray(uint8_t aSlaveAddress, uint32_t i2cAddress, std::vector<uint8_t> aData) const {
+    std::vector<uint8_t> block(aData.size() + 1);
     block[0] = (i2cAddress & 0xff);
-    block[1] = (data & 0xff);
+
+    for ( size_t i(0); i < aData.size(); ++i )
+        block[i+1] = aData[i];
+
     this->writeBlockI2C(aSlaveAddress, block);
 }
 //-----------------------------------------------------------------------------
@@ -136,8 +173,10 @@ I2CBaseNode::writeBlockI2C(uint8_t aSlaveAddress, const std::vector<uint8_t>& ar
     // bit 3: 0 when acknowledgement is received
     // bit 2:1: Reserved
     // bit 0: Interrupt acknowledge. When set, clears a pending interrupt
+    
+    // TODO: Check if this is still required
     // Reset bus before beginning
-    reset();
+    // reset();
     // Set slave address in bits 7:1, and set bit 0 to zero (i.e. "write mode")
     getNode(kTx).write((aSlaveAddress << 1) & 0xfe);
     getClient().dispatch();
@@ -192,8 +231,11 @@ I2CBaseNode::readBlockI2C(uint8_t aSlaveAddress, uint32_t numBytes) const {
     // bit 3:   0 when acknowledgement is received
     // bit 2:1: Reserved
     // bit 0:   Interrupt acknowledge. When set, clears a pending interrupt
+    
+
+    // TODO: Check if this is still required
     // Reset bus before beginning
-    reset();
+    // reset();
     // Set slave address in bits 7:1, and set bit 0 to one
     // (i.e. we're writing an address to the bus and then want to read)
     getNode(kTx).write((aSlaveAddress << 1) | 0x01);
@@ -268,8 +310,7 @@ void I2CBaseNode::reset() const {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void I2CBaseNode::waitUntilFinished(bool requireAcknowledgement,
-        bool requireBusIdleAtEnd) const {
+void I2CBaseNode::waitUntilFinished(bool requireAcknowledgement, bool requireBusIdleAtEnd) const {
     // Ensures the current bus transaction has finished successfully
     // before allowing further I2C bus transactions
     // This method monitors the status register
@@ -293,7 +334,7 @@ void I2CBaseNode::waitUntilFinished(bool requireAcknowledgement,
 
         if (arbitrationLost) {
             // This is an instant error at any time
-            pdt::I2CException lExc("OpenCoresI2CMasterNode error: bus arbitration lost. Is another application running?");
+            pdt::I2CException lExc("I2C error: bus arbitration lost. Is another application running?");
             PDT_LOG(kError) << lExc.what();
             throw lExc;
         }
@@ -313,19 +354,19 @@ void I2CBaseNode::waitUntilFinished(bool requireAcknowledgement,
     // the bus operated as expected:
 
     if (attempt > maxRetry) {
-        pdt::I2CException lExc("OpenCoresI2CMasterNode error: Transaction timeout - the 'Transfer in Progress' bit remained high for too long");
+        pdt::I2CException lExc("I2C error: Transaction timeout - the 'Transfer in Progress' bit remained high for too long");
         PDT_LOG(kError) << lExc.what();
         throw lExc;
     }
 
     if (requireAcknowledgement && !receivedAcknowledge) {
-        pdt::I2CException lExc("OpenCoresI2CMasterNode error: No acknowledge received");
+        pdt::I2CException lExc("I2C error: No acknowledge received");
         PDT_LOG(kError) << lExc.what();
         throw lExc;
     }
 
     if (requireBusIdleAtEnd && busy) {
-        pdt::I2CException lExc("OpenCoresI2CMasterNode error: Transfer finished but bus still busy");
+        pdt::I2CException lExc("I2C error: Transfer finished but bus still busy");
         PDT_LOG(kError) << lExc.what();
         throw lExc;
     }

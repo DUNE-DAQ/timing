@@ -44,10 +44,16 @@ public:
 
     virtual std::vector<std::string>  getSlaves() const;
     virtual uint8_t  getSlaveAddress( const std::string& name ) const;
+
+    void reset() const;
+
     /// commodity functions
     virtual uint8_t readI2C(uint8_t aSlaveAddress, uint32_t i2cAddress) const;
-    virtual void writeI2C(uint8_t aSlaveAddress, uint32_t i2cAddress, uint32_t data) const;
-    
+    virtual void writeI2C(uint8_t aSlaveAddress, uint32_t i2cAddress, uint8_t data) const;
+
+    virtual std::vector<uint8_t> readI2CArray(uint8_t aSlaveAddress, uint32_t i2cAddress, uint32_t aNumWords) const;
+    virtual void writeI2CArray(uint8_t aSlaveAddress, uint32_t i2cAddress, std::vector<uint8_t> data) const;
+
 protected:
     // low level i2c functions
     std::vector<uint8_t> virtual readBlockI2C(uint8_t aSlaveAddress, uint32_t numBytes) const;
@@ -61,9 +67,7 @@ private:
     void constructor();
     
     // low level i2c functions
-    void reset() const;
-    void waitUntilFinished(bool requireAcknowledgement = true,
-            bool requireBusIdleAtEnd = false) const;
+    void waitUntilFinished(bool requireAcknowledgement = true, bool requireBusIdleAtEnd = false) const;
     
     //! IPBus register names for i2c bus
     static const std::string kPreHi;

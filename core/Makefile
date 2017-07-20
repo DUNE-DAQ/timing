@@ -36,7 +36,8 @@ LibraryPaths = \
 
 ExecutableLibraries = ${Libraries} \
 	${Library} \
-    boost_filesystem
+    boost_filesystem \
+    boost_thread
 
 LibraryPaths = \
 	${CACTUS_ROOT}/lib \

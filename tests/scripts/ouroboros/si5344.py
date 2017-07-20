@@ -49,7 +49,7 @@ class si5344:
         #Now write to register.
         data.insert(0, myaddr)
         if verbose:
-            print "  Writing: "
+            print "  Writing (page %d): " % requirePg
             result="\t  "
             for iaddr in data:
                 result+="%#02x "%(iaddr)

@@ -8,6 +8,8 @@
 #ifndef __PDT_I2CSLAVE_HPP__
 #define	__PDT_I2CSLAVE_HPP__
 
+#include <vector>
+ 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 #include "pdt/exception.hpp"
@@ -43,7 +45,10 @@ public:
 
     /// comodity functions
     uint8_t readI2C(uint32_t i2cAddress) const;
-    void writeI2C(uint32_t i2cAddress, uint32_t data) const;
+    void writeI2C(uint32_t i2cAddress, uint8_t aData) const;
+
+    std::vector<uint8_t> readI2CArray(uint32_t i2cAddress, uint32_t aNumWords) const;
+    void writeI2CArray(uint32_t i2cAddress, std::vector<uint8_t> aData) const;
 
 private:
     const I2CBaseNode* mMaster;
