@@ -88,11 +88,15 @@ class I2CCore:
     def checkack(self):
         inprogress = True
         ack = False
+        k = 0
         while inprogress:
             cmd_stat = self.cmd_stat.read()
             self.target.dispatch()
+            print '<< ack', hex(cmd_stat),k,
             inprogress = (cmd_stat & I2CCore.inprogress) > 0
             ack = (cmd_stat & I2CCore.recvdack) == 0
+            print ack
+            k += 1
         return ack
 
     def delayorcheckack(self):
@@ -118,9 +122,12 @@ class I2CCore:
         nwritten = -1
         addr &= 0x7f
         addr = addr << 1
-        startcmd = 0x1 << 7
-        stopcmd = 0x1 << 6
-        writecmd = 0x1 << 4
+        print '+ write', stop, [hex(x) for x in data]
+        print '>>', hex(addr), hex(I2CCore.startcmd | I2CCore.writecmd)
+  
+        # startcmd = 0x1 << 7
+        # stopcmd = 0x1 << 6
+        # writecmd = 0x1 << 4
         #Set transmit register (write operation, LSB=0)
         self.data.write(addr)
         #Set Command Register to 0x90 (write, start)
@@ -136,6 +143,7 @@ class I2CCore:
             val &= 0xff
             #Write slave memory address
             self.data.write(val)
+            print '>> val', hex(val)
             #Set Command Register to 0x10 (write)
             self.cmd_stat.write(I2CCore.writecmd)
             self.target.dispatch()
@@ -148,6 +156,8 @@ class I2CCore:
         if stop:
             self.cmd_stat.write(I2CCore.stopcmd)
             self.target.dispatch()
+            ack = self.delayorcheckack()
+            
         return nwritten
 
 ################################################################################
@@ -162,6 +172,10 @@ class I2CCore:
         addr &= 0x7f
         addr = addr << 1
         addr |= 0x1 # read bit
+        
+        print '+ read'
+        print '>>', hex(addr), hex(I2CCore.startcmd | I2CCore.writecmd)
+
         self.data.write(addr)
         self.cmd_stat.write(I2CCore.startcmd | I2CCore.writecmd)
         self.target.dispatch()
@@ -172,10 +186,12 @@ class I2CCore:
             return data
         for i in range(n):
             if i < (n-1):
-                self.cmd_stat.write(I2CCore.readcmd) # <---
+                cmd = (I2CCore.readcmd) # <---
             else:
-                self.cmd_stat.write(I2CCore.readcmd | I2CCore.ack | I2CCore.stopcmd) # <--- This tells the slave that it is the last word
-	        self.target.dispatch()
+                cmd = (I2CCore.readcmd | I2CCore.ack | I2CCore.stopcmd) # <--- This tells the slave that it is the last word
+            print '>>', hex(cmd), i
+            self.cmd_stat.write(cmd)
+            self.target.dispatch()
             ack = self.delayorcheckack()
             val = self.data.read()
             self.target.dispatch()

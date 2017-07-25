@@ -20,6 +20,8 @@
 
 namespace pdt {
 
+UHAL_REGISTER_DERIVED_NODE(I2CMasterNode);
+
 //____________________________________________________________________________//
 I2CMasterNode::I2CMasterNode( const uhal::Node& aNode ) : I2CBaseNode(aNode) {
     constructor();

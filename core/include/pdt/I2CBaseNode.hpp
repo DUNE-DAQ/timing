@@ -38,7 +38,7 @@ public:
     virtual ~I2CBaseNode();
 
     ///
-    virtual uint8_t getI2CClockPrescale() const {
+    virtual uint16_t getI2CClockPrescale() const {
         return mClockPrescale;
     }
 
@@ -49,15 +49,16 @@ public:
 
     /// commodity functions
     virtual uint8_t readI2C(uint8_t aSlaveAddress, uint32_t i2cAddress) const;
-    virtual void writeI2C(uint8_t aSlaveAddress, uint32_t i2cAddress, uint8_t data) const;
+    virtual void writeI2C(uint8_t aSlaveAddress, uint32_t i2cAddress, uint8_t aData, bool aSendStop = true) const;
 
     virtual std::vector<uint8_t> readI2CArray(uint8_t aSlaveAddress, uint32_t i2cAddress, uint32_t aNumWords) const;
-    virtual void writeI2CArray(uint8_t aSlaveAddress, uint32_t i2cAddress, std::vector<uint8_t> data) const;
+    virtual void writeI2CArray(uint8_t aSlaveAddress, uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop = true ) const;
 
 protected:
+
     // low level i2c functions
-    std::vector<uint8_t> virtual readBlockI2C(uint8_t aSlaveAddress, uint32_t numBytes) const;
-    void virtual writeBlockI2C(uint8_t aSlaveAddress, const std::vector<uint8_t>& data) const;
+    std::vector<uint8_t> virtual readBlockI2C(uint8_t aSlaveAddress, uint32_t aNumBytes) const;
+    void virtual writeBlockI2C(uint8_t aSlaveAddress, const std::vector<uint8_t>& aData, bool aSendStop = true) const;
 
     //! Slaves 
     boost::unordered_map<std::string,uint8_t> mSlavesAddresses;
@@ -78,13 +79,20 @@ private:
     static const std::string kCmd;
     static const std::string kStatus;
 
-    static const uint32_t kStartCmd; // 1 << 7
-    static const uint32_t kStopCmd;  // 1 << 6
-    static const uint32_t kReadFromSlaveCmd; // 1 << 5
-    static const uint32_t kWriteToSlaveCmd; // 1 << 4
-    static const uint32_t kAckCmd; // 1 << 3
-    static const uint32_t kInterruptAck; // 1
+    static const uint8_t kStartCmd; // 1 << 7
+    static const uint8_t kStopCmd;  // 1 << 6
+    static const uint8_t kReadFromSlaveCmd; // 1 << 5
+    static const uint8_t kWriteToSlaveCmd; // 1 << 4
+    static const uint8_t kAckCmd; // 1 << 3
+    static const uint8_t kInterruptAck; // 1
 
+
+    static const uint8_t kReceivedAckBit;// recvdack = 0x1 << 7
+    static const uint8_t kBusyBit;// busy = 0x1 << 6
+    static const uint8_t kArbitrationLostBit;// arblost = 0x1 << 5
+    static const uint8_t kInProgressBit;// inprogress = 0x1 << 1
+    static const uint8_t kInterruptBit;// interrupt = 0x1
+    // 
     //! clock prescale factor
     uint16_t mClockPrescale;
 

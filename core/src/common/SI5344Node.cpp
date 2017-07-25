@@ -43,6 +43,10 @@ SI5344Slave::switchPage( uint8_t aPage ) const {
 
 	// Prepare a data block with address and new page
 	// std::vector<uint8_t> lData = {0x1, aPage};
+    PDT_LOG(kNotice) << "-> Switching to page " 
+        << std::showbase
+        << std:: hex
+        << (uint32_t) aPage;
 	writeI2C(0x1, aPage);
 }
 //-----------------------------------------------------------------------------
@@ -68,10 +72,16 @@ SI5344Slave::readClockRegister( uint16_t aAddr ) const {
 
 	uint8_t lRegAddr = (aAddr & 0xff);
 	uint8_t lPageAddr = (aAddr >> 8) & 0xff;
-
+    PDT_LOG(kWarning) << std::showbase << std::hex 
+        << "Read Address " << (uint32_t)aAddr 
+        << " reg: " << (uint32_t)lRegAddr 
+        << " page: " << (uint32_t)lPageAddr;
 	// Change page only when required.
 	// (The SI5344 don't like to have the page register id to be written all the time.)
 	uint8_t lCurrentPage = readPage();
+    // PDT_LOG(kWarning) << std::showbase << std::hex 
+        // << "current page " << (uint32_t)lCurrentPage 
+        // << " dest page " << (uint32_t)lPageAddr;
 	if ( lPageAddr != lCurrentPage ) {
 		switchPage(lPageAddr);
 	}
@@ -89,6 +99,10 @@ SI5344Slave::writeClockRegister( uint16_t aAddr, uint8_t aData ) const {
 	uint8_t lRegAddr = (aAddr & 0xff);
 	uint8_t lPageAddr = (aAddr >> 8) & 0xff;
 
+    PDT_LOG(kWarning) << std::showbase << std::hex 
+        << "Write Address " << (uint32_t)aAddr 
+        << " reg: " << (uint32_t)lRegAddr 
+        << " page: " << (uint32_t)lPageAddr;
 	// Change page only when required.
 	// (The SI5344 don't like to have the page register id to be written all the time.)
 	uint8_t lCurrentPage = readPage();
@@ -154,7 +168,37 @@ SI5344Slave::configure( const std::string& aPath ) const {
 	size_t lNotifyEvery(lConfig.size()/lNotifyPercent);
 
 	for ( const auto& lSetting : lConfig ) {
-		this->writeClockRegister(lSetting.get<0>(), lSetting.get<1>());
+		PDT_LOG(kInfo) << std::showbase << std::hex 
+                       << "Writing to "  << (uint32_t)lSetting.get<0>() 
+                       << " data " << (uint32_t)lSetting.get<1>();
+
+        uint32_t lMaxAttempts(2), lAttempt(0);
+        while( lAttempt < lMaxAttempts ) {        
+            PDT_LOG(kInfo) << "Attempt " << lAttempt;
+            try {
+    		  this->writeClockRegister(lSetting.get<0>(), lSetting.get<1>());
+            } catch( const std::exception& e) {
+                PDT_LOG(kError) << "-> Bugger Write failed";
+                PDT_LOG(kError) << "   reason: " << e.what();
+                ++lAttempt;
+                continue;
+            }
+            break;
+        }
+
+        try {
+            uint8_t lVal = this->readClockRegister(lSetting.get<0>());
+            if (  lVal != lSetting.get<1>() ) {
+                PDT_LOG(kError) << "-> Bugger Readback failed";
+                PDT_LOG(kError) << std::showbase << std::hex 
+                     << "   Exp " <<  (uint32_t)lSetting.get<1>() << " found " << (uint32_t)lVal;
+                break;
+            }
+        } catch( const std::exception& e) {
+            PDT_LOG(kError) << "-> Bugger Read failed";
+            PDT_LOG(kError) << "   reason: " << e.what();
+        }
+
 		++k;
 		if ( (k % lNotifyEvery) == 0 ) {
 			PDT_LOG(kDebug) << (k/lNotifyEvery) * lNotifyPercent << "%";

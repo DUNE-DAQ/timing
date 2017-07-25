@@ -45,10 +45,10 @@ public:
 
     /// comodity functions
     uint8_t readI2C(uint32_t i2cAddress) const;
-    void writeI2C(uint32_t i2cAddress, uint8_t aData) const;
+    void writeI2C(uint32_t i2cAddress, uint8_t aData, bool aSendStop = true) const;
 
     std::vector<uint8_t> readI2CArray(uint32_t i2cAddress, uint32_t aNumWords) const;
-    void writeI2CArray(uint32_t i2cAddress, std::vector<uint8_t> aData) const;
+    void writeI2CArray(uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop = true) const;
 
 private:
     const I2CBaseNode* mMaster;

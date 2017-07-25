@@ -56,16 +56,19 @@ for hw in hw_list:
     hw.dispatch()
 
     uid_I2C = I2CCore(hw, 10, 5, "io.uid_i2c", None)
-    uid_I2C.write(0x21, [0x01, 0x7f], True)
+    uid_I2C.write(0x21, [0x01, 0x7f])
     uid_I2C.write(0x21, [0x01], False)
     res = uid_I2C.read(0x21, 1)
     print "I2c enable lines:" , res
+
+    # break 
     uid_I2C.write(0x53, [0xfa], False)
     res = uid_I2C.read(0x53, 6)
     id = 0
     for i in res:
     	id = (id << 8) | int(i)
     print "Unique ID PROM / board rev:", hex(id), brd_rev[id]
+    # break
 
     clock_I2C = I2CCore(hw, 10, 5, "io.pll_i2c", None)
     zeClock=si5344(clock_I2C)

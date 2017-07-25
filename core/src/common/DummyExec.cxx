@@ -7,6 +7,7 @@
 #include "pdt/Logger.hpp"
 #include "pdt/toolbox.hpp"
 #include "pdt/SI5344Node.hpp"
+#include "pdt/I2CMasterNode.hpp"
 
 #include "uhal/ConnectionManager.hpp"
 #include "uhal/log/log.hpp"
@@ -66,43 +67,91 @@ int main(int argc, char const *argv[])
    	PDT_LOG(pdt::kNotice) << "Opening connection to uri: " << lOuro.uri();
 
 
+   	//-----------------------------------------------------
+	// Soft reset
    	PDT_LOG(pdt::kNotice) << "Soft reset";
 	auto lStat = lOuro.getNode("io.csr.stat").read();
     lOuro.getNode("io.csr.ctrl.soft_rst").write(1);
     lOuro.dispatch();
 	PDT_LOG(pdt::kInfo) << "io.csr.stat: " << std::showbase << std::hex << lStat;
 
+	// 1 sec nap	
+	boost::this_thread::sleep_for( boost::chrono::seconds(1) );
+
+
+   	//-----------------------------------------------------
+	// Pll reset
 	PDT_LOG(pdt::kNotice) << "Resetting PLL";
     lOuro.getNode("io.csr.ctrl.pll_rst").write(1);
     lOuro.dispatch();
     lOuro.getNode("io.csr.ctrl.pll_rst").write(0);
     lOuro.dispatch();
 
+   	//-----------------------------------------------------
+    // Clocking setup
+	const pdt::I2CMasterNode&  lUID = lOuro.getNode<pdt::I2CMasterNode>("io.uid_i2c");
+	std::cout << "uid clock i2c clock prescale " << std::showbase << std::hex << (uint32_t)lUID.getI2CClockPrescale() << std::endl;
+
+	std::cout << "A: " << std::hex << (uint32_t)lUID.getSlaveAddress("A") << std::endl;
+	std::cout << "B: " << std::hex << (uint32_t)lUID.getSlaveAddress("B") << std::endl;
+	lUID.getSlave("A").writeI2C(0x01, 0x7f);
+	uint32_t x = lUID.getSlave("A").readI2C(0x01);
+	PDT_LOG(pdt::kInfo) << "I2c enable lines: " << x;
+
+	// return -1;
+    // uid_I2C.write(0x21, [0x01, 0x7f], True)
+    // uid_I2C.write(0x21, [0x01], False)
+    // res = uid_I2C.read(0x21, 1)
+
+	std::vector<uint8_t> lVals = lUID.getSlave("B").readI2CArray(0xfa, 6);
+	uint64_t lUniqueId(0x0);
+	for ( uint8_t lVal : lVals ) {
+		// std::cout << (uint64_t)lVal << std::endl;
+		lUniqueId = (lUniqueId << 8) | lVal;
+	}
+	PDT_LOG(pdt::kInfo) << "Unique ID PROM / board rev: " << std::showbase << std::hex << lUniqueId;
+
+	kClockConfigMap.at(kBoardRevisionMap.at(lUniqueId));
+    // uid_I2C.write(0x53, [0xfa], False)
+    // res = uid_I2C.read(0x53, 6)
+    // id = 0
+    // for i in res:
+    // 	id = (id << 8) | int(i)
+    // print "Unique ID PROM / board rev:", hex(id), brd_rev[id]
+
+
+	// return -1;
+
+
+
+
+   	//-----------------------------------------------------
    	PDT_LOG(pdt::kNotice) << "Reading Board information";
 
 
 
+   	//-----------------------------------------------------
    	PDT_LOG(pdt::kNotice) << "Reading PLL version information";
-	pdt::SI5344Node lClock(lOuro.getNode("io.pll_i2c"));
+	const pdt::SI5344Node&  lClock = lOuro.getNode<pdt::SI5344Node>("io.pll_i2c");
+	std::cout << "si5344 clock i2c clock prescale " << std::showbase << std::hex << (uint32_t)lClock.getI2CClockPrescale() << std::endl;
 
-   	PDT_LOG(pdt::kInfo) << "Resetting pll's i2c bus";
+   	// PDT_LOG(pdt::kInfo) << "Resetting pll's i2c bus";
 	lClock.reset();
 	PDT_LOG(pdt::kInfo) << "SI5344 version " << std::showbase << std::hex << lClock.readDeviceVersion();
 
 
+   	//-----------------------------------------------------
    	uhal::ValWord<uint32_t> lMasterVersion = lOuro.getNode("master.global.version").read();
    	uhal::ValWord<uint32_t> lEndpointVersion = lOuro.getNode("endpoint.version").read();
    	lOuro.dispatch();
 
 	PDT_LOG(pdt::kInfo) << "Master version: " << std::showbase << std::hex << lMasterVersion;
 	PDT_LOG(pdt::kInfo) << "Endpoint version: " << std::showbase << std::hex << lEndpointVersion;
+   	//-----------------------------------------------------
 
-
-
-    
 	boost::this_thread::sleep_for( boost::chrono::seconds(1) );
 
-
+	//------------------------------------------------------
     std::string aCfgPath = "${PDT_TESTS}/scripts/ouroboros/SI5344/PDTS0000.txt";
     aCfgPath = pdt::shellExpandPath(aCfgPath);
 	PDT_LOG(pdt::kInfo) << "Loading clock configuration" << aCfgPath;

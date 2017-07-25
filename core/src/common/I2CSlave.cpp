@@ -46,8 +46,8 @@ I2CSlave::readI2C(uint32_t i2cAddress) const {
 
 //-----------------------------------------------------------------------------
 void
-I2CSlave::writeI2C(uint32_t i2cAddress, uint8_t aData) const {
-    mMaster->writeI2C(mAddress, i2cAddress, aData);
+I2CSlave::writeI2C(uint32_t i2cAddress, uint8_t aData, bool aSendStop) const {
+    mMaster->writeI2C(mAddress, i2cAddress, aData, aSendStop);
 }
 //-----------------------------------------------------------------------------
 
@@ -62,8 +62,8 @@ I2CSlave::readI2CArray(uint32_t i2cAddress, uint32_t aNumWords) const {
 
 //-----------------------------------------------------------------------------
 void
-I2CSlave::writeI2CArray(uint32_t i2cAddress, std::vector<uint8_t> aData) const {
-    mMaster->writeI2CArray(mAddress, i2cAddress, aData);
+I2CSlave::writeI2CArray(uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop) const {
+    mMaster->writeI2CArray(mAddress, i2cAddress, aData, aSendStop);
 }
 //-----------------------------------------------------------------------------
 

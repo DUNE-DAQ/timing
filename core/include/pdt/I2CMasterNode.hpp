@@ -23,6 +23,7 @@ class I2CSlave;
  * @brief Generic class to give access to multiple I2C targets
  */
 class I2CMasterNode : public I2CBaseNode {
+    UHAL_DERIVEDNODE(I2CBaseNode);
 public:
     I2CMasterNode(const uhal::Node& aNode );
     I2CMasterNode(const I2CMasterNode& aOther );

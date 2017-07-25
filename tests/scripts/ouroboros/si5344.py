@@ -54,7 +54,9 @@ class si5344:
             for iaddr in data:
                 result+="%#02x "%(iaddr)
             print result
-        self.i2c.write( self.slaveaddr, data)
+        nwrt = self.i2c.write( self.slaveaddr, data)
+        assert(nwrt == len(data))
+
         #time.sleep(0.01)
 
     def setPage(self, page, verbose=False):
