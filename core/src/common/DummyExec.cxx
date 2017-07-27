@@ -13,8 +13,8 @@
 #include "uhal/log/log.hpp"
 
 enum {
-	kRev1,
-	kRev2
+	kRev1 = 1,
+	kRev2 = 2
 };
 
 const std::map<uint32_t, std::string> kClockConfigMap = {
@@ -109,9 +109,18 @@ int main(int argc, char const *argv[])
 		// std::cout << (uint64_t)lVal << std::endl;
 		lUniqueId = (lUniqueId << 8) | lVal;
 	}
-	PDT_LOG(pdt::kInfo) << "Unique ID PROM / board rev: " << std::showbase << std::hex << lUniqueId;
 
-	kClockConfigMap.at(kBoardRevisionMap.at(lUniqueId));
+
+	PDT_LOG(pdt::kInfo) << "Unique ID PROM " << std::showbase << std::hex << lUniqueId;
+
+	uint32_t lRevision;
+	try {
+		lRevision = kBoardRevisionMap.at(lUniqueId);
+	} catch ( ... ) { // TODO: check what exception map::at throws
+		PDT_LOG(pdt::kError) << "No revision associated to UID " << std::showbase << std::hex << lUniqueId;
+		exit(-1);
+	}
+
     // uid_I2C.write(0x53, [0xfa], False)
     // res = uid_I2C.read(0x53, 6)
     // id = 0
@@ -124,10 +133,8 @@ int main(int argc, char const *argv[])
 
 
 
-
    	//-----------------------------------------------------
    	PDT_LOG(pdt::kNotice) << "Reading Board information";
-
 
 
    	//-----------------------------------------------------
@@ -151,11 +158,46 @@ int main(int argc, char const *argv[])
 
 	boost::this_thread::sleep_for( boost::chrono::seconds(1) );
 
+	pdt::Log::setLogThreshold(pdt::kDebug1);
+	pdt::Log::setLogThreshold(pdt::kWarning);
+
 	//------------------------------------------------------
-    std::string aCfgPath = "${PDT_TESTS}/scripts/ouroboros/SI5344/PDTS0000.txt";
+	std::string lClockConfig;
+	try {
+		lClockConfig = kClockConfigMap.at(lRevision);
+    } catch ( ... ) {
+		PDT_LOG(pdt::kError) << "Board revisions " << lRevision << " has no associated clock configuration";
+    	exit(-1);
+	}
+
+    std::string aCfgPath = "${PDT_TESTS}/scripts/ouroboros/" + lClockConfig;
+
     aCfgPath = pdt::shellExpandPath(aCfgPath);
 	PDT_LOG(pdt::kInfo) << "Loading clock configuration" << aCfgPath;
 	lClock.configure(aCfgPath);
+	pdt::Log::setLogThreshold(pdt::kInfo);
+
+	//------------------------------------------------------
+    for( uint32_t i(0); i<2; ++i) {
+        lOuro.getNode("io.freq.ctrl.chan_sel").write(i);
+        lOuro.getNode("io.freq.ctrl.en_crap_mode").write(0);
+        lOuro.dispatch();
+		boost::this_thread::sleep_for( boost::chrono::seconds(1) );
+        auto fq = lOuro.getNode("io.freq.freq.count").read();
+        auto fv = lOuro.getNode("io.freq.freq.valid").read();
+        lOuro.dispatch();
+        PDT_LOG(pdt::kInfo) <<  "Freq: " << i << " " << fv << " " << (fq * 119.20928 / 1000000);
+    }
+
+    // What does this do?
+    lOuro.getNode("io.csr.ctrl.sfp_tx_dis").write(0);
+    lOuro.dispatch();
+
+
+    lOuro.getNode("io.csr.ctrl.rst").write(1);
+    lOuro.dispatch();
+    lOuro.getNode("io.csr.ctrl.rst").write(0);
+    lOuro.dispatch();
 
 	/* code */
 	return 0;

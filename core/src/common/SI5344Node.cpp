@@ -74,16 +74,13 @@ SI5344Slave::readClockRegister( uint16_t aAddr ) const {
 
 	uint8_t lRegAddr = (aAddr & 0xff);
 	uint8_t lPageAddr = (aAddr >> 8) & 0xff;
-    PDT_LOG(kWarning) << std::showbase << std::hex 
+    PDT_LOG(kDebug) << std::showbase << std::hex 
         << "Read Address " << (uint32_t)aAddr 
         << " reg: " << (uint32_t)lRegAddr 
         << " page: " << (uint32_t)lPageAddr;
 	// Change page only when required.
 	// (The SI5344 don't like to have the page register id to be written all the time.)
-	uint8_t lCurrentPage = readPage();
-    // PDT_LOG(kWarning) << std::showbase << std::hex 
-        // << "current page " << (uint32_t)lCurrentPage 
-        // << " dest page " << (uint32_t)lPageAddr;
+    uint8_t lCurrentPage = readPage();
 	if ( lPageAddr != lCurrentPage ) {
 		switchPage(lPageAddr);
 	}
@@ -101,7 +98,7 @@ SI5344Slave::writeClockRegister( uint16_t aAddr, uint8_t aData ) const {
 	uint8_t lRegAddr = (aAddr & 0xff);
 	uint8_t lPageAddr = (aAddr >> 8) & 0xff;
 
-    PDT_LOG(kWarning) << std::showbase << std::hex 
+    PDT_LOG(kDebug) << std::showbase << std::hex 
         << "Write Address " << (uint32_t)aAddr 
         << " reg: " << (uint32_t)lRegAddr 
         << " page: " << (uint32_t)lPageAddr;
@@ -177,6 +174,9 @@ SI5344Slave::configure( const std::string& aPath ) const {
         uint32_t lMaxAttempts(2), lAttempt(0);
         while( lAttempt < lMaxAttempts ) {        
             PDT_LOG(kInfo) << "Attempt " << lAttempt;
+            if ( lAttempt > 0) {
+                PDT_LOG(kWarning) << "Retry " << lAttempt << " for reg " << std::showbase << std::hex <<  (uint32_t)lSetting.get<0>() ;
+            }
             try {
     		  this->writeClockRegister(lSetting.get<0>(), lSetting.get<1>());
             } catch( const std::exception& e) {
