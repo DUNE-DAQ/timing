@@ -31,6 +31,8 @@ SI5344Slave::~SI5344Slave( ) {
 uint8_t
 SI5344Slave::readPage( ) const {
 
+    PDT_LOG(kNotice) << "<- Reading page ";
+
 	// Read from the page address (0x1?)
 	return readI2C(0x1);
 }
@@ -158,7 +160,7 @@ SI5344Slave::configure( const std::string& aPath ) const {
         std::istringstream lLineStream(lLine);
         lLineStream >> std::hex >> lAddress >> lDummy >> std::hex >> lData;
 
-		PDT_LOG(pdt::kDebug1) << std::showbase << std::hex << "Address: " <<  lAddress << lDummy << " Data: " << lData;
+		PDT_LOG(pdt::kDebug2) << std::showbase << std::hex << "Address: " <<  lAddress << lDummy << " Data: " << lData;
 
 		lConfig.push_back(RegisterSetting(lAddress, lData));
 	}
@@ -178,7 +180,7 @@ SI5344Slave::configure( const std::string& aPath ) const {
             try {
     		  this->writeClockRegister(lSetting.get<0>(), lSetting.get<1>());
             } catch( const std::exception& e) {
-                PDT_LOG(kError) << "-> Bugger Write failed";
+                PDT_LOG(kError) << "-> Bugger Write failed " << std::showbase << std::hex << lSetting.get<0>();
                 PDT_LOG(kError) << "   reason: " << e.what();
                 ++lAttempt;
                 continue;
@@ -186,18 +188,29 @@ SI5344Slave::configure( const std::string& aPath ) const {
             break;
         }
 
-        try {
-            uint8_t lVal = this->readClockRegister(lSetting.get<0>());
-            if (  lVal != lSetting.get<1>() ) {
-                PDT_LOG(kError) << "-> Bugger Readback failed";
-                PDT_LOG(kError) << std::showbase << std::hex 
-                     << "   Exp " <<  (uint32_t)lSetting.get<1>() << " found " << (uint32_t)lVal;
-                break;
-            }
-        } catch( const std::exception& e) {
-            PDT_LOG(kError) << "-> Bugger Read failed";
-            PDT_LOG(kError) << "   reason: " << e.what();
-        }
+
+        // PDT_LOG(kInfo) << std::showbase << std::hex 
+        //                << "Reading from "  << (uint32_t)lSetting.get<0>();
+        // while( lAttempt < lMaxAttempts ) {        
+        //     PDT_LOG(kInfo) << "Attempt " << lAttempt;
+
+        //     try {
+        //         uint8_t lVal = this->readClockRegister(lSetting.get<0>());
+        //         if (  lVal != lSetting.get<1>() ) {
+        //             PDT_LOG(kError) << "-> Bugger Readback failed " << std::showbase << std::hex << lSetting.get<0>();
+        //             PDT_LOG(kError) << std::showbase << std::hex 
+        //                  << "   Exp " <<  (uint32_t)lSetting.get<1>() << " found " << (uint32_t)lVal;
+        //             ++lAttempt;
+        //             continue;
+        //         }
+        //     } catch( const std::exception& e) {
+        //         PDT_LOG(kError) << "-> Bugger Read failed " << std::showbase << std::hex << lSetting.get<0>();
+        //         PDT_LOG(kError) << "   reason: " << e.what();
+        //         ++lAttempt;
+        //         continue;
+        //     }
+        //     break;
+        // }
 
 		++k;
 		if ( (k % lNotifyEvery) == 0 ) {

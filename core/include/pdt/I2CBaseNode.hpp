@@ -60,6 +60,13 @@ protected:
     std::vector<uint8_t> virtual readBlockI2C(uint8_t aSlaveAddress, uint32_t aNumBytes) const;
     void virtual writeBlockI2C(uint8_t aSlaveAddress, const std::vector<uint8_t>& aData, bool aSendStop = true) const;
 
+    // low level i2c functions
+    std::vector<uint8_t> virtual readBlockI2C2g(uint8_t aSlaveAddress, uint32_t aNumBytes) const;
+    void virtual writeBlockI2C2g(uint8_t aSlaveAddress, const std::vector<uint8_t>& aData, bool aSendStop = true) const;
+
+    uint8_t sendI2CCommandAndRead( uint8_t aCmd ) const;
+    void sendI2CCommandAndWrite( uint8_t aCmd, uint8_t aData ) const;
+
     //! Slaves 
     boost::unordered_map<std::string,uint8_t> mSlavesAddresses;
 
@@ -71,13 +78,13 @@ private:
     void waitUntilFinished(bool requireAcknowledgement = true, bool requireBusIdleAtEnd = false) const;
     
     //! IPBus register names for i2c bus
-    static const std::string kPreHi;
-    static const std::string kPreLo;
-    static const std::string kCtrl;
-    static const std::string kTx;
-    static const std::string kRx;
-    static const std::string kCmd;
-    static const std::string kStatus;
+    static const std::string kPreHiNode;
+    static const std::string kPreLoNode;
+    static const std::string kCtrlNode;
+    static const std::string kTxNode;
+    static const std::string kRxNode;
+    static const std::string kCmdNode;
+    static const std::string kStatusNode;
 
     static const uint8_t kStartCmd; // 1 << 7
     static const uint8_t kStopCmd;  // 1 << 6

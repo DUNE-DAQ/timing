@@ -7,6 +7,8 @@ import time
 
 import uhal
 
+import logging
+
 verbose = True
 
 
@@ -36,6 +38,7 @@ class I2CCore:
     arblost = 0x1 << 5
     inprogress = 0x1 << 1
     interrupt = 0x1
+    log = logging.getLogger('I2CCore')
 
     def __init__(self, target, wclk, i2cclk, name="i2c", delay=None):
         self.target = target
@@ -73,6 +76,8 @@ class I2CCore:
     def config(self):
         #INITIALIZATION OF THE I2S MASTER CORE
         #Disable core
+        self.log.info("Initialising I2C core")
+        self.log.debug("Initialising I2C core")
         self.ctrl.write(0x0 << 7)
         self.target.dispatch()
         #Write pre-scale register
@@ -85,27 +90,33 @@ class I2CCore:
         self.ctrl.write(0x1 << 7)
         self.target.dispatch()
 
-    def checkack(self):
+    def checkack(self, reqAck=True):
         inprogress = True
         ack = False
         k = 0
         while inprogress:
             cmd_stat = self.cmd_stat.read()
             self.target.dispatch()
-            print '<< ack', hex(cmd_stat),k,
+            self.log.debug('<< i2c stats %s %d', hex(cmd_stat),k)
             inprogress = (cmd_stat & I2CCore.inprogress) > 0
             ack = (cmd_stat & I2CCore.recvdack) == 0
+            busy = (cmd_stat & I2CCore.busy)
+            arblost = (cmd_stat & I2CCore.arblost)
+
             print ack
             k += 1
+
+        if reqAck and ack == 0:
+            raise RuntimeError("Missing ack i2c from slave")
         return ack
 
-    def delayorcheckack(self):
+    def delayorcheckack(self, reqAck=True):
         ack = True
         if self.delay is None:
-            ack = self.checkack()
+            ack = self.checkack(reqAck)
         else:
             time.sleep(self.delay)
-            ack = self.checkack()#Remove this?
+            ack = self.checkack(reqAck)#Remove this?
         return ack
 
 ################################################################################
@@ -116,20 +127,24 @@ class I2CCore:
 
 
 
-    def write(self, addr, data, stop=True):
+    def write(self, i2cAddr, data, stop=True):
         """Write data to the device with the given address."""
         # Start transfer with 7 bit address and write bit (0)
         nwritten = -1
-        addr &= 0x7f
-        addr = addr << 1
-        print '+ write', stop, [hex(x) for x in data]
-        print '>>', hex(addr), hex(I2CCore.startcmd | I2CCore.writecmd)
+
+        # i2cAddr &= 0x7f
+        # i2cAddr = i2cAddr << 1
+        self.log.info("Writing %d bytes to 0x%x: [%s]", len(data), i2cAddr, ', '.join([hex(x) for x in data]))
+        i2cAddr = (( i2cAddr << 1 ) & 0xfe )
+        
+        # print '+ write', stop, [hex(x) for x in data]
+        # print '>>', hex(i2cAddr), hex(I2CCore.startcmd | I2CCore.writecmd)
   
         # startcmd = 0x1 << 7
         # stopcmd = 0x1 << 6
         # writecmd = 0x1 << 4
         #Set transmit register (write operation, LSB=0)
-        self.data.write(addr)
+        self.data.write(i2cAddr)
         #Set Command Register to 0x90 (write, start)
         self.cmd_stat.write(I2CCore.startcmd | I2CCore.writecmd)
         self.target.dispatch()
@@ -165,25 +180,31 @@ class I2CCore:
 #        I2C READ
 # */
 ################################################################################
-    def read(self, addr, n):
+    def read(self, i2cAddr, n):
         """Read n bytes of data from the device with the given address."""
         # Start transfer with 7 bit address and read bit (1)
         data = []
-        addr &= 0x7f
-        addr = addr << 1
-        addr |= 0x1 # read bit
         
-        print '+ read'
-        print '>>', hex(addr), hex(I2CCore.startcmd | I2CCore.writecmd)
+        self.log.info("Reading %d bytes from 0x%x", n, i2cAddr)
 
-        self.data.write(addr)
+        i2cAddr = (( i2cAddr << 1 ) & 0xff )| 0x1
+        # i2cAddr = i2cAddr << 1
+        # i2cAddr |= 0x1 # read bit
+        
+        # print '+ read'
+        # print '>>', hex(i2cAddr), hex(I2CCore.startcmd | I2CCore.writecmd)
+
+        # ---
+        self.data.write(i2cAddr)
         self.cmd_stat.write(I2CCore.startcmd | I2CCore.writecmd)
         self.target.dispatch()
+
         ack = self.delayorcheckack()
         if not ack:
             self.cmd_stat.write(I2CCore.stopcmd)
             self.target.dispatch()
             return data
+
         for i in range(n):
             if i < (n-1):
                 cmd = (I2CCore.readcmd) # <---
@@ -192,7 +213,7 @@ class I2CCore:
             print '>>', hex(cmd), i
             self.cmd_stat.write(cmd)
             self.target.dispatch()
-            ack = self.delayorcheckack()
+            ack = self.delayorcheckack(False)
             val = self.data.read()
             self.target.dispatch()
             data.append(val & 0xff)

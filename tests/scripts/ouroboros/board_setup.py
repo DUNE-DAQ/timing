@@ -3,6 +3,8 @@
 import sys
 import uhal
 import time
+import coloredlogs
+
 from I2CuHal import I2CCore
 from si5344 import si5344
 
@@ -32,6 +34,8 @@ clk_cfg_files = {
 }
 
 uhal.setLogLevelTo(uhal.LogLevel.NOTICE)
+coloredlogs.install(level='DEBUG', fmt='%(asctime)s %(levelname)-8s: %(message)s', stream=sys.stdout)
+
 manager = uhal.ConnectionManager("file://connections.xml")
 hw_list = [manager.getDevice(i) for i in sys.argv[1:]]
 
@@ -71,6 +75,7 @@ for hw in hw_list:
     # break
 
     clock_I2C = I2CCore(hw, 10, 5, "io.pll_i2c", None)
+    # raise SystemExit(0)
     zeClock=si5344(clock_I2C)
     res= zeClock.getDeviceVersion()
     zeClock.setPage(0, True)

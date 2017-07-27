@@ -22,13 +22,13 @@ namespace pdt {
 UHAL_REGISTER_DERIVED_NODE(I2CBaseNode);
 
 // PRIVATE CONST definitions
-const std::string I2CBaseNode::kPreHi = "ps_hi";
-const std::string I2CBaseNode::kPreLo = "ps_lo";
-const std::string I2CBaseNode::kCtrl = "ctrl";
-const std::string I2CBaseNode::kTx = "data";
-const std::string I2CBaseNode::kRx = "data";
-const std::string I2CBaseNode::kCmd = "cmd_stat";
-const std::string I2CBaseNode::kStatus = "cmd_stat";
+const std::string I2CBaseNode::kPreHiNode = "ps_hi";
+const std::string I2CBaseNode::kPreLoNode = "ps_lo";
+const std::string I2CBaseNode::kCtrlNode = "ctrl";
+const std::string I2CBaseNode::kTxNode = "data";
+const std::string I2CBaseNode::kRxNode = "data";
+const std::string I2CBaseNode::kCmdNode = "cmd_stat";
+const std::string I2CBaseNode::kStatusNode = "cmd_stat";
 
 const uint8_t I2CBaseNode::kStartCmd = 0x80; // 1 << 7
 const uint8_t I2CBaseNode::kStopCmd = 0x40;  // 1 << 6
@@ -56,8 +56,8 @@ void I2CBaseNode::constructor() {
     // formula: m_clockPrescale = (input_frequency / 5 / desired_frequency) -1
     // for typical IPbus applications: input frequency = IPbus clock = 31.x MHz
     // target frequency 100 kHz to play it safe (first revision of i2c standard),
-    // mClockPrescale = 0x40;
-    mClockPrescale = 0x100;
+    mClockPrescale = 0x40;
+    // mClockPrescale = 0x100;
     
     // Build the list of slaves
     // Loop over node parameters. Each parameter becomes a slave node.
@@ -135,9 +135,9 @@ I2CBaseNode::readI2CArray(uint8_t aSlaveAddress, uint32_t i2cAddress, uint32_t a
     // std::cout << "Reading " << aNumWords << " from " << std::showbase <<  std::hex << i2cAddress << " on " << (uint32_t)aSlaveAddress << std::endl; // HACK
     // write one word containing the address
     std::vector<uint8_t> lArray(1, i2cAddress & 0xff);
-    this->writeBlockI2C(aSlaveAddress, lArray);
+    this->writeBlockI2C2g(aSlaveAddress, lArray);
     // request the content at the specific address
-    return this->readBlockI2C(aSlaveAddress, aNumWords);
+    return this->readBlockI2C2g(aSlaveAddress, aNumWords);
 }
 //-----------------------------------------------------------------------------
  
@@ -152,7 +152,7 @@ I2CBaseNode::writeI2CArray(uint8_t aSlaveAddress, uint32_t i2cAddress, std::vect
     for ( size_t i(0); i < aData.size(); ++i )
         block[i+1] = aData[i];
 
-    this->writeBlockI2C(aSlaveAddress, block, aSendStop);
+    this->writeBlockI2C2g(aSlaveAddress, block, aSendStop);
 }
 //-----------------------------------------------------------------------------
 
@@ -181,17 +181,24 @@ I2CBaseNode::writeBlockI2C(uint8_t aSlaveAddress, const std::vector<uint8_t>& aA
     // Reset bus before beginning
     reset();
     // Set slave address in bits 7:1, and set bit 0 to zero (i.e. "write mode")
-    getNode(kTx).write((aSlaveAddress << 1) & 0xfe);
+    getNode(kTxNode).write((aSlaveAddress << 1) & 0xfe);
     getClient().dispatch();
     // Set start and write bit in command reg
-    // getNode(kCmd).write(0x90);
-    getNode(kCmd).write(kStartCmd + kWriteToSlaveCmd);
+    // getNode(kCmdNode).write(0x90);
+    getNode(kCmdNode).write(kStartCmd + kWriteToSlaveCmd);
     // Run the commands and wait for transaction to finish
     getClient().dispatch();
     waitUntilFinished();
 
     for (unsigned iByte = 0; iByte < aArray.size(); iByte++) {
         // uint8_t lStopBit = 0x00;
+
+        bool lFireStop = (iByte == aArray.size()) & aSendStop;
+        uint8_t lCmd = kWriteToSlaveCmd;
+
+        if ( lFireStop ) {
+            lCmd += kStopCmd;
+        }
 
         // if (iByte == aArray.size() - 1 && aSendStop) {
         //     // lStopBit = 0x40;
@@ -200,28 +207,33 @@ I2CBaseNode::writeBlockI2C(uint8_t aSlaveAddress, const std::vector<uint8_t>& aA
         std::cout << "wi2c >> i=" << iByte << " d=" << (uint32_t)aArray[iByte]  << " cmd=" << (uint32_t)kWriteToSlaveCmd << std::endl; // HACK
 
         // Set aArray to be written in transmit reg
-        getNode(kTx).write(aArray[iByte]);
+        getNode(kTxNode).write(aArray[iByte]);
         getClient().dispatch();
         // Set write and stop bit in command reg
-        // getNode(kCmd).write(0x10 + lStopBit);
-        // getNode(kCmd).write(kWriteToSlaveCmd + lStopBit);
-        getNode(kCmd).write(kWriteToSlaveCmd);
+        // getNode(kCmdNode).write(0x10 + lStopBit);
+        // getNode(kCmdNode).write(kWriteToSlaveCmd + lStopBit);
+        // getNode(kCmdNode).write(kWriteToSlaveCmd);
+        getNode(kCmdNode).write(lCmd);
         // Run the commands and wait for transaction to finish
         getClient().dispatch();
 
         // if (lStopBit) {
         //     waitUntilFinished(true, true);
         // } else {
-            waitUntilFinished(true, false);
+            // waitUntilFinished(true, false);
         // }
-
+        if (lFireStop) {
+            waitUntilFinished(true, true);
+        } else {
+            waitUntilFinished(true, false);
+        }
     }
 
-    if (aSendStop) {
-        getNode(kCmd).write(kStopCmd);
-        getClient().dispatch();
-        waitUntilFinished(true, true);
-    }
+    // if (aSendStop) {
+    //     getNode(kCmdNode).write(kStopCmd);
+    //     getClient().dispatch();
+    //     waitUntilFinished(true, true);
+    // }
 }
 //-----------------------------------------------------------------------------
 
@@ -251,11 +263,11 @@ I2CBaseNode::readBlockI2C(uint8_t aSlaveAddress, uint32_t lNumBytes) const {
     reset();
     // Set slave address in bits 7:1, and set bit 0 to one
     // (i.e. we're writing an address to the bus and then want to read)
-    getNode(kTx).write((aSlaveAddress << 1) | 0x01);
+    getNode(kTxNode).write((aSlaveAddress << 1) | 0x01);
     getClient().dispatch();
     // Set start and write bit in command reg
-    // getNode(kCmd).write(0x90);
-    getNode(kCmd).write(kStartCmd + kWriteToSlaveCmd);
+    // getNode(kCmdNode).write(0x90);
+    getNode(kCmdNode).write(kStartCmd + kWriteToSlaveCmd);
     // Run the commands and wait for transaction to finish
     getClient().dispatch();
     // std::cout << ">> " << ((aSlaveAddress << 1) | 0x01) << " cmd " << kStartCmd + kWriteToSlaveCmd << std::endl;// HACK
@@ -267,10 +279,11 @@ I2CBaseNode::readBlockI2C(uint8_t aSlaveAddress, uint32_t lNumBytes) const {
         // uint8_t lStopBit = 0x00;
         // uint8_t lAckBit = 0x00;
         
-        uint8_t lCmd;
-        lCmd = kReadFromSlaveCmd;
+        bool lLast = (ibyte == lNumBytes - 1);
+        uint8_t lCmd = kReadFromSlaveCmd;
 
-        if (ibyte == lNumBytes - 1) {
+
+        if (lLast) {
             // lStopBit = 0x40;
             // lStopBit = kStopCmd;
             // lAckBit = 0x10;
@@ -278,9 +291,9 @@ I2CBaseNode::readBlockI2C(uint8_t aSlaveAddress, uint32_t lNumBytes) const {
             lCmd += (kStopCmd | kAckCmd);
         }
 
-        // getNode(kCmd).write(0x20 + lAckBit + lStopBit);
-        // getNode(kCmd).write(kReadFromSlaveCmd + lAckBit + lStopBit);
-        getNode(kCmd).write(lCmd);
+        // getNode(kCmdNode).write(0x20 + lAckBit + lStopBit);
+        // getNode(kCmdNode).write(kReadFromSlaveCmd + lAckBit + lStopBit);
+        getNode(kCmdNode).write(lCmd);
         getClient().dispatch();
         // std::cout << ">> cmd " << kReadFromSlaveCmd + lAckBit + lStopBit << std::endl;// HACK
 
@@ -290,10 +303,15 @@ I2CBaseNode::readBlockI2C(uint8_t aSlaveAddress, uint32_t lNumBytes) const {
         // if (lStopBit) {
             // waitUntilFinished(false, true);
         // } else {
-            waitUntilFinished(false, false);
+            // waitUntilFinished(false, false);
         // }
+        if ( lLast ) {
+           waitUntilFinished(false, true);
+        } else {
+            waitUntilFinished(false, false);
+        }
 
-        uhal::ValWord<uint32_t> lResult = getNode(kRx).read();
+        uhal::ValWord<uint32_t> lResult = getNode(kRxNode).read();
         getClient().dispatch();
         lArray.push_back(lResult);
     }
@@ -302,8 +320,84 @@ I2CBaseNode::readBlockI2C(uint8_t aSlaveAddress, uint32_t lNumBytes) const {
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
-void I2CBaseNode::reset() const {
+void
+I2CBaseNode::writeBlockI2C2g(uint8_t aSlaveAddress, const std::vector<uint8_t>& aArray, bool aSendStop) const {
+    // transmit reg definitions
+    // bits 7-1: 7-bit slave address during address transfer
+    //           or first 7 bits of byte during data transfer
+    // bit 0: RW flag during address transfer or LSB during data transfer.
+    // '1' = reading from slave
+    // '0' = writing to slave
+    // command reg definitions
+    // bit 7: Generate start condition
+    // bit 6: Generate stop condition
+    // bit 5: Read from slave
+    // bit 4: Write to slave
+    // bit 3: 0 when acknowledgement is received
+    // bit 2:1: Reserved
+    // bit 0: Interrupt acknowledge. When set, clears a pending interrupt
+    
+    // Reset bus before beginning
+    reset();
+
+    // Open the connection and send the slave address, bit 0 set to zero
+    sendI2CCommandAndWrite(kStartCmd, (aSlaveAddress << 1) & 0xfe);
+
+    for (unsigned iByte = 0; iByte < aArray.size(); iByte++) {
+
+        // Send stop if last element of the array (and not vetoed)
+        uint8_t lCmd = ( ((iByte == aArray.size() - 1) && aSendStop) ? kStopCmd : 0x0);
+
+        // Push the byte on the bus
+        sendI2CCommandAndWrite(lCmd, aArray[iByte]);
+    }
+
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+std::vector<uint8_t>
+I2CBaseNode::readBlockI2C2g(uint8_t aSlaveAddress, uint32_t lNumBytes) const {
+    // transmit reg definitions
+    // bits 7-1: 7-bit slave address during address transfer
+    //           or first 7 bits of byte during data transfer
+    // bit 0: RW flag during address transfer or LSB during data transfer.
+    //        '1' = reading from slave
+    //        '0' = writing to slave
+    // command reg definitions
+    // bit 7:   Generate start condition
+    // bit 6:   Generate stop condition
+    // bit 5:   Read from slave
+    // bit 4:   Write to slave
+    // bit 3:   0 when acknowledgement is received
+    // bit 2:1: Reserved
+    // bit 0:   Interrupt acknowledge. When set, clears a pending interrupt
+    
+    // Reset bus before beginning
+    reset();
+
+    // Open the connection & send the target i2c address. Bit 0 set to 1 (read)
+    sendI2CCommandAndWrite(kStartCmd, (aSlaveAddress << 1) | 0x01);
+
+    std::vector<uint8_t> lArray;
+    for (unsigned iByte = 0; iByte < lNumBytes; iByte++) {
+
+        uint8_t lCmd = (  (iByte == lNumBytes - 1) ? (kStopCmd | kAckCmd) : 0x0); 
+
+        // Push the cmd on the bus, retrieve the result and put it in the arrary
+        lArray.push_back( sendI2CCommandAndRead(lCmd) );
+    }
+    return lArray;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void 
+I2CBaseNode::reset() const {
     // Resets the I2C bus
     //
     // This function does the following:
@@ -312,26 +406,83 @@ void I2CBaseNode::reset() const {
     //        3) Enables the I2C core
     //        4) Sets all writable bus-master registers to default values
     // disable the I2C core
-    getNode(kCtrl).write(0x00);
+    getNode(kCtrlNode).write(0x00);
     getClient().dispatch();
     // set the clock prescale
-    getNode(kPreHi).write((mClockPrescale & 0xff00) >> 8);
+    getNode(kPreHiNode).write((mClockPrescale & 0xff00) >> 8);
     // getClient().dispatch();
-    getNode(kPreLo).write(mClockPrescale & 0xff);
+    getNode(kPreLoNode).write(mClockPrescale & 0xff);
     getClient().dispatch();
     // enable the I2C core
-    getNode(kCtrl).write(0x80);
+    getNode(kCtrlNode).write(0x80);
     getClient().dispatch();
     // set all writable bus-master registers to default values
-    getNode(kTx).write(0x00);
+    getNode(kTxNode).write(0x00);
     // getClient().dispatch();
-    getNode(kCmd).write(0x00);
+    getNode(kCmdNode).write(0x00);
     getClient().dispatch();
+
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
-void I2CBaseNode::waitUntilFinished(bool requireAcknowledgement, bool requireBusIdleAtEnd) const {
+uint8_t 
+I2CBaseNode::sendI2CCommandAndRead( uint8_t aCmd ) const  {
+
+    assert( !(aCmd & kWriteToSlaveCmd) );
+
+    uint8_t lFullCmd = aCmd | kReadFromSlaveCmd;
+    PDT_LOG(kDebug1) << ">> sending read cmd  = " << std::showbase << std::hex << (uint32_t)lFullCmd;
+
+
+    // Force the read bit high and set them cmd bits
+    getNode(kCmdNode).write( lFullCmd );
+    getClient().dispatch();
+
+    // Wait for transaction to finish. Require idle bus at the end if stop bit is high)
+    waitUntilFinished(/*req ack*/ false, aCmd & kStopCmd);
+
+    // Pull the data out of the rx register.
+    uhal::ValWord<uint32_t> lResult = getNode(kRxNode).read();
+    getClient().dispatch();
+
+    PDT_LOG(kDebug1) << "<< receive data      = " << std::showbase << std::hex << (uint32_t)lResult;
+
+    return (lResult & 0xff);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void
+I2CBaseNode::sendI2CCommandAndWrite( uint8_t aCmd, uint8_t aData ) const  {
+
+    // 
+    assert( !(aCmd & kReadFromSlaveCmd) );
+    
+    uint8_t lFullCmd = aCmd | kWriteToSlaveCmd;
+    PDT_LOG(kDebug1) << ">> sending write cmd = " << std::showbase << std::hex << (uint32_t)lFullCmd << " data = " << std::showbase << std::hex << (uint32_t)aData;
+
+    // write the payload
+    getNode(kTxNode).write( aData );
+    getClient().dispatch();
+
+    // Force the write bit high and set them cmd bits
+    getNode(kCmdNode).write( lFullCmd );
+
+    // Run the commands and wait for transaction to finish
+    getClient().dispatch();
+
+    // Wait for transaction to finish. Require idle bus at the end if stop bit is high
+    waitUntilFinished(/*req hack*/ true, /*requ idle*/ aCmd & kStopCmd);
+}
+//-----------------------------------------------------------------------------
+
+
+
+//-----------------------------------------------------------------------------
+void I2CBaseNode::waitUntilFinished(bool aRequireAcknowledgement, bool aRequireBusIdleAtEnd) const {
     // Ensures the current bus transaction has finished successfully
     // before allowing further I2C bus transactions
     // This method monitors the status register
@@ -345,7 +496,7 @@ void I2CBaseNode::waitUntilFinished(bool requireAcknowledgement, bool requireBus
     while (lAttempt <= lMaxRetry) {
         usleep(10);
         // Get the status
-        uhal::ValWord<uint32_t> i2c_status = getNode(kStatus).read();
+        uhal::ValWord<uint32_t> i2c_status = getNode(kStatusNode).read();
         getClient().dispatch();
         // lReceivedAcknowledge = !(i2c_status & 0x80);
         lReceivedAcknowledge = !(i2c_status & kReceivedAckBit);
@@ -356,8 +507,6 @@ void I2CBaseNode::waitUntilFinished(bool requireAcknowledgement, bool requireBus
         // bool transferInProgress = (i2c_status & 0x02);
         bool transferInProgress = (i2c_status & kInProgressBit);
         //bool interruptFlag = (i2c_status & 0x01);
-        //
-        // std::cout << i2c_status << "   " << std::dec << lAttempt << std::hex << std::endl; // HACK
 
         if (arbitrationLost) {
             // This is an instant error at any time
@@ -386,19 +535,18 @@ void I2CBaseNode::waitUntilFinished(bool requireAcknowledgement, bool requireBus
         throw lExc;
     }
 
-    if (requireAcknowledgement && !lReceivedAcknowledge) {
+    if (aRequireAcknowledgement && !lReceivedAcknowledge) {
         pdt::I2CException lExc("I2C error: No acknowledge received");
         PDT_LOG(kError) << lExc.what();
         throw lExc;
     }
 
-    if (requireBusIdleAtEnd && lBusy) {
+    if (aRequireBusIdleAtEnd && lBusy) {
         pdt::I2CException lExc("I2C error: Transfer finished but bus still busy");
         PDT_LOG(kError) << lExc.what();
         throw lExc;
     }
 }
-//-----------------------------------------------------------------------------
 
 } // namespace pdt
 

@@ -3,9 +3,11 @@ import uhal
 from I2CuHal import I2CCore
 import StringIO
 import csv
+import logging
 
 class si5344:
     #Class to configure the Si5344 clock generator
+    log = logging.getLogger('si5344')
 
     def __init__(self, i2c, slaveaddr=0x68):
         self.i2c = i2c
@@ -14,70 +16,68 @@ class si5344:
 
     #def writeReg(self, address, data):
 
-    def readRegister(self, myaddr, nwords):
+    def readRegister(self, aRegAddr, aNwords):
         ### Read a specific register on the Si5344 chip. There is not check on the validity of the address but
         ### the code sets the correct page before reading.
 
         #First make sure we are on the correct page
         currentPg= self.getPage()
-        requirePg= (myaddr & 0xFF00) >> 8
-#        print "REG", hex(myaddr), "CURR PG" , hex(currentPg[0]), "REQ PG", hex(requirePg)
+        requirePg= (aRegAddr & 0xFF00) >> 8
+#        print "REG", hex(aRegAddr), "CURR PG" , hex(currentPg[0]), "REQ PG", hex(requirePg)
         if currentPg[0] != requirePg:
             self.setPage(requirePg)
         #Now read from register.
         addr=[]
-        addr.append(myaddr)
-        mystop=False
+        addr.append(aRegAddr)
+        mystop=True
         self.i2c.write( self.slaveaddr, addr, mystop)
         # time.sleep(0.1)
-        res= self.i2c.read( self.slaveaddr, nwords)
+        res = self.i2c.read( self.slaveaddr, aNwords)
         return res
 
-    def writeRegister(self, myaddr, data, verbose=False):
+    def writeRegister(self, aRegAddr, aData, verbose=False):
         ### Write a specific register on the Si5344 chip. There is not check on the validity of the address but
         ### the code sets the correct page before reading.
-        ### myaddr is an int
-        ### data is a list of ints
+        ### aRegAddr is an int
+        ### aData is a list of ints
 
         #First make sure we are on the correct page
-        myaddr= myaddr & 0xFFFF
+        aRegAddr= aRegAddr & 0xFFFF
         currentPg= self.getPage()
-        requirePg= (myaddr & 0xFF00) >> 8
-#        print "REG", hex(myaddr), "CURR PG" , currentPg, "REQ PG", hex(requirePg)
+        requirePg= (aRegAddr & 0xFF00) >> 8
+#        print "REG", hex(aRegAddr), "CURR PG" , currentPg, "REQ PG", hex(requirePg)
         if currentPg[0] != requirePg:
             self.setPage(requirePg)
         #Now write to register.
-        data.insert(0, myaddr)
+        aData.insert(0, aRegAddr)
         if verbose:
             print "  Writing (page %d): " % requirePg
             result="\t  "
-            for iaddr in data:
+            for iaddr in aData:
                 result+="%#02x "%(iaddr)
             print result
-        nwrt = self.i2c.write( self.slaveaddr, data)
-        assert(nwrt == len(data))
+        nwrt = self.i2c.write(self.slaveaddr, aData)
+        assert(nwrt == len(aData))
 
         #time.sleep(0.01)
 
-    def setPage(self, page, verbose=False):
+    def setPage(self, aPage, verbose=False):
         #Configure the chip to perform operations on the specified address page.
         mystop=True
-        myaddr= [0x01, page]
-        self.i2c.write( self.slaveaddr, myaddr, mystop)
+        lData= [0x01, aPage]
+        self.i2c.write( self.slaveaddr, lData, mystop)
         #time.sleep(0.01)
-        if verbose:
-            print "Si5344 Set Reg Page:", page
+        logging.debug("Si5344 Set Reg Page: 0x%x", aPage)
 
 
     def getPage(self, verbose=False):
         #Read the current address page
-        mystop=False
-        myaddr= [0x01]
-        self.i2c.write( self.slaveaddr, myaddr, mystop)
+        mystop = True
+        lData =  [0x01]
+        self.i2c.write( self.slaveaddr, lData, mystop)
         rPage= self.i2c.read( self.slaveaddr, 1)
         #time.sleep(0.1)
-        if verbose:
-            print "  Page read:", rPage
+        logging.debug("Page read: 0x%x", rPage[0])
         return rPage
 
     def getDeviceVersion(self):
@@ -123,11 +123,9 @@ class si5344:
     def writeConfiguration(self, regSettingList):
         print "\tWrite configuration:"
         #regSettingList= list(regSettingCsv)
-        counter=0
-        for item in regSettingList:
+        for counter, item in enumerate(regSettingList):
             regAddr= int(item[0], 16)
             regData=[0]
             regData[0]= int(item[1], 16)
-#            print "\t  ", counter, "Reg:", hex(regAddr), "Data:", regData
-            counter += 1
+            logging.debug("%d reg: 0x%x data: 0x%x", counter, regAddr, regData[0])
             self.writeRegister(regAddr, regData)
