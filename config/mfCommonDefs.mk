@@ -61,15 +61,16 @@ At_1 :=
 At = ${At_${VERBOSE}}
 
 ColorGreen := \033[0;32m
+ColorBlue := \033[0;34m
 ColorNone := \033[0m
 
 CPP_Actual := ${CPP}
-CPP_0 = @echo -e "-> Compiling ${ColorGreen}$(<F)${ColorNone}..."; ${CPP_Actual}
+CPP_0 = @echo -e "(${ColorBlue}${Project}/${Package}${ColorNone}) -> Compiling ${ColorGreen}$(<F)${ColorNone}..."; ${CPP_Actual}
 CPP_1 = ${CPP_Actual}
 CPP = ${CPP_${VERBOSE}}
 
 LD_Actual := ${LD}
-LD_0 = @echo -e "-> Linking ${ColorGreen}$(@F)${ColorNone}..."; ${LD_Actual}
+LD_0 = @echo -e "(${ColorBlue}${Project}/${Package}${ColorNone}) -> Linking ${ColorGreen}$(@F)${ColorNone}..."; ${LD_Actual}
 LD_1 = ${LD_Actual}
 LD = ${LD_${VERBOSE}}
 

@@ -60,12 +60,8 @@ protected:
     std::vector<uint8_t> virtual readBlockI2C(uint8_t aSlaveAddress, uint32_t aNumBytes) const;
     void virtual writeBlockI2C(uint8_t aSlaveAddress, const std::vector<uint8_t>& aData, bool aSendStop = true) const;
 
-    // low level i2c functions
-    std::vector<uint8_t> virtual readBlockI2C2g(uint8_t aSlaveAddress, uint32_t aNumBytes) const;
-    void virtual writeBlockI2C2g(uint8_t aSlaveAddress, const std::vector<uint8_t>& aData, bool aSendStop = true) const;
-
-    uint8_t sendI2CCommandAndRead( uint8_t aCmd ) const;
-    void sendI2CCommandAndWrite( uint8_t aCmd, uint8_t aData ) const;
+    uint8_t sendI2CCommandAndReadData( uint8_t aCmd ) const;
+    void sendI2CCommandAndWriteData( uint8_t aCmd, uint8_t aData ) const;
 
     //! Slaves 
     boost::unordered_map<std::string,uint8_t> mSlavesAddresses;

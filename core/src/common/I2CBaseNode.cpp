@@ -132,12 +132,11 @@ I2CBaseNode::writeI2C(uint8_t aSlaveAddress, uint32_t i2cAddress, uint8_t aData,
 //-----------------------------------------------------------------------------
 std::vector<uint8_t>
 I2CBaseNode::readI2CArray(uint8_t aSlaveAddress, uint32_t i2cAddress, uint32_t aNumWords) const {
-    // std::cout << "Reading " << aNumWords << " from " << std::showbase <<  std::hex << i2cAddress << " on " << (uint32_t)aSlaveAddress << std::endl; // HACK
     // write one word containing the address
     std::vector<uint8_t> lArray(1, i2cAddress & 0xff);
-    this->writeBlockI2C2g(aSlaveAddress, lArray);
+    this->writeBlockI2C(aSlaveAddress, lArray);
     // request the content at the specific address
-    return this->readBlockI2C2g(aSlaveAddress, aNumWords);
+    return this->readBlockI2C(aSlaveAddress, aNumWords);
 }
 //-----------------------------------------------------------------------------
  
@@ -152,7 +151,7 @@ I2CBaseNode::writeI2CArray(uint8_t aSlaveAddress, uint32_t i2cAddress, std::vect
     for ( size_t i(0); i < aData.size(); ++i )
         block[i+1] = aData[i];
 
-    this->writeBlockI2C2g(aSlaveAddress, block, aSendStop);
+    this->writeBlockI2C(aSlaveAddress, block, aSendStop);
 }
 //-----------------------------------------------------------------------------
 
@@ -175,65 +174,21 @@ I2CBaseNode::writeBlockI2C(uint8_t aSlaveAddress, const std::vector<uint8_t>& aA
     // bit 2:1: Reserved
     // bit 0: Interrupt acknowledge. When set, clears a pending interrupt
     
-    // std::cout << "+ write " << (uint32_t)((aSlaveAddress << 1) & 0xfe) << std::endl; // HACK
-
-    // TODO: Check if this is still required
     // Reset bus before beginning
     reset();
-    // Set slave address in bits 7:1, and set bit 0 to zero (i.e. "write mode")
-    getNode(kTxNode).write((aSlaveAddress << 1) & 0xfe);
-    getClient().dispatch();
-    // Set start and write bit in command reg
-    // getNode(kCmdNode).write(0x90);
-    getNode(kCmdNode).write(kStartCmd + kWriteToSlaveCmd);
-    // Run the commands and wait for transaction to finish
-    getClient().dispatch();
-    waitUntilFinished();
+
+    // Open the connection and send the slave address, bit 0 set to zero
+    sendI2CCommandAndWriteData(kStartCmd, (aSlaveAddress << 1) & 0xfe);
 
     for (unsigned iByte = 0; iByte < aArray.size(); iByte++) {
-        // uint8_t lStopBit = 0x00;
 
-        bool lFireStop = (iByte == aArray.size()) & aSendStop;
-        uint8_t lCmd = kWriteToSlaveCmd;
+        // Send stop if last element of the array (and not vetoed)
+        uint8_t lCmd = ( ((iByte == aArray.size() - 1) && aSendStop) ? kStopCmd : 0x0);
 
-        if ( lFireStop ) {
-            lCmd += kStopCmd;
-        }
-
-        // if (iByte == aArray.size() - 1 && aSendStop) {
-        //     // lStopBit = 0x40;
-        //     lStopBit = kStopCmd;
-        // }
-        std::cout << "wi2c >> i=" << iByte << " d=" << (uint32_t)aArray[iByte]  << " cmd=" << (uint32_t)kWriteToSlaveCmd << std::endl; // HACK
-
-        // Set aArray to be written in transmit reg
-        getNode(kTxNode).write(aArray[iByte]);
-        getClient().dispatch();
-        // Set write and stop bit in command reg
-        // getNode(kCmdNode).write(0x10 + lStopBit);
-        // getNode(kCmdNode).write(kWriteToSlaveCmd + lStopBit);
-        // getNode(kCmdNode).write(kWriteToSlaveCmd);
-        getNode(kCmdNode).write(lCmd);
-        // Run the commands and wait for transaction to finish
-        getClient().dispatch();
-
-        // if (lStopBit) {
-        //     waitUntilFinished(true, true);
-        // } else {
-            // waitUntilFinished(true, false);
-        // }
-        if (lFireStop) {
-            waitUntilFinished(true, true);
-        } else {
-            waitUntilFinished(true, false);
-        }
+        // Push the byte on the bus
+        sendI2CCommandAndWriteData(lCmd, aArray[iByte]);
     }
 
-    // if (aSendStop) {
-    //     getNode(kCmdNode).write(kStopCmd);
-    //     getClient().dispatch();
-    //     waitUntilFinished(true, true);
-    // }
 }
 //-----------------------------------------------------------------------------
 
@@ -256,131 +211,11 @@ I2CBaseNode::readBlockI2C(uint8_t aSlaveAddress, uint32_t lNumBytes) const {
     // bit 2:1: Reserved
     // bit 0:   Interrupt acknowledge. When set, clears a pending interrupt
     
-    // std::cout << "+ read" << std::endl; // HACK
-
-    // TODO: Check if this is still required
-    // Reset bus before beginning
-    reset();
-    // Set slave address in bits 7:1, and set bit 0 to one
-    // (i.e. we're writing an address to the bus and then want to read)
-    getNode(kTxNode).write((aSlaveAddress << 1) | 0x01);
-    getClient().dispatch();
-    // Set start and write bit in command reg
-    // getNode(kCmdNode).write(0x90);
-    getNode(kCmdNode).write(kStartCmd + kWriteToSlaveCmd);
-    // Run the commands and wait for transaction to finish
-    getClient().dispatch();
-    // std::cout << ">> " << ((aSlaveAddress << 1) | 0x01) << " cmd " << kStartCmd + kWriteToSlaveCmd << std::endl;// HACK
-    waitUntilFinished();
-    std::vector<uint8_t> lArray;
-
-    for (unsigned ibyte = 0; ibyte < lNumBytes; ibyte++) {
-        // Set read bit, acknowledge and stop bit in command reg
-        // uint8_t lStopBit = 0x00;
-        // uint8_t lAckBit = 0x00;
-        
-        bool lLast = (ibyte == lNumBytes - 1);
-        uint8_t lCmd = kReadFromSlaveCmd;
-
-
-        if (lLast) {
-            // lStopBit = 0x40;
-            // lStopBit = kStopCmd;
-            // lAckBit = 0x10;
-            // lAckBit = kAckCmd;
-            lCmd += (kStopCmd | kAckCmd);
-        }
-
-        // getNode(kCmdNode).write(0x20 + lAckBit + lStopBit);
-        // getNode(kCmdNode).write(kReadFromSlaveCmd + lAckBit + lStopBit);
-        getNode(kCmdNode).write(lCmd);
-        getClient().dispatch();
-        // std::cout << ">> cmd " << kReadFromSlaveCmd + lAckBit + lStopBit << std::endl;// HACK
-
-
-        // Wait for transaction to finish.
-        // Don't expect an ACK, do expect bus free at finish.
-        // if (lStopBit) {
-            // waitUntilFinished(false, true);
-        // } else {
-            // waitUntilFinished(false, false);
-        // }
-        if ( lLast ) {
-           waitUntilFinished(false, true);
-        } else {
-            waitUntilFinished(false, false);
-        }
-
-        uhal::ValWord<uint32_t> lResult = getNode(kRxNode).read();
-        getClient().dispatch();
-        lArray.push_back(lResult);
-    }
-
-    return lArray;
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-void
-I2CBaseNode::writeBlockI2C2g(uint8_t aSlaveAddress, const std::vector<uint8_t>& aArray, bool aSendStop) const {
-    // transmit reg definitions
-    // bits 7-1: 7-bit slave address during address transfer
-    //           or first 7 bits of byte during data transfer
-    // bit 0: RW flag during address transfer or LSB during data transfer.
-    // '1' = reading from slave
-    // '0' = writing to slave
-    // command reg definitions
-    // bit 7: Generate start condition
-    // bit 6: Generate stop condition
-    // bit 5: Read from slave
-    // bit 4: Write to slave
-    // bit 3: 0 when acknowledgement is received
-    // bit 2:1: Reserved
-    // bit 0: Interrupt acknowledge. When set, clears a pending interrupt
-    
-    // Reset bus before beginning
-    reset();
-
-    // Open the connection and send the slave address, bit 0 set to zero
-    sendI2CCommandAndWrite(kStartCmd, (aSlaveAddress << 1) & 0xfe);
-
-    for (unsigned iByte = 0; iByte < aArray.size(); iByte++) {
-
-        // Send stop if last element of the array (and not vetoed)
-        uint8_t lCmd = ( ((iByte == aArray.size() - 1) && aSendStop) ? kStopCmd : 0x0);
-
-        // Push the byte on the bus
-        sendI2CCommandAndWrite(lCmd, aArray[iByte]);
-    }
-
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-std::vector<uint8_t>
-I2CBaseNode::readBlockI2C2g(uint8_t aSlaveAddress, uint32_t lNumBytes) const {
-    // transmit reg definitions
-    // bits 7-1: 7-bit slave address during address transfer
-    //           or first 7 bits of byte during data transfer
-    // bit 0: RW flag during address transfer or LSB during data transfer.
-    //        '1' = reading from slave
-    //        '0' = writing to slave
-    // command reg definitions
-    // bit 7:   Generate start condition
-    // bit 6:   Generate stop condition
-    // bit 5:   Read from slave
-    // bit 4:   Write to slave
-    // bit 3:   0 when acknowledgement is received
-    // bit 2:1: Reserved
-    // bit 0:   Interrupt acknowledge. When set, clears a pending interrupt
-    
     // Reset bus before beginning
     reset();
 
     // Open the connection & send the target i2c address. Bit 0 set to 1 (read)
-    sendI2CCommandAndWrite(kStartCmd, (aSlaveAddress << 1) | 0x01);
+    sendI2CCommandAndWriteData(kStartCmd, (aSlaveAddress << 1) | 0x01);
 
     std::vector<uint8_t> lArray;
     for (unsigned iByte = 0; iByte < lNumBytes; iByte++) {
@@ -388,7 +223,7 @@ I2CBaseNode::readBlockI2C2g(uint8_t aSlaveAddress, uint32_t lNumBytes) const {
         uint8_t lCmd = (  (iByte == lNumBytes - 1) ? (kStopCmd | kAckCmd) : 0x0); 
 
         // Push the cmd on the bus, retrieve the result and put it in the arrary
-        lArray.push_back( sendI2CCommandAndRead(lCmd) );
+        lArray.push_back( sendI2CCommandAndReadData(lCmd) );
     }
     return lArray;
 }
@@ -405,30 +240,46 @@ I2CBaseNode::reset() const {
     //        2) Sets the clock prescale registers
     //        3) Enables the I2C core
     //        4) Sets all writable bus-master registers to default values
-    // disable the I2C core
-    getNode(kCtrlNode).write(0x00);
-    getClient().dispatch();
-    // set the clock prescale
-    getNode(kPreHiNode).write((mClockPrescale & 0xff00) >> 8);
-    // getClient().dispatch();
-    getNode(kPreLoNode).write(mClockPrescale & 0xff);
-    getClient().dispatch();
-    // enable the I2C core
-    getNode(kCtrlNode).write(0x80);
-    getClient().dispatch();
-    // set all writable bus-master registers to default values
-    getNode(kTxNode).write(0x00);
-    // getClient().dispatch();
-    getNode(kCmdNode).write(0x00);
-    getClient().dispatch();
 
+    auto ctrl = getNode(kCtrlNode).read();
+    auto preHi = getNode(kPreHiNode).read();
+    auto preLo = getNode(kPreLoNode).read();
+    getClient().dispatch();
+    
+    bool lFullReset(false);
+
+    lFullReset = (mClockPrescale != (preHi << 8) + preLo);
+
+    if ( lFullReset ) {
+        // disable the I2C core
+        getNode(kCtrlNode).write(0x00);
+        getClient().dispatch();
+        // set the clock prescale
+        getNode(kPreHiNode).write((mClockPrescale & 0xff00) >> 8);
+        // getClient().dispatch();
+        getNode(kPreLoNode).write(mClockPrescale & 0xff);
+        // getClient().dispatch();
+        // set all writable bus-master registers to default values
+        getNode(kTxNode).write(0x00);
+        getNode(kCmdNode).write(0x00);
+        getClient().dispatch();
+
+        // enable the I2C core
+        getNode(kCtrlNode).write(0x80);
+        getClient().dispatch();
+    } else {
+        // set all writable bus-master registers to default values
+        getNode(kTxNode).write(0x00);
+        getNode(kCmdNode).write(0x00);
+        getClient().dispatch();
+    }
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 uint8_t 
-I2CBaseNode::sendI2CCommandAndRead( uint8_t aCmd ) const  {
+I2CBaseNode::sendI2CCommandAndReadData( uint8_t aCmd ) const  {
 
     assert( !(aCmd & kWriteToSlaveCmd) );
 
@@ -456,7 +307,7 @@ I2CBaseNode::sendI2CCommandAndRead( uint8_t aCmd ) const  {
 
 //-----------------------------------------------------------------------------
 void
-I2CBaseNode::sendI2CCommandAndWrite( uint8_t aCmd, uint8_t aData ) const  {
+I2CBaseNode::sendI2CCommandAndWriteData( uint8_t aCmd, uint8_t aData ) const  {
 
     // 
     assert( !(aCmd & kReadFromSlaveCmd) );
