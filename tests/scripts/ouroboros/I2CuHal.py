@@ -7,8 +7,6 @@ import time
 
 import uhal
 
-import logging
-
 verbose = True
 
 
@@ -38,7 +36,6 @@ class I2CCore:
     arblost = 0x1 << 5
     inprogress = 0x1 << 1
     interrupt = 0x1
-    log = logging.getLogger('I2CCore')
 
     def __init__(self, target, wclk, i2cclk, name="i2c", delay=None):
         self.target = target
@@ -76,8 +73,6 @@ class I2CCore:
     def config(self):
         #INITIALIZATION OF THE I2S MASTER CORE
         #Disable core
-        self.log.info("Initialising I2C core")
-        self.log.debug("Initialising I2C core")
         self.ctrl.write(0x0 << 7)
         self.target.dispatch()
         #Write pre-scale register
@@ -90,33 +85,23 @@ class I2CCore:
         self.ctrl.write(0x1 << 7)
         self.target.dispatch()
 
-    def checkack(self, reqAck=True):
+    def checkack(self):
         inprogress = True
         ack = False
-        k = 0
         while inprogress:
             cmd_stat = self.cmd_stat.read()
             self.target.dispatch()
-            self.log.debug('<< i2c stats %s %d', hex(cmd_stat),k)
             inprogress = (cmd_stat & I2CCore.inprogress) > 0
             ack = (cmd_stat & I2CCore.recvdack) == 0
-            busy = (cmd_stat & I2CCore.busy)
-            arblost = (cmd_stat & I2CCore.arblost)
-
-            print ack
-            k += 1
-
-        if reqAck and ack == 0:
-            raise RuntimeError("Missing ack i2c from slave")
         return ack
 
-    def delayorcheckack(self, reqAck=True):
+    def delayorcheckack(self):
         ack = True
         if self.delay is None:
-            ack = self.checkack(reqAck)
+            ack = self.checkack()
         else:
             time.sleep(self.delay)
-            ack = self.checkack(reqAck)#Remove this?
+            ack = self.checkack()#Remove this?
         return ack
 
 ################################################################################
@@ -127,24 +112,17 @@ class I2CCore:
 
 
 
-    def write(self, i2cAddr, data, stop=True):
+    def write(self, addr, data, stop=True):
         """Write data to the device with the given address."""
         # Start transfer with 7 bit address and write bit (0)
         nwritten = -1
-
-        # i2cAddr &= 0x7f
-        # i2cAddr = i2cAddr << 1
-        self.log.info("Writing %d bytes to 0x%x: [%s]", len(data), i2cAddr, ', '.join([hex(x) for x in data]))
-        i2cAddr = (( i2cAddr << 1 ) & 0xfe )
-        
-        # print '+ write', stop, [hex(x) for x in data]
-        # print '>>', hex(i2cAddr), hex(I2CCore.startcmd | I2CCore.writecmd)
-  
-        # startcmd = 0x1 << 7
-        # stopcmd = 0x1 << 6
-        # writecmd = 0x1 << 4
+        addr &= 0x7f
+        addr = addr << 1
+        startcmd = 0x1 << 7
+        stopcmd = 0x1 << 6
+        writecmd = 0x1 << 4
         #Set transmit register (write operation, LSB=0)
-        self.data.write(i2cAddr)
+        self.data.write(addr)
         #Set Command Register to 0x90 (write, start)
         self.cmd_stat.write(I2CCore.startcmd | I2CCore.writecmd)
         self.target.dispatch()
@@ -158,7 +136,6 @@ class I2CCore:
             val &= 0xff
             #Write slave memory address
             self.data.write(val)
-            print '>> val', hex(val)
             #Set Command Register to 0x10 (write)
             self.cmd_stat.write(I2CCore.writecmd)
             self.target.dispatch()
@@ -171,8 +148,6 @@ class I2CCore:
         if stop:
             self.cmd_stat.write(I2CCore.stopcmd)
             self.target.dispatch()
-            ack = self.delayorcheckack()
-            
         return nwritten
 
 ################################################################################
@@ -180,40 +155,28 @@ class I2CCore:
 #        I2C READ
 # */
 ################################################################################
-    def read(self, i2cAddr, n):
+    def read(self, addr, n):
         """Read n bytes of data from the device with the given address."""
         # Start transfer with 7 bit address and read bit (1)
         data = []
-        
-        self.log.info("Reading %d bytes from 0x%x", n, i2cAddr)
-
-        i2cAddr = (( i2cAddr << 1 ) & 0xff )| 0x1
-        # i2cAddr = i2cAddr << 1
-        # i2cAddr |= 0x1 # read bit
-        
-        # print '+ read'
-        # print '>>', hex(i2cAddr), hex(I2CCore.startcmd | I2CCore.writecmd)
-
-        # ---
-        self.data.write(i2cAddr)
+        addr &= 0x7f
+        addr = addr << 1
+        addr |= 0x1 # read bit
+        self.data.write(addr)
         self.cmd_stat.write(I2CCore.startcmd | I2CCore.writecmd)
         self.target.dispatch()
-
         ack = self.delayorcheckack()
         if not ack:
             self.cmd_stat.write(I2CCore.stopcmd)
             self.target.dispatch()
             return data
-
         for i in range(n):
             if i < (n-1):
-                cmd = (I2CCore.readcmd) # <---
+                self.cmd_stat.write(I2CCore.readcmd) # <---
             else:
-                cmd = (I2CCore.readcmd | I2CCore.ack | I2CCore.stopcmd) # <--- This tells the slave that it is the last word
-            print '>>', hex(cmd), i
-            self.cmd_stat.write(cmd)
-            self.target.dispatch()
-            ack = self.delayorcheckack(False)
+                self.cmd_stat.write(I2CCore.readcmd | I2CCore.ack | I2CCore.stopcmd) # <--- This tells the slave that it is the last word
+	        self.target.dispatch()
+            ack = self.delayorcheckack()
             val = self.data.read()
             self.target.dispatch()
             data.append(val & 0xff)

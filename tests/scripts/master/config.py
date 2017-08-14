@@ -39,6 +39,7 @@ for hw in hw_list:
 
     hw.getNode("master.partition.csr.ctrl.trig_en").write(1)
 	hw.getNode("master.partition.csr.ctrl.part_en").write(1) # Enable partition 0
+    hw.getNode("master.partition.csr.ctrl.buf_en").write(0) # Disable buffer in partition 0
     hw.getNode("master.partition.csr.ctrl.buf_en").write(1) # Disable buffer in partition 0
     hw.getNode("master.partition.csr.ctrl.cmd_mask").write(0x000f) # Set command mask in partition 0
     hw.dispatch()
@@ -64,5 +65,5 @@ while True:
 
     for hw in hw_list:
 
-        status(hw)
+        # status(hw)
         dump(hw.getNode("master.partition.buf"))

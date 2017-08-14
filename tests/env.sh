@@ -19,8 +19,19 @@ PDT_TESTS=$( readlink -f $(dirname $BASH_SOURCE)/ )
 PDT_ROOT=$( readlink -f ${PDT_TESTS}/.. )
 
 pathadd PATH "${PDT_ROOT}/core/bin"
+pathadd PATH "${PDT_ROOT}/tests/bin"
+pathadd PATH "${PDT_ROOT}/tests/scripts"
 pathadd LD_LIBRARY_PATH "${PDT_ROOT}/core/lib"
 
-export PATH LD_LIBRARY_PATH
+# add python path
+pathadd PYTHONPATH "${PDT_ROOT}/python/pkg"
+pathadd PYTHONPATH "${PDT_ROOT}/tests/python"
+
+
+export PATH LD_LIBRARY_PATH PYTHONPATH
 export PDT_ROOT PDT_TESTS
+
+
+eval "$(_PDTBUTLER_COMPLETE=source pdtbutler)"
+
 

@@ -1,5 +1,6 @@
 PACKAGES = \
 	core \
+	python \
 	tests
 
 VIRTUAL_PACKAGES = $(addsuffix /.virtual.Makefile,${PACKAGES})

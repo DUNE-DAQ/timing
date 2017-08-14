@@ -3,8 +3,6 @@
 import sys
 import uhal
 import time
-import coloredlogs
-
 from I2CuHal import I2CCore
 from si5344 import si5344
 
@@ -34,8 +32,6 @@ clk_cfg_files = {
 }
 
 uhal.setLogLevelTo(uhal.LogLevel.NOTICE)
-coloredlogs.install(level='DEBUG', fmt='%(asctime)s %(levelname)-8s: %(message)s', stream=sys.stdout)
-
 manager = uhal.ConnectionManager("file://connections.xml")
 hw_list = [manager.getDevice(i) for i in sys.argv[1:]]
 
@@ -60,22 +56,25 @@ for hw in hw_list:
     hw.dispatch()
 
     uid_I2C = I2CCore(hw, 10, 5, "io.uid_i2c", None)
-    uid_I2C.write(0x21, [0x01, 0x7f])
-    uid_I2C.write(0x21, [0x01], False)
-    res = uid_I2C.read(0x21, 1)
-    print "I2c enable lines:" , res
 
-    # break 
+    uid_I2C.write(0x0, [8 * 0x0], True) # Wake up AX3 EEPROM if present
+    time.sleep(0.1)
+    res = uid_I2C.read(0x64, 4)
+    if res == [0x04, 0x11, 0x33, 0x43]:
+        print "AX3 detected; setting I2C bus switch"
+        uid_I2C.write(0x21, [0x01, 0x7f], True) # Set up AX3 bus switch
+    else:
+        print "Not an AX3, assuming a Xilinx KX705; setting I2C bus switch"
+        uid_I2c.write(0x74, [0x10]) # Set up KC705 bus switch   
+
     uid_I2C.write(0x53, [0xfa], False)
     res = uid_I2C.read(0x53, 6)
     id = 0
     for i in res:
     	id = (id << 8) | int(i)
     print "Unique ID PROM / board rev:", hex(id), brd_rev[id]
-    # break
 
     clock_I2C = I2CCore(hw, 10, 5, "io.pll_i2c", None)
-    # raise SystemExit(0)
     zeClock=si5344(clock_I2C)
     res= zeClock.getDeviceVersion()
     zeClock.setPage(0, True)

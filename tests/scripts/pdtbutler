@@ -1,0 +1,550 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+
+# Python imports
+import uhal
+import click
+import click_didyoumean
+import time
+import collections
+
+# PDT imports
+import pdt
+import pdt.cli.toolbox as toolbox
+
+# 
+from click import echo, style, secho
+from os.path import join, expandvars
+
+class PDTContext: pass
+
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+
+# ------------------------------------------------------------------------------
+@click.group(
+    cls=click_didyoumean.DYMGroup,
+    context_settings=CONTEXT_SETTINGS,
+)
+@click.pass_context
+@click.option('-c', '--connections', default='${PDT_TESTS}/etc/connections.xml', help='Path to uhal connection file')
+def cli(ctx, connections):
+    
+    # Set uhal log level
+    uhal.setLogLevelTo(uhal.LogLevel.NOTICE)
+
+    # click.secho('Connection paths: {}'.format(connections), fg='blue')
+    lConnections  = toolbox.sanitizeConnectionPaths(connections)
+    # click.secho('Connection paths: {}'.format(lConnections), fg='blue')
+
+    ctx.obj.mConnectionManager = uhal.ConnectionManager(str(lConnections))
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@cli.command()
+@click.pass_obj
+def list(obj):
+    print (obj.mConnectionManager.getDevices())
+    pass
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+#    __  ___         __         
+#   /  |/  /__ ____ / /____ ____
+#  / /|_/ / _ `(_-</ __/ -_) __/
+# /_/  /_/\_,_/___/\__/\__/_/   
+                              
+# -----------------
+def validate_device(ctx, param, value):
+
+    lDevices = ctx.obj.mConnectionManager.getDevices()
+    if value not in lDevices:
+        raise click.BadParameter('Device must be choosen among '+', '.join(lDevices))
+    return value
+# -----------------
+
+
+@cli.group()
+@click.pass_obj
+@click.argument('device', callback=validate_device)
+def master(obj, device):
+    # print obj.mConnectionManager.getDevices()
+    lDevice = obj.mConnectionManager.getDevice(str(device))
+
+    echo('Created device ' + click.style(lDevice.id(), fg='blue'))
+
+    lVersion = lDevice.getNode("master.global.version").read()
+    lDevice.dispatch()
+    echo("Master FW version: "+hex(lVersion))
+
+    obj.mDevice = lDevice
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+
+kRev1 = 1
+kRev2 = 2
+
+kClockConfigMap = {
+    kRev1: "SI5344/PDTS0000.txt",
+    kRev2: "SI5344/PDTS0003.txt",
+}
+
+kBoardRevisionMap = {
+    0xd880395e720b: kRev1,
+    0xd880395e501a: kRev1,
+    0xd880395e50b8: kRev1,
+    0xd880395e501b: kRev1,
+    0xd880395e7201: kRev1,
+    0xd880395e4fcc: kRev1,
+    0xd880395e5069: kRev1,
+    0xd880395e7206: kRev1,
+    0xd880395e1c86: kRev2,
+    0xd880395e2630: kRev2,
+    0xd880395e262b: kRev2,
+    0xd880395e2b38: kRev2,
+    0xd880395e1a6a: kRev2,
+    0xd880395e36ae: kRev2,
+    0xd880395e2b2e: kRev2,
+    0xd880395e2b33: kRev2,
+    0xd880395e1c81: kRev2,
+}
+
+# kBoardRevisionMap = {
+# }
+
+@master.command()
+@click.pass_obj
+def reset(obj):
+    echo('Resetting ' + click.style(obj.mDevice.id(), fg='blue'))
+
+    lDevice = obj.mDevice
+
+    # Global soft reset
+    lDevice.getNode("io.csr.ctrl.soft_rst").write(0x1)
+    lDevice.dispatch()
+
+    time.sleep(1)
+    
+    # PLL reset
+    lDevice.getNode("io.csr.ctrl.pll_rst").write(0x1)
+    lDevice.dispatch()
+    lDevice.getNode("io.csr.ctrl.pll_rst").write(0x0)
+    lDevice.dispatch()
+
+    # Detect the on-board eprom and read the board UID
+    lUID = lDevice.getNode("io.uid_i2c")
+    echo("UID I2C Slaves")
+    for lSlave in lUID.getSlaves():
+        echo("  {}: {}".format(lSlave, hex(lUID.getSlaveAddress(lSlave))))
+
+    lUID.getSlave('A').writeI2C(0x01, 0x7f)
+    x = lUID.getSlave('A').readI2C(0x01)
+    echo("I2C enable lines: {}".format(x))
+
+    lValues = lUID.getSlave('B').readI2CArray(0xfa, 6)
+    lUniqueID = 0x0
+    for lVal in lValues:
+        lUniqueID = ( lUniqueID << 8 ) | lVal
+    echo("Timing Board UID: "+style(hex(lUniqueID), fg="blue"))
+
+    # Ensure that the board is known to the revision DB
+    try:
+        lRevision = kBoardRevisionMap[lUniqueID]
+    except KeyError:
+        raise click.ClickException("No revision associated to UID "+hex(lUniqueID))
+
+    # Access the clock chip
+    lSI5344 = lDevice.getNode('io.pll_i2c')
+    lSIVersion = lSI5344.readDeviceVersion()
+    echo("PLL version : "+style(hex(lSIVersion), fg='blue'))
+
+    # Ensure that the board revision has a registered clock config
+    try:
+        lClockConfigPath = kClockConfigMap[lRevision]    
+    except KeyError:
+        raise ClickException("Board revision " << lRevision << " has no associated clock configuration")
+
+    echo("Clock configuration to load "+style(lClockConfigPath, fg='green') )
+
+    # Configure the clock chip
+    lFullClockConfigPath = expandvars(join('${PDT_TESTS}/scripts/ouroboros', lClockConfigPath))
+    lSI5344.configure(lFullClockConfigPath)
+
+    # Measure the generated clock frequency
+    for i in range(2):
+        lDevice.getNode("io.freq.ctrl.chan_sel").write(i)
+        lDevice.getNode("io.freq.ctrl.en_crap_mode").write(0)
+        lDevice.dispatch()
+        time.sleep(2)
+        fq = lDevice.getNode("io.freq.freq.count").read()
+        fv = lDevice.getNode("io.freq.freq.valid").read()
+        lDevice.dispatch()
+        print( "Freq:", i, int(fv), int(fq) * 119.20928 / 1000000 )
+        
+    lDevice.getNode("io.csr.ctrl.sfp_tx_dis").write(0)
+    lDevice.dispatch()
+
+    # Reset controls
+    lDevice.getNode("io.csr.ctrl.rst").write(1)
+    lDevice.dispatch()
+    lDevice.getNode("io.csr.ctrl.rst").write(0)
+    lDevice.dispatch()
+# ------------------------------------------------------------------------------
+
+kCommands = collections.OrderedDict([
+    ('SpillStart', 0),
+    ('SpillStop', 1),
+    ('Calib', 2),
+    ('Trigger', 3),
+    ('TimeSync', 4),
+])
+
+# ------------------------------------------------------------------------------
+@master.command()
+@click.pass_obj
+def setup(obj):
+    
+    lDevice = obj.mDevice
+
+    lPartNode = lDevice.getNode('master.partition')
+    lScmdGenNode = lDevice.getNode('master.scmd_gen')
+
+    echo("--- Global status ---")
+    lCsrStat = toolbox.readSubNodes(lDevice.getNode('master.global.csr.stat'))
+    for k,v in lCsrStat.iteritems():
+        echo("{}: {}".format(k, hex(v)))
+
+    echo()
+    echo("Configuring prtition 0")
+    lPartNode.getNode('csr.ctrl.trig_en').write(1)
+    lPartNode.getNode('csr.ctrl.part_en').write(1) # Enable partition 0
+    lPartNode.getNode('csr.ctrl.buf_en').write(1) # Disable buffer in partition 0
+    lPartNode.getNode('csr.ctrl.cmd_mask').write(0x000f) # Set command mask in partition 0
+    lDevice.dispatch()
+
+    time.sleep(1) # Allow endpoint time to sync
+
+    echo("Enable time-sync command generators")
+    lScmdGenNode.getNode('ctrl.en').write(1) # Enable sync command generators
+    lDevice.dispatch()
+    
+    echo("Sending a single sync command")
+    # Send a sync command? Just in case?
+    lScmdGenNode.getNode('chan_ctrl.type').write(kCommands['TimeSync']) # Set command type = 1 for generator 0
+    lScmdGenNode.getNode('chan_ctrl.force').write(1) # Issue a single command
+    lDevice.dispatch()
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+# -----------------
+def printCounters(aNode):
+    # lTStamp = aNode.getNode('tstamp').readBlock(2)
+    # lEventCtr = aNode.getNode('evtctr').read()
+    lCtrBlock = aNode.readBlock(0x10)
+    aNode.getClient().dispatch()
+    # lTimeStamp = int(lTStamp[0]) + (int(lTStamp[1]) << 32)
+
+    # print( "Timestamp", hex(lTimeStamp), int(lTimeStamp))
+    # print( "EventCounter", int(lEventCtr))
+    lFmt = '| {!s:^2} | {:^10} | {:^10} |'
+    echo (lFmt.format('', 'hex', 'num'))
+    for i,x in enumerate(lCtrBlock):
+        echo (lFmt.format(i,hex(x),int(x)))
+# -----------------
+
+@master.command()
+@click.pass_obj
+@click.option('--periodic', type=click.IntRange(0, 240), default=False)
+def monitor(obj, periodic):
+    """
+    Print the master event counters
+    """
+    lDevice = obj.mDevice
+    lPartNode = lDevice.getNode('master.partition')
+    lTStampNode = lDevice.getNode('master.global.tstamp')
+
+
+    while(True):
+        if periodic:
+            click.clear()
+        
+        echo( "-- Master state ---\n")
+
+        lStatDump = toolbox.readSubNodes(lPartNode.getNode('csr.stat'))
+
+        echo( "Status registers" )
+        for n in sorted(lStatDump):
+            echo( "  {} {}".format(n, hex(lStatDump[n])))
+        echo()
+        # echo( 'Endpoint state: '+ kEpStates[int(lStatDump['ep_stat'])]) 
+
+        lTimeStamp = lTStampNode.readBlock(2)
+        lEventCtr = lPartNode.getNode('evtctr').read()
+        lBufCount = lPartNode.getNode('buf.count').read()
+        lDevice.dispatch()
+
+        echo( "Timestamp "+ hex(int(lTimeStamp[0]) + (int(lTimeStamp[1]) << 32)))
+        echo( "EventCounter {}".format(lEventCtr))
+        echo( "Buffer occupancy {}".format(lBufCount))
+
+        echo ()
+        secho ("Accept commands counters", fg='green')
+        printCounters(lPartNode.getNode('actrs'))
+        
+        echo ()
+        secho ("Reject commands counters", fg='green')
+        printCounters(lPartNode.getNode('rctrs'))
+
+        time.sleep(1)
+        if not periodic:
+            break
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@master.command()
+@click.pass_obj
+@click.argument('cmd', type=click.Choice(kCommands.keys()))
+def send(obj, cmd):
+
+    lDevice = obj.mDevice
+
+    lGenChanCtrl = lDevice.getNode('master.scmd_gen.chan_ctrl')
+
+    toolbox.resetSubNodes(lGenChanCtrl)
+
+    lGenChanCtrl.getNode('type').write(kCommands[cmd])
+    lGenChanCtrl.getNode('force').write(0x1)
+    lTStamp = lDevice.getNode("master.global.tstamp").readBlock(2)
+    lDevice.dispatch()
+
+    lGenChanCtrl.getNode('force').write(0x0)
+    lDevice.dispatch()
+    lTimeStamp = int(lTStamp[0]) + (int(lTStamp[1]) << 32)
+    echo("Command sent {}({}) @time {} {}".format(style(cmd, fg='blue'), kCommands[cmd], hex(lTimeStamp), lTimeStamp))
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@master.command()
+@click.pass_obj
+@click.argument('divider', type=click.IntRange(0, 0xf))
+@click.option('--poisson', is_flag=True, default=False)
+def triggen(obj, divider, poisson):
+
+    lDevice = obj.mDevice
+
+    lGenChanCtrl = lDevice.getNode('master.scmd_gen.chan_ctrl')
+
+    lGenChanCtrl.getNode('type').write(kCommands['Trigger']) # Set command type = 3 for generator 0
+    lGenChanCtrl.getNode('rate_div').write(divider) # Set about 1Hz rate for generator 0
+    lGenChanCtrl.getNode('patt').write(poisson) # Set Poisson mode for generator 0
+    lGenChanCtrl.getClient().dispatch()
+    echo( "> Setting trigger rate to {:.3e} Hz".format((50e6/(1<<(12+divider)))))
+    echo( "> Trigger spacing mode:" + {False: 'equally spaced', True: 'poisson'}[poisson] )
+
+    lGenChanCtrl.getNode("en").write(1) # Start the command stream
+    lGenChanCtrl.getClient().dispatch()
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@master.command()
+@click.pass_obj
+def trigclear(obj):
+
+    lDevice = obj.mDevice
+
+    lGenChanCtrl = lDevice.getNode('master.scmd_gen.chan_ctrl')
+
+    toolbox.resetSubNodes(lGenChanCtrl)
+    echo( "> Command generator configuration cleared" )
+
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+    # d(0) <= X"aa000600"; -- DAQ word 0
+    # d(1) <= X"0000000" & scmd; -- DAQ word 1
+    # d(2) <= tstamp(31 downto 0); -- DAQ word 2
+    # d(3) <= tstamp(63 downto 32); -- DAQ word 3
+    # d(4) <= evtctr; -- DAQ word 4
+    # d(5) <= X"00000000"; -- Dummy checksum (not implemented yet)
+kEventSize = 6
+
+@master.command()
+@click.pass_obj
+@click.option('--force', is_flag=True, default=False)
+def readback(obj, force):
+    
+    lDevice = obj.mDevice
+    
+    lPartNode = lDevice.getNode('master.partition')
+    lBufCount = lPartNode.getNode('buf.count').read()
+    lPartNode.getClient().dispatch()
+
+    echo ( "Words available in readout buffer: "+hex(lBufCount))
+    
+    # lEventsToRead = int(lBufCount) / kEventSize
+    # echo (lEventsToRead)
+
+    lWordsToRead = int(lBufCount) if force else (int(lBufCount) / kEventSize)*kEventSize
+
+    echo (lWordsToRead )
+    if lWordsToRead == 0:
+        echo("Nothing to read, goodbye!")
+
+    lBufData = lPartNode.getNode('buf.data').readBlock(lWordsToRead)
+    lPartNode.getClient().dispatch()
+
+    for i, lWord in enumerate(lBufData):
+        echo ( '{:04d} {}'.format(i, hex(lWord)))
+
+
+
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+#    ____        __          _      __ 
+#   / __/__  ___/ /__  ___  (_)__  / /_
+#  / _// _ \/ _  / _ \/ _ \/ / _ \/ __/
+# /___/_//_/\_,_/ .__/\___/_/_//_/\__/ 
+#              /_/                     
+@cli.group()
+@click.pass_obj
+@click.argument('device', callback=validate_device)
+def endpoint(obj, device):
+    # print obj.mConnectionManager.getDevices()
+    lDevice = obj.mConnectionManager.getDevice(str(device))
+
+    echo('Created endpoint device ' + style(lDevice.id(), fg='blue'))
+
+    lVersion = lDevice.getNode('endpoint.version').read()
+    lDevice.dispatch()
+    echo("Endpoint FW version: "+hex(lVersion))
+
+    obj.mDevice = lDevice
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@endpoint.command()
+@click.pass_obj
+@click.option('--on/--off', default=True)
+def enable(obj, on):
+    """
+    Activate timing endpoint wrapper block
+    """
+
+    lEndPointNode = obj.mDevice.getNode('endpoint')
+    lEndPointNode.getNode('csr.ctrl.ep_en').write(on)
+    lEndPointNode.getNode('csr.ctrl.buf_en').write(on)
+    lEndPointNode.getClient().dispatch()
+    echo("> Endpoint " + style("activated" if on else "deactivated", fg='blue'))
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+# -----------------
+kEpStates = collections.OrderedDict([
+    (0b0000,'Standing by'), #when W_RST, -- Starting state after reset
+    (0b0001,'Waiting SPF for signal'), #when W_SFP, -- Waiting for SFP LOS to go low
+    (0b0010,'Waiting CDR lock'), #when W_CDR, -- Waiting for CDR lock
+    (0b0011,'Waiting for comman alignment'), #when W_ALIGN, -- Waiting for comma alignment, stable 50MHz phase
+    (0b0100,'Waiting for good frequency checl'), #when W_FREQ, -- Waiting for good frequency check
+    (0b0101,'Waiting for 8b10 decoder good packet'), #when W_LOCK, -- Waiting for 8b10 decoder good packet
+    (0b0110,'Waiting for time stamp initialisation'), #when W_RDY, -- Waiting for time stamp initialisation
+    (0b1000,'Ready'), #when RUN, -- Good to go
+    (0b1100,'Error in Rx'), #when ERR_R, -- Error in rx
+    (0b1101,'Error in time stamp check'), #when ERR_T; -- Error in time stamp check
+    ])
+# -----------------
+
+@endpoint.command()
+@click.pass_obj
+@click.option('--periodic', type=click.IntRange(0, 240), default=False)
+def monitor(obj, periodic):
+    """
+    Print the master event counters
+    """
+    lDevice = obj.mDevice
+    lEndPointNode = lDevice.getNode('endpoint')
+    lTStampNode = lEndPointNode.getNode('tstamp')
+    lEvCtrNode = lEndPointNode.getNode('evtctr')
+    lBufCountNode = lEndPointNode.getNode('buf.count')
+
+    while(True):
+        if periodic:
+            click.clear()
+        
+        lTimeStamp = lTStampNode.readBlock(2)
+        lEventCtr = lEvCtrNode.read()
+        lBufCount = lBufCountNode.read()
+        lDevice.dispatch()
+
+        echo( "-- Endpoint state ---\n")
+
+        lStatDump = toolbox.readSubNodes(lEndPointNode.getNode('csr.stat'))
+
+        echo( "Status registers" )
+        for n in sorted(lStatDump):
+            echo( "  {} {}".format(n, hex(lStatDump[n])))
+        echo()
+        echo( 'Endpoint state: '+ kEpStates[int(lStatDump['ep_stat'])]) 
+
+        echo ()
+        echo( "Timestamp "+ hex(int(lTimeStamp[0]) + (int(lTimeStamp[1]) << 32)))
+        echo( "EventCounter {}".format(lEventCtr))
+        echo( "Buffer occupancy {}".format(lBufCount))
+        echo ()
+
+        secho ("Received commands counters", fg='green')
+        printCounters(lEndPointNode.getNode('ctrs'))
+        
+        time.sleep(periodic)
+        if not periodic:
+            break
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@endpoint.command()
+@click.pass_obj
+@click.option('--force', is_flag=True, default=False)
+def readback(obj, force):
+    
+    lDevice = obj.mDevice
+    
+    lEndPointNode = lDevice.getNode('endpoint')
+    lBufCount = lEndPointNode.getNode('buf.count').read()
+    lEndPointNode.getClient().dispatch()
+
+    echo ( "Words available in readout buffer: "+hex(lBufCount))
+    
+    # lEventsToRead = int(lBufCount) / kEventSize
+    # echo (lEventsToRead)
+
+    lWordsToRead = int(lBufCount) if force else (int(lBufCount) / kEventSize)*kEventSize
+
+    echo (lWordsToRead )
+    if lWordsToRead == 0:
+        echo("Nothing to read, goodbye!")
+
+    lBufData = lEndPointNode.getNode('buf.data').readBlock(lWordsToRead)
+    lEndPointNode.getClient().dispatch()
+
+    for i, lWord in enumerate(lBufData):
+        echo ( '{:04d} {}'.format(i, hex(lWord)))
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+if __name__ == '__main__':
+    cli(obj=PDTContext())
+# ------------------------------------------------------------------------------

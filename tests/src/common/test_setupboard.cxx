@@ -64,6 +64,7 @@ int main(int argc, char const *argv[])
    	uhal::ConnectionManager lCM("file://"+lConnections.string());
 
    	uhal::HwInterface lOuro = lCM.getDevice("DUNE_FMC_SLAVE_TUN");
+   	// uhal::HwInterface lOuro = lCM.getDevice("DUNE_FMC_MASTER_TUN");
    	PDT_LOG(pdt::kNotice) << "Opening connection to uri: " << lOuro.uri();
 
 

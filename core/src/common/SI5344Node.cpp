@@ -31,7 +31,7 @@ SI5344Slave::~SI5344Slave( ) {
 uint8_t
 SI5344Slave::readPage( ) const {
 
-    PDT_LOG(kNotice) << "<- Reading page ";
+    PDT_LOG(kDebug) << "<- Reading page ";
 
 	// Read from the page address (0x1?)
 	return readI2C(0x1);
@@ -45,7 +45,7 @@ SI5344Slave::switchPage( uint8_t aPage ) const {
 
 	// Prepare a data block with address and new page
 	// std::vector<uint8_t> lData = {0x1, aPage};
-    PDT_LOG(kNotice) << "-> Switching to page " 
+    PDT_LOG(kDebug) << "-> Switching to page " 
         << std::showbase
         << std:: hex
         << (uint32_t) aPage;
@@ -167,13 +167,13 @@ SI5344Slave::configure( const std::string& aPath ) const {
 	size_t lNotifyEvery(lConfig.size()/lNotifyPercent);
 
 	for ( const auto& lSetting : lConfig ) {
-		PDT_LOG(kInfo) << std::showbase << std::hex 
+		PDT_LOG(kDebug) << std::showbase << std::hex 
                        << "Writing to "  << (uint32_t)lSetting.get<0>() 
                        << " data " << (uint32_t)lSetting.get<1>();
 
         uint32_t lMaxAttempts(2), lAttempt(0);
         while( lAttempt < lMaxAttempts ) {        
-            PDT_LOG(kInfo) << "Attempt " << lAttempt;
+            PDT_LOG(kDebug) << "Attempt " << lAttempt;
             if ( lAttempt > 0) {
                 PDT_LOG(kWarning) << "Retry " << lAttempt << " for reg " << std::showbase << std::hex <<  (uint32_t)lSetting.get<0>() ;
             }
