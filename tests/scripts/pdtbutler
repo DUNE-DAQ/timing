@@ -50,7 +50,10 @@ def list(obj):
     '''
     List known uhal devices.
     '''
-    print (obj.mConnectionManager.getDevices())
+    echo ( 'Available IPBus devices')
+    for lId in obj.mConnectionManager.getDevices():
+        echo ( ' - '+lId )
+        
     pass
 # ------------------------------------------------------------------------------
 
