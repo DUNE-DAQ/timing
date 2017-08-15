@@ -27,8 +27,9 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
     context_settings=CONTEXT_SETTINGS,
 )
 @click.pass_context
-@click.option('-c', '--connections', default='${PDT_TESTS}/etc/connections.xml', help='Path to uhal connection file')
-def cli(ctx, connections):
+@click.option('-c', '--connections', default='${PDT_TESTS}/etc/connections.xml', help='Path to uhal connection file(s)')
+@click.option('-t', '--timeout', default=False, help='uhal timeout (sec)')
+def cli(ctx, connections, timeout):
     
     # Set uhal log level
     uhal.setLogLevelTo(uhal.LogLevel.NOTICE)
@@ -38,6 +39,7 @@ def cli(ctx, connections):
     # click.secho('Connection paths: {}'.format(lConnections), fg='blue')
 
     ctx.obj.mConnectionManager = uhal.ConnectionManager(str(lConnections))
+    ctx.obj.mTimeout = timeout
 # ------------------------------------------------------------------------------
 
 
@@ -45,6 +47,9 @@ def cli(ctx, connections):
 @cli.command()
 @click.pass_obj
 def list(obj):
+    '''
+    List known uhal devices.
+    '''
     print (obj.mConnectionManager.getDevices())
     pass
 # ------------------------------------------------------------------------------
@@ -70,6 +75,11 @@ def validate_device(ctx, param, value):
 @click.pass_obj
 @click.argument('device', callback=validate_device)
 def master(obj, device):
+    '''
+    Timing master commands.
+
+    DEVICE: uhal device identifier
+    '''
     # print obj.mConnectionManager.getDevices()
     lDevice = obj.mConnectionManager.getDevice(str(device))
 
@@ -116,9 +126,17 @@ kBoardRevisionMap = {
 # kBoardRevisionMap = {
 # }
 
-@master.command()
+@master.command('reset', short_help="Perform a hard reset on the timing master.")
 @click.pass_obj
 def reset(obj):
+    '''
+    Perform a hard reset on the timing master, including
+
+    \b
+    - ipbus registers
+    - i2c buses
+    - pll and pll configuration
+    '''
     echo('Resetting ' + click.style(obj.mDevice.id(), fg='blue'))
 
     lDevice = obj.mDevice
@@ -204,10 +222,18 @@ kCommands = collections.OrderedDict([
 ])
 
 # ------------------------------------------------------------------------------
-@master.command()
+@master.command('setup', short_help='Configures partition 0 for data taking.')
 @click.pass_obj
 def setup(obj):
-    
+    '''
+    Configures partition 0 for data taking
+
+    \b
+    - enable triggers
+    - enable partition 0 (P0)
+    - enable readout buffer (P0)
+    - enable time-sync command generator
+    '''
     lDevice = obj.mDevice
 
     lPartNode = lDevice.getNode('master.partition')
@@ -257,20 +283,21 @@ def printCounters(aNode):
         echo (lFmt.format(i,hex(x),int(x)))
 # -----------------
 
-@master.command()
+@master.command('monitor', short_help='Display the status of the timing master.')
 @click.pass_obj
-@click.option('--periodic', type=click.IntRange(0, 240), default=False)
-def monitor(obj, periodic):
-    """
-    Print the master event counters
-    """
+@click.option('--watch', is_flag=True, default=False, help='Turn on automatic refresh')
+@click.option('--period', type=click.IntRange(0, 240), default=2, help='Period of automatic refresh')
+def monitor(obj, watch, period):
+    '''
+    Display the master status, accepted and rejected command counters
+    '''
+
     lDevice = obj.mDevice
     lPartNode = lDevice.getNode('master.partition')
     lTStampNode = lDevice.getNode('master.global.tstamp')
 
-
     while(True):
-        if periodic:
+        if watch:
             click.clear()
         
         echo( "-- Master state ---\n")
@@ -300,17 +327,23 @@ def monitor(obj, periodic):
         secho ("Reject commands counters", fg='green')
         printCounters(lPartNode.getNode('rctrs'))
 
-        time.sleep(1)
-        if not periodic:
+        if watch:
+            time.sleep(period)
+        else:
             break
 # ------------------------------------------------------------------------------
 
 
 # ------------------------------------------------------------------------------
-@master.command()
+@master.command('send', short_help='Inject a single command.')
 @click.pass_obj
 @click.argument('cmd', type=click.Choice(kCommands.keys()))
 def send(obj, cmd):
+    '''
+    Inject a single command.
+
+    CMD (str): Name of the command to inject '''
+    # + ','.join(kCommands.keys())
 
     lDevice = obj.mDevice
 
@@ -334,9 +367,18 @@ def send(obj, cmd):
 @master.command()
 @click.pass_obj
 @click.argument('divider', type=click.IntRange(0, 0xf))
-@click.option('--poisson', is_flag=True, default=False)
+@click.option('--poisson', is_flag=True, default=False, help="Randomize time interval between consecutive triggers.")
 def triggen(obj, divider, poisson):
+    '''
+    \b
+    Enables the internal trigger generator.
+    Configures the internal command generator to produce triggers at a defined frequency.
+    
+    Rate = 50 Mhz / 2**( 12 + divider )
 
+    \b
+    DIVIDER (int): Trigger rate divider.
+    '''
     lDevice = obj.mDevice
 
     lGenChanCtrl = lDevice.getNode('master.scmd_gen.chan_ctrl')
@@ -357,7 +399,9 @@ def triggen(obj, divider, poisson):
 @master.command()
 @click.pass_obj
 def trigclear(obj):
-
+    '''
+    Clear the internal trigger generator.
+    '''
     lDevice = obj.mDevice
 
     lGenChanCtrl = lDevice.getNode('master.scmd_gen.chan_ctrl')
@@ -377,11 +421,13 @@ def trigclear(obj):
     # d(5) <= X"00000000"; -- Dummy checksum (not implemented yet)
 kEventSize = 6
 
-@master.command()
+@master.command('readback', short_help='Read the timing master readout buffer.')
 @click.pass_obj
-@click.option('--force', is_flag=True, default=False)
-def readback(obj, force):
-    
+@click.option('--events/--all', ' /-a', 'readall', default=False, help="Buffer readout mode.\n- events: only completed events are readout.\n- all: the content of the buffer is fully read-out.")
+def readback(obj, readall):
+    '''
+    Read the content of the timing master readout buffer.
+    '''
     lDevice = obj.mDevice
     
     lPartNode = lDevice.getNode('master.partition')
@@ -393,7 +439,7 @@ def readback(obj, force):
     # lEventsToRead = int(lBufCount) / kEventSize
     # echo (lEventsToRead)
 
-    lWordsToRead = int(lBufCount) if force else (int(lBufCount) / kEventSize)*kEventSize
+    lWordsToRead = int(lBufCount) if readall else (int(lBufCount) / kEventSize)*kEventSize
 
     echo (lWordsToRead )
     if lWordsToRead == 0:
@@ -420,7 +466,12 @@ def readback(obj, force):
 @click.pass_obj
 @click.argument('device', callback=validate_device)
 def endpoint(obj, device):
-    # print obj.mConnectionManager.getDevices()
+    '''
+    Endpoint master commands.
+
+    DEVICE: uhal device identifier
+    '''
+
     lDevice = obj.mConnectionManager.getDevice(str(device))
 
     echo('Created endpoint device ' + style(lDevice.id(), fg='blue'))
@@ -436,11 +487,11 @@ def endpoint(obj, device):
 # ------------------------------------------------------------------------------
 @endpoint.command()
 @click.pass_obj
-@click.option('--on/--off', default=True)
+@click.option('--on/--off', default=True, help='enable/disable the endpoint')
 def enable(obj, on):
-    """
-    Activate timing endpoint wrapper block
-    """
+    '''
+    Activate timing endpoint wrapper block.
+    '''
 
     lEndPointNode = obj.mDevice.getNode('endpoint')
     lEndPointNode.getNode('csr.ctrl.ep_en').write(on)
@@ -466,13 +517,15 @@ kEpStates = collections.OrderedDict([
     ])
 # -----------------
 
-@endpoint.command()
+@endpoint.command('monitor', short_help='Display the status of timing endpoint.')
 @click.pass_obj
-@click.option('--periodic', type=click.IntRange(0, 240), default=False)
-def monitor(obj, periodic):
-    """
-    Print the master event counters
-    """
+@click.option('--watch', is_flag=True, default=False, help='Turn on automatic refresh')
+@click.option('--period', type=click.IntRange(0, 240), default=2, help='Period of automatic refresh')
+def monitor(obj, watch, period):
+    '''
+    Display the endpoint status, accepted and rejected command counters
+    '''
+
     lDevice = obj.mDevice
     lEndPointNode = lDevice.getNode('endpoint')
     lTStampNode = lEndPointNode.getNode('tstamp')
@@ -480,7 +533,7 @@ def monitor(obj, periodic):
     lBufCountNode = lEndPointNode.getNode('buf.count')
 
     while(True):
-        if periodic:
+        if watch:
             click.clear()
         
         lTimeStamp = lTStampNode.readBlock(2)
@@ -507,18 +560,21 @@ def monitor(obj, periodic):
         secho ("Received commands counters", fg='green')
         printCounters(lEndPointNode.getNode('ctrs'))
         
-        time.sleep(periodic)
-        if not periodic:
+        if watch:
+            time.sleep(period)
+        else:
             break
 # ------------------------------------------------------------------------------
 
 
 # ------------------------------------------------------------------------------
-@endpoint.command()
+@endpoint.command('readback', short_help='Read the content of the endpoint master readout buffer.')
 @click.pass_obj
-@click.option('--force', is_flag=True, default=False)
-def readback(obj, force):
-    
+@click.option('--events/--all', ' /-a', 'readall', default=False, help="Buffer readout mode.\n- events: only completed events are readout.\n- all: the content of the buffer is fully read-out.")
+def readback(obj, readall):
+    '''
+    Read the content of the endpoint master readout buffer.
+    '''
     lDevice = obj.mDevice
     
     lEndPointNode = lDevice.getNode('endpoint')
@@ -530,7 +586,7 @@ def readback(obj, force):
     # lEventsToRead = int(lBufCount) / kEventSize
     # echo (lEventsToRead)
 
-    lWordsToRead = int(lBufCount) if force else (int(lBufCount) / kEventSize)*kEventSize
+    lWordsToRead = int(lBufCount) if readall else (int(lBufCount) / kEventSize)*kEventSize
 
     echo (lWordsToRead )
     if lWordsToRead == 0:
