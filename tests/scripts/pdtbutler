@@ -28,7 +28,7 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 )
 @click.pass_context
 @click.option('-c', '--connections', default='${PDT_TESTS}/etc/connections.xml', help='Path to uhal connection file(s)')
-@click.option('-t', '--timeout', default=False, help='uhal timeout (sec)')
+@click.option('-t', '--timeout', default=None, help='uhal timeout (sec)')
 def cli(ctx, connections, timeout):
     
     # Set uhal log level
@@ -85,7 +85,9 @@ def master(obj, device):
     '''
     # print obj.mConnectionManager.getDevices()
     lDevice = obj.mConnectionManager.getDevice(str(device))
-
+    if obj.mTimeout:
+        lDevice.setTimeoutPeriod(obj.mTimeout)
+        
     echo('Created device ' + click.style(lDevice.id(), fg='blue'))
 
     lVersion = lDevice.getNode("master.global.version").read()
@@ -476,6 +478,8 @@ def endpoint(obj, device):
     '''
 
     lDevice = obj.mConnectionManager.getDevice(str(device))
+    if obj.mTimeout:
+        lDevice.setTimeoutPeriod(obj.mTimeout)
 
     echo('Created endpoint device ' + style(lDevice.id(), fg='blue'))
 
