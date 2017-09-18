@@ -78,7 +78,7 @@ def validate_device(ctx, param, value):
 # -----------------
 
 
-@cli.group()
+@cli.group(invoke_without_command=True)
 @click.pass_obj
 @click.argument('device', callback=validate_device)
 def master(obj, device):
@@ -238,12 +238,21 @@ def reset(obj):
     lDevice.dispatch()
 # ------------------------------------------------------------------------------
 
-kCommandIDs = collections.OrderedDict([
+# Command definition from pdt_defs.vhd
+#     constant SCMD_SPILL_START: std_logic_vector(3 downto 0) := X"0";
+#     constant SCMD_SPILL_STOP: std_logic_vector(3 downto 0) := X"1";
+#     constant SCMD_RUN_START: std_logic_vector(3 downto 0) := X"2";
+#     constant SCMD_RUN_STOP: std_logic_vector(3 downto 0) := X"3";
+#     constant SCMD_SYNC: std_logic_vector(3 downto 0) := X"7";
+#     constant SCMD_TRIG: std_logic_vector(3 downto 0) := X"8"; -- Commands from 0x8 to 0xf reserved for triggers / calib
+
+kCommands = collections.OrderedDict([
     ('SpillStart', 0),
     ('SpillStop', 1),
-    ('Calib', 2),
-    ('Trigger', 3),
-    ('TimeSync', 4),
+    ('RunStart', 2),
+    ('RunStop', 3),
+    ('Trigger', 7),
+    ('TimeSync', 8),
 ])
 
 kCommandNames = { v:k for k,v in kCommandIDs.iteritems() }
@@ -297,7 +306,7 @@ def configure(obj, partition):
     lPartNode.getNode('csr.ctrl.trig_ctr_rst').write(1) # Disable buffer in partition 0
     lPartNode.getNode('csr.ctrl.evtctr_rst').write(0) # Disable buffer in partition 0
     lPartNode.getNode('csr.ctrl.trig_ctr_rst').write(0) # Disable buffer in partition 0
-    lPartNode.getNode('csr.ctrl.cmd_mask').write(0x0f) 
+    lPartNode.getNode('csr.ctrl.cmd_mask').write(0x001f) # Set command mask in partition 0
     lDevice.dispatch()
 
     lPartNode.getNode('csr.ctrl.part_en').write(1) # Enable partition 0
@@ -410,7 +419,7 @@ def monitor(obj, watch, period):
 
     lDevice = obj.mDevice
     lPartNode = lDevice.getNode('master.partition')
-    lTStampNode = lDevice.getNode('master.global.tstamp')
+    lTStampNode = lDevice.getNode('master.tstamp.ctr')
 
     while(True):
         if watch:
@@ -624,8 +633,32 @@ def readback(obj, readall):
 
     for i, lWord in enumerate(lBufData):
         echo ( '{:04d} {}'.format(i, hex(lWord)))
+# ------------------------------------------------------------------------------
 
 
+# ------------------------------------------------------------------------------
+@master.command('sfp', short_help='Query the sfp parameters.')
+@click.pass_obj
+def sfp(obj):
+    '''
+    Read the content of the timing master readout buffer.
+    '''
+    lDevice = obj.mDevice
+
+    lSfp = lDevice.getNode('io.sfp_i2c')
+    print ( lSfp )
+    print ( lSfp.getSlave('eeprom') )
+    print ( hex(lSfp.getSlave('eeprom').getI2CAddress()) )
+    # print ( lSfp.getSlave('eeprom').readI2C(0x0) )
+
+    try:
+        import IPython
+    except ImportError:
+        echo('Failed to load IPython')
+        return
+
+    echo('Starting IPython - {} connected to variable \'board\''.format( lDevice.id() ))
+    IPython.embed()
 
 # ------------------------------------------------------------------------------
 
@@ -636,7 +669,7 @@ def readback(obj, readall):
 #  / _// _ \/ _  / _ \/ _ \/ / _ \/ __/
 # /___/_//_/\_,_/ .__/\___/_/_//_/\__/ 
 #              /_/                     
-@cli.group()
+@cli.group(invoke_without_command=True)
 @click.pass_obj
 @click.argument('device', callback=validate_device)
 def endpoint(obj, device):
