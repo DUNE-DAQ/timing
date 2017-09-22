@@ -18,6 +18,11 @@ CACTUS_ROOT=/opt/cactus
 PDT_TESTS=$( readlink -f $(dirname $BASH_SOURCE)/ )
 PDT_ROOT=$( readlink -f ${PDT_TESTS}/.. )
 
+
+# add dependant paths
+pathadd LD_LIBRARY_PATH "/opt/cactus/lib"
+
+# add pdt core paths
 pathadd PATH "${PDT_ROOT}/core/bin"
 pathadd PATH "${PDT_ROOT}/tests/bin"
 pathadd PATH "${PDT_ROOT}/tests/scripts"
