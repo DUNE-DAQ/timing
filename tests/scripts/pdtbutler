@@ -264,6 +264,16 @@ def setup(obj):
         echo("{}: {}".format(k, hex(v)))
 
     echo()
+    lPartNode.getNode('csr.ctrl.part_en').write(0) # Enable partition 0
+    lPartNode.getNode('csr.ctrl.buf_en').write(0) # Disable buffer in partition 0
+    lPartNode.getNode('csr.ctrl.evtctr_rst').write(1) # Disable buffer in partition 0
+    lPartNode.getNode('csr.ctrl.trig_ctr_rst').write(1) # Disable buffer in partition 0
+    lPartNode.getNode('csr.ctrl.evtctr_rst').write(0) # Disable buffer in partition 0
+    lPartNode.getNode('csr.ctrl.trig_ctr_rst').write(0) # Disable buffer in partition 0
+    lDevice.dispatch()
+
+    time.sleep(1) # Allow endpoint time to settle
+
     echo("Configuring pratition 0")
     lPartNode.getNode('csr.ctrl.trig_en').write(1)
     lPartNode.getNode('csr.ctrl.part_en').write(1) # Enable partition 0
@@ -271,17 +281,34 @@ def setup(obj):
     lPartNode.getNode('csr.ctrl.cmd_mask').write(0x000f) # Set command mask in partition 0
     lDevice.dispatch()
 
-    time.sleep(1) # Allow endpoint time to sync
-
     echo("Enable time-sync command generators")
     lScmdGenNode.getNode('ctrl.en').write(1) # Enable sync command generators
     lDevice.dispatch()
     
+    time.sleep(1) # Allow endpoint time to sync
+
     echo("Sending a single sync command")
     # Send a sync command? Just in case?
     lScmdGenNode.getNode('chan_ctrl.type').write(kCommands['TimeSync']) # Set command type = 1 for generator 0
     lScmdGenNode.getNode('chan_ctrl.force').write(1) # Issue a single command
     lDevice.dispatch()
+# ------------------------------------------------------------------------------
+
+
+
+# ------------------------------------------------------------------------------
+@master.command('start', short_help='Configures partition 0 for data taking.')
+@click.pass_obj
+def start(obj):
+    pass
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@master.command('stop', short_help='Configures partition 0 for data taking.')
+@click.pass_obj
+def stop(obj):
+    pass
 # ------------------------------------------------------------------------------
 
 
@@ -377,7 +404,8 @@ def monitor(obj, watch, period):
 @master.command('send', short_help='Inject a single command.')
 @click.pass_obj
 @click.argument('cmd', type=click.Choice(kCommands.keys()))
-def send(obj, cmd):
+@click.option('-n', type=click.IntRange(0, 100), default=1)
+def send(obj, cmd, n):
     '''
     Inject a single command.
 
@@ -390,15 +418,16 @@ def send(obj, cmd):
 
     toolbox.resetSubNodes(lGenChanCtrl)
 
-    lGenChanCtrl.getNode('type').write(kCommands[cmd])
-    lGenChanCtrl.getNode('force').write(0x1)
-    lTStamp = lDevice.getNode("master.global.tstamp").readBlock(2)
-    lDevice.dispatch()
+    for i in xrange(n):
+        lGenChanCtrl.getNode('type').write(kCommands[cmd])
+        lGenChanCtrl.getNode('force').write(0x1)
+        lTStamp = lDevice.getNode("master.global.tstamp").readBlock(2)
+        lDevice.dispatch()
 
-    lGenChanCtrl.getNode('force').write(0x0)
-    lDevice.dispatch()
-    lTimeStamp = int(lTStamp[0]) + (int(lTStamp[1]) << 32)
-    echo("Command sent {}({}) @time {} {}".format(style(cmd, fg='blue'), kCommands[cmd], hex(lTimeStamp), lTimeStamp))
+        lGenChanCtrl.getNode('force').write(0x0)
+        lDevice.dispatch()
+        lTimeStamp = int(lTStamp[0]) + (int(lTStamp[1]) << 32)
+        echo("Command sent {}({}) @time {} {}".format(style(cmd, fg='blue'), kCommands[cmd], hex(lTimeStamp), lTimeStamp))
 # ------------------------------------------------------------------------------
 
 
