@@ -69,7 +69,10 @@ def validate_device(ctx, param, value):
 
     lDevices = ctx.obj.mConnectionManager.getDevices()
     if value not in lDevices:
-        raise click.BadParameter('Device must be choosen among '+', '.join(lDevices))
+        raise click.BadParameter(
+            'Device must be one of '+
+            ', '.join(["'"+lId+"'" for lId in lDevices])
+            )
     return value
 # -----------------
 
@@ -103,7 +106,9 @@ def master(obj, device):
 @click.pass_obj
 def ipy(obj):
     '''
-    List known uhal devices.
+    Start an interactive IPython session.
+
+    The board HwInterface is accessible as 'lDevice'
     '''
     lDevice = obj.mDevice
 
@@ -232,7 +237,7 @@ def reset(obj):
     lDevice.dispatch()
 # ------------------------------------------------------------------------------
 
-kCommands = collections.OrderedDict([
+kCommandIDs = collections.OrderedDict([
     ('SpillStart', 0),
     ('SpillStop', 1),
     ('Calib', 2),
@@ -240,58 +245,62 @@ kCommands = collections.OrderedDict([
     ('TimeSync', 4),
 ])
 
+kCommandNames = { v:k for k,v in kCommandIDs.iteritems() }
+
 # ------------------------------------------------------------------------------
-@master.command('setup', short_help='Configures partition 0 for data taking.')
+@master.command('configure', short_help='Configures partition 0 for data taking.')
+@click.option('--partition', '-p', type=click.IntRange(0,0), help='Target partition', default=0)
 @click.pass_obj
-def setup(obj):
+def configure(obj, partition):
     '''
     Configures partition 0 for data taking
 
     \b
-    - enable triggers
-    - enable partition 0 (P0)
-    - enable readout buffer (P0)
+    - disable command generator (calibration)
     - enable time-sync command generator
+    - disable readout buffer
+    - disable triggers
+    - set command mask for the partition
+    - enable partition 0
     '''
     lDevice = obj.mDevice
 
+    lGlobalNode = lDevice.getNode('master.global')
     lPartNode = lDevice.getNode('master.partition')
     lScmdGenNode = lDevice.getNode('master.scmd_gen')
+    lGenChanCtrl = lDevice.getNode('master.scmd_gen.chan_ctrl')
+
 
     echo("--- Global status ---")
     lCsrStat = toolbox.readSubNodes(lDevice.getNode('master.global.csr.stat'))
     for k,v in lCsrStat.iteritems():
         echo("{}: {}".format(k, hex(v)))
 
+    
+    echo("Disable command generator")
+    toolbox.resetSubNodes(lGenChanCtrl)
+
+    echo("Enable time-sync command generators")
+    lScmdGenNode.getNode('ctrl.en').write(1) # Enable sync command generators
+    lDevice.dispatch()
+  
+    # Select the desired partition
+    lGlobalNode.getNode('part_sel.partition').write(partition)
+    lDevice.dispatch()
+    
     echo()
+    echo("Configuring partition {}".format(partition))
     lPartNode.getNode('csr.ctrl.part_en').write(0) # Enable partition 0
     lPartNode.getNode('csr.ctrl.buf_en').write(0) # Disable buffer in partition 0
     lPartNode.getNode('csr.ctrl.evtctr_rst').write(1) # Disable buffer in partition 0
     lPartNode.getNode('csr.ctrl.trig_ctr_rst').write(1) # Disable buffer in partition 0
     lPartNode.getNode('csr.ctrl.evtctr_rst').write(0) # Disable buffer in partition 0
     lPartNode.getNode('csr.ctrl.trig_ctr_rst').write(0) # Disable buffer in partition 0
+    lPartNode.getNode('csr.ctrl.cmd_mask').write(0x0f) 
     lDevice.dispatch()
 
-    time.sleep(1) # Allow endpoint time to settle
-
-    echo("Configuring pratition 0")
-    lPartNode.getNode('csr.ctrl.trig_en').write(1)
     lPartNode.getNode('csr.ctrl.part_en').write(1) # Enable partition 0
-    lPartNode.getNode('csr.ctrl.buf_en').write(1) # Disable buffer in partition 0
-    lPartNode.getNode('csr.ctrl.cmd_mask').write(0x000f) # Set command mask in partition 0
-    lDevice.dispatch()
-
-    echo("Enable time-sync command generators")
-    lScmdGenNode.getNode('ctrl.en').write(1) # Enable sync command generators
-    lDevice.dispatch()
-    
-    time.sleep(1) # Allow endpoint time to sync
-
-    echo("Sending a single sync command")
-    # Send a sync command? Just in case?
-    lScmdGenNode.getNode('chan_ctrl.type').write(kCommands['TimeSync']) # Set command type = 1 for generator 0
-    lScmdGenNode.getNode('chan_ctrl.force').write(1) # Issue a single command
-    lDevice.dispatch()
+    lDevice.dispatch()  
 # ------------------------------------------------------------------------------
 
 
@@ -300,6 +309,31 @@ def setup(obj):
 @master.command('start', short_help='Configures partition 0 for data taking.')
 @click.pass_obj
 def start(obj):
+
+    '''
+    Starts a new run
+    
+    \b
+    - flushes the partition buffer
+    - set the command mask
+    - enables the readout buffer
+    - enables triggers
+    '''
+ 
+    # Disable the buffer
+    lPartNode.getNode('csr.ctrl.buf_en').write(0)
+    # Set command mask in partition 0
+    lPartNode.getNode('csr.ctrl.cmd_mask').write(0x0f) 
+    lDevice.dispatch()
+    
+    # TODO (v4)
+    # Set the run bit and wait for it to be acknowledged
+
+    # Re-enable the buffer (flushes it)
+    lPartNode.getNode('csr.ctrl.buf_en').write(1)
+    # Open to triggers
+    lPartNode.getNode('csr.ctrl.trig_en').write(1)
+    lDevice.dispatch()
     pass
 # ------------------------------------------------------------------------------
 
@@ -308,25 +342,58 @@ def start(obj):
 @master.command('stop', short_help='Configures partition 0 for data taking.')
 @click.pass_obj
 def stop(obj):
+    
+    '''
+    Stop the run
+    
+    \b
+    - disables triggers
+    - disables the readout buffer
+    '''
+
+    lPartNode.getNode('csr.ctrl.buf_en').write(0)
+    lPartNode.getNode('csr.ctrl.trig_en').write(0)
+
     pass
 # ------------------------------------------------------------------------------
 
 
 # ------------------------------------------------------------------------------
-# -----------------
-def printCounters(aNode):
-    # lTStamp = aNode.getNode('tstamp').readBlock(2)
-    # lEventCtr = aNode.getNode('evtctr').read()
-    lCtrBlock = aNode.readBlock(0x10)
-    aNode.getClient().dispatch()
-    # lTimeStamp = int(lTStamp[0]) + (int(lTStamp[1]) << 32)
+def printCounters( aTopNode, aSubNodes ):
 
-    # print( "Timestamp", hex(lTimeStamp), int(lTimeStamp))
-    # print( "EventCounter", int(lEventCtr))
-    lFmt = '| {!s:^2} | {:^10} | {:^10} |'
-    echo (lFmt.format('', 'hex', 'num'))
-    for i,x in enumerate(lCtrBlock):
-        echo (lFmt.format(i,hex(x),int(x)))
+    lNumCtrs = 0x10
+    lBlocks = [ aTopNode.getNode(lKey).readBlock(lNumCtrs) for lKey in aSubNodes ]
+    aTopNode.getClient().dispatch()
+
+    # Just a bit of math
+    lCellWidth = 10
+    kCellFmt = ' {{:^{}}} '.format(lCellWidth)
+    kTitleCellFmt = ' {{:^{}}} '.format((lCellWidth+1)*2+1)
+
+    lLineLen = (lCellWidth+2+1)*(len(aSubNodes)*2+1)+1
+
+    # Build the title
+    lLine = [kCellFmt.format('')]+[style(kTitleCellFmt.format(aSubNodes[lName]), fg='green') for lName in aSubNodes]
+ 
+    lTitle = '|'.join(['']+lLine+[''])
+    echo ( '-'*lLineLen)
+    # print ( '-'*len(lTitle))
+    echo ( lTitle )
+
+    # Build the title
+    lLine = ['Cmd'] +( ['cnts', 'hex' ]*len(aSubNodes) )
+    lHdr = '|'.join(['']+[kCellFmt.format(lCell) for lCell in lLine]+[''])
+    print ( '-'*lLineLen)
+    print ( lHdr )
+    print ( '-'*lLineLen)
+
+    for lId in xrange(lNumCtrs):
+
+        lLine = [ (kCommandNames.get(lId,hex(lId))) ]
+        for lBlock in lBlocks:
+            lLine += [int(lBlock[lId]),hex(lBlock[lId])]
+        print( '|'.join(['']+[kCellFmt.format(lCell) for lCell in lLine]+['']))
+    print ( '-'*lLineLen)
 # -----------------
 
 @master.command('monitor', short_help='Display the status of the timing master.')
@@ -346,7 +413,10 @@ def monitor(obj, watch, period):
         if watch:
             click.clear()
         
-        echo( "-- Master state ---\n")
+        echo()
+        echo( "-- " + style("Master state", fg='green') + "---")
+        echo()
+
         secho( "=> Time sync generator", fg='green')
         lScmdGenNode = lDevice.getNode('master.scmd_gen')
         lScmdGenCtrlDump = toolbox.readSubNodes(lScmdGenNode.getNode('ctrl'))
@@ -374,7 +444,6 @@ def monitor(obj, watch, period):
         for n in sorted(lStatDump):
             echo( "  {} {}".format(n, hex(lStatDump[n])))
         echo()
-        # echo( 'Endpoint state: '+ kEpStates[int(lStatDump['ep_stat'])]) 
 
         lTimeStamp = lTStampNode.readBlock(2)
         lEventCtr = lPartNode.getNode('evtctr').read()
@@ -385,13 +454,11 @@ def monitor(obj, watch, period):
         echo( "EventCounter {}".format(lEventCtr))
         echo( "Buffer occupancy {}".format(lBufCount))
 
-        echo ()
-        secho ("Accept commands counters", fg='green')
-        printCounters(lPartNode.getNode('actrs'))
-        
-        echo ()
-        secho ("Reject commands counters", fg='green')
-        printCounters(lPartNode.getNode('rctrs'))
+        echo()
+        printCounters( lPartNode, {
+            'actrs': 'Accept counters',
+            'rctrs': 'Reject counters',
+            })
 
         if watch:
             time.sleep(period)
@@ -403,14 +470,14 @@ def monitor(obj, watch, period):
 # ------------------------------------------------------------------------------
 @master.command('send', short_help='Inject a single command.')
 @click.pass_obj
-@click.argument('cmd', type=click.Choice(kCommands.keys()))
-@click.option('-n', type=click.IntRange(0, 100), default=1)
+@click.argument('cmd', type=click.Choice(kCommandIDs.keys()))
+@click.option('-n', type=int, default=1)
 def send(obj, cmd, n):
     '''
     Inject a single command.
 
     CMD (str): Name of the command to inject '''
-    # + ','.join(kCommands.keys())
+    # + ','.join(kCommandIDs.keys())
 
     lDevice = obj.mDevice
 
@@ -419,7 +486,7 @@ def send(obj, cmd, n):
     toolbox.resetSubNodes(lGenChanCtrl)
 
     for i in xrange(n):
-        lGenChanCtrl.getNode('type').write(kCommands[cmd])
+        lGenChanCtrl.getNode('type').write(kCommandIDs[cmd])
         lGenChanCtrl.getNode('force').write(0x1)
         lTStamp = lDevice.getNode("master.global.tstamp").readBlock(2)
         lDevice.dispatch()
@@ -427,7 +494,7 @@ def send(obj, cmd, n):
         lGenChanCtrl.getNode('force').write(0x0)
         lDevice.dispatch()
         lTimeStamp = int(lTStamp[0]) + (int(lTStamp[1]) << 32)
-        echo("Command sent {}({}) @time {} {}".format(style(cmd, fg='blue'), kCommands[cmd], hex(lTimeStamp), lTimeStamp))
+        echo("Command sent {}({}) @time {} {}".format(style(cmd, fg='blue'), kCommandIDs[cmd], hex(lTimeStamp), lTimeStamp))
 # ------------------------------------------------------------------------------
 
 
@@ -451,7 +518,7 @@ def triggen(obj, divider, poisson):
 
     lGenChanCtrl = lDevice.getNode('master.scmd_gen.chan_ctrl')
 
-    lGenChanCtrl.getNode('type').write(kCommands['Trigger']) # Set command type = 3 for generator 0
+    lGenChanCtrl.getNode('type').write(kCommandIDs['Trigger']) # Set command type = 3 for generator 0
     lGenChanCtrl.getNode('rate_div').write(divider) # Set about 1Hz rate for generator 0
     lGenChanCtrl.getNode('patt').write(poisson) # Set Poisson mode for generator 0
     lGenChanCtrl.getClient().dispatch()
@@ -613,7 +680,9 @@ def monitor(obj, watch, period):
         lBufCount = lBufCountNode.read()
         lDevice.dispatch()
 
-        echo( "-- Endpoint state ---\n")
+        echo()
+        echo( "-- " + style("Endpoint state", fg='green') + "---")
+        echo()
 
         lStatDump = toolbox.readSubNodes(lEndPointNode.getNode('csr.stat'))
 
@@ -629,9 +698,13 @@ def monitor(obj, watch, period):
         echo( "Buffer occupancy {}".format(lBufCount))
         echo ()
 
-        secho ("Received commands counters", fg='green')
-        printCounters(lEndPointNode.getNode('ctrs'))
+        # secho ("Received commands counters", fg='green')
+        # printCounters(lEndPointNode.getNode('ctrs'))
         
+        echo()
+        printCounters( lEndPointNode, {
+            'ctrs': 'Received counters',
+            })
         if watch:
             time.sleep(period)
         else:
