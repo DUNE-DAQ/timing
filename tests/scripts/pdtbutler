@@ -319,6 +319,8 @@ def start(obj):
     - enables the readout buffer
     - enables triggers
     '''
+    lDevice = obj.mDevice
+    lPartNode = lDevice.getNode('master.partition')
  
     # Disable the buffer
     lPartNode.getNode('csr.ctrl.buf_en').write(0)
@@ -450,9 +452,13 @@ def monitor(obj, watch, period):
         lBufCount = lPartNode.getNode('buf.count').read()
         lDevice.dispatch()
 
-        echo( "Timestamp "+ hex(int(lTimeStamp[0]) + (int(lTimeStamp[1]) << 32)))
-        echo( "EventCounter {}".format(lEventCtr))
-        echo( "Buffer occupancy {}".format(lBufCount))
+        lTime = int(lTimeStamp[0]) + (int(lTimeStamp[1]) << 32)
+        echo( "Timestamp: {} ({})".format(style(str(lTime), fg='blue'), hex(lTime)) )
+        echo( "EventCounter: {}".format(lEventCtr))
+        lBufState = style('OK', fg='green') if lStatDump['buf_err'] == 0 else style('Error', fg='red')
+        # lStatDump['buf_empty']
+        echo( "Buffer status: " + lBufState)
+        echo( "Buffer occupancy: {}".format(lBufCount))
 
         echo()
         printCounters( lPartNode, {
