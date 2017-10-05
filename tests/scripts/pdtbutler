@@ -8,6 +8,7 @@ import click
 import click_didyoumean
 import time
 import collections
+# import operator
 
 # PDT imports
 import pdt
@@ -505,21 +506,47 @@ def send(obj, cmd, n):
 
 
 # ------------------------------------------------------------------------------
+
+# -----------------
+def validate_freq(ctx, param, value):
+
+    lFqMin = 0.5
+    lFqMax = 12500.0
+
+    if value < lFqMin or value > lFqMax:    
+        raise click.BadParameter(
+            'Frequency out of the allowed range {}-{} Hz'.format(lFqMin, lFqMax)
+            )
+
+    def div2freq(div):
+        return 50e6/(1<<(12+div))
+
+    # Brute force it
+    lDeltas = [ abs(value-div2freq(div)) for div in xrange(0x10) ]
+    lMinDeltaIdx = min(xrange(len(lDeltas)), key=lDeltas.__getitem__)
+    return value, lMinDeltaIdx, div2freq(lMinDeltaIdx)
+# -----------------
+
 @master.command()
 @click.pass_obj
-@click.argument('divider', type=click.IntRange(0, 0xf))
+# @click.argument('divider', type=click.IntRange(0, 0xf))
+@click.argument('freq', type=float, callback=validate_freq)
 @click.option('--poisson', is_flag=True, default=False, help="Randomize time interval between consecutive triggers.")
-def triggen(obj, divider, poisson):
+def triggen(obj, freq, poisson):
+# def triggen(obj, divider, freq, poisson):
     '''
     \b
     Enables the internal trigger generator.
     Configures the internal command generator to produce triggers at a defined frequency.
     
-    Rate = 50 Mhz / 2**( 12 + divider )
+    Rate = 50 Mhz / 2**( 12 + divider ) for divider between 0 and 15
 
     \b
-    DIVIDER (int): Trigger rate divider.
+    FREQ (int): Target trigger frequency.
     '''
+
+
+    target, divider, approx = freq
     lDevice = obj.mDevice
 
     lGenChanCtrl = lDevice.getNode('master.scmd_gen.chan_ctrl')
@@ -528,8 +555,14 @@ def triggen(obj, divider, poisson):
     lGenChanCtrl.getNode('rate_div').write(divider) # Set about 1Hz rate for generator 0
     lGenChanCtrl.getNode('patt').write(poisson) # Set Poisson mode for generator 0
     lGenChanCtrl.getClient().dispatch()
-    echo( "> Setting trigger rate to {:.3e} Hz".format((50e6/(1<<(12+divider)))))
-    echo( "> Trigger spacing mode:" + {False: 'equally spaced', True: 'poisson'}[poisson] )
+    echo( "> Trigger rate set to " + 
+        style(
+            "{:.3e} Hz".format(approx),
+            fg='yellow'
+            ) +
+        " (best approximation to {} Hz)".format(target)
+        ) 
+    echo( "> Trigger mode: " + style({False: 'periodic', True: 'poisson'}[poisson], fg='blue') )
 
     lGenChanCtrl.getNode("en").write(1) # Start the command stream
     lGenChanCtrl.getClient().dispatch()
