@@ -1,0 +1,114 @@
+# timing_board_sw.table
+# P. Rodrigues, Dec 2017
+# Mostly just copied from uhal.table
+
+File    = table
+Product = timing_board_sw
+
+#*************************************************
+# Starting Group definition
+Group:
+
+Flavor     = ANY
+Qualifiers = "e14:s48:prof"
+
+
+  Action = GetFQDir
+    if ( printenv CET_SUBDIR > /dev/null )
+      envSet( ${UPS_PROD_NAME_UC}_FQ_DIR, ${${UPS_PROD_NAME_UC}_DIR}/${CET_SUBDIR}.e14.prof.s48 )
+    else()
+      envSet( ${UPS_PROD_NAME_UC}_FQ_DIR, ${${UPS_PROD_NAME_UC}_DIR}/`get-directory-name subdir`.e14.prof.s48 )
+    endif ( printenv CET_SUBDIR > /dev/null )
+    fileTest( ${${UPS_PROD_NAME_UC}_FQ_DIR}, -d, "${${UPS_PROD_NAME_UC}_FQ_DIR} directory not found: SETUP ABORTED")
+
+  Action = GetProducts
+    envSet( ${UPS_PROD_NAME_UC}_CXXFLAGS, "-O3 -g -gdwarf-2 -fno-omit-frame-pointer -DRTI_UNIX -DRTI_LINUX -DRTI_64BIT -m64 -std=c++14" )
+    envSet( ${UPS_PROD_NAME_UC}_CFLAGS, "-O3 -g -gdwarf-2 -fno-omit-frame-pointer -DRTI_UNIX -DRTI_LINUX -DRTI_64BIT -m64" )
+    setupRequired( uhal v2_4_2 -q +e14:+prof )
+
+Common:
+  Action = setup
+    prodDir()
+    setupEnv()
+    envSet(${UPS_PROD_NAME_UC}_VERSION, __VERSION__)
+    # cetpkgsupport has get-directory-name and find-path
+    # cetpkgsupport also defines the CET_SUBDIR variable
+    setupRequired(cetpkgsupport)
+    exeActionRequired(GetFQDir)
+    envSet(${UPS_PROD_NAME_UC}_INC, ${UPS_PROD_DIR}/include) 
+
+    exeActionRequired(GetProducts)
+
+    envSet(${UPS_PROD_NAME_UC}_LIB, ${${UPS_PROD_NAME_UC}_FQ_DIR}/lib) 
+    if ( test `uname` = "Darwin" )
+      pathPrepend(DYLD_LIBRARY_PATH, ${${UPS_PROD_NAME_UC}_LIB})
+    else()
+      pathPrepend(LD_LIBRARY_PATH, ${${UPS_PROD_NAME_UC}_LIB})
+    endif ( test `uname` = "Darwin" )
+
+    # add the bin directory to the path
+    pathPrepend(PATH, ${${UPS_PROD_NAME_UC}_FQ_DIR}/bin )
+
+    # Prepend CMAKE_PREFIX_PATH for flavour qualified product
+    pathPrepend(CMAKE_PREFIX_PATH, ${${UPS_PROD_NAME_UC}_FQ_DIR})
+    pathPrepend(PKG_CONFIG_PATH, ${${UPS_PROD_NAME_UC}_FQ_DIR})
+    # Prepend ROOT_INCLUDE_PATH for dictionaries
+    pathPrepend(ROOT_INCLUDE_PATH, ${${UPS_PROD_NAME_UC}_INC}) 
+
+End:
+# End Group definition
+#*************************************************
+
+#*************************************************
+# Starting Group definition
+Group:
+
+Flavor     = ANY
+Qualifiers = "e14:s50:prof"
+
+
+  Action = GetFQDir
+    if ( printenv CET_SUBDIR > /dev/null )
+      envSet( ${UPS_PROD_NAME_UC}_FQ_DIR, ${${UPS_PROD_NAME_UC}_DIR}/${CET_SUBDIR}.e14.prof.s50 )
+    else()
+      envSet( ${UPS_PROD_NAME_UC}_FQ_DIR, ${${UPS_PROD_NAME_UC}_DIR}/`get-directory-name subdir`.e14.prof.s50 )
+    endif ( printenv CET_SUBDIR > /dev/null )
+    fileTest( ${${UPS_PROD_NAME_UC}_FQ_DIR}, -d, "${${UPS_PROD_NAME_UC}_FQ_DIR} directory not found: SETUP ABORTED")
+
+  Action = GetProducts
+    envSet( ${UPS_PROD_NAME_UC}_CXXFLAGS, "-O3 -g -gdwarf-2 -fno-omit-frame-pointer -DRTI_UNIX -DRTI_LINUX -DRTI_64BIT -m64 -std=c++14" )
+    envSet( ${UPS_PROD_NAME_UC}_CFLAGS, "-O3 -g -gdwarf-2 -fno-omit-frame-pointer -DRTI_UNIX -DRTI_LINUX -DRTI_64BIT -m64" )
+    setupRequired( boost v1_63_0b -q +e14:+prof )
+
+Common:
+  Action = setup
+    prodDir()
+    setupEnv()
+    envSet(${UPS_PROD_NAME_UC}_VERSION, __VERSION__)
+    # cetpkgsupport has get-directory-name and find-path
+    # cetpkgsupport also defines the CET_SUBDIR variable
+    setupRequired(cetpkgsupport)
+    exeActionRequired(GetFQDir)
+    envSet(${UPS_PROD_NAME_UC}_INC, ${UPS_PROD_DIR}/include) 
+
+    exeActionRequired(GetProducts)
+
+    envSet(${UPS_PROD_NAME_UC}_LIB, ${${UPS_PROD_NAME_UC}_FQ_DIR}/lib) 
+    if ( test `uname` = "Darwin" )
+      pathPrepend(DYLD_LIBRARY_PATH, ${${UPS_PROD_NAME_UC}_LIB})
+    else()
+      pathPrepend(LD_LIBRARY_PATH, ${${UPS_PROD_NAME_UC}_LIB})
+    endif ( test `uname` = "Darwin" )
+
+    # add the bin directory to the path
+    pathPrepend(PATH, ${${UPS_PROD_NAME_UC}_FQ_DIR}/bin )
+
+    # Prepend CMAKE_PREFIX_PATH for flavour qualified product
+    pathPrepend(CMAKE_PREFIX_PATH, ${${UPS_PROD_NAME_UC}_FQ_DIR})
+    pathPrepend(PKG_CONFIG_PATH, ${${UPS_PROD_NAME_UC}_FQ_DIR})
+    # Prepend ROOT_INCLUDE_PATH for dictionaries
+    pathPrepend(ROOT_INCLUDE_PATH, ${${UPS_PROD_NAME_UC}_INC}) 
+
+End:
+# End Group definition
+#*************************************************
