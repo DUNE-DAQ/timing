@@ -92,7 +92,7 @@ setup -c cetpkgsupport
 # MYPRODDIR=/nfs/home/phrodrig/protodune/timing/upsify/myproducts
 
 # The name of the UPS product we're making 
-PRODNAME=timing_board_sw
+PRODNAME=protodune_pdt_core
 # VERSION=v0_0_1
 # The necessary gubbins to find the directory name for the build in
 # UPS, so we get something like "slf7.x86_64.e14.prof.s50"
@@ -132,7 +132,7 @@ if ups exist ${PRODNAME} ${VERSION} -q ${QUALS}; then
     ups undeclare -z ${MYPRODDIR} -r ${VERSIONDIR} -5 -m ${TABLE} -q ${QUALS} ${PRODNAME} ${VERSION}
 fi
 
-ORIG_TABLE="${BUILDDIR}/config/timing_board_sw.table"
+ORIG_TABLE="${BUILDDIR}/config/${PRODNAME}.table"
 # Replace the version string in the table file with the version we were told on the command line
 sed -e "s,__VERSION__,${VERSION},g" ${ORIG_TABLE} > "${TABLE}"
 
@@ -157,17 +157,17 @@ else
     echo Setting up the new product succeeded
 fi
 
-if [ ! -d "${TIMING_BOARD_SW_INC}" ]; then
-    echo \$TIMING_BOARD_SW_INC is not defined or does not exist. I don\'t know what to do
+if [ ! -d "${PROTODUNE_PDT_CORE_INC}" ]; then
+    echo \$PROTODUNE_PDT_CORE_INC is not defined or does not exist. I don\'t know what to do
     exit 1
 fi
 
 if [ ! -d "${TIMING_BOARD_SW_LIB}" ]; then
-    echo \$TIMING_BOARD_SW_LIB is not defined or does not exist. I don\'t know what to do
+    echo \$PROTODUNE_PDT_CORE_LIB is not defined or does not exist. I don\'t know what to do
     exit 1
 fi
 
 # Now that everything's set up, we can actually copy the files we want
 # into the install directory
-cp -r ${BUILDDIR}/core/include/* ${TIMING_BOARD_SW_INC}
-cp -r ${BUILDDIR}/core/lib/* ${TIMING_BOARD_SW_LIB}
+cp -r ${BUILDDIR}/core/include/* ${PROTODUNE_PDT_CORE_INC}
+cp -r ${BUILDDIR}/core/lib/* ${PROTODUNE_PDT_CORE_LIB}

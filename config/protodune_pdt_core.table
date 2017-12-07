@@ -1,9 +1,9 @@
-# timing_board_sw.table
+# protodune_pdt_core.table
 # P. Rodrigues, Dec 2017
 # Mostly just copied from uhal.table
 
 File    = table
-Product = timing_board_sw
+Product = protodune_pdt_core
 
 #*************************************************
 # Starting Group definition
