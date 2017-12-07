@@ -94,6 +94,13 @@ endif
 # two have different directory layouts. So we set the paths depending
 # on whether USE_UPS_CACTUS is set from the command line
 ifdef USE_UPS_CACTUS
+    # Check that uhal has been setup by ups
+    ifndef UHAL_INC
+        $(error UHAL_INC is not set. Make sure uhal has been setup via ups)
+    endif
+    ifndef UHAL_LIB
+        $(error UHAL_LIB is not set. Make sure uhal has been setup via ups)
+    endif
     CACTUS_INC_DIRS := $(UHAL_INC) $(UHAL_INC)/uhal
     $(info Using CACTUS_INC_DIRS=${CACTUS_INC_DIRS})
     CACTUS_LIB_DIRS := $(UHAL_LIB)
