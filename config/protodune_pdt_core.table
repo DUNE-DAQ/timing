@@ -22,8 +22,6 @@ Qualifiers = "e14:s48:prof"
     fileTest( ${${UPS_PROD_NAME_UC}_FQ_DIR}, -d, "${${UPS_PROD_NAME_UC}_FQ_DIR} directory not found: SETUP ABORTED")
 
   Action = GetProducts
-    envSet( ${UPS_PROD_NAME_UC}_CXXFLAGS, "-O3 -g -gdwarf-2 -fno-omit-frame-pointer -DRTI_UNIX -DRTI_LINUX -DRTI_64BIT -m64 -std=c++14" )
-    envSet( ${UPS_PROD_NAME_UC}_CFLAGS, "-O3 -g -gdwarf-2 -fno-omit-frame-pointer -DRTI_UNIX -DRTI_LINUX -DRTI_64BIT -m64" )
     setupRequired( uhal __REQUIRED_UHAL_VERSION__ -q +e14:+prof )
 
 Common:
@@ -48,12 +46,6 @@ Common:
 
     # add the bin directory to the path
     pathPrepend(PATH, ${${UPS_PROD_NAME_UC}_FQ_DIR}/bin )
-
-    # Prepend CMAKE_PREFIX_PATH for flavour qualified product
-    pathPrepend(CMAKE_PREFIX_PATH, ${${UPS_PROD_NAME_UC}_FQ_DIR})
-    pathPrepend(PKG_CONFIG_PATH, ${${UPS_PROD_NAME_UC}_FQ_DIR})
-    # Prepend ROOT_INCLUDE_PATH for dictionaries
-    pathPrepend(ROOT_INCLUDE_PATH, ${${UPS_PROD_NAME_UC}_INC}) 
 
 End:
 # End Group definition
@@ -76,8 +68,6 @@ Qualifiers = "e14:s50:prof"
     fileTest( ${${UPS_PROD_NAME_UC}_FQ_DIR}, -d, "${${UPS_PROD_NAME_UC}_FQ_DIR} directory not found: SETUP ABORTED")
 
   Action = GetProducts
-    envSet( ${UPS_PROD_NAME_UC}_CXXFLAGS, "-O3 -g -gdwarf-2 -fno-omit-frame-pointer -DRTI_UNIX -DRTI_LINUX -DRTI_64BIT -m64 -std=c++14" )
-    envSet( ${UPS_PROD_NAME_UC}_CFLAGS, "-O3 -g -gdwarf-2 -fno-omit-frame-pointer -DRTI_UNIX -DRTI_LINUX -DRTI_64BIT -m64" )
     setupRequired( uhal __REQUIRED_UHAL_VERSION__ -q +e14:+prof )
 
 Common:
@@ -102,12 +92,6 @@ Common:
 
     # add the bin directory to the path
     pathPrepend(PATH, ${${UPS_PROD_NAME_UC}_FQ_DIR}/bin )
-
-    # Prepend CMAKE_PREFIX_PATH for flavour qualified product
-    pathPrepend(CMAKE_PREFIX_PATH, ${${UPS_PROD_NAME_UC}_FQ_DIR})
-    pathPrepend(PKG_CONFIG_PATH, ${${UPS_PROD_NAME_UC}_FQ_DIR})
-    # Prepend ROOT_INCLUDE_PATH for dictionaries
-    pathPrepend(ROOT_INCLUDE_PATH, ${${UPS_PROD_NAME_UC}_INC}) 
 
 End:
 # End Group definition
