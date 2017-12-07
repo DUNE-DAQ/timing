@@ -27,6 +27,15 @@ CxxFlags += \
 		-O0 -rdynamic -finline-functions \
 		-Wno-inline -DNDEBUG
 
+# If we're using the UPS version of uhal, along with its newer
+# compiler and newer boost, we get deprecation warnings for auto_ptr,
+# so quieten those down
+#
+# https://svn.boost.org/trac10/ticket/11622
+ifdef USE_UPS_CACTUS
+    CxxFlags := $(CxxFlags) -Wno-deprecated-declarations
+endif
+
 Library = protodune_pdt_python
 
 # The leading undescore is meant to be there

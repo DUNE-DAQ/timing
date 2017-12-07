@@ -101,9 +101,9 @@ ifdef USE_UPS_CACTUS
     ifndef UHAL_LIB
         $(error UHAL_LIB is not set. Make sure uhal has been setup via ups)
     endif
-    CACTUS_INC_DIRS := $(UHAL_INC) $(UHAL_INC)/uhal
+    CACTUS_INC_DIRS := $(UHAL_INC) $(UHAL_INC)/uhal $(BOOST_INC)
     $(info Using CACTUS_INC_DIRS=${CACTUS_INC_DIRS})
-    CACTUS_LIB_DIRS := $(UHAL_LIB)
+    CACTUS_LIB_DIRS := $(UHAL_LIB) $(BOOST_LIB)
     $(info Using CACTUS_LIB_DIRS=${CACTUS_LIB_DIRS})
 else 
     CACTUS_ROOT ?= /opt/cactus

@@ -8,6 +8,12 @@
 #ifndef __PDT_PYTHON_CONVERTERS_HPP__
 #define	__PDT_PYTHON_CONVERTERS_HPP__
 
+// (PAR 2017-12-07) When building against the ups version of uhal
+// along with its corresponding version of python, this header needs
+// to be first to avoid a compiler warning about _POSIX_C_SOURCE being
+// redefined. I don't really understand why
+#include <boost/python.hpp>
+
 // C++ Headers
 #include <vector>
 #include <map>
