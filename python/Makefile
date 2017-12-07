@@ -37,7 +37,7 @@ Includes = \
     include \
     $(PYTHON_INCLUDE_PREFIX) \
     $(PDT_ROOT)/core/include \
-    $(CACTUS_ROOT)/include 
+    $(CACTUS_INC_DIRS)
 
 Libraries = \
 	boost_python \
@@ -45,7 +45,7 @@ Libraries = \
 
 LibraryPaths = \
 	$(PDT_ROOT)/core/lib \
-    $(CACTUS_ROOT)/lib 
+        $(CACTUS_LIB_DIRS)
 
 
 include ${PDT_ROOT}/config/mfRules.mk

@@ -26,21 +26,6 @@ endif
 
 $(info Detected OS $(PDT_OS))
 
-# Environment
-# Ensure that $CACTUS_ROOT/lib is present in LD_LIBRARY_PATH
-
-# Cactus config. This section shall be sources from /opt/pdf/config
-CACTUS_ROOT ?= /opt/cactus
-
-ifeq ($(findstring $(CACTUS_ROOT)/lib,$(LD_LIBRARY_PATH)),)
-    $(info CACTUS_ROOT/lib added to LD_LIBRARY_PATH)
-    LD_LIBRARY_PATH:=$(CACTUS_ROOT)/lib:$(LD_LIBRARY_PATH)
-else
-    $(info CACTUS_ROOT already in LD_LIBRARY_PATH)
-endif
-
-export LD_LIBRARY_PATH
-
 #$(info Linker path: $(LD_LIBRARY_PATH))
 VERBOSE ?= 0
 
@@ -104,3 +89,29 @@ else
     ExecutableLinkFlags = -g -ggdb -Wall -std=c++11
 endif
 
+# We want to be able to build against both the system cactus library
+# in /opt/cactus and the one in ups. This would be easy, except the
+# two have different directory layouts. So we set the paths depending
+# on whether USE_UPS_CACTUS is set from the command line
+ifdef USE_UPS_CACTUS
+    CACTUS_INC_DIRS := $(UHAL_INC) $(UHAL_INC)/uhal
+    $(info Using CACTUS_INC_DIRS=${CACTUS_INC_DIRS})
+    CACTUS_LIB_DIRS := $(UHAL_LIB)
+    $(info Using CACTUS_LIB_DIRS=${CACTUS_LIB_DIRS})
+else 
+    CACTUS_ROOT ?= /opt/cactus
+    CACTUS_INC_DIRS := $(CACTUS_ROOT)/include
+    CACTUS_LIB_DIRS := $(CACTUS_ROOT)/lib
+
+    # Environment
+    # Ensure that $CACTUS_ROOT/lib is present in LD_LIBRARY_PATH
+    ifeq ($(findstring $(CACTUS_ROOT)/lib,$(LD_LIBRARY_PATH)),)
+        $(info CACTUS_ROOT/lib added to LD_LIBRARY_PATH)
+        LD_LIBRARY_PATH:=$(CACTUS_ROOT)/lib:$(LD_LIBRARY_PATH)
+    else
+        $(info CACTUS_ROOT already in LD_LIBRARY_PATH)
+    endif
+
+    export LD_LIBRARY_PATH
+
+endif
