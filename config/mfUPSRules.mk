@@ -8,6 +8,7 @@ ups: _ups
 
 _ups:
 	$(INSTALL_SCRIPT) -v v$(PACKAGE_VER_MAJOR)_$(PACKAGE_VER_MINOR)_$(PACKAGE_VER_PATCH) \
+	                  -u $(RequiredUhalVersion) \
 	                  -b $(PDT_ROOT) \
 	                  -i $(UPS_PRODUCT_DIR) \
 	                  -q $(UPS_QUALIFIERS)

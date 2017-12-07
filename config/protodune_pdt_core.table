@@ -24,7 +24,7 @@ Qualifiers = "e14:s48:prof"
   Action = GetProducts
     envSet( ${UPS_PROD_NAME_UC}_CXXFLAGS, "-O3 -g -gdwarf-2 -fno-omit-frame-pointer -DRTI_UNIX -DRTI_LINUX -DRTI_64BIT -m64 -std=c++14" )
     envSet( ${UPS_PROD_NAME_UC}_CFLAGS, "-O3 -g -gdwarf-2 -fno-omit-frame-pointer -DRTI_UNIX -DRTI_LINUX -DRTI_64BIT -m64" )
-    setupRequired( uhal v2_4_2 -q +e14:+prof )
+    setupRequired( uhal __REQUIRED_UHAL_VERSION__ -q +e14:+prof )
 
 Common:
   Action = setup
@@ -78,7 +78,7 @@ Qualifiers = "e14:s50:prof"
   Action = GetProducts
     envSet( ${UPS_PROD_NAME_UC}_CXXFLAGS, "-O3 -g -gdwarf-2 -fno-omit-frame-pointer -DRTI_UNIX -DRTI_LINUX -DRTI_64BIT -m64 -std=c++14" )
     envSet( ${UPS_PROD_NAME_UC}_CFLAGS, "-O3 -g -gdwarf-2 -fno-omit-frame-pointer -DRTI_UNIX -DRTI_LINUX -DRTI_64BIT -m64" )
-    setupRequired( boost v1_63_0b -q +e14:+prof )
+    setupRequired( uhal __REQUIRED_UHAL_VERSION__ -q +e14:+prof )
 
 Common:
   Action = setup

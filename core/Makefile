@@ -16,8 +16,13 @@ PACKAGE_VER_MINOR = 1
 PACKAGE_VER_PATCH = 0
 PACKAGE_RELEASE = 0
 
+# Requirements for the rpm build
 PackageRequires = cactuscore-uhal-uhal >= 2.5.0, cactuscore-uhal-uhal < 2.6.0
 PackageBuildRequires = ${PackageRequires}
+# Requirements for the UPS build. UPS versions look different to RPM
+# versions (vX_Y_Z vs X.Y.Z) and the dependency has to be on a
+# specific version, not a range, so we need this duplication
+RequiredUhalVersion = v2_4_2
 
 Library = protodune_pdt_core
 

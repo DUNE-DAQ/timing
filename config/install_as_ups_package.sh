@@ -5,13 +5,14 @@ usage()
     echo "Usage:" >&2
     echo "$(basename $0) -v version -b builddir -i installdir -q qualifiers" >&2
     echo
-    echo " -v version:    software version string for ups"                   >&2
-    echo " -b builddir:   the root directory of where the sw was built"      >&2
-    echo " -i installdir: the ups products directory to install into"        >&2
-    echo " -q qualifiers: the ups qualifiers for this build"                 >&2
+    echo " -v version:     software version string for ups"                   >&2
+    echo " -u uhalversion: required version of uhal"                          >&2
+    echo " -b builddir:    the root directory of where the sw was built"      >&2
+    echo " -i installdir:  the ups products directory to install into"        >&2
+    echo " -q qualifiers:  the ups qualifiers for this build"                 >&2
 }
 
-while getopts "b:i:v:q:h" opt; do
+while getopts "b:i:u:v:q:h" opt; do
     case $opt in
 	b)
 	    # Where the timing board software was built
@@ -24,6 +25,10 @@ while getopts "b:i:v:q:h" opt; do
 	v)
 	    # The version string for UPS
 	    VERSION="${OPTARG}"
+	    ;;
+	u)
+	    # The version of uhal we depend on
+	    UHALVERSION="${OPTARG}"
 	    ;;
 	q)
 	    # The qualifiers for UPS, colon-separated
@@ -83,6 +88,12 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
+if [ -z "$UHALVERSION" ]; then
+    echo "uhal version not set. Use -u" >&2
+    usage
+    exit 1
+fi
+
 # Setup UPS, since we'll be needing it later
 . /nfs/sw/artdaq/products/setups
 # We use get-directory-name from cetpkgsupport below
@@ -134,7 +145,7 @@ fi
 
 ORIG_TABLE="${BUILDDIR}/config/${PRODNAME}.table"
 # Replace the version string in the table file with the version we were told on the command line
-sed -e "s,__VERSION__,${VERSION},g" ${ORIG_TABLE} > "${TABLE}"
+sed -e "s,__VERSION__,${VERSION},g" -e "s,__REQUIRED_UHAL_VERSION__,${UHALVERSION},g" ${ORIG_TABLE} > "${TABLE}"
 
 echo Declaring with:
 echo ups declare -z ${MYPRODDIR} -r ${VERSIONDIR} -5 -m ${TABLE} -q ${QUALS} ${PRODNAME} ${VERSION}
@@ -146,7 +157,7 @@ if [ "$?" != "0" ]; then
 fi
 
 echo Now ups list says the available builds are:
-ups list -aK+ timing_board_sw
+ups list -aK+ protodune_pdt_core
 
 setup ${PRODNAME} ${VERSION} -q ${QUALS}
 
@@ -162,7 +173,7 @@ if [ ! -d "${PROTODUNE_PDT_CORE_INC}" ]; then
     exit 1
 fi
 
-if [ ! -d "${TIMING_BOARD_SW_LIB}" ]; then
+if [ ! -d "${PROTODUNE_PDT_CORE_LIB}" ]; then
     echo \$PROTODUNE_PDT_CORE_LIB is not defined or does not exist. I don\'t know what to do
     exit 1
 fi
