@@ -22,7 +22,7 @@ Qualifiers = "e14:s48:prof"
     fileTest( ${${UPS_PROD_NAME_UC}_FQ_DIR}, -d, "${${UPS_PROD_NAME_UC}_FQ_DIR} directory not found: SETUP ABORTED")
 
   Action = GetProducts
-    setupRequired( uhal __REQUIRED_UHAL_VERSION__ -q +e14:+prof )
+    setupRequired( uhal __REQUIRED_UHAL_VERSION__ -q +e14:+prof:s48 )
 
 Common:
   Action = setup
@@ -68,7 +68,7 @@ Qualifiers = "e14:s50:prof"
     fileTest( ${${UPS_PROD_NAME_UC}_FQ_DIR}, -d, "${${UPS_PROD_NAME_UC}_FQ_DIR} directory not found: SETUP ABORTED")
 
   Action = GetProducts
-    setupRequired( uhal __REQUIRED_UHAL_VERSION__ -q +e14:+prof )
+    setupRequired( uhal __REQUIRED_UHAL_VERSION__ -q +e14:+prof:s50 )
 
 Common:
   Action = setup
