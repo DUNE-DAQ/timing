@@ -14,12 +14,18 @@
 // Namespace resolution
 using namespace boost::python;
 
+
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PartitionNode_enable_overloads, enable, 0, 2);
+
 namespace pdt {
 namespace python {
 
 void
 register_partition() {
   class_<pdt::PartitionNode, bases<uhal::Node> > ("PartitionNode", init<const uhal::Node&>())
+      .def("readCommandMask", &pdt::PartitionNode::readCommandMask)
+      .def("setCommandMask", &pdt::PartitionNode::setCommandMask)
+      .def("enable", &pdt::PartitionNode::enable, pdt_PartitionNode_enable_overloads())
       .def("reset", &pdt::PartitionNode::reset)
       .def("start", &pdt::PartitionNode::start)
       .def("stop", &pdt::PartitionNode::stop)

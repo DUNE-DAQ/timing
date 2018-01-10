@@ -20,9 +20,31 @@ PartitionNode::~PartitionNode() {
 
 //-----------------------------------------------------------------------------
 void
-PartitionNode::enableNow(bool aEnable) const {
+PartitionNode::enable(bool aEnable, bool aDispatch) const {
     getNode("csr.ctrl.part_en").write(1);
+    
+    if ( aDispatch )
+        getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void
+PartitionNode::setCommandMask( uint32_t aMask) const {
+    getNode("csr.ctrl.cmd_mask").write(aMask);
     getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+uint32_t
+PartitionNode::readCommandMask() const {
+    uhal::ValWord<uint32_t> lMask = getNode("csr.ctrl.cmd_mask").read();
+    getClient().dispatch();
+
+    return lMask;
 }
 //-----------------------------------------------------------------------------
 
