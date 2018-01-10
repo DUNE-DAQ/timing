@@ -1,5 +1,6 @@
 PACKAGES = \
 	core \
+	daemon \
 	python \
 	tests
 
