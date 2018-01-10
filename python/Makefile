@@ -22,19 +22,17 @@ PACKAGE_RELEASE = 0
 PackageRequires = cactuscore-uhal-uhal >= 2.5.0, cactuscore-uhal-uhal < 2.6.0
 PackageBuildRequires=${PackageRequires}
 
+# Rationale for -Wno-deprecated-declarations: If we're using the UPS
+# version of uhal, along with its newer compiler and newer boost, we
+# get deprecation warnings for auto_ptr, so quieten those down
+#
+# https://svn.boost.org/trac10/ticket/11622
+
 CxxFlags += \
 		-ftemplate-depth-128 \
 		-O0 -rdynamic -finline-functions \
-		-Wno-inline -DNDEBUG
-
-# If we're using the UPS version of uhal, along with its newer
-# compiler and newer boost, we get deprecation warnings for auto_ptr,
-# so quieten those down
-#
-# https://svn.boost.org/trac10/ticket/11622
-ifdef USE_UPS_CACTUS
-    CxxFlags := $(CxxFlags) -Wno-deprecated-declarations
-endif
+		-Wno-inline -Wno-deprecated-declarations \
+		-DNDEBUG
 
 Library = protodune_pdt_python
 
