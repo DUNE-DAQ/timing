@@ -291,12 +291,19 @@ def configure(obj, partition):
     
     echo()
     echo("Configuring partition {}".format(partition))
-    lPartNode.getNode('csr.ctrl.part_en').write(0) # Enable partition 0
-    lPartNode.getNode('csr.ctrl.buf_en').write(0) # Disable buffer in partition 0
-    lPartNode.getNode('csr.ctrl.evtctr_rst').write(1) # Disable buffer in partition 0
-    lPartNode.getNode('csr.ctrl.trig_ctr_rst').write(1) # Disable buffer in partition 0
-    lPartNode.getNode('csr.ctrl.evtctr_rst').write(0) # Disable buffer in partition 0
-    lPartNode.getNode('csr.ctrl.trig_ctr_rst').write(0) # Disable buffer in partition 0
+    # Disable partition 0
+    lPartNode.getNode('csr.ctrl.part_en').write(0) 
+    # Disable buffer in partition 0
+    lPartNode.getNode('csr.ctrl.buf_en').write(0) 
+    # Reset event counter
+    lPartNode.getNode('csr.ctrl.evtctr_rst').write(1) 
+    # Disable buffer in partition 0
+    lPartNode.getNode('csr.ctrl.trig_ctr_rst').write(1) 
+    # Disable buffer in partition 0
+    lPartNode.getNode('csr.ctrl.evtctr_rst').write(0) 
+    # Disable buffer in partition 0
+    lPartNode.getNode('csr.ctrl.trig_ctr_rst').write(0) 
+    
     lPartNode.getNode('csr.ctrl.cmd_mask').write(0x0f) 
     lDevice.dispatch()
 

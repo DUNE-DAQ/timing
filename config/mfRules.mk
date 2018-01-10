@@ -61,8 +61,8 @@ build: _all
 buildall: _all
 _all: ${LibraryTarget} ${Executables} ${ExtraTargets}
 
-.PHONY: objects
-objects: ${LibraryObjectFiles} ${ExecutableObjectFiles}
+.PHONY: objs
+objs: ${LibraryObjectFiles} ${ExecutableObjectFiles}
 
 
 # Implicit rule for .cpp -> .o 
