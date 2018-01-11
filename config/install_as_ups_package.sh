@@ -162,8 +162,11 @@ mkdir -p "${VERSIONDIR}/${SUBDIR}.${QUALSDIR}/lib" || exit 1
 
 ORIG_PRODUCT_DEPS="${BUILDDIR}/config/product_deps.template"
 
-# Replace the version string in the table file with the version we were told on the command line
-sed -e "s,__VERSION__,${VERSION},g" -e "s,__REQUIRED_UHAL_VERSION__,${UHALVERSION},g" ${ORIG_PRODUCT_DEPS} > "${VERSIONDIR}/ups/product_deps" || exit 1
+# Replace the version string, etc, in the table file with the version we were told on the command line
+sed -e "s,__PRODUCT__,${PRODNAME},g" \
+    -e "s,__VERSION__,${VERSION},g" \
+    -e "s,__REQUIRED_UHAL_VERSION__,${UHALVERSION},g" \
+    ${ORIG_PRODUCT_DEPS} > "${VERSIONDIR}/ups/product_deps" || exit 1
 
 # Make the table file from the product_deps file
 build_table ${VERSIONDIR}/ups ${VERSIONDIR}/ups || exit 1
@@ -203,7 +206,6 @@ if [ "$?" != "0" ]; then
 else
     echo Setting up the new product succeeded
 fi
-
 
 PRODNAME_UC=$(echo $PRODNAME | tr '[:lower:]' '[:upper:]')
 PRODNAME_UC_INC="${PRODNAME_UC}_INC"

@@ -1,7 +1,8 @@
 # Based on instructions in https://cdcvs.fnal.gov/redmine/projects/cet-is-public/wiki/Defining_products_in_the_CET_build_environment
-# __VERSION__ and __REQUIRED_UHAL_VERSION__ are overwritten by install_as_ups_package.sh
+# __PRODUCT__ __VERSION__ and __REQUIRED_UHAL_VERSION__ are overwritten by install_as_ups_package.sh
 
-parent protodune_pdt_core __VERSION__
+# The name and version of the product
+parent __PRODUCT__ __VERSION__
 
 defaultqual e14:s50
 
