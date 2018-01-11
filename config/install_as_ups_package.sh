@@ -98,9 +98,30 @@ fi
 . /nfs/sw/artdaq/products/setups
 # We use get-directory-name from cetpkgsupport below
 setup -c cetpkgsupport
+# We use build_table from cetbuildtools to make the table file from the product_deps file
+setup cetbuildtools v5_14_03
 
-# BUILDDIR=/nfs/home/phrodrig/protodune/timing/upsify/timing-board-software
-# MYPRODDIR=/nfs/home/phrodrig/protodune/timing/upsify/myproducts
+
+# Sort the qualifiers in the same way as build_table does:
+# 'prof'/'debug' at the end, and the rest in alphabetical order
+function sort_quals
+{
+    ret=""
+    optimization=""
+    for i in $(echo $1 | tr ':' '\n' | sort); do
+        if [[ $i = "prof" || $i = "debug" ]]; then
+            optimization="$i"
+        else
+            ret="$ret $i"
+        fi
+    done
+    ret="$ret $optimization"
+    # Use printf not echo deliberately here: $ret gets split into
+    # words, and printf prints each as "%s\n", so now there are line
+    # breaks between the quals
+    printf "%s\n" $ret | paste -sd:
+}
+
 
 # The name of the UPS product we're making 
 PRODNAME=protodune_pdt_core
@@ -110,6 +131,7 @@ PRODNAME=protodune_pdt_core
 SUBDIR=`get-directory-name subdir` || exit 1
 # Sometimes we need the qualifiers colon-separated, sometimes
 # dot-separated, so form both
+QUALS=$(sort_quals ${QUALS})
 QUALSDIR=$(echo ${QUALS} | tr ':' '.')
 
 # Is my installation dir already in the places where UPS will look? If not, add it
@@ -129,6 +151,14 @@ mkdir -p "${VERSIONDIR}/include"                   || exit 1
 mkdir -p "${VERSIONDIR}/${SUBDIR}.${QUALSDIR}"     || exit 1
 mkdir -p "${VERSIONDIR}/${SUBDIR}.${QUALSDIR}/lib" || exit 1
 
+ORIG_PRODUCT_DEPS="${BUILDDIR}/config/product_deps.template"
+
+# Replace the version string in the table file with the version we were told on the command line
+sed -e "s,__VERSION__,${VERSION},g" -e "s,__REQUIRED_UHAL_VERSION__,${UHALVERSION},g" ${ORIG_PRODUCT_DEPS} > "${VERSIONDIR}/ups/product_deps" || exit 1
+
+# Make the table file from the product_deps file
+build_table ${VERSIONDIR}/ups ${VERSIONDIR}/ups || exit 1
+
 TABLE="${VERSIONDIR}/ups/${PRODNAME}.table"
 
 # Not sure what the best thing to do if the product is already built
@@ -137,15 +167,12 @@ TABLE="${VERSIONDIR}/ups/${PRODNAME}.table"
 if ups exist ${PRODNAME} ${VERSION} -q ${QUALS}; then
     echo
     echo Product already exists with this version. I will undeclare it and re-declare
-    echo You may want to manually remove ${VERSIONDIR}/${SUBDIR}.${QUALSDIR} or even
+    echo You may want to manually remove ${VERSIONDIR}'/*' or even
     echo ${VERSIONDIR} and rerun 'make ups'
     echo 
     ups undeclare -z ${MYPRODDIR} -r ${VERSIONDIR} -5 -m ${TABLE} -q ${QUALS} ${PRODNAME} ${VERSION}
 fi
 
-ORIG_TABLE="${BUILDDIR}/config/${PRODNAME}.table"
-# Replace the version string in the table file with the version we were told on the command line
-sed -e "s,__VERSION__,${VERSION},g" -e "s,__REQUIRED_UHAL_VERSION__,${UHALVERSION},g" ${ORIG_TABLE} > "${TABLE}"
 
 echo Declaring with:
 echo ups declare -z ${MYPRODDIR} -r ${VERSIONDIR} -5 -m ${TABLE} -q ${QUALS} ${PRODNAME} ${VERSION}
