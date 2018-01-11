@@ -5,6 +5,7 @@ usage()
     echo "Usage:" >&2
     echo "$(basename $0) -v version -b builddir -i installdir -q qualifiers" >&2
     echo
+    echo " -p product:     name of ups product"                               >&2
     echo " -v version:     software version string for ups"                   >&2
     echo " -u uhalversion: required version of uhal"                          >&2
     echo " -b builddir:    the root directory of where the sw was built"      >&2
@@ -12,7 +13,7 @@ usage()
     echo " -q qualifiers:  the ups qualifiers for this build"                 >&2
 }
 
-while getopts "b:i:u:v:q:h" opt; do
+while getopts "p:b:i:u:v:q:h" opt; do
     case $opt in
 	b)
 	    # Where the timing board software was built
@@ -21,6 +22,10 @@ while getopts "b:i:u:v:q:h" opt; do
 	i)
 	    # The products directory we want to install the UPS version in
 	    MYPRODDIR="${OPTARG}"
+	    ;;
+	p)
+	    # The product name
+	    PRODNAME="${OPTARG}"
 	    ;;
 	v)
 	    # The version string for UPS
@@ -88,6 +93,12 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
+if [ -z "$PRODNAME" ]; then
+    echo "Product name not set. Use -p" >&2
+    usage
+    exit 1
+fi
+
 if [ -z "$UHALVERSION" ]; then
     echo "uhal version not set. Use -u" >&2
     usage
@@ -123,8 +134,6 @@ function sort_quals
 }
 
 
-# The name of the UPS product we're making 
-PRODNAME=protodune_pdt_core
 # VERSION=v0_0_1
 # The necessary gubbins to find the directory name for the build in
 # UPS, so we get something like "slf7.x86_64.e14.prof.s50"
@@ -184,7 +193,7 @@ if [ "$?" != "0" ]; then
 fi
 
 echo Now ups list says the available builds are:
-ups list -aK+ protodune_pdt_core
+ups list -aK+ ${PRODNAME}
 
 setup ${PRODNAME} ${VERSION} -q ${QUALS}
 
@@ -195,17 +204,22 @@ else
     echo Setting up the new product succeeded
 fi
 
-if [ ! -d "${PROTODUNE_PDT_CORE_INC}" ]; then
-    echo \$PROTODUNE_PDT_CORE_INC is not defined or does not exist. I don\'t know what to do
+
+PRODNAME_UC=$(echo $PRODNAME | tr '[:lower:]' '[:upper:]')
+PRODNAME_UC_INC="${PRODNAME_UC}_INC"
+PRODNAME_UC_LIB="${PRODNAME_UC}_LIB"
+
+if [ ! -d "${!PRODNAME_UC_INC}" ]; then
+    echo $PRODNAME_UC_INC is not defined or does not exist. I don\'t know what to do
     exit 1
 fi
 
-if [ ! -d "${PROTODUNE_PDT_CORE_LIB}" ]; then
-    echo \$PROTODUNE_PDT_CORE_LIB is not defined or does not exist. I don\'t know what to do
+if [ ! -d "${!PRODNAME_UC_LIB}" ]; then
+    echo $PRODNAME_UC_LIB is not defined or does not exist. I don\'t know what to do
     exit 1
 fi
 
 # Now that everything's set up, we can actually copy the files we want
 # into the install directory
-cp -r ${BUILDDIR}/core/include/* ${PROTODUNE_PDT_CORE_INC}
-cp -r ${BUILDDIR}/core/lib/* ${PROTODUNE_PDT_CORE_LIB}
+cp -r ${BUILDDIR}/core/include/* ${!PRODNAME_UC_INC}
+cp -r ${BUILDDIR}/core/lib/* ${!PRODNAME_UC_LIB}
