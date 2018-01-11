@@ -1,0 +1,17 @@
+# Based on instructions in https://cdcvs.fnal.gov/redmine/projects/cet-is-public/wiki/Defining_products_in_the_CET_build_environment
+
+parent protodune_pdt_core v0_1_0
+
+defaultqual e14:s50
+
+fcldir -
+bindir -
+
+product	    version
+uhal	    v2_4_2
+end_product_list
+
+qualifier	uhal
+e14:prof:s50	e14:s50:prof	
+e14:s50:debug	e14:s50:debug	
+end_qualifier_list
