@@ -92,8 +92,9 @@ endif
 # We want to be able to build against both the system cactus library
 # in /opt/cactus and the one in ups. This would be easy, except the
 # two have different directory layouts. So we set the paths depending
-# on whether USE_UPS_CACTUS is set from the command line
-ifdef USE_UPS_CACTUS
+# on whether the ups version of uhal has been setup, as indicated by
+# $SETUP_UHAL
+ifdef SETUP_UHAL
     # Check that uhal has been setup by ups
     ifndef UHAL_INC
         $(error UHAL_INC is not set. Make sure uhal has been setup via ups)
