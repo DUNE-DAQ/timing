@@ -1,4 +1,4 @@
-INSTALL_SCRIPT := $(PDT_ROOT)/config/install_as_ups_package.sh
+INSTALL_SCRIPT := $(PDT_ROOT)/config/create_ups_product.sh
 UPS_PRODUCT_DIR ?= $(PDT_ROOT)/ups/products
 UPS_QUALIFIERS ?= e14:prof:s50
 # UPS product names can't contain dashes so replace them with underscores

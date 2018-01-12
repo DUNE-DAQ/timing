@@ -1,5 +1,5 @@
 # Based on instructions in https://cdcvs.fnal.gov/redmine/projects/cet-is-public/wiki/Defining_products_in_the_CET_build_environment
-# __PRODUCT__ __VERSION__ and __REQUIRED_UHAL_VERSION__ are overwritten by install_as_ups_package.sh
+# __PRODUCT__ __VERSION__ and __REQUIRED_UHAL_VERSION__ are overwritten by create_ups_product.sh
 
 # The name and version of the product
 parent __PRODUCT__ __VERSION__
@@ -22,7 +22,7 @@ end_product_list
 # non-debug build): build_table will make a table file that contains
 # all the qualifiers, but ups will only look at qualifiers that have
 # been explicitly declared, and we explicitly declare the right one in
-# install_as_ups_package.sh
+# create_ups_product.sh
 
 qualifier	uhal
 e14:prof:s50	e14:s50:prof	
