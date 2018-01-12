@@ -58,7 +58,16 @@ register_converters() {
     // Duplicated converter
         Converter_std_vector_from_list<uint8_t>();
         bpy::to_python_converter< std::vector<uint8_t>, Converter_std_vector_to_list<uint8_t> >();
-    }   
+    }
+
+    // // std::vector<uint32_t>
+    // reg = bpy::converter::registry::query(bpy::type_id< std::vector<uint32_t> >());
+    // if (reg == NULL or (*reg).m_to_python == NULL) {
+    // // Duplicated converter
+    //     Converter_std_vector_from_list<uint32_t>();
+    //     bpy::to_python_converter< std::vector<uint32_t>, Converter_std_vector_to_list<uint32_t> >();
+    // }   
+
 
     // std::vector<uint64_t>
     reg = bpy::converter::registry::query(bpy::type_id< std::vector<uint64_t> >());

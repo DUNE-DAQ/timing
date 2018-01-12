@@ -2,14 +2,13 @@
 #define __PDT_CORE_DUMMYCLASS_HPP__
 
 namespace pdt {
-class DummyClass
-{
+class DummyClass {
 
-public:
-	DummyClass();
-	~DummyClass();
+  public:
+    DummyClass();
+    ~DummyClass();
 };
-	
+
 } // namespace pdt
 
 #endif /* __PDT_CORE_DUMMYCLASS_HPP__ */

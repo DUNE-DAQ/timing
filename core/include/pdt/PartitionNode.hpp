@@ -1,10 +1,16 @@
-#ifndef __PDT_SI5344_HPP__
-#define __PDT_SI5344_HPP__
+#ifndef __PDT_PARTITIONNODE_HPP__
+#define __PDT_PARTITIONNODE_HPP__
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
+// PDT Headers
+#include "pdt/exception.hpp"
+
 namespace pdt {
+
+
+PDTExceptionClass(EventReadError, "Error while reading events from the partition");
 
 /**
  * @brief      Class for partition node.
@@ -15,12 +21,36 @@ public:
     PartitionNode(const uhal::Node& aNode);
     virtual ~PartitionNode();
 
+    static const uint32_t kWordsPerEvent;
+
     /**
      * @brief      Reads a command mask.
      *
-     * @return     { description_of_the_return_value }
+     * @return     The current value of the command mask.
      */
     uint32_t readCommandMask() const;
+
+
+    /**
+     * @brief      Reads the number words in buffer.
+     *
+     * @return     { description_of_the_return_value }
+     */
+    uint32_t readBufferWordCount() const;
+
+    /**
+     * @brief      { function_description }
+     *
+     * @return     { description_of_the_return_value }
+     */
+    uint32_t numEventsInBuffer() const;
+    
+    /**
+     * @brief      Reads an event.
+     *
+     * @return     { description_of_the_return_value }
+     */
+    std::vector<uint32_t> readEvents( size_t aNumEvents = 0 ) const;
 
     /**
      * @brief      Enables the partition now.
@@ -64,4 +94,4 @@ public:
 
 } // namespace pdt
 
-#endif
+#endif // __PDT_PARTITIONNODE_HPP__
