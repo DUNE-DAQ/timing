@@ -36,7 +36,7 @@ PartitionNode::enable(bool aEnable, bool aDispatch) const {
 //-----------------------------------------------------------------------------
 void
 PartitionNode::setCommandMask( uint32_t aMask) const {
-    getNode("csr.ctrl.cmd_mask").write(aMask);
+    getNode("csr.ctrl.trig_mask").write(aMask);
     getClient().dispatch();
 }
 //-----------------------------------------------------------------------------
@@ -45,7 +45,7 @@ PartitionNode::setCommandMask( uint32_t aMask) const {
 //-----------------------------------------------------------------------------
 uint32_t
 PartitionNode::readCommandMask() const {
-    uhal::ValWord<uint32_t> lMask = getNode("csr.ctrl.cmd_mask").read();
+    uhal::ValWord<uint32_t> lMask = getNode("csr.ctrl.trig_mask").read();
     getClient().dispatch();
 
     return lMask;
@@ -103,12 +103,8 @@ PartitionNode::reset() const {
     
     // Disable buffer in partition 0
     getNode("csr.ctrl.buf_en").write(0);
-    // Reset event counter
-    getNode("csr.ctrl.evtctr_rst").write(1);
     // Reset trigger counter
     getNode("csr.ctrl.trig_ctr_rst").write(1);
-    // Release event counter
-    getNode("csr.ctrl.evtctr_rst").write(0);
     // Release trigger counter
     getNode("csr.ctrl.trig_ctr_rst").write(0);
     getClient().dispatch();
@@ -122,7 +118,7 @@ PartitionNode::start() const {
     getNode("csr.ctrl.buf_en").write(0);
     // TODO: in configuration?
     // Set command mask in partition 0
-    // getNode("csr.ctrl.cmd_mask").write(0x0f) 
+    // getNode("csr.ctrl.trig_mask").write(0x0f) 
     getClient().dispatch();
     
     // TODO (v4)
