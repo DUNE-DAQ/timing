@@ -239,20 +239,23 @@ def reset(obj):
 # ------------------------------------------------------------------------------
 
 # Command definition from pdt_defs.vhd
-#     constant SCMD_SPILL_START: std_logic_vector(3 downto 0) := X"0";
-#     constant SCMD_SPILL_STOP: std_logic_vector(3 downto 0) := X"1";
-#     constant SCMD_RUN_START: std_logic_vector(3 downto 0) := X"2";
-#     constant SCMD_RUN_STOP: std_logic_vector(3 downto 0) := X"3";
-#     constant SCMD_SYNC: std_logic_vector(3 downto 0) := X"7";
-#     constant SCMD_TRIG: std_logic_vector(3 downto 0) := X"8"; -- Commands from 0x8 to 0xf reserved for triggers / calib
+    # constant SCMD_SYNC: std_logic_vector(3 downto 0) := X"0";
+    # constant SCMD_ECHO: std_logic_vector(3 downto 0) := X"1";
+    # constant SCMD_SPILL_START: std_logic_vector(3 downto 0) := X"2";
+    # constant SCMD_SPILL_STOP: std_logic_vector(3 downto 0) := X"3";
+    # constant SCMD_RUN_START: std_logic_vector(3 downto 0) := X"4";
+    # constant SCMD_RUN_STOP: std_logic_vector(3 downto 0) := X"5";
+    # constant SCMD_FAKE_TRIG: std_logic_vector(3 downto 0) := X"8"; -- Commands from 0x8 to 0xf reserved for triggers / calib
 
-kCommands = collections.OrderedDict([
-    ('SpillStart', 0),
-    ('SpillStop', 1),
-    ('RunStart', 2),
-    ('RunStop', 3),
-    ('Trigger', 7),
-    ('TimeSync', 8),
+kCommandIDs = collections.OrderedDict([
+
+    ('TimeSync', 0x0),
+    ('Echo', 0x1),
+    ('SpillStart', 0x2),
+    ('SpillStop', 0x3),
+    ('RunStart', 0x4),
+    ('RunStop', 0x5),
+    ('Trigger', 0x8),
 ])
 
 kCommandNames = { v:k for k,v in kCommandIDs.iteritems() }
@@ -300,7 +303,7 @@ def configure(obj, partition):
     
     echo()
     echo("Configuring partition {}".format(partition))
-    
+
     # lPartNode.getNode('csr.ctrl.part_en').write(1) # Enable partition 0
     # lDevice.dispatch() 
     lPartNode.reset(); 
