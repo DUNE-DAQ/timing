@@ -19,6 +19,7 @@ namespace pdt {
 namespace python {
 
 extern void register_i2c();
+extern void register_partition();
 
 } // namespace python
 } // namespace pdt
@@ -46,6 +47,7 @@ BOOST_PYTHON_MODULE(_pdt) {
 	    scope orbScope = orbModule;
 
 		pdt::python::register_i2c();
+		pdt::python::register_partition();
 
 	}
 }

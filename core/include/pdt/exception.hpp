@@ -5,8 +5,8 @@
  * Created on August 21, 2013, 2:29 PM
  */
 
-#ifndef __MP7_EXCEPTION_HPP__
-#define	__MP7_EXCEPTION_HPP__
+#ifndef __PDT_EXCEPTION_HPP__
+#define	__PDT_EXCEPTION_HPP__
 
 
 #include <exception>
@@ -115,6 +115,6 @@ PDTExceptionClass(I2CException, "Exception class to handle I2C Exceptions");
 }
 
 
-#endif	/* __MP7_EXCEPTION_HPP__ */
+#endif	/* __PDT_EXCEPTION_HPP__ */
 
 

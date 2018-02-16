@@ -31,7 +31,8 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CSlave_writeI2CArray_overloads, wri
 namespace pdt {
 namespace python {
 
-void register_i2c() {
+void 
+register_i2c() {
         // .def("hardReset", (void ( mp7::CtrlNode::*) (double)) 0, mp7_CTRLNODE_hardReset_overloads())
 
   // Wrap pdt::I2CMasterNode

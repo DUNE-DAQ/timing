@@ -300,17 +300,12 @@ def configure(obj, partition):
     
     echo()
     echo("Configuring partition {}".format(partition))
-    lPartNode.getNode('csr.ctrl.part_en').write(0) # Enable partition 0
-    lPartNode.getNode('csr.ctrl.buf_en').write(0) # Disable buffer in partition 0
-    lPartNode.getNode('csr.ctrl.evtctr_rst').write(1) # Disable buffer in partition 0
-    lPartNode.getNode('csr.ctrl.trig_ctr_rst').write(1) # Disable buffer in partition 0
-    lPartNode.getNode('csr.ctrl.evtctr_rst').write(0) # Disable buffer in partition 0
-    lPartNode.getNode('csr.ctrl.trig_ctr_rst').write(0) # Disable buffer in partition 0
-    lPartNode.getNode('csr.ctrl.cmd_mask').write(0x001f) # Set command mask in partition 0
-    lDevice.dispatch()
-
-    lPartNode.getNode('csr.ctrl.part_en').write(1) # Enable partition 0
-    lDevice.dispatch()  
+    
+    # lPartNode.getNode('csr.ctrl.part_en').write(1) # Enable partition 0
+    # lDevice.dispatch() 
+    lPartNode.reset(); 
+    lPartNode.setCommandMask(0x0f);
+    lPartNode.enable(); 
 # ------------------------------------------------------------------------------
 
 
@@ -332,20 +327,21 @@ def start(obj):
     lDevice = obj.mDevice
     lPartNode = lDevice.getNode('master.partition')
  
-    # Disable the buffer
-    lPartNode.getNode('csr.ctrl.buf_en').write(0)
-    # Set command mask in partition 0
-    lPartNode.getNode('csr.ctrl.cmd_mask').write(0x0f) 
-    lDevice.dispatch()
+    # # Disable the buffer
+    # lPartNode.getNode('csr.ctrl.buf_en').write(0)
+    # # Set command mask in partition 0
+    # lPartNode.getNode('csr.ctrl.cmd_mask').write(0x0f) 
+    # lDevice.dispatch()
     
-    # TODO (v4)
-    # Set the run bit and wait for it to be acknowledged
+    # # TODO (v4)
+    # # Set the run bit and wait for it to be acknowledged
 
-    # Re-enable the buffer (flushes it)
-    lPartNode.getNode('csr.ctrl.buf_en').write(1)
-    # Open to triggers
-    lPartNode.getNode('csr.ctrl.trig_en').write(1)
-    lDevice.dispatch()
+    # # Re-enable the buffer (flushes it)
+    # lPartNode.getNode('csr.ctrl.buf_en').write(1)
+    # # Open to triggers
+    # lPartNode.getNode('csr.ctrl.trig_en').write(1)
+    # lDevice.dispatch()
+    lPartNode.start();
     pass
 # ------------------------------------------------------------------------------
 
@@ -363,10 +359,13 @@ def stop(obj):
     - disables the readout buffer
     '''
 
-    lPartNode.getNode('csr.ctrl.buf_en').write(0)
-    lPartNode.getNode('csr.ctrl.trig_en').write(0)
+    lDevice = obj.mDevice
+    lPartNode = lDevice.getNode('master.partition')
+    lPartNode.stop()
 
-    pass
+    # lPartNode.getNode('csr.ctrl.buf_en').write(0)
+    # lPartNode.getNode('csr.ctrl.trig_en').write(0)
+
 # ------------------------------------------------------------------------------
 
 
