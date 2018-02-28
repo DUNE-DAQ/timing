@@ -1,5 +1,8 @@
 #include "pdt/PartitionNode.hpp"
 
+#include <chrono>
+#include <thread>
+
 namespace pdt {
 
 UHAL_REGISTER_DERIVED_NODE(PartitionNode);
@@ -114,18 +117,32 @@ PartitionNode::reset() const {
 //-----------------------------------------------------------------------------
 void
 PartitionNode::start() const {
+
+    
     // Disable the buffer
     getNode("csr.ctrl.buf_en").write(0);
     // TODO: in configuration?
     // Set command mask in partition 0
     // getNode("csr.ctrl.trig_mask").write(0x0f) 
     getClient().dispatch();
+    // Re-enable the buffer (flushes it)
+    getNode("csr.ctrl.buf_en").write(1);
+    getClient().dispatch();
     
     // TODO (v4)
     // Set the run bit and wait for it to be acknowledged
+    getNode("csr.ctrl.run_req").write(1);
+    getClient().dispatch();
 
-    // Re-enable the buffer (flushes it)
-    getNode("csr.ctrl.buf_en").write(1);
+    while(true) {
+        // TODO: add timeout
+
+        auto lInRun = getNode("csr.stat.in_run").read();
+        getClient().dispatch();
+
+        if ( lInRun ) break;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
     // Open to triggers
     getNode("csr.ctrl.trig_en").write(1);
     getClient().dispatch();
@@ -136,6 +153,16 @@ PartitionNode::start() const {
 //-----------------------------------------------------------------------------
 void
 PartitionNode::stop() const {
+    getNode("csr.ctrl.run_req").write(0);
+    getClient().dispatch();
+    while(true) {
+
+        auto lInRun = getNode("csr.stat.in_run").read();
+        getClient().dispatch();
+
+        if ( !lInRun ) break;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
     // Disable the readout buffer
     getNode("csr.ctrl.buf_en").write(0);
     // Disable triggers
