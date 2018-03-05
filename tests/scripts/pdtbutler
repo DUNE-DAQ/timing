@@ -101,10 +101,10 @@ def master(obj, device):
     obj.mDevice = lDevice
 # ------------------------------------------------------------------------------
 
-def snapshot(node):
-    s = { n:node.getNode(n).read() for n in node.getNodes() }
-    node.getClient().dispatch()
-    return s
+# def snapshot(node):
+#     s = { n:node.getNode(n).read() for n in node.getNodes() }
+#     node.getClient().dispatch()
+#     return s
 
 # ------------------------------------------------------------------------------
 @master.command()
@@ -271,8 +271,9 @@ kCommandNames = { v:k for k,v in kCommandIDs.iteritems() }
 # ------------------------------------------------------------------------------
 @master.command('configure', short_help='Configures partition 0 for data taking.')
 @click.option('--partition', '-p', type=click.IntRange(0,0), help='Target partition', default=0)
+@click.option('--trgmask', '-m', type=int, help='Trigger mask', default=0xff)
 @click.pass_obj
-def configure(obj, partition):
+def configure(obj, partition, trgmask):
     '''
     Configures partition 0 for data taking
 
@@ -315,7 +316,7 @@ def configure(obj, partition):
     # lPartNode.getNode('csr.ctrl.part_en').write(1) # Enable partition 0
     # lDevice.dispatch() 
     lPartNode.reset(); 
-    lPartNode.setCommandMask(0xff);
+    lPartNode.setCommandMask(trgmask);
     lPartNode.enable(); 
 # ------------------------------------------------------------------------------
 
@@ -338,20 +339,6 @@ def start(obj):
     lDevice = obj.mDevice
     lPartNode = lDevice.getNode('master.partition')
  
-    # # Disable the buffer
-    # lPartNode.getNode('csr.ctrl.buf_en').write(0)
-    # # Set command mask in partition 0
-    # lPartNode.getNode('csr.ctrl.cmd_mask').write(0xff) 
-    # lDevice.dispatch()
-    
-    # # TODO (v4)
-    # # Set the run bit and wait for it to be acknowledged
-
-    # # Re-enable the buffer (flushes it)
-    # lPartNode.getNode('csr.ctrl.buf_en').write(1)
-    # # Open to triggers
-    # lPartNode.getNode('csr.ctrl.trig_en').write(1)
-    # lDevice.dispatch()
     lPartNode.start();
     pass
 # ------------------------------------------------------------------------------
@@ -373,9 +360,6 @@ def stop(obj):
     lDevice = obj.mDevice
     lPartNode = lDevice.getNode('master.partition')
     lPartNode.stop()
-
-    # lPartNode.getNode('csr.ctrl.buf_en').write(0)
-    # lPartNode.getNode('csr.ctrl.trig_en').write(0)
 
 # ------------------------------------------------------------------------------
 
@@ -759,16 +743,19 @@ def endpoint(obj, device):
 @endpoint.command()
 @click.pass_obj
 @click.option('--on/--off', default=True, help='enable/disable the endpoint')
-def enable(obj, on):
+@click.option('--partition', '-p', type=click.IntRange(0,4), help='Target partition', default=0)
+def enable(obj, on, partition):
     '''
     Activate timing endpoint wrapper block.
     '''
 
     lEndPointNode = obj.mDevice.getNode('endpoint')
+    lEndPointNode.getNode('csr.ctrl.tgrp').write(partition)
+    lEndPointNode.getClient().dispatch()
     lEndPointNode.getNode('csr.ctrl.ep_en').write(on)
     lEndPointNode.getNode('csr.ctrl.buf_en').write(on)
     lEndPointNode.getClient().dispatch()
-    echo("> Endpoint " + style("activated" if on else "deactivated", fg='blue'))
+    echo("> Endpoint " + style("activated in partition {}".format(partition ) if on else "deactivated", fg='blue'))
 # ------------------------------------------------------------------------------
 
 
@@ -776,7 +763,7 @@ def enable(obj, on):
 # -----------------
 kEpStates = collections.OrderedDict([
     (0b0000,'Standing by'), #when W_RST, -- Starting state after reset
-    (0b0001,'Waiting SPF for signal'), #when W_SFP, -- Waiting for SFP LOS to go low
+    (0b0001,'Waiting SFP for signal'), #when W_SFP, -- Waiting for SFP LOS to go low
     (0b0010,'Waiting CDR lock'), #when W_CDR, -- Waiting for CDR lock
     (0b0011,'Waiting for comman alignment'), #when W_ALIGN, -- Waiting for comma alignment, stable 50MHz phase
     (0b0100,'Waiting for good frequency checl'), #when W_FREQ, -- Waiting for good frequency check
@@ -818,6 +805,7 @@ def monitor(obj, watch, period):
         echo( "-- " + style("Endpoint state", fg='green') + "---")
         echo()
 
+        lCtrlDump = toolbox.readSubNodes(lEndPointNode.getNode('csr.ctrl'))
         lStatDump = toolbox.readSubNodes(lEndPointNode.getNode('csr.stat'))
 
         echo( "Status registers" )
@@ -827,12 +815,13 @@ def monitor(obj, watch, period):
         echo( 'Endpoint state: {} ({})'.format(kEpStates[int(lStatDump['ep_stat'])], hex(lStatDump['ep_stat'])))
 
         echo ()
-        echo( "Timestamp "+ hex(int(lTimeStamp[0]) + (int(lTimeStamp[1]) << 32)))
-        echo( "EventCounter {}".format(lEventCtr))
+        echo( "Partition: {}".format(lCtrlDump['tgrp']))
+        echo( "Timestamp: "+ hex(int(lTimeStamp[0]) + (int(lTimeStamp[1]) << 32)))
+        echo( "EventCounter: {}".format(lEventCtr))
         lBufState = style('OK', fg='green') if lStatDump['buf_err'] == 0 else style('Error', fg='red')
         # lStatDump['buf_empty']
         echo( "Buffer status: " + lBufState)
-        echo( "Buffer occupancy {}".format(lBufCount))
+        echo( "Buffer occupancy: {}".format(lBufCount))
         echo ()
 
         # secho ("Received commands counters", fg='green')

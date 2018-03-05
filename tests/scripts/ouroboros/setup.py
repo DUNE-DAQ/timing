@@ -9,8 +9,8 @@ manager = uhal.ConnectionManager("file://connections.xml")
 hw_list = [manager.getDevice(i) for i in sys.argv[1:]]
 
 if len(hw_list) == 0:
-	print "No targets specified - I'm done"
-	sys.exit()
+    print "No targets specified - I'm done"
+    sys.exit()
 
 for hw in hw_list:
 
@@ -37,7 +37,7 @@ for hw in hw_list:
 
     time.sleep(4)
 
-    m_t = hw.getNode("master.global.tstamp").readBlock(2)
+    m_t = hw.getNode("master.tstamp.ctr").readBlock(2)
     hw.dispatch()
     m_stat = hw.getNode("master.global.csr.stat").read()
     hw.dispatch()

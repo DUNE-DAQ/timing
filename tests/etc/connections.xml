@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <connections>
-  <connection id="DUNE_FMC_PRIMARY"       uri="ipbusudp-2.0://192.168.200.16:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_v3f/top.xml" />
-  <connection id="DUNE_FMC_SECONDARY"     uri="ipbusudp-2.0://192.168.200.17:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_v3f/top.xml" />
-  <connection id="DUNE_FMC_SIM"           uri="ipbusudp-2.0://192.168.201.16:50001" address_table="file://${PDT_TESTS}/etc/addrtab/sim_v3f/top_sim.xml" />
-  <connection id="DUNE_FMC_SECONDARY_TUN" uri="chtcp-2.0://localhost:60708?target=192.168.200.17:50001" address_table="file:///${PDT_TESTS}/etc/addrtab/ouroboros_v3f/top.xml" />    
-  <connection id="DUNE_FMC_PRIMARY_TUN"   uri="chtcp-2.0://localhost:60708?target=192.168.200.16:50001" address_table="file:///${PDT_TESTS}/etc/addrtab/ouroboros_v3f/top.xml" />  
+  <connection id="DUNE_FMC_PRIMARY"       uri="ipbusudp-2.0://192.168.200.16:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_v4rc0/top.xml" />
+  <connection id="DUNE_FMC_SECONDARY"     uri="ipbusudp-2.0://192.168.200.17:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_v4rc0/top.xml" />
+  <connection id="DUNE_FMC_SIM"           uri="ipbusudp-2.0://192.168.201.16:50001" address_table="file://${PDT_TESTS}/etc/addrtab/sim_v4rc0/top_sim.xml" />
+  <connection id="DUNE_FMC_SECONDARY_TUN" uri="chtcp-2.0://localhost:60708?target=192.168.200.17:50001" address_table="file:///${PDT_TESTS}/etc/addrtab/ouroboros_v4rc0/top.xml" />    
+  <connection id="DUNE_FMC_PRIMARY_TUN"   uri="chtcp-2.0://localhost:60708?target=192.168.200.16:50001" address_table="file:///${PDT_TESTS}/etc/addrtab/ouroboros_v4rc0/top.xml" />  
 </connections>
