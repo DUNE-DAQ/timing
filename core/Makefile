@@ -16,6 +16,7 @@ PACKAGE_VER_MINOR = 1
 PACKAGE_VER_PATCH = 0
 PACKAGE_RELEASE = 0
 
+# Requirements for the rpm build
 PackageRequires = cactuscore-uhal-uhal >= 2.5.0, cactuscore-uhal-uhal < 2.6.0
 PackageBuildRequires = ${PackageRequires}
 
@@ -23,7 +24,7 @@ Library = protodune_pdt_core
 
 Includes = \
     include \
-    $(CACTUS_ROOT)/include 
+    $(CACTUS_INC_DIRS)
 
 Libraries = \
     boost_date_time \
@@ -31,8 +32,8 @@ Libraries = \
     cactus_uhal_log \
     cactus_uhal_uhal
 
-LibraryPaths = \
-  $(CACTUS_ROOT)/lib 
+#LibraryPaths = \
+#  $(CACTUS_ROOT)/lib 
 
 ExecutableLibraries = ${Libraries} \
 	${Library} \
@@ -40,7 +41,7 @@ ExecutableLibraries = ${Libraries} \
     boost_thread
 
 LibraryPaths = \
-	${CACTUS_ROOT}/lib \
+	${CACTUS_LIB_DIRS} \
 	${PDT_ROOT}/core/lib
 
 include ${PDT_ROOT}/config/mfRules.mk

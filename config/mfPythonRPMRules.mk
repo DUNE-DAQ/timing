@@ -1,3 +1,18 @@
+# If we built against the ups uhal, we want to build a ups product and
+# not an rpm, so refuse to go ahead here. This isn't foolproof: the
+# check is against the existence of the environment variable that
+# indicates whether uhal is set up via ups in the current environment,
+# not strictly how the build was done
+ifdef SETUP_UHAL
+.PHONY: rpm
+
+rpm:
+	$(warning '**********************************************************')
+	$(warning '* uhal has been set up with ups: refusing to make an RPM *')
+	$(warning '* You probably want to \'make ups\' instead              *')
+	$(warning '**********************************************************')
+	$(error exiting)
+else
 RPMBUILD_DIR=${PackagePath}/rpm/RPMBUILD
 # 
 ifndef PythonModules
@@ -50,3 +65,4 @@ _setup_update:
 cleanrpm: _cleanrpm
 _cleanrpm:
 	-rm -r rpm
+endif

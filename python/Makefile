@@ -22,10 +22,17 @@ PACKAGE_RELEASE = 0
 PackageRequires = cactuscore-uhal-uhal >= 2.5.0, cactuscore-uhal-uhal < 2.6.0
 PackageBuildRequires=${PackageRequires}
 
+# Rationale for -Wno-deprecated-declarations: If we're using the UPS
+# version of uhal, along with its newer compiler and newer boost, we
+# get deprecation warnings for auto_ptr, so quieten those down
+#
+# https://svn.boost.org/trac10/ticket/11622
+
 CxxFlags += \
 		-ftemplate-depth-128 \
 		-O0 -rdynamic -finline-functions \
-		-Wno-inline -DNDEBUG
+		-Wno-inline -Wno-deprecated-declarations \
+		-DNDEBUG
 
 Library = protodune_pdt_python
 
@@ -37,7 +44,7 @@ Includes = \
     include \
     $(PYTHON_INCLUDE_PREFIX) \
     $(PDT_ROOT)/core/include \
-    $(CACTUS_ROOT)/include 
+    $(CACTUS_INC_DIRS)
 
 Libraries = \
 	boost_python \
@@ -45,7 +52,7 @@ Libraries = \
 
 LibraryPaths = \
 	$(PDT_ROOT)/core/lib \
-    $(CACTUS_ROOT)/lib 
+        $(CACTUS_LIB_DIRS)
 
 
 include ${PDT_ROOT}/config/mfRules.mk

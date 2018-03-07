@@ -1,0 +1,30 @@
+# Based on instructions in https://cdcvs.fnal.gov/redmine/projects/cet-is-public/wiki/Defining_products_in_the_CET_build_environment
+# __PRODUCT__ __VERSION__ and __REQUIRED_UHAL_VERSION__ are overwritten by create_ups_product.sh
+
+# The name and version of the product
+parent __PRODUCT__ __VERSION__
+
+defaultqual e14:s50
+
+fcldir -
+bindir -
+
+product	    version
+uhal	    __REQUIRED_UHAL_VERSION__
+end_product_list
+
+# The following matrix lists all the possible qualifiers for our
+# product in the first column, and the corresponding qualifiers to use
+# for the dependent packages.
+#
+#  It's safe (and in fact necessary) to put qualifiers here that might
+# not correspond to the current build (for example, 'debug' for a
+# non-debug build): build_table will make a table file that contains
+# all the qualifiers, but ups will only look at qualifiers that have
+# been explicitly declared, and we explicitly declare the right one in
+# create_ups_product.sh
+
+qualifier	uhal
+e14:prof:s50	e14:s50:prof	
+e14:s50:debug	e14:s50:debug	
+end_qualifier_list

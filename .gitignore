@@ -1,0 +1,10 @@
+core/lib/
+core/obj/
+core/rpm/
+python/obj/
+*.so
+python/rpm/
+tests/bin/
+tests/lib/
+tests/obj/
+ups/
