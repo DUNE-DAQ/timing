@@ -9,7 +9,7 @@ FLAGS = $(ifeq $(MAKEFLAGS) "","",-$(MAKEFLAGS))
 
 TARGETS=clean build all rpm cleanrpm objects
 
-.PHONY: $(TARGETS)
+.PHONY: $(TARGETS) ups cleanups
 default: build
 
 $(TARGETS): ${VIRTUAL_PACKAGES}
