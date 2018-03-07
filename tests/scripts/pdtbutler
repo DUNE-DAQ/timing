@@ -18,6 +18,23 @@ import pdt.cli.toolbox as toolbox
 from click import echo, style, secho
 from os.path import join, expandvars
 
+
+def hookDebugger(debugger='gdb'):
+    '''debugging helper, hooks debugger to running interpreter process'''
+
+    import os
+    pid = os.spawnvp(os.P_NOWAIT,
+                     debugger, [debugger, '-q', 'python', str(os.getpid())])
+
+    # give debugger some time to attach to the python process
+    import time
+    time.sleep( 1 )
+
+    # verify the process' existence (will raise OSError if failed)
+    os.waitpid( pid, os.WNOHANG )
+    os.kill( pid, 0 )
+    return
+
 class PDTContext: pass
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
@@ -87,7 +104,6 @@ def master(obj, device):
 
     DEVICE: uhal device identifier
     '''
-    # print obj.mConnectionManager.getDevices()
     lDevice = obj.mConnectionManager.getDevice(str(device))
     if obj.mTimeout:
         lDevice.setTimeoutPeriod(obj.mTimeout)
@@ -157,8 +173,9 @@ kBoardRevisionMap = {
 
 @master.command('reset', short_help="Perform a hard reset on the timing master.")
 @click.option('--soft', '-s', is_flag=True, help='Target partition', default=False)
+@click.option('--model','-m', type=click.Choice(['ax3','kc705']), default='ax3')
 @click.pass_obj
-def reset(obj, soft):
+def reset(obj, soft, model):
     '''
     Perform a hard reset on the timing master, including
 
@@ -192,11 +209,18 @@ def reset(obj, soft):
         for lSlave in lUID.getSlaves():
             echo("  {}: {}".format(lSlave, hex(lUID.getSlaveAddress(lSlave))))
 
-        lUID.getSlave('A').writeI2C(0x01, 0x7f)
-        x = lUID.getSlave('A').readI2C(0x01)
-        echo("I2C enable lines: {}".format(x))
+        if model == 'ax3':
+            lUID.getSlave('AX3_Switch').writeI2C(0x01, 0x7f)
+            x = lUID.getSlave('AX3_Switch').readI2C(0x01)
+            echo("I2C enable lines: {}".format(x))
+        elif model == 'kc705':
+            # Warning, this might not work
+            lUID.getSlave('').writeI2CArray(0x10, [])
+        else:
+            click.ClickException("Unknown master model {}".format(model))
 
-        lValues = lUID.getSlave('B').readI2CArray(0xfa, 6)
+
+        lValues = lUID.getSlave('FMC_UID_PROM').readI2CArray(0xfa, 6)
         lUniqueID = 0x0
         for lVal in lValues:
             lUniqueID = ( lUniqueID << 8 ) | lVal
@@ -270,12 +294,19 @@ def reset(obj, soft):
 # ------------------------------------------------------------------------------
 @master.group('part', invoke_without_command=True)
 @click.pass_obj
-@click.argument('id', type=int)
+@click.argument('id', type=click.IntRange(0,3))
 def partition(obj, id):
     """
     Partition specific commands
+
+    ID: Id of the selected partition
     """
     obj.mPartitionId = id
+    try:
+        obj.mPartitionNode = obj.mDevice.getNode('master.partition{}'.format(id))
+    except Exception as lExc:
+        click.Abort('Partition {} not found in address table'.format(id))
+
 # ------------------------------------------------------------------------------
 
 # Command definition from pdt_defs.vhd
@@ -307,7 +338,7 @@ def read_mask(ctx, param, value):
 
 # ------------------------------------------------------------------------------
 @partition.command('configure', short_help='Prepares partition for data taking.')
-@click.option('--trgmask', '-m', type=str, callback=read_mask, help='Trigger mask', default='0xff')
+@click.option('--trgmask', '-m', type=str, callback=lambda c, p, v: int(v, 16), default='0xff', help='Trigger mask (in hex)')
 @click.pass_obj
 def configure(obj, trgmask):
     '''
@@ -321,16 +352,9 @@ def configure(obj, trgmask):
     - set command mask for the partition
     - enable partition
     '''
-    lDevice = obj.mDevice
     lPartId = obj.mPartitionId
+    lPartNode = obj.mPartitionNode
 
-    lGlobalNode = lDevice.getNode('master.global')
-    lPartNode = lDevice.getNode('master.partition')
-
-    # Select the desired partition
-    lGlobalNode.getNode('csr.ctrl.part_sel').write(lPartId)
-    lDevice.dispatch()
-    
     echo()
     echo("Configuring partition {}".format(lPartId))
     echo("Trigger mask set to {}".format(hex(trgmask)))
@@ -358,18 +382,8 @@ def start(obj):
     - enables the readout buffer
     - enables triggers
     '''
-    lDevice = obj.mDevice
-    lPartId = obj.mPartitionId
-
-    lGlobalNode = lDevice.getNode('master.global')
-    lPartNode = lDevice.getNode('master.partition')
-
-    # Select the desired partition
-    lGlobalNode.getNode('csr.ctrl.part_sel').write(lPartId)
-    lDevice.dispatch()
-
-    lPartNode.start();
-    pass
+    obj.mPartitionNode.start()
+    secho("Partition {} started".format(obj.mPartitionId), fg='green')
 # ------------------------------------------------------------------------------
 
 
@@ -386,17 +400,9 @@ def stop(obj):
     - disables the readout buffer
     '''
 
-    lDevice = obj.mDevice
-    lPartId = obj.mPartitionId
-
-    lGlobalNode = lDevice.getNode('master.global')
-    lPartNode = lDevice.getNode('master.partition')
-
     # Select the desired partition
-    lGlobalNode.getNode('csr.ctrl.part_sel').write(lPartId)
-    lDevice.dispatch()
-
-    lPartNode.stop()
+    obj.mPartitionNode.stop()
+    secho("Partition {} stopped".format(obj.mPartitionId), fg='green')
 
 # ------------------------------------------------------------------------------
 
@@ -467,11 +473,9 @@ def monitor(obj, watch, period):
 
     lDevice = obj.mDevice
     lPartId = obj.mPartitionId
+    lPartNode = obj.mPartitionNode
 
-    lGlobalNode = lDevice.getNode('master.global')
-    lPartNode = lDevice.getNode('master.partition')
     lTStampNode = lDevice.getNode('master.tstamp.ctr')
-
 
     while(True):
         if watch:
@@ -514,9 +518,6 @@ def monitor(obj, watch, period):
         # echo()
 
         secho( "=> Partition {}".format(lPartId), fg='green')
-        # Select the desired partition
-        lGlobalNode.getNode('csr.ctrl.part_sel').write(lPartId)
-        lDevice.dispatch()
 
         lCtrlDump = toolbox.readSubNodes(lPartNode.getNode('csr.ctrl'))
         lStatDump = toolbox.readSubNodes(lPartNode.getNode('csr.stat'))
@@ -574,16 +575,8 @@ def readback(obj, readall):
     '''
     lDevice = obj.mDevice
     lPartId = obj.mPartitionId
+    lPartNode = obj.mPartitionNode
 
-    lGlobalNode = lDevice.getNode('master.global')
-    lPartNode = lDevice.getNode('master.partition')
-
-
-    # Select the desired partition
-    lGlobalNode.getNode('csr.ctrl.part_sel').write(lPartId)
-    lDevice.dispatch()
-
-    
     lBufCount = lPartNode.getNode('buf.count').read()
     lPartNode.getClient().dispatch()
 
