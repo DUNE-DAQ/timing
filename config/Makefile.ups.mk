@@ -1,11 +1,11 @@
 PDT_ROOT= $(shell pwd)
 BUILD_HOME = $(PDT_ROOT)
 include ${PDT_ROOT}/config/mfCommonDefs.mk
+include ${PDT_ROOT}/config/UPSProductDeclaration.mk
 
 INSTALL_SCRIPT := $(PDT_ROOT)/config/create_ups_product.sh
 UPS_PRODUCT_DIR ?= $(PDT_ROOT)/ups/products
 # UPS product names can't contain dashes so replace them with underscores
-PRODUCTNAME := protodune_timing
 
 .PHONY: ups _ups 
 
