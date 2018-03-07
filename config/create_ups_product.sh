@@ -105,8 +105,22 @@ if [ -z "$UHALVERSION" ]; then
     exit 1
 fi
 
-# Setup UPS, since we'll be needing it later
-. /nfs/sw/artdaq/products/setups
+# Make sure UPS is set up, since we'll be using it later
+if [ -z "$UPS_DIR" ]; then
+    echo "It appears that ups is not set up (\$UPS_DIR is not set). Bailing"
+    exit 1
+fi
+
+# Unfortunately, ups's 'setup' is a function, and it's not exported to
+# subshells, so we can't use it in this script (we *could* manually
+# source 'setups', but then we have to hardcode a path here, which is
+# ugly). So instead we'll just define setup ourselves, the same way
+# that ups does
+setup ()
+{
+    . `ups setup "$@"`
+}
+
 # We use get-directory-name from cetpkgsupport below
 setup -c cetpkgsupport
 # We use build_table from cetbuildtools to make the table file from the product_deps file
