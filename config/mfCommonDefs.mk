@@ -101,7 +101,8 @@ endif
 # in /opt/cactus and the one in ups. This would be easy, except the
 # two have different directory layouts. So we set the paths depending
 # on whether the ups version of uhal has been setup, as indicated by
-# $SETUP_UHAL
+# $SETUP_UHAL, which is set by UPS. (Sourcing setupDUNEARTDAQ will
+# cause this to be set)
 ifdef SETUP_UHAL
     # Check that uhal has been setup by ups
     ifndef UHAL_INC
