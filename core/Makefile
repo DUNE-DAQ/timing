@@ -50,5 +50,4 @@ LibraryPaths = \
 
 include ${PDT_ROOT}/config/mfRules.mk
 include ${PDT_ROOT}/config/mfRPMRules.mk
-include ${PDT_ROOT}/config/mfUPSRules.mk
 

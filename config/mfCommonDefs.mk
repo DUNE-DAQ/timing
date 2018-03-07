@@ -5,14 +5,6 @@ $(info Using BUILD_HOME=${BUILD_HOME})
 
 export BUILD_HOME
 
-# Global UPS variables. To be moved in a def file
-REQUIRED_UHAL_VERSION = v2_6_0
-UPS_QUALIFIERS ?= e14:prof:s50
-
-UPS_PACKAGE_VER_MAJOR = 0
-UPS_PACKAGE_VER_MINOR = 1
-UPS_PACKAGE_VER_PATCH = 0
-
 # PDT_SYSROOT
 PDT_SYSROOT = /opt/pdt
 DEBUG ?= 1
