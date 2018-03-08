@@ -23,7 +23,7 @@ Library = protodune_pdt_core
 
 Includes = \
     include \
-    $(CACTUS_ROOT)/include 
+    $(CACTUS_INC_DIRS)
 
 Libraries = \
     boost_date_time \
@@ -32,16 +32,13 @@ Libraries = \
     cactus_uhal_uhal \
     protodune_pdt_core
 
-LibraryPaths = \
-  $(CACTUS_ROOT)/lib 
-
 ExecutableLibraries = ${Libraries} \
 	${Library} \
     boost_filesystem \
     boost_thread
 
 LibraryPaths = \
-	${CACTUS_ROOT}/lib \
+	${CACTUS_LIB_DIRS} \
 	${PDT_ROOT}/core/lib \
 	${PDT_ROOT}/daemon/lib
 
