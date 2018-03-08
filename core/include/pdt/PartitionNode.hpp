@@ -1,6 +1,9 @@
 #ifndef __PDT_PARTITIONNODE_HPP__
 #define __PDT_PARTITIONNODE_HPP__
 
+// C++ Headers
+#include <chrono>
+
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
@@ -11,6 +14,7 @@ namespace pdt {
 
 
 PDTExceptionClass(EventReadError, "Error while reading events from the partition");
+PDTExceptionClass(RunRequestTimeoutExpired, "Timeout when waiting for a run request");
 
 /**
  * @brief      Class for partition node.
@@ -32,21 +36,21 @@ public:
 
 
     /**
-     * @brief      Reads the number words in buffer.
+     * @brief      Read the number words in buffer.
      *
      * @return     { description_of_the_return_value }
      */
     uint32_t readBufferWordCount() const;
 
     /**
-     * @brief      { function_description }
+     * @brief      Count the number of events available in the readout buffer
      *
      * @return     { description_of_the_return_value }
      */
     uint32_t numEventsInBuffer() const;
     
     /**
-     * @brief      Reads an event.
+     * @brief      Read an event.
      *
      * @return     { description_of_the_return_value }
      */
@@ -79,18 +83,23 @@ public:
      *
      *             Flushes the readout buffer, set the run bit and wait for
      *             acknowledgment (to implement in v4)
+     *
+     * @param[in]  aTimeout  in milliseconds
      */
-    void start() const;
+    void start( uint32_t aTimeout = 5000 ) const;
 
     /**
      * @brief      Stops the partition.
      *
      *             Disable readout buffer and triggers.
+     *
+     * @param[in]  aTimeout  in milliseconds
      */
-    void stop() const;
+    void stop( uint32_t aTimeout = 5000 ) const;
 
 
 };
+
 
 } // namespace pdt
 

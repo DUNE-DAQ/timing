@@ -17,7 +17,8 @@ using namespace boost::python;
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PartitionNode_enable_overloads, enable, 0, 2);
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PartitionNode_readEvents_overloads, readEvents, 0, 1);
-
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PartitionNode_start_overloads, start, 0, 1);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PartitionNode_stop_overloads, stop, 0, 1);
 namespace pdt {
 namespace python {
 
@@ -31,8 +32,8 @@ register_partition() {
       .def("readEvents", &pdt::PartitionNode::readEvents, pdt_PartitionNode_readEvents_overloads())
       .def("enable", &pdt::PartitionNode::enable, pdt_PartitionNode_enable_overloads())
       .def("reset", &pdt::PartitionNode::reset)
-      .def("start", &pdt::PartitionNode::start)
-      .def("stop", &pdt::PartitionNode::stop)
+      .def("start", &pdt::PartitionNode::start, pdt_PartitionNode_start_overloads())
+      .def("stop", &pdt::PartitionNode::stop, pdt_PartitionNode_stop_overloads())
       ;
 }
 

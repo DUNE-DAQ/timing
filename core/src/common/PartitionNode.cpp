@@ -116,58 +116,67 @@ PartitionNode::reset() const {
 
 //-----------------------------------------------------------------------------
 void
-PartitionNode::start() const {
+PartitionNode::start( uint32_t aTimeout /*milliseconds*/ ) const {
 
-    
+    // Diable to triggers (just in case)
+    getNode("csr.ctrl.trig_en").write(0);
     // Disable the buffer
     getNode("csr.ctrl.buf_en").write(0);
-    // TODO: in configuration?
-    // Set command mask in partition 0
-    // getNode("csr.ctrl.trig_mask").write(0x0f) 
     getClient().dispatch();
     // Re-enable the buffer (flushes it)
     getNode("csr.ctrl.buf_en").write(1);
     getClient().dispatch();
     
-    // TODO (v4)
     // Set the run bit and wait for it to be acknowledged
     getNode("csr.ctrl.run_req").write(1);
     getClient().dispatch();
 
-    while(true) {
-        // TODO: add timeout
 
+    std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+
+    while(true) {
         auto lInRun = getNode("csr.stat.in_run").read();
         getClient().dispatch();
 
         if ( lInRun ) break;
+
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        if ( (end - start).count() > aTimeout or true) {
+            std::ostringstream lMsg;
+            lMsg << "Failed to start after " << aTimeout << " milliseconds";
+            throw RunRequestTimeoutExpired(lMsg.str());
+        }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
-    // Open to triggers
-    getNode("csr.ctrl.trig_en").write(1);
-    getClient().dispatch();
+
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void
-PartitionNode::stop() const {
+PartitionNode::stop( uint32_t aTimeout /*milliseconds*/ ) const {
     getNode("csr.ctrl.run_req").write(0);
     getClient().dispatch();
+
+    std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+
     while(true) {
 
         auto lInRun = getNode("csr.stat.in_run").read();
         getClient().dispatch();
 
         if ( !lInRun ) break;
+
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        if ( (end - start).count() > aTimeout or true) {
+            std::ostringstream lMsg;
+            lMsg << "Failed to stop after " << aTimeout << " milliseconds";
+            throw RunRequestTimeoutExpired(lMsg.str());
+        }
+
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
-    // Disable the readout buffer
-    getNode("csr.ctrl.buf_en").write(0);
-    // Disable triggers
-    getNode("csr.ctrl.trig_en").write(0);
-    getClient().dispatch();
 }
 //-----------------------------------------------------------------------------
 

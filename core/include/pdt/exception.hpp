@@ -62,55 +62,9 @@ PDTExceptionClass(InvalidConfigFile, "Exception class to handle invalid configur
 PDTExceptionClass(UnmatchedRequirement, "Exception class to handle invalid unmatched configuration requirements.")
 PDTExceptionClass(EntryNotFoundError, "Entry not found");
 
-    
-// PDTExceptionClass(IdentificationError, "MP7 board model cannot be detected");
-
-// // MMC Exceptions
-// PDTExceptionClass(SDCardError, " Exception class to handle errors related to SDCard access");
-
-// // Ctrl Exceptions
-// PDTExceptionClass(RegionKindError, "Exception class to handle region kind readout errors");
-// PDTExceptionClass(Clock40NotInReset, "Exception class to handle cases where the clock source is change without keeping the line in reset");
-// PDTExceptionClass(Clock40LockFailed, "Exception class to handle failure of clock 40 locking");
-// PDTExceptionClass(XpointConfigTimeout, "Exception class to handle Xpoint configuration timeout");
-// PDTExceptionClass(SI5326ConfigurationTimeout, "Exception class to handle si5326 configuration timeout");
-
-// // TTC Exceptions
-// PDTExceptionClass(BC0LockFailed, "Exception class to handle failure of BC0 lock");
-// PDTExceptionClass(TTCFrequencyInvalid, "Exception class to handle TTC invalid frequency readings");
-// PDTExceptionClass(TTCPhaseError, "Exception class to handle TTC phase errors");
-
-// // Alingment Exceptions
-// PDTExceptionClass(AlignmentTimeout, "Exception class to handle alignment timeout errors");
-// PDTExceptionClass(AlignmentShiftFailed, "Failure to apply alignment shift");
-// PDTExceptionClass(AlignmentErrorsDetected, "Exception class to handle alignment errors");
-// // PDTExceptionClass(AlignmentError, "Exception class to handle alignment errors");
-
-
-// PDTExceptionClass(FormatterError, "Exception class to handle formatter errors");
-// PDTExceptionClass(LinkError, "Exception class to handle link errors (e.g. alignment/CRC errors)")
-// PDTExceptionClass(CaptureFailed, "Capture operation failed")
-
-// // MGTs Exceptions
-// PDTExceptionClass(MGTFSMResetTimeout, "Exception class to handle failure to reset the transciever's FSMs");
-// PDTExceptionClass(MGTChannelIdOutOfBounds, "Exception class to out of bounds channel ids");
-
-// PDTExceptionClass(BufferLockFailed, "Exception class to handle failure of Buffer lock");
-// PDTExceptionClass(BufferConfigError, "Exception class to handle buffer misconfiguration");
-// PDTExceptionClass(BufferSizeExceeded, "Exception class to handle buffer size errors");
 
 PDTExceptionClass(I2CSlaveNotFound, "Exception class to handle missing I2C slaves");
 PDTExceptionClass(I2CException, "Exception class to handle I2C Exceptions");
-// PDTExceptionClass(MinipodChannelNotFound, "Requested MiniPOD channel does not exist");
-
-// // Readout exceptions
-// PDTExceptionClass(ZeroSuppressionNotAvailable, "Zero Suppression module not implemented");
-// PDTExceptionClass(InvalidCaptureId, "Invalid capture id");
-// PDTExceptionClass(CaptureNumberMismatch, "Expected number of capture ides doesn't match");
-// PDTExceptionClass(MaskSizeError, "Zero suppression Mask size error");
-// PDTExceptionClass(ReadoutMenuInconsistentWithFirmware, "Mismatch between readout menu and firmware error");
-// PDTExceptionClass(ReadoutMenuConsistencyCheckFailed, "Mismatch between readout menu and firmware error");
-
         
 }
 
