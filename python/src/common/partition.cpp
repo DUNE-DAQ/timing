@@ -25,8 +25,8 @@ namespace python {
 void
 register_partition() {
   class_<pdt::PartitionNode, bases<uhal::Node> > ("PartitionNode", init<const uhal::Node&>())
-      .def("readCommandMask", &pdt::PartitionNode::readCommandMask)
-      .def("setCommandMask", &pdt::PartitionNode::setCommandMask)
+      .def("readTriggerMask", &pdt::PartitionNode::readTriggerMask)
+      .def("writeTriggerMask", &pdt::PartitionNode::writeTriggerMask)
       .def("readBufferWordCount", &pdt::PartitionNode::readBufferWordCount)
       .def("numEventsInBuffer", &pdt::PartitionNode::numEventsInBuffer)
       .def("readEvents", &pdt::PartitionNode::readEvents, pdt_PartitionNode_readEvents_overloads())

@@ -38,7 +38,7 @@ PartitionNode::enable(bool aEnable, bool aDispatch) const {
 
 //-----------------------------------------------------------------------------
 void
-PartitionNode::setCommandMask( uint32_t aMask) const {
+PartitionNode::writeTriggerMask( uint32_t aMask) const {
     getNode("csr.ctrl.trig_mask").write(aMask);
     getClient().dispatch();
 }
@@ -46,8 +46,18 @@ PartitionNode::setCommandMask( uint32_t aMask) const {
 
 
 //-----------------------------------------------------------------------------
+void
+PartitionNode::enableTriggers( bool aEnable ) const {
+    // Disable the buffer
+    getNode("csr.ctrl.buf_en").write(aEnable);
+    getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
 uint32_t
-PartitionNode::readCommandMask() const {
+PartitionNode::readTriggerMask() const {
     uhal::ValWord<uint32_t> lMask = getNode("csr.ctrl.trig_mask").read();
     getClient().dispatch();
 
@@ -118,7 +128,7 @@ PartitionNode::reset() const {
 void
 PartitionNode::start( uint32_t aTimeout /*milliseconds*/ ) const {
 
-    // Diable to triggers (just in case)
+    // Disable triggers (just in case)
     getNode("csr.ctrl.trig_en").write(0);
     // Disable the buffer
     getNode("csr.ctrl.buf_en").write(0);

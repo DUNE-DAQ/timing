@@ -32,7 +32,7 @@ public:
      *
      * @return     The current value of the command mask.
      */
-    uint32_t readCommandMask() const;
+    uint32_t readTriggerMask() const;
 
 
     /**
@@ -50,9 +50,11 @@ public:
     uint32_t numEventsInBuffer() const;
     
     /**
-     * @brief      Read an event.
+     * @brief      Read multiple events from the rob.
      *
-     * @return     { description_of_the_return_value }
+     * @param[in]  aNumEvents  Number of events to read
+     *
+     * @return     Standard vector containing all events extracted from rob
      */
     std::vector<uint32_t> readEvents( size_t aNumEvents = 0 ) const;
 
@@ -64,11 +66,18 @@ public:
     void enable( bool aEnable=true, bool aDispatch=true ) const;
 
     /**
-     * @brief      Sets the command mask.
+     * @brief      Writes the trigger mask.
      *
      * @param[in]  aMask  A mask
      */
-    void setCommandMask( uint32_t aMask ) const;
+    void writeTriggerMask( uint32_t aMask ) const;
+
+    /**
+     * @brief      Enables the triggers.
+     *
+     * @param[in]  aEnable  The enable switch
+     */
+    void enableTriggers( bool aEnable = true ) const;
 
     /**
      * @brief      Resets the partition.
