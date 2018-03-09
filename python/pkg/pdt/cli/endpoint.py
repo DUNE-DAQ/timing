@@ -62,14 +62,11 @@ def endpoint(obj, device, ids):
         lEPNotFound = set( ( 'endpoint{}'.format(i) for i in ids ) ) -set(lEPNames)
         raise click.ClickException('Endpoints {} do(es) not exist'.format(', '.join( ('\''+ep+'\'' for ep in lEPNotFound) )))
     
-    lEndpoints = { pid:lDevice.getNode('endpoint{}.version'.format(pid)) for pid in ids}
+    lEndpoints = { pid:lDevice.getNode('endpoint{}'.format(pid)) for pid in ids}
 
-    lVersions = { pid:n.read() for pid,n in lEndpoints.iteritems()}
+    lVersions = { pid:n.getNode('version').read() for pid,n in lEndpoints.iteritems()}
 
     lDevice.dispatch()
-
-    # echo("Endpoint FW version: "+hex(lVersion))
-    print({ k:hex(v.value()) for k,v in lVersions.iteritems()})
 
     lVTable = Texttable(max_width=0)
     lVTable.set_deco(Texttable.VLINES | Texttable.BORDER)
@@ -79,6 +76,7 @@ def endpoint(obj, device, ids):
     echo  ( lVTable.draw() )
 
     obj.mDevice = lDevice
+    obj.mEndpoints = lEndpoints
 # ------------------------------------------------------------------------------
 
 
@@ -92,13 +90,18 @@ def enable(obj, on, partition):
     Activate timing endpoint wrapper block.
     '''
 
-    lEndPointNode = obj.mDevice.getNode('endpoint')
-    lEndPointNode.getNode('csr.ctrl.tgrp').write(partition)
-    lEndPointNode.getClient().dispatch()
-    lEndPointNode.getNode('csr.ctrl.ep_en').write(on)
-    lEndPointNode.getNode('csr.ctrl.buf_en').write(on)
-    lEndPointNode.getClient().dispatch()
-    echo("> Endpoint " + style("activated in partition {}".format(partition ) if on else "deactivated", fg='blue'))
+    lDone = []
+    for i, ep in obj.mEndpoints.iteritems():
+        if on:
+            ep.getNode('csr.ctrl.tgrp').write(partition)
+            ep.getClient().dispatch()
+        ep.getNode('csr.ctrl.ep_en').write(on)
+        ep.getNode('csr.ctrl.buf_en').write(on)
+        ep.getClient().dispatch()
+        lDone.append(i)
+
+    echo(
+        "> Endpoints {} ".format(','.join( (str(i) for i in lDone) )) + style("activated in partition {}".format(partition) if on else "deactivated", fg='blue'))
 # ------------------------------------------------------------------------------
 
 
@@ -131,6 +134,9 @@ def monitor(obj, watch, period):
 
     lDevice = obj.mDevice
     lEndPointNode = lDevice.getNode('endpoint0')
+
+
+
     lTStampNode = lEndPointNode.getNode('tstamp')
     lEvCtrNode = lEndPointNode.getNode('evtctr')
     lBufCountNode = lEndPointNode.getNode('buf.count')
@@ -140,6 +146,9 @@ def monitor(obj, watch, period):
             click.clear()
         
         lTimeStamp = lTStampNode.readBlock(2)
+    
+
+
         lEventCtr = lEvCtrNode.read()
         lBufCount = lBufCountNode.read()
         lDevice.dispatch()
@@ -164,7 +173,6 @@ def monitor(obj, watch, period):
         echo( "Timestamp: {} ({})".format(style(str(lTime), fg='blue'), hex(lTime)) )
         echo( "EventCounter: {}".format(lEventCtr))
         lBufState = style('OK', fg='green') if lStatDump['buf_err'] == 0 else style('Error', fg='red')
-        # lStatDump['buf_empty']
         echo( "Buffer status: " + lBufState)
         echo( "Buffer occupancy: {}".format(lBufCount))
         echo ()
