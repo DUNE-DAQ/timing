@@ -49,7 +49,7 @@ PartitionNode::writeTriggerMask( uint32_t aMask) const {
 void
 PartitionNode::enableTriggers( bool aEnable ) const {
     // Disable the buffer
-    getNode("csr.ctrl.buf_en").write(aEnable);
+    getNode("csr.ctrl.trig_en").write(aEnable);
     getClient().dispatch();
 }
 //-----------------------------------------------------------------------------
