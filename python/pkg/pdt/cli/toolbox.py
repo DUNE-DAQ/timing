@@ -16,20 +16,23 @@ def sanitizeConnectionPaths(aConnectionPaths):
 
 
 # ------------------------------------------------------------------------------
-def readSubNodes(aNode):
+def readSubNodes(aNode, dispatch=True):
     lValues = { n:aNode.getNode(n).read() for n in aNode.getNodes() }
-    aNode.getClient().dispatch()
+
+    if dispatch:
+        aNode.getClient().dispatch()
     return lValues
 # ------------------------------------------------------------------------------
 
 
 # ------------------------------------------------------------------------------
-def resetSubNodes(aNode, aValue=0x0):
+def resetSubNodes(aNode, aValue=0x0, dispatch=True):
     """
     Reset subnodes of aNode to aValue
     """
     lValues = { n:aNode.getNode(n).write(aValue) for n in aNode.getNodes() }
-    aNode.getClient().dispatch()
+    if dispatch:
+        aNode.getClient().dispatch()
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
@@ -63,6 +66,13 @@ def validate_device(ctx, param, value):
             )
     return value
 # -----------------
+
+
+# ------------------------------------------------------------------------------
+def formatTStamp( aRawTStamp ):
+    ts = int(aRawTStamp[0]) + int((aRawTStamp[1]) << 32)
+    return ts
+# ------------------------------------------------------------------------------
 
 
 # ------------------------------------------------------------------------------

@@ -2,10 +2,12 @@ import click
 
 import collections
 
-import pdt.cli.toolbox as toolbox
+import toolbox
+import definitions as defs
 
 from click import echo, style, secho
-from texttable import Texttable
+from click_texttable import Texttable
+import time
 
 # -----------------
 def split_ints(ctx, param, value):
@@ -45,8 +47,9 @@ def endpoint(obj, device, ids):
     '''
     Endpoint master commands.
 
+    \b
     DEVICE: uhal device identifier
-    IDS: enpoint ids
+    IDS: id(s) of the target endpoint(s).
     '''
 
     lDevice = obj.mConnectionManager.getDevice(str(device))
@@ -68,6 +71,9 @@ def endpoint(obj, device, ids):
 
     lDevice.dispatch()
 
+    if len(set( (v.value() for v in lVersions) )) > 1:
+        secho('WARNING: multiple enpoint versions detected', fg='yellow')
+        secho('')
     lVTable = Texttable(max_width=0)
     lVTable.set_deco(Texttable.VLINES | Texttable.BORDER)
     lVTable.set_chars(['-', '|', '+', '-'])
@@ -112,7 +118,7 @@ kEpStates = collections.OrderedDict([
     (0b0001,'Waiting SFP for signal'), #when W_SFP, -- Waiting for SFP LOS to go low
     (0b0010,'Waiting CDR lock'), #when W_CDR, -- Waiting for CDR lock
     (0b0011,'Waiting for comman alignment'), #when W_ALIGN, -- Waiting for comma alignment, stable 50MHz phase
-    (0b0100,'Waiting for good frequency checl'), #when W_FREQ, -- Waiting for good frequency check
+    (0b0100,'Waiting for good frequency check'), #when W_FREQ, -- Waiting for good frequency check
     (0b0101,'Waiting for 8b10 decoder good packet'), #when W_LOCK, -- Waiting for 8b10 decoder good packet
     (0b0110,'Waiting for time stamp initialisation'), #when W_RDY, -- Waiting for time stamp initialisation
     (0b1000,'Ready'), #when RUN, -- Good to go
@@ -126,13 +132,13 @@ kEpStates = collections.OrderedDict([
 @click.option('--watch', '-w', is_flag=True, default=False, help='Turn on automatic refresh')
 @click.option('--period', '-p', type=click.IntRange(0, 240), default=2, help='Period of automatic refresh')
 def monitor(obj, watch, period):
-
-# def monitor(obj, watch, period):
     '''
     Display the endpoint status, accepted and rejected command counters
     '''
+    lNumCtrs = 0x10
 
     lDevice = obj.mDevice
+    lEndpoints = obj.mEndpoints
     lEndPointNode = lDevice.getNode('endpoint0')
 
 
@@ -145,45 +151,96 @@ def monitor(obj, watch, period):
         if watch:
             click.clear()
         
-        lTimeStamp = lTStampNode.readBlock(2)
-    
+        lEPKeys = sorted(lEndpoints)
+        lEPData = { p:{} for p,_ in lEndpoints.iteritems() }
 
+        for p,n in lEndpoints.iteritems():
 
-        lEventCtr = lEvCtrNode.read()
-        lBufCount = lBufCountNode.read()
+            lData = lEPData[p]
+            lData['tstamp'] = n.getNode('tstamp').readBlock(2)
+            lData['evtctr'] = n.getNode('evtctr').read()
+            lData['bufcount'] = n.getNode('buf.count').read()
+
+            lData['ctrldump'] = toolbox.readSubNodes(n.getNode('csr.ctrl'), False)
+            lData['statdump'] = toolbox.readSubNodes(n.getNode('csr.stat'), False)
+            lData['ctrs'] = n.getNode('ctrs').readBlock(lNumCtrs)
         lDevice.dispatch()
 
-        lTime = int(lTimeStamp[0]) + (int(lTimeStamp[1]) << 32)
+
+        lTimeStamp = lTStampNode.readBlock(2)
+        lDevice.dispatch()
+
+        lEPSummary = Texttable(max_width=0)
+        lEPSummary.set_deco(Texttable.VLINES | Texttable.BORDER | Texttable.HEADER )
+        lEPSummary.set_chars(['-', '|', '+', '-'])
+        lEPSummary.header( ['Endpoint']+lEPKeys )
+        lEPSummary.set_cols_dtype(['t']*(len(lEPKeys)+1))
+        lEPSummary.add_row(
+                ['State']+
+                ['{} ({})'.format(kEpStates[int(lEPData[p]['statdump']['ep_stat'])], hex(lEPData[p]['statdump']['ep_stat'])) for p in lEPKeys
+                ]
+        )
+        lEPSummary.add_row(
+                ['Partition']+
+                [str(lEPData[p]['ctrldump']['tgrp']) for p in lEPKeys]
+        )
+        lEPSummary.add_row(
+                ['Timestamp']+
+                [style(str(toolbox.formatTStamp(lEPData[p]['tstamp'])), fg='blue') for p in lEPKeys]
+        )
+        lEPSummary.add_row(
+                ['Timestamp (hex)']+
+                [hex(toolbox.formatTStamp(lEPData[p]['tstamp'])) for p in lEPKeys]
+        )        
+        lEPSummary.add_row(
+                ['EventCounter']+
+                [str(lEPData[p]['evtctr']) for p in lEPKeys]
+        )
+        lEPSummary.add_row(
+                ['Buffer status']+
+                [style('OK', fg='green') if (lEPData[p]['statdump']['buf_err'] == 0x0) else style('Error', fg='red') for p in lEPKeys]
+        )
+        lEPSummary.add_row(
+                ['Buffer occupancy']+
+                [str(lEPData[p]['bufcount']) for p in lEPKeys]
+        )
+        echo ( lEPSummary.draw() )
 
         echo()
         echo( "-- " + style("Endpoint state", fg='green') + "---")
+
+        lEPStats = Texttable(max_width=0)
+        lEPStats.set_deco(Texttable.VLINES | Texttable.BORDER | Texttable.HEADER)
+        lEPStats.set_chars(['-', '|', '+', '-'])
+        lEPStats.set_cols_align(['l']+['c']*len(lEPKeys))
+        lEPStats.set_cols_width([10]+[8]*(len(lEPKeys)))
+
+        lEPStats.header( ['Endpoint']+lEPKeys )
+
+        for k in sorted(lEPData[lEPKeys[0]]['statdump']):
+            lEPStats.add_row(
+                [k]+
+                [hex(lEPData[p]['statdump'][k]) for p in lEPKeys]
+            )
+        echo ( lEPStats.draw() )
+
         echo()
+        echo( "-- " + style("Command counters", fg='green') + "---")
 
-        lCtrlDump = toolbox.readSubNodes(lEndPointNode.getNode('csr.ctrl'))
-        lStatDump = toolbox.readSubNodes(lEndPointNode.getNode('csr.stat'))
+        lEPCtrs = Texttable(max_width=0)
+        lEPCtrs.set_deco(Texttable.VLINES | Texttable.BORDER | Texttable.HEADER)
+        lEPCtrs.set_chars(['-', '|', '+', '-'])
+        lEPCtrs.set_cols_align(['l']+['c']*len(lEPKeys))
+        lEPCtrs.set_cols_width([10]+[8]*(len(lEPKeys)))
 
-        echo( "Status registers" )
-        for n in sorted(lStatDump):
-            echo( "  {} {}".format(n, hex(lStatDump[n])))
-        echo()
-        echo( 'Endpoint state: {} ({})'.format(kEpStates[int(lStatDump['ep_stat'])], hex(lStatDump['ep_stat'])))
+        lEPCtrs.header( ['Endpoint']+lEPKeys )
+        for c in xrange(lNumCtrs):
+            lEPCtrs.add_row(
+                [defs.kCommandNames.get(c)]+
+                [lEPData[p]['ctrs'][c] for p in lEPKeys]
+                )
+        echo ( lEPCtrs.draw() )
 
-        echo ()
-        echo( "Partition: {}".format(lCtrlDump['tgrp']))
-        echo( "Timestamp: {} ({})".format(style(str(lTime), fg='blue'), hex(lTime)) )
-        echo( "EventCounter: {}".format(lEventCtr))
-        lBufState = style('OK', fg='green') if lStatDump['buf_err'] == 0 else style('Error', fg='red')
-        echo( "Buffer status: " + lBufState)
-        echo( "Buffer occupancy: {}".format(lBufCount))
-        echo ()
-
-        # secho ("Received commands counters", fg='green')
-        # printCounters(lEndPointNode.getNode('ctrs'))
-        
-        echo()
-        toolbox.printCounters( lEndPointNode, {
-            'ctrs': 'Received counters',
-            })
         if watch:
             time.sleep(period)
         else:

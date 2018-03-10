@@ -16,8 +16,6 @@ import pdt.cli.toolbox as toolbox
 import pdt.cli.endpoint as endpoint
 import pdt.cli.definitions as defs
 
-
-from texttable import Texttable
 # 
 from click import echo, style, secho
 from os.path import join, expandvars
