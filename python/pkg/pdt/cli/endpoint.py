@@ -71,15 +71,16 @@ def endpoint(obj, device, ids):
 
     lDevice.dispatch()
 
-    if len(set( (v.value() for v in lVersions) )) > 1:
+    if len(set( (v.value() for v in lVersions.itervalues()) )) > 1:
         secho('WARNING: multiple enpoint versions detected', fg='yellow')
-        secho('')
-    lVTable = Texttable(max_width=0)
-    lVTable.set_deco(Texttable.VLINES | Texttable.BORDER)
-    lVTable.set_chars(['-', '|', '+', '-'])
-    lVTable.header( sorted(lVersions.keys()) )
-    lVTable.add_row( [hex(lVersions[p].value()) for p in sorted(lVersions.keys()) ] )
-    echo  ( lVTable.draw() )
+        secho()
+
+        lVTable = Texttable(max_width=0)
+        lVTable.set_deco(Texttable.VLINES | Texttable.BORDER)
+        lVTable.set_chars(['-', '|', '+', '-'])
+        lVTable.header( sorted(lVersions.keys()) )
+        lVTable.add_row( [hex(lVersions[p].value()) for p in sorted(lVersions.keys()) ] )
+        echo  ( lVTable.draw() )
 
     obj.mDevice = lDevice
     obj.mEndpoints = lEndpoints
@@ -207,7 +208,7 @@ def monitor(obj, watch, period):
         echo ( lEPSummary.draw() )
 
         echo()
-        echo( "-- " + style("Endpoint state", fg='green') + "---")
+        echo( "--- " + style("Endpoint state", fg='green') + " ---")
 
         lEPStats = Texttable(max_width=0)
         lEPStats.set_deco(Texttable.VLINES | Texttable.BORDER | Texttable.HEADER)
@@ -220,12 +221,15 @@ def monitor(obj, watch, period):
         for k in sorted(lEPData[lEPKeys[0]]['statdump']):
             lEPStats.add_row(
                 [k]+
-                [hex(lEPData[p]['statdump'][k]) for p in lEPKeys]
+                [
+                    style(hex(v), fg=('blue' if v != 0 else 'white')) 
+                    for v in ( lEPData[p]['statdump'][k]  for p in lEPKeys ) 
+                ]
             )
         echo ( lEPStats.draw() )
 
         echo()
-        echo( "-- " + style("Command counters", fg='green') + "---")
+        echo( "--- " + style("Command counters", fg='green') + " ---")
 
         lEPCtrs = Texttable(max_width=0)
         lEPCtrs.set_deco(Texttable.VLINES | Texttable.BORDER | Texttable.HEADER)
@@ -237,7 +241,7 @@ def monitor(obj, watch, period):
         for c in xrange(lNumCtrs):
             lEPCtrs.add_row(
                 [defs.kCommandNames.get(c)]+
-                [lEPData[p]['ctrs'][c] for p in lEPKeys]
+                [k if k > 0 else '' for k in (lEPData[p]['ctrs'][c] for p in lEPKeys)]
                 )
         echo ( lEPCtrs.draw() )
 

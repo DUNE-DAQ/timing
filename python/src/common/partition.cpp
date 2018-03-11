@@ -16,6 +16,7 @@ using namespace boost::python;
 
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PartitionNode_enable_overloads, enable, 0, 2);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PartitionNode_enableTriggers_overloads, enableTriggers, 0, 1);
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PartitionNode_readEvents_overloads, readEvents, 0, 1);
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PartitionNode_start_overloads, start, 0, 1);
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PartitionNode_stop_overloads, stop, 0, 1);
@@ -27,6 +28,7 @@ register_partition() {
   class_<pdt::PartitionNode, bases<uhal::Node> > ("PartitionNode", init<const uhal::Node&>())
       .def("readTriggerMask", &pdt::PartitionNode::readTriggerMask)
       .def("writeTriggerMask", &pdt::PartitionNode::writeTriggerMask)
+      .def("enableTriggers", &pdt::PartitionNode::enableTriggers, pdt_PartitionNode_enableTriggers_overloads())
       .def("readBufferWordCount", &pdt::PartitionNode::readBufferWordCount)
       .def("numEventsInBuffer", &pdt::PartitionNode::numEventsInBuffer)
       .def("readEvents", &pdt::PartitionNode::readEvents, pdt_PartitionNode_readEvents_overloads())

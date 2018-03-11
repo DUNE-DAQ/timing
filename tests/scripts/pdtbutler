@@ -459,6 +459,19 @@ def start(obj):
 
 
 # ------------------------------------------------------------------------------
+@partition.command('trig', short_help='Toggles triggers')
+@click.option('--on/--off', default=True, help='enable/disable triggers')
+@click.pass_obj
+def trig(obj, on):
+    '''
+    Toggles triggers.
+    '''
+    obj.mPartitionNode.enableTriggers(on)
+    secho("Partition {} triggers {}".format(obj.mPartitionId, 'enabled' if on else 'disbaled'), fg='green')
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
 @partition.command('stop', short_help='Stops data taking.')
 @click.pass_obj
 def stop(obj):
