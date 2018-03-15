@@ -14,6 +14,22 @@ function pathadd() {
 
 }
 
+declare -a missing_pypkg
+
+function chkpypkg() {
+  if python -c "import ${1}" &> /dev/null; then
+    echo "${1} is installed"
+else
+    echo "Error: package '${1}' is not installed"
+    missing_pypkg+=(${1})
+fi
+}
+
+chkpypkg click
+
+(( ${#array[@]} > 0 )) || return 1
+
+
 CACTUS_ROOT=/opt/cactus
 PDT_TESTS=$( readlink -f $(dirname $BASH_SOURCE)/ )
 PDT_ROOT=$( readlink -f ${PDT_TESTS}/.. )
