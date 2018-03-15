@@ -21,7 +21,7 @@ from click import echo, style, secho
 from os.path import join, expandvars
 
 
-
+kMasterFWMajorRequired = 4
 
 class PDTContext: pass
 
@@ -88,7 +88,15 @@ def master(obj, device):
 
     lVersion = lDevice.getNode("master.global.version").read()
     lDevice.dispatch()
+
+    lMajor = (lVersion >> 16) & 0xff
+    lMinor = (lVersion >> 8) & 0xff
+    lPatch = (lVersion >> 0) & 0xff
     echo("Master FW version: "+hex(lVersion))
+
+    if lMajor < 4:
+        secho('ERROR: Incompatible master firmware version. Found {}, required {}'.format(hex(lMajor), hex(kMasterFWMajorRequired)), fg='red')
+        raise click.Abort()
 
     obj.mDevice = lDevice
 # ------------------------------------------------------------------------------
@@ -148,8 +156,8 @@ kBoardRevisionMap = {
 # }
 
 @master.command('reset', short_help="Perform a hard reset on the timing master.")
-@click.option('--soft', '-s', is_flag=True, help='Target partition', default=False)
-@click.option('--model','-m', type=click.Choice(['ax3','kc705']), default='ax3')
+@click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
+@click.option('--model','-m', type=click.Choice(['ax3','kc705']), default='ax3', help='Master board model (default: ax3')
 @click.pass_obj
 def reset(obj, soft, model):
     '''
