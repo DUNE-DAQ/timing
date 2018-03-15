@@ -25,6 +25,7 @@ else
 fi
 }
 
+chkpypkg uhal
 chkpypkg click
 
 (( ${#array[@]} > 0 )) || return 1
