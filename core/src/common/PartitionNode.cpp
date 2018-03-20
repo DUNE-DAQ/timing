@@ -85,6 +85,29 @@ PartitionNode::numEventsInBuffer() const {
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+bool
+PartitionNode::readROBWarningOverflow() const {
+    uhal::ValWord<uint32_t> lWord = getNode("csr.stat.buf_warn").read();
+    getClient().dispatch();
+
+    return lWord.value();
+
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+bool
+PartitionNode::readROBError() const {
+    uhal::ValWord<uint32_t> lWord = getNode("csr.stat.buf_err").read();
+    getClient().dispatch();
+
+    return lWord.value();
+
+}
+//-----------------------------------------------------------------------------
+
+
 
 //-----------------------------------------------------------------------------
 std::vector<uint32_t>

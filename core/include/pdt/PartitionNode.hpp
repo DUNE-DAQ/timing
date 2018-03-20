@@ -50,6 +50,20 @@ public:
     uint32_t numEventsInBuffer() const;
     
     /**
+     * @brief      Reads a rob warning overflow.
+     *
+     * @return     { description_of_the_return_value }
+     */
+    bool readROBWarningOverflow() const;
+
+    /**
+     * @brief      Reads a rob error.
+     *
+     * @return     { description_of_the_return_value }
+     */
+    bool readROBError() const;
+    
+    /**
      * @brief      Read multiple events from the rob.
      *
      * @param[in]  aNumEvents  Number of events to read
@@ -57,6 +71,7 @@ public:
      * @return     Standard vector containing all events extracted from rob
      */
     std::vector<uint32_t> readEvents( size_t aNumEvents = 0 ) const;
+
 
     /**
      * @brief      Enables the partition now.

@@ -31,6 +31,8 @@ register_partition() {
       .def("enableTriggers", &pdt::PartitionNode::enableTriggers, pdt_PartitionNode_enableTriggers_overloads())
       .def("readBufferWordCount", &pdt::PartitionNode::readBufferWordCount)
       .def("numEventsInBuffer", &pdt::PartitionNode::numEventsInBuffer)
+      .def("readROBWarningOverflow", &pdt::PartitionNode::readROBWarningOverflow)
+      .def("readROBError", &pdt::PartitionNode::readROBError)
       .def("readEvents", &pdt::PartitionNode::readEvents, pdt_PartitionNode_readEvents_overloads())
       .def("enable", &pdt::PartitionNode::enable, pdt_PartitionNode_enable_overloads())
       .def("reset", &pdt::PartitionNode::reset)

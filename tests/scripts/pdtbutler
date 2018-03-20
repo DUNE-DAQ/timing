@@ -86,7 +86,8 @@ def master(obj, device):
         
     echo('Created device ' + click.style(lDevice.id(), fg='blue'))
 
-    lVersion = lDevice.getNode("master.global.version").read()
+    lVersion = lDevice.getNode('master.global.version').read()
+    lGenerics = toolbox.readSubNodes(lDevice.getNode('master.global.config'), False)
     lDevice.dispatch()
 
     lMajor = (lVersion >> 16) & 0xff
@@ -98,13 +99,10 @@ def master(obj, device):
         secho('ERROR: Incompatible master firmware version. Found {}, required {}'.format(hex(lMajor), hex(kMasterFWMajorRequired)), fg='red')
         raise click.Abort()
 
+    # print({ k:v.value() for k,v in lGenerics.iteritems()})
     obj.mDevice = lDevice
 # ------------------------------------------------------------------------------
 
-# def snapshot(node):
-#     s = { n:node.getNode(n).read() for n in node.getNodes() }
-#     node.getClient().dispatch()
-#     return s
 
 # ------------------------------------------------------------------------------
 @master.command()
@@ -293,27 +291,6 @@ def partition(obj, id):
 
 # ------------------------------------------------------------------------------
 
-# Command definition from pdt_defs.vhd
-    # constant SCMD_SYNC: std_logic_vector(3 downto 0) := X"0";
-    # constant SCMD_ECHO: std_logic_vector(3 downto 0) := X"1";
-    # constant SCMD_SPILL_START: std_logic_vector(3 downto 0) := X"2";
-    # constant SCMD_SPILL_STOP: std_logic_vector(3 downto 0) := X"3";
-    # constant SCMD_RUN_START: std_logic_vector(3 downto 0) := X"4";
-    # constant SCMD_RUN_STOP: std_logic_vector(3 downto 0) := X"5";
-    # constant SCMD_FAKE_TRIG: std_logic_vector(3 downto 0) := X"8"; -- Commands from 0x8 to 0xf reserved for triggers / calib
-
-# kCommandIDs = collections.OrderedDict([
-
-#     ('TimeSync', 0x0),
-#     ('Echo', 0x1),
-#     ('SpillStart', 0x2),
-#     ('SpillStop', 0x3),
-#     ('RunStart', 0x4),
-#     ('RunStop', 0x5),
-#     ('FakeTrig', 0x8),
-# ])
-
-# kCommandNames = { v:k for k,v in kCommandIDs.iteritems() }
 
 # ------------------------------------------------------------------------------
 @partition.command('monitor', short_help='Display the status of the timing master.')
@@ -594,9 +571,10 @@ def validate_freq(ctx, param, value):
 
 @master.command()
 @click.pass_obj
+@click.argument('chan', type=click.IntRange(0, 3))
 @click.argument('divider', type=click.IntRange(0, 0xf))
 @click.option('--poisson', is_flag=True, default=False, help="Randomize time interval between consecutive triggers.")
-def triggen(obj, divider, poisson):
+def triggen(obj, chan, divider, poisson):
     '''
     \b
     Enables the internal trigger generator.
@@ -609,19 +587,24 @@ def triggen(obj, divider, poisson):
     '''
 
     lDevice = obj.mDevice
-
     lGenChanCtrl = lDevice.getNode('master.scmd_gen.chan_ctrl')
+    kFakeTrigID = 'FakeTrig{}'.format(chan)
 
-    lGenChanCtrl.getNode('type').write(defs.kCommandIDs['FakeTrig']) # Set command type = 3 for generator 0
-    lGenChanCtrl.getNode('rate_div').write(divider) # Set about 1Hz rate for generator 0
-    lGenChanCtrl.getNode('patt').write(poisson) # Set Poisson mode for generator 0
+    lDevice.getNode('master.scmd_gen.sel').write(chan)
+
+    lGenChanCtrl.getNode('type').write(defs.kCommandIDs[kFakeTrigID])
+    lGenChanCtrl.getNode('rate_div').write(divider)
+    lGenChanCtrl.getNode('patt').write(poisson)
     lGenChanCtrl.getClient().dispatch()
-    echo( "> Trigger rate set to " + 
+    echo( "> Trigger rate for {} ({}) set to {}".format( 
+        kFakeTrigID,
+        hex(defs.kCommandIDs[kFakeTrigID]),
         style(
             "{:.3e} Hz".format(50e6/(1<<(12+divider))),
             fg='yellow'
             )
-        ) 
+        )
+    )
     echo( "> Trigger mode: " + style({False: 'periodic', True: 'poisson'}[poisson], fg='blue') )
 
     lGenChanCtrl.getNode("en").write(1) # Start the command stream
