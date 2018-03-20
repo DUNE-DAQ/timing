@@ -27,9 +27,8 @@ fi
 
 chkpypkg uhal
 chkpypkg click
-
-(( ${#array[@]} > 0 )) || return 1
-
+(( ${#missing_pypkg[@]} > 0 )) &&  return 1
+unset missing_pypkg
 
 CACTUS_ROOT=/opt/cactus
 PDT_TESTS=$( readlink -f $(dirname $BASH_SOURCE)/ )
