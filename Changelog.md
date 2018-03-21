@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [4.a.1] 2018-03-21
 ### Changed
-- Exrtended the `mst` `triggen` parameters with channel id to control up to 4 trigger generators in parallel. Each generator issues a dedicated `FakeTrigger` command (`FakeTrigger0`-`FakeTrigger3`).
+- Extended the `mst` `triggen` parameters with channel id to control up to 4 trigger generators in parallel. Each generator issues a dedicated `FakeTrigger` command (`FakeTrigger0`-`FakeTrigger3`).
 - Added `readROBWarningOverflow` and `readROBError` `PartitionNode` methods.
 
 ### Added
