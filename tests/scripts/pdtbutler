@@ -197,7 +197,7 @@ def reset(obj, soft, model):
             echo("I2C enable lines: {}".format(x))
         elif model == 'kc705':
             # Warning, this might not work
-            lUID.getSlave('').writeI2CArray(0x10, [])
+            lUID.getSlave('KC705_Switch').writeI2CArray(0x10, [])
         else:
             click.ClickException("Unknown master model {}".format(model))
 
