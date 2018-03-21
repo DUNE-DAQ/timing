@@ -2,6 +2,8 @@
 import re
 
 import definitions as defs
+import click
+
 from click import echo, style, secho
 
 # ------------------------------------------------------------------------------
