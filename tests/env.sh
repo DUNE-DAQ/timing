@@ -17,7 +17,7 @@ function pathadd() {
 declare -a missing_pypkg
 
 function chkpypkg() {
-  if python -c "import ${1}" &> /dev/null; then
+  if python -c "import pkgutil; raise SystemExit(1 if pkgutil.find_loader('${1}') is None else 0)" &> /dev/null; then
     echo "${1} is installed"
 else
     echo "Error: package '${1}' is not installed"
