@@ -27,6 +27,8 @@ fi
 
 chkpypkg uhal
 chkpypkg click
+chkpypkg click_didyoumean
+
 (( ${#missing_pypkg[@]} > 0 )) &&  return 1
 unset missing_pypkg
 
