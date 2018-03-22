@@ -13,7 +13,7 @@ Packager = Alessandro Thea
 
 PACKAGE_VER_MAJOR = 4
 PACKAGE_VER_MINOR = 0
-PACKAGE_VER_PATCH = 1
+PACKAGE_VER_PATCH = 2
 PACKAGE_RELEASE = 0
 
 # Requirements for the rpm build

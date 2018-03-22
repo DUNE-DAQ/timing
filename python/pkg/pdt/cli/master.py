@@ -521,12 +521,12 @@ def validate_freq(ctx, param, value):
     return value, lMinDeltaIdx, div2freq(lMinDeltaIdx)
 # -----------------
 
-@master.command()
+@master.command('faketrig-conf')
 @click.pass_obj
 @click.argument('chan', type=int, callback=toolbox.validate_chan)
 @click.argument('divider', type=click.IntRange(0, 0xf))
 @click.option('--poisson', is_flag=True, default=False, help="Randomize time interval between consecutive triggers.")
-def triggen(obj, chan, divider, poisson):
+def faketriggen(obj, chan, divider, poisson):
     '''
     \b
     Enables the internal trigger generator.
@@ -557,7 +557,7 @@ def triggen(obj, chan, divider, poisson):
             )
         )
     )
-    echo( "> Trigger mode: " + style({False: 'periodic', True: 'poisson'}[poisson], fg='blue') )
+    echo( "> Trigger mode: " + style({False: 'periodic', True: 'poisson'}[poisson], fg='cyan') )
 
     lGenChanCtrl.getNode("en").write(1) # Start the command stream
     lGenChanCtrl.getClient().dispatch()
@@ -565,18 +565,20 @@ def triggen(obj, chan, divider, poisson):
 
 
 # ------------------------------------------------------------------------------
-@master.command()
+@master.command('faketrig-clear')
 @click.pass_obj
-def trigclear(obj):
+@click.argument('chan', type=int, callback=toolbox.validate_chan)
+def faketrigclear(obj, chan):
     '''
     Clear the internal trigger generator.
     '''
     lDevice = obj.mDevice
 
     lGenChanCtrl = lDevice.getNode('master.scmd_gen.chan_ctrl')
+    lDevice.getNode('master.scmd_gen.sel').write(chan)
 
     toolbox.resetSubNodes(lGenChanCtrl)
-    echo( "> Command generator configuration cleared" )
+    secho( "> Fake trigger generator {} configuration cleared".format(chan), fg='cyan' )
 
 # ------------------------------------------------------------------------------
 
