@@ -70,6 +70,33 @@ def validate_device(ctx, param, value):
 # -----------------
 
 
+# -----------------
+def validate_partition(ctx, param, value):
+    
+    lMaxParts = ctx.obj.mGenerics['n_part']
+    if value < 0 or value > lMaxParts-1:
+
+        raise click.BadParameter(
+            'Invalid partition {}. Available partitions: {}'.format(value, range(lMaxParts))
+        )
+    return value
+# -----------------
+
+
+# -----------------
+def validate_chan(ctx, param, value):
+    
+    lMaxChans = ctx.obj.mGenerics['n_chan']
+    print(lMaxChans, value)
+    if value < 0 or value > lMaxChans-1:
+
+        raise click.BadParameter(
+            'Invalid partition {}. Available partitions: {}'.format(value, range(lMaxChans))
+        )
+    return value
+# -----------------
+
+
 # ------------------------------------------------------------------------------
 def formatTStamp( aRawTStamp ):
     ts = int(aRawTStamp[0]) + int((aRawTStamp[1]) << 32)
