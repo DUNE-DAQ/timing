@@ -355,7 +355,7 @@ def read_mask(ctx, param, value):
 
 # ------------------------------------------------------------------------------
 @partition.command('configure', short_help='Prepares partition for data taking.')
-@click.option('--trgmask', '-m', type=str, callback=lambda c, p, v: int(v, 16), default='0xff', help='Trigger mask (in hex)')
+@click.option('--trgmask', '-m', type=str, callback=lambda c, p, v: int(v, 16), default='0xf', help='Trigger mask (in hex).')
 @click.pass_obj
 def configure(obj, trgmask):
     '''
@@ -368,13 +368,21 @@ def configure(obj, trgmask):
     - disable triggers
     - set command mask for the partition
     - enable partition
+    \b
+    Note: The trigger mask does not cover fake triggers which mask is automatically
+    set according to the partition number.
     '''
     lPartId = obj.mPartitionId
     lPartNode = obj.mPartitionNode
 
+    lFakeMask = (0x1 << lPartId)
+    lTrgMask = (trgmask << 4) | lFakeMask;
+
     echo()
     echo("Configuring partition {}".format(lPartId))
-    echo("Trigger mask set to {}".format(hex(trgmask)))
+    echo("Trigger mask set to {}".format(hex(lTrgMask)))
+    echo("  Fake mask {}".format(hex(lFakeMask)))
+    echo("  Phys mask {}".format(hex(trgmask)))
 
     lPartNode.reset(); 
     lPartNode.writeTriggerMask(trgmask);
