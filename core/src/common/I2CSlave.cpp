@@ -67,5 +67,21 @@ I2CSlave::writeI2CArray(uint32_t i2cAddress, std::vector<uint8_t> aData, bool aS
 }
 //-----------------------------------------------------------------------------
 
+// comodity functions
+//-----------------------------------------------------------------------------
+std::vector<uint8_t>
+I2CSlave::readI2CPrimitive(uint32_t aNumBytes) const {
+    return mMaster->readI2CPrimitive(mAddress, aNumBytes);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void
+I2CSlave::writeI2CPrimitive(const std::vector<uint8_t>& aData, bool aSendStop) const {
+    mMaster->writeI2CPrimitive(mAddress, aData, aSendStop);
+}
+//-----------------------------------------------------------------------------
+
 } // namespace pdt
 

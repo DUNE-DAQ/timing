@@ -23,9 +23,11 @@ using namespace boost::python;
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CBaseNode_writeI2C_overloads, writeI2C, 3, 4);
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CBaseNode_writeI2CArray_overloads, writeI2CArray, 3, 4);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CBaseNode_writeI2CPrimitive_overloads, writeI2CPrimitive, 2, 3);
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CSlave_writeI2C_overloads, writeI2C, 2, 3);
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CSlave_writeI2CArray_overloads, writeI2CArray, 2, 3);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CSlave_writeI2CPrimitive_overloads, writeI2CPrimitive, 1, 2);
 
 
 namespace pdt {
@@ -42,6 +44,8 @@ register_i2c() {
       .def("writeI2C", &pdt::I2CBaseNode::writeI2C, pdt_I2CBaseNode_writeI2C_overloads())
       .def("readI2CArray", &pdt::I2CBaseNode::readI2CArray)
       .def("writeI2CArray", &pdt::I2CBaseNode::writeI2CArray, pdt_I2CBaseNode_writeI2CArray_overloads())
+      .def("readI2CPrimitive", &pdt::I2CBaseNode::readI2CPrimitive)
+      .def("writeI2CPrimitive", &pdt::I2CBaseNode::writeI2CPrimitive, pdt_I2CBaseNode_writeI2CPrimitive_overloads())
       .def("getSlaves", &pdt::I2CBaseNode::getSlaves)
       .def("getSlaveAddress", &pdt::I2CBaseNode::getSlaveAddress)
       ;
@@ -58,6 +62,8 @@ register_i2c() {
       .def("writeI2C", &pdt::I2CSlave::writeI2C, pdt_I2CSlave_writeI2C_overloads())
       .def("readI2CArray", &pdt::I2CSlave::readI2CArray)
       .def("writeI2CArray", &pdt::I2CSlave::writeI2CArray, pdt_I2CSlave_writeI2CArray_overloads())
+      .def("readI2CPrimitive", &pdt::I2CSlave::readI2CPrimitive)
+      .def("writeI2CPrimitive", &pdt::I2CSlave::writeI2CPrimitive, pdt_I2CSlave_writeI2CPrimitive_overloads())
       ;
 
   // Wrap SI5344Slave
