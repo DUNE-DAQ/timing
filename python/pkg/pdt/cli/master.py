@@ -6,13 +6,14 @@ import click
 import click_didyoumean
 import time
 import collections
+import pdt
 
 import pdt.cli.toolbox as toolbox
 import pdt.cli.definitions as defs
 
 from click import echo, style, secho
 from os.path import join, expandvars
-
+from pdt.core import SI5344Slave
 
 # ------------------------------------------------------------------------------
 #    __  ___         __         
@@ -49,7 +50,7 @@ def master(obj, device):
         secho('ERROR: Incompatible master firmware version. Found {}, required {}'.format(hex(lMajor), hex(kMasterFWMajorRequired)), fg='red')
         raise click.Abort()
 
-    # print({ k:v.value() for k,v in lGenerics.iteritems()})
+    print({ k:v.value() for k,v in lGenerics.iteritems()})
     obj.mDevice = lDevice
     obj.mGenerics = { k:v.value() for k,v in lGenerics.iteritems()}
     obj.mVersion = lVersion
@@ -76,10 +77,12 @@ def ipy(ctx):
 
 kRev1 = 1
 kRev2 = 2
+kRev3 = 3
 
 kClockConfigMap = {
     kRev1: "SI5344/PDTS0000.txt",
     kRev2: "SI5344/PDTS0003.txt",
+    kRev3: "SI5344/PDTS0005.txt",
 }
 
 kBoardRevisionMap = {
@@ -100,14 +103,20 @@ kBoardRevisionMap = {
     0xd880395e2b2e: kRev2,
     0xd880395e2b33: kRev2,
     0xd880395e1c81: kRev2,
+    0xd88039d980cf: kRev3,
+    0xd88039d98adf: kRev3,
 }
 
 # kBoardRevisionMap = {
 # }
 
+kBoardPC053 = 'pc053'
+kBoardPC059 = 'pc059'
+kBoardKC705 = 'kc705'
+
 @master.command('reset', short_help="Perform a hard reset on the timing master.")
 @click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
-@click.option('--model','-m', type=click.Choice(['ax3','kc705']), default='ax3', help='Master board model (default: ax3')
+@click.option('--model','-m', type=click.Choice([kBoardPC059, kBoardPC053, kBoardKC705]), default=kBoardPC059, help='Master board model (default: {})'.format(kBoardPC059))
 @click.pass_obj
 def reset(obj, soft, model):
     '''
@@ -118,6 +127,7 @@ def reset(obj, soft, model):
     - i2c buses
     - pll and pll configuration
     '''
+
     echo('Resetting ' + click.style(obj.mDevice.id(), fg='blue'))
 
     lDevice = obj.mDevice
@@ -131,34 +141,38 @@ def reset(obj, soft, model):
         
         time.sleep(1)
         
-        # PLL reset
+
+        # PLL and I@C reset 
         lDevice.getNode("io.csr.ctrl.pll_rst").write(0x1)
+        if model == kBoardPC059:
+            lDevice.getNode("io.csr.ctrl.rst_i2c").write(0x1)
+            lDevice.getNode("io.csr.ctrl.rst_i2cmux").write(0x1)
+
         lDevice.dispatch()
         lDevice.getNode("io.csr.ctrl.pll_rst").write(0x0)
+        if model == kBoardPC059:
+            lDevice.getNode("io.csr.ctrl.rst_i2c").write(0x0)
+            lDevice.getNode("io.csr.ctrl.rst_i2cmux").write(0x0)
         lDevice.dispatch()
 
         # Detect the on-board eprom and read the board UID
-        lUID = lDevice.getNode("io.uid_i2c")
+        if model == kBoardPC059:
+            lUID = lDevice.getNode("io.i2c")
+        else:
+            lUID = lDevice.getNode("io.uid_i2c")
+
         echo("UID I2C Slaves")
         for lSlave in lUID.getSlaves():
             echo("  {}: {}".format(lSlave, hex(lUID.getSlaveAddress(lSlave))))
 
-        if model == 'ax3':
+        if model in [kBoardPC059, kBoardPC053]:
             lUID.getSlave('AX3_Switch').writeI2C(0x01, 0x7f)
             x = lUID.getSlave('AX3_Switch').readI2C(0x01)
             echo("I2C enable lines: {}".format(x))
-        elif model == 'kc705':
-            # Warning, this might not work
-            # lUID.getSlave('KC705_Switch').writeI2CArray(0x10, [])
-            # lUID.getSlave('KC705_Switch').writeI2CPrimitive([0x1])
-            # x = lUID.getSlave('KC705_Switch').readI2CPrimitive(1)
-            # print (x)
+        elif model == kBoardKC705:
             lUID.getSlave('KC705_Switch').writeI2CPrimitive([0x10])
-            x = lUID.getSlave('KC705_Switch').readI2CPrimitive(1)
-            print (x)
-
-            # raise click.Abort()
-
+            # x = lUID.getSlave('KC705_Switch').readI2CPrimitive(1)
+            echo("KC705 I2C switch enabled (hopefully)".format())
         else:
             click.ClickException("Unknown master model {}".format(model))
 
@@ -176,7 +190,11 @@ def reset(obj, soft, model):
             raise click.ClickException("No revision associated to UID "+hex(lUniqueID))
 
         # Access the clock chip
-        lSI5344 = lDevice.getNode('io.pll_i2c')
+        if model == kBoardPC059:
+            lI2CBusNode = lDevice.getNode("io.i2c")
+            lSI5344 = SI5344Slave(lI2CBusNode, lI2CBusNode.getSlave('SI5344').getI2CAddress())
+        else:
+            lSI5344 = lDevice.getNode('io.pll_i2c')
         lSIVersion = lSI5344.readDeviceVersion()
         echo("PLL version : "+style(hex(lSIVersion), fg='blue'))
 
@@ -189,7 +207,7 @@ def reset(obj, soft, model):
         echo("Clock configuration to load "+style(lClockConfigPath, fg='green') )
 
         # Configure the clock chip
-        lFullClockConfigPath = expandvars(join('${PDT_TESTS}/scripts/ouroboros', lClockConfigPath))
+        lFullClockConfigPath = expandvars(join('${PDT_TESTS}/etc/clock', lClockConfigPath))
         lSI5344.configure(lFullClockConfigPath)
 
         # Measure the generated clock frequency
@@ -202,9 +220,27 @@ def reset(obj, soft, model):
             fv = lDevice.getNode("io.freq.freq.valid").read()
             lDevice.dispatch()
             print( "Freq:", i, int(fv), int(fq) * 119.20928 / 1000000 )
-            
-        lDevice.getNode("io.csr.ctrl.sfp_tx_dis").write(0)
-        lDevice.dispatch()
+        
+        if model != kBoardPC059:
+            lDevice.getNode("io.csr.ctrl.sfp_tx_dis").write(0)
+            lDevice.dispatch()
+        else:
+            lSFPExp = lDevice.getNode("io.i2c").getSlave('SFPExpander')
+            # Bank 0 - Set invert registers to default
+            lSFPExp.writeI2C(0x4, 0x00)
+            # Bank 1 - Set invert registers to default
+            lSFPExp.writeI2C(0x5, 0x00)
+
+            # Bank 0 - configure for output
+            lSFPExp.writeI2C(0x6, 0x00)
+            # Bank 1 - configure for input
+            lSFPExp.writeI2C(0x7, 0xff)
+
+            # Bank 0 - enable all SFPGs
+            lSFPExp.writeI2C(0x2, 0x00)
+            secho("SFPs 0-7 enabled", fg='cyan')
+
+
 
     # Reset controls
     lDevice.getNode("io.csr.ctrl.rst").write(1)

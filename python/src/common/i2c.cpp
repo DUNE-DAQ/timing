@@ -67,7 +67,7 @@ register_i2c() {
       ;
 
   // Wrap SI5344Slave
-  class_<pdt::SI5344Slave, bases<pdt::I2CSlave>, boost::noncopyable > ("SI5344Slave", no_init)
+  class_<pdt::SI5344Slave, bases<pdt::I2CSlave>, boost::noncopyable > ("SI5344Slave", init<const pdt::I2CBaseNode*, uint8_t>())
       .def("readPage", &pdt::SI5344Slave::readPage)
       .def("switchPage", &pdt::SI5344Slave::switchPage)
       .def("readDeviceVersion", &pdt::SI5344Slave::readDeviceVersion)
