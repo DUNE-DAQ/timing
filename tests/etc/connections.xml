@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <connections>
-  <connection id="PDT_PRIMARY"       uri="ipbusudp-2.0://192.168.200.16:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_pc053_v4a4/top.xml" />
-  <connection id="PDT_SECONDARY"     uri="ipbusudp-2.0://192.168.200.17:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_pc053_v4a4/top.xml" />
-  <connection id="PDT_TERTIARY"     uri="ipbusudp-2.0://192.168.200.32:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_pc059_v4a7/top_pc059.xml" />
-  <connection id="PDT_SIM"           uri="ipbusudp-2.0://192.168.201.16:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_sim_v4rc1/top_sim.xml" />
-  <connection id="PDT_PRIMARY_TUN"   uri="chtcp-2.0://localhost:60708?target=192.168.200.16:50001" address_table="file:///${PDT_TESTS}/etc/addrtab/ouroboros_pc053_v4a4/top.xml" />  
-  <connection id="PDT_SECONDARY_TUN" uri="chtcp-2.0://localhost:60708?target=192.168.200.17:50001" address_table="file:///${PDT_TESTS}/etc/addrtab/ouroboros_pc053_v4a4/top.xml" />    
-  <connection id="PDT_TERTIARY_TUN" uri="chtcp-2.0://localhost:60708?target=192.168.200.32:50001" address_table="file:///${PDT_TESTS}/etc/addrtab/ouroboros_pc059_v4a7/top_pc059.xml" />    
+  <connection id="PDTS_PRIMARY"       uri="ipbusudp-2.0://192.168.200.16:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_pc053_v4a4/top.xml" />
+  <connection id="PDTS_SECONDARY"     uri="ipbusudp-2.0://192.168.200.17:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_pc053_v4a4/top.xml" />
+  <connection id="PDTS_TERTIARY"     uri="ipbusudp-2.0://192.168.200.32:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_pc059_v4a7/top_pc059.xml" />
+  <connection id="PDTS_SIM"           uri="ipbusudp-2.0://192.168.201.16:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_sim_v4rc1/top_sim.xml" />
+  <connection id="PDTS_PRIMARY_TUN"   uri="chtcp-2.0://localhost:60708?target=192.168.200.16:50001" address_table="file:///${PDT_TESTS}/etc/addrtab/ouroboros_pc053_v4a4/top.xml" />  
+  <connection id="PDTS_SECONDARY_TUN" uri="chtcp-2.0://localhost:60708?target=192.168.200.17:50001" address_table="file:///${PDT_TESTS}/etc/addrtab/ouroboros_pc053_v4a4/top.xml" />    
+  <connection id="PDTS_TERTIARY_TUN" uri="chtcp-2.0://localhost:60708?target=192.168.200.32:50001" address_table="file:///${PDT_TESTS}/etc/addrtab/ouroboros_pc059_v4a7/top_pc059.xml" />    
 </connections>
