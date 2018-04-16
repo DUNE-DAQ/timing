@@ -248,7 +248,6 @@ def reset(obj, soft, model):
     lDevice.getNode("io.csr.ctrl.rst").write(0)
     lDevice.dispatch()
 
-    lGenChanCtrl = lDevice.getNode('master.scmd_gen.chan_ctrl')
     lScmdGenNode = lDevice.getNode('master.scmd_gen')
 
     echo()
@@ -258,9 +257,6 @@ def reset(obj, soft, model):
         echo("{}: {}".format(k, hex(v)))
     echo()
 
-    
-    toolbox.resetSubNodes(lGenChanCtrl)
-    echo("Disabled command generator")
 
     lScmdGenNode.getNode('ctrl.en').write(1) # Enable sync command generators
     lDevice.dispatch()
@@ -314,6 +310,8 @@ def monitor(obj, watch, period):
         echo()
 
         lScmdGenNode = lDevice.getNode('master.scmd_gen')
+        lScmdGenNode.getNode('sel').write(lPartId)
+        lScmdGenNode.getClient().dispatch()
 
         secho( "=> Time sync generator", fg='green')
         lScmdGenCtrlDump = toolbox.readSubNodes(lScmdGenNode.getNode('ctrl'))
@@ -421,7 +419,7 @@ def configure(obj, trgmask):
     echo("  Phys mask {}".format(hex(trgmask)))
 
     lPartNode.reset(); 
-    lPartNode.writeTriggerMask(trgmask);
+    lPartNode.writeTriggerMask(lTrgMask);
     lPartNode.enable();
     secho("Partition {} enabled".format(lPartId), fg='green')
 
@@ -605,7 +603,7 @@ def faketriggen(obj, chan, divider, poisson):
         kFakeTrigID,
         hex(defs.kCommandIDs[kFakeTrigID]),
         style(
-            "{:.3e} Hz".format(50e6/(1<<(12+divider))),
+            "{:.3e} Hz".format(50e6/(1<<(13+divider))),
             fg='yellow'
             )
         )
