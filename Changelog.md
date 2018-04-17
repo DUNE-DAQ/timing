@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [4.a.3] 2018-04-17
+### Added
+- Support for pc509
+
+### Changed
+- Fixed trigger rate reported by `faketrig-conf`
+
 ## [4.a.2] 2018-03-22
 ### Changed
 - Renamed `triggen` and `trigclear` `mst` commands as `faketrig-conf` and `faketrig-clear` respectively.
