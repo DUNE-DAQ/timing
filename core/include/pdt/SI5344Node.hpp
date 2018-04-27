@@ -1,5 +1,5 @@
-#ifndef __PDT_SI5344_HPP__
-#define __PDT_SI5344_HPP__
+#ifndef __PDT_SI5344NODE_HPP__
+#define __PDT_SI5344NODE_HPP__
 
 #include <map>
 
@@ -69,4 +69,4 @@ public:
 	
 } // namespace pdt
 
-#endif /* __PDT_SI5344_HPP__ */
+#endif /* __PDT_SI5344NODE_HPP__ */

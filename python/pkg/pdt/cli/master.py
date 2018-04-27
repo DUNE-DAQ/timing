@@ -15,6 +15,32 @@ from click import echo, style, secho
 from os.path import join, expandvars
 from pdt.core import SI5344Slave
 
+
+kBoardSim = 0x1
+kBoardFMC = 0x0
+kBoardPC059 = 0x2
+kBoardMicrozed = 0x3
+# kBoardKC705 = 'kc705'
+
+kCarrierEnclustraA35 = 0x0
+kCarrierKC705 = 0x1
+kCarrierMicrozed = 0x2
+
+
+kBoardNamelMap = {
+    kBoardSim: 'sim',
+    kBoardFMC: 'fmc',
+    kBoardPC059: 'pc059',
+    kBoardMicrozed: 'microzed'
+}
+
+kBoardNamelMap = {
+    kCarrierEnclustraA35: 'enclustra-a35',
+    kCarrierKC705: 'kc705',
+    kCarrierMicrozed: 'microzed',
+    # kBoardKC705: 'kc705'
+}
+
 # ------------------------------------------------------------------------------
 #    __  ___         __         
 #   /  |/  /__ ____ / /____ ____
@@ -37,23 +63,29 @@ def master(obj, device):
         
     echo('Created device ' + click.style(lDevice.id(), fg='blue'))
 
+    lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
     lVersion = lDevice.getNode('master.global.version').read()
     lGenerics = toolbox.readSubNodes(lDevice.getNode('master.global.config'), False)
     lDevice.dispatch()
 
+    # print({ k:v.value() for k,v in lBoardInfo.iteritems()})
+    # raise SystemExit(0)
+
     lMajor = (lVersion >> 16) & 0xff
     lMinor = (lVersion >> 8) & 0xff
     lPatch = (lVersion >> 0) & 0xff
-    echo("Master FW version: "+hex(lVersion))
+    echo("Master FW version: {}, board kind: '{}', chans: {}, parts: {}".format(hex(lVersion), kBoardNamelMap[lBoardInfo['board_type'].value()], lGenerics['n_chan'], lGenerics['n_part']))
 
     if lMajor < 4:
         secho('ERROR: Incompatible master firmware version. Found {}, required {}'.format(hex(lMajor), hex(kMasterFWMajorRequired)), fg='red')
         raise click.Abort()
 
-    print({ k:v.value() for k,v in lGenerics.iteritems()})
     obj.mDevice = lDevice
     obj.mGenerics = { k:v.value() for k,v in lGenerics.iteritems()}
-    obj.mVersion = lVersion
+    obj.mVersion = lVersion.value()
+    obj.mBoardType = lBoardInfo['board_type'].value()
+    obj.mCarrierType = lBoardInfo['carrier_type'].value()
+    obj.mDesignType = lBoardInfo['design_type'].value()
 # ------------------------------------------------------------------------------
 
 
@@ -75,50 +107,47 @@ def ipy(ctx):
 
 # ------------------------------------------------------------------------------
 
-kRev1 = 1
-kRev2 = 2
-kRev3 = 3
+kFMCRev1 = 1
+kFMCRev2 = 2
+kPC059Rev1 = 3
 
 kClockConfigMap = {
-    kRev1: "SI5344/PDTS0000.txt",
-    kRev2: "SI5344/PDTS0003.txt",
-    kRev3: "SI5344/PDTS0005.txt",
+    kFMCRev1: "SI5344/PDTS0000.txt",
+    kFMCRev2: "SI5344/PDTS0003.txt",
+    kPC059Rev1: "SI5344/PDTS0005.txt",
 }
 
-kBoardRevisionMap = {
-    0xd880395e720b: kRev1,
-    0xd880395e501a: kRev1,
-    0xd880395e50b8: kRev1,
-    0xd880395e501b: kRev1,
-    0xd880395e7201: kRev1,
-    0xd880395e4fcc: kRev1,
-    0xd880395e5069: kRev1,
-    0xd880395e7206: kRev1,
-    0xd880395e1c86: kRev2,
-    0xd880395e2630: kRev2,
-    0xd880395e262b: kRev2,
-    0xd880395e2b38: kRev2,
-    0xd880395e1a6a: kRev2,
-    0xd880395e36ae: kRev2,
-    0xd880395e2b2e: kRev2,
-    0xd880395e2b33: kRev2,
-    0xd880395e1c81: kRev2,
-    0xd88039d980cf: kRev3,
-    0xd88039d98adf: kRev3,
+kUIDRevisionMap = {
+    0xd880395e720b: kFMCRev1,
+    0xd880395e501a: kFMCRev1,
+    0xd880395e50b8: kFMCRev1,
+    0xd880395e501b: kFMCRev1,
+    0xd880395e7201: kFMCRev1,
+    0xd880395e4fcc: kFMCRev1,
+    0xd880395e5069: kFMCRev1,
+    0xd880395e7206: kFMCRev1,
+    0xd880395e1c86: kFMCRev2,
+    0xd880395e2630: kFMCRev2,
+    0xd880395e262b: kFMCRev2,
+    0xd880395e2b38: kFMCRev2,
+    0xd880395e1a6a: kFMCRev2,
+    0xd880395e36ae: kFMCRev2,
+    0xd880395e2b2e: kFMCRev2,
+    0xd880395e2b33: kFMCRev2,
+    0xd880395e1c81: kFMCRev2,
+    0xd88039d980cf: kPC059Rev1,
+    0xd88039d98adf: kPC059Rev1,
 }
 
-# kBoardRevisionMap = {
+# kUIDRevisionMap = {
 # }
 
-kBoardPC053 = 'pc053'
-kBoardPC059 = 'pc059'
-kBoardKC705 = 'kc705'
 
 @master.command('reset', short_help="Perform a hard reset on the timing master.")
 @click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
-@click.option('--model','-m', type=click.Choice([kBoardPC059, kBoardPC053, kBoardKC705]), default=kBoardPC059, help='Master board model (default: {})'.format(kBoardPC059))
+# @click.option('--model','-m', type=click.Choice([kBoardPC059, kBoardPC053, kBoardKC705]), default=kBoardPC059, help='Master board model (default: {})'.format(kBoardPC059))
 @click.pass_obj
-def reset(obj, soft, model):
+def reset(obj, soft):
     '''
     Perform a hard reset on the timing master, including
 
@@ -131,32 +160,34 @@ def reset(obj, soft, model):
     echo('Resetting ' + click.style(obj.mDevice.id(), fg='blue'))
 
     lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+    lCarrierType = obj.mCarrierType
 
     # Global soft reset
     lDevice.getNode("io.csr.ctrl.soft_rst").write(0x1)
     lDevice.dispatch()
 
 
-    if not soft:
+    if not (soft or lBoardType == kBoardSim):
         
         time.sleep(1)
         
 
         # PLL and I@C reset 
         lDevice.getNode("io.csr.ctrl.pll_rst").write(0x1)
-        if model == kBoardPC059:
+        if lBoardType == kBoardPC059:
             lDevice.getNode("io.csr.ctrl.rst_i2c").write(0x1)
             lDevice.getNode("io.csr.ctrl.rst_i2cmux").write(0x1)
 
         lDevice.dispatch()
         lDevice.getNode("io.csr.ctrl.pll_rst").write(0x0)
-        if model == kBoardPC059:
+        if lBoardType == kBoardPC059:
             lDevice.getNode("io.csr.ctrl.rst_i2c").write(0x0)
             lDevice.getNode("io.csr.ctrl.rst_i2cmux").write(0x0)
         lDevice.dispatch()
 
         # Detect the on-board eprom and read the board UID
-        if model == kBoardPC059:
+        if lBoardType == kBoardPC059:
             lUID = lDevice.getNode("io.i2c")
         else:
             lUID = lDevice.getNode("io.uid_i2c")
@@ -165,16 +196,19 @@ def reset(obj, soft, model):
         for lSlave in lUID.getSlaves():
             echo("  {}: {}".format(lSlave, hex(lUID.getSlaveAddress(lSlave))))
 
-        if model in [kBoardPC059, kBoardPC053]:
+        if (
+            lBoardType == kBoardPC059 or
+            (lBoardType == kBoardFMC and lCarrierType == kCarrierEnclustraA35)
+            ):
             lUID.getSlave('AX3_Switch').writeI2C(0x01, 0x7f)
             x = lUID.getSlave('AX3_Switch').readI2C(0x01)
             echo("I2C enable lines: {}".format(x))
-        elif model == kBoardKC705:
+        elif lBoardType == kBoardKC705:
             lUID.getSlave('KC705_Switch').writeI2CPrimitive([0x10])
             # x = lUID.getSlave('KC705_Switch').readI2CPrimitive(1)
             echo("KC705 I2C switch enabled (hopefully)".format())
         else:
-            click.ClickException("Unknown master model {}".format(model))
+            click.ClickException("Unknown board kind {}".format(lBoardType))
 
 
         lValues = lUID.getSlave('FMC_UID_PROM').readI2CArray(0xfa, 6)
@@ -185,12 +219,12 @@ def reset(obj, soft, model):
 
         # Ensure that the board is known to the revision DB
         try:
-            lRevision = kBoardRevisionMap[lUniqueID]
+            lRevision = kUIDRevisionMap[lUniqueID]
         except KeyError:
             raise click.ClickException("No revision associated to UID "+hex(lUniqueID))
 
         # Access the clock chip
-        if model == kBoardPC059:
+        if lBoardType == kBoardPC059:
             lI2CBusNode = lDevice.getNode("io.i2c")
             lSI5344 = SI5344Slave(lI2CBusNode, lI2CBusNode.getSlave('SI5344').getI2CAddress())
         else:
@@ -221,11 +255,12 @@ def reset(obj, soft, model):
             lDevice.dispatch()
             print( "Freq:", i, int(fv), int(fq) * 119.20928 / 1000000 )
         
-        if model != kBoardPC059:
+        if lBoardType == kBoardFMC:
             lDevice.getNode("io.csr.ctrl.sfp_tx_dis").write(0)
             lDevice.dispatch()
-        else:
-            lSFPExp = lDevice.getNode("io.i2c").getSlave('SFPExpander')
+        elif lBoardType == kBoardPC059:
+            lI2CBusNode = lDevice.getNode("io.i2c")
+            lSFPExp = SFPExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('SFPExpander').getI2CAddress())
             # Bank 0 - Set invert registers to default
             lSFPExp.writeI2C(0x4, 0x00)
             # Bank 1 - Set invert registers to default
@@ -239,6 +274,8 @@ def reset(obj, soft, model):
             # Bank 0 - enable all SFPGs
             lSFPExp.writeI2C(0x2, 0x00)
             secho("SFPs 0-7 enabled", fg='cyan')
+        else:
+            click.ClickException("Unknown board kind {}".format(lBoardType))
 
 
 
@@ -265,6 +302,30 @@ def reset(obj, soft, model):
 
 # ------------------------------------------------------------------------------
 
+
+
+
+# ------------------------------------------------------------------------------
+@master.command('freq', short_help="Measure some fequencies.")
+@click.pass_obj
+def freq(obj):
+    lDevice = obj.mDevice
+            # Measure the generated clock frequency
+    freqs = {}
+    for i in range(2):
+        lDevice.getNode("io.freq.ctrl.chan_sel").write(i)
+        lDevice.getNode("io.freq.ctrl.en_crap_mode").write(0)
+        lDevice.dispatch()
+        time.sleep(2)
+        fq = lDevice.getNode("io.freq.freq.count").read()
+        fv = lDevice.getNode("io.freq.freq.valid").read()
+        lDevice.dispatch()
+        freqs[i] = int(fq) * 119.20928 / 1000000 if fv else 'NaN'
+
+    print( "Freq PLL:", freqs[0] )
+    print( "Freq CDR:", freqs[1] )
+        
+# ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
 @master.group('part', invoke_without_command=True)
