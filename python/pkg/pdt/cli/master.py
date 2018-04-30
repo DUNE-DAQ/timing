@@ -147,10 +147,38 @@ kUIDRevisionMap = {
 # kUIDRevisionMap = {
 # }
 
+# ------------------------------------------------------------------------------
+@master.command('debug-sfpexpander', short_help="Debug.")
+@click.pass_obj
+def show_sfpexpander(obj):
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
 
+    if lBoardType != kBoardPC059:
+        secho('No SFP expander on {}'.format(kBoardNamelMap[lBoardInfo['board_type'].value()]))
+        return
+    lI2CBusNode = lDevice.getNode("io.i2c")
+    lSFPExp = SFPExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('SFPExpander').getI2CAddress())
+    lSFPExpStatus = lSFPExp.debug()
+
+    lLabels = [
+        'B0 values', 
+        'B1 values',
+        'B0 enable',
+        'B1 enable',
+        'B0 invert',
+        'B1 invert',
+        'B0 I/O   ',
+        'B1 I/O   ',
+        ]
+    for a,v in enumerate(lSFPExpStatus):
+        echo("{} ({}): {}".format(lLabels[a], hex(a), hex(v)))
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
 @master.command('reset', short_help="Perform a hard reset on the timing master.")
 @click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
-# @click.option('--model','-m', type=click.Choice([kBoardPC059, kBoardPC053, kBoardKC705]), default=kBoardPC059, help='Master board model (default: {})'.format(kBoardPC059))
 @click.pass_obj
 def reset(obj, soft):
     '''
@@ -265,19 +293,37 @@ def reset(obj, soft):
         elif lBoardType == kBoardPC059:
             lI2CBusNode = lDevice.getNode("io.i2c")
             lSFPExp = SFPExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('SFPExpander').getI2CAddress())
-            # Bank 0 - Set invert registers to default
-            lSFPExp.writeI2C(0x4, 0x00)
-            # Bank 1 - Set invert registers to default
-            lSFPExp.writeI2C(0x5, 0x00)
+            # # Bank 0 - Set invert registers to default
+            # lSFPExp.writeI2C(0x4, 0x00)
+            # # Bank 1 - Set invert registers to default
+            # lSFPExp.writeI2C(0x5, 0x00)
 
-            # Bank 0 - configure for output
-            lSFPExp.writeI2C(0x6, 0x00)
-            # Bank 1 - configure for input
-            lSFPExp.writeI2C(0x7, 0xff)
+            # # Bank 0 - configure for output
+            # lSFPExp.writeI2C(0x6, 0x00)
+            # # Bank 1 - configure for input
+            # lSFPExp.writeI2C(0x7, 0xff)
 
-            # Bank 0 - enable all SFPGs
-            lSFPExp.writeI2C(0x2, 0x00)
+            # # Bank 0 - enable all SFPGs
+            # lSFPExp.writeI2C(0x2, 0x00)
+            # secho("SFPs 0-7 enabled", fg='cyan')
+
+            # print ( lSFPExp.debug() )
+
+            # Set invert registers to default for both banks
+            lSFPExp.setInversion(0, 0x00)
+            lSFPExp.setInversion(1, 0x00)
+
+            # BAnk 0 input, bank 1 output
+            lSFPExp.setIO(0, 0x00)
+            lSFPExp.setIO(1, 0xff)
+
+            # Bank 0 - enable all SFPGs (enable low)
+            lSFPExp.enable(0, 0x00)
+
+            # print ( lSFPExp.debug() )
+
             secho("SFPs 0-7 enabled", fg='cyan')
+
         else:
             click.ClickException("Unknown board kind {}".format(lBoardType))
 

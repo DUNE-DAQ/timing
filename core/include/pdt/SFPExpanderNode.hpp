@@ -64,6 +64,8 @@ public:
      */
     void writeValues( uint8_t aBankId,  uint32_t aValues ) const;
 
+    std::vector<uint32_t> debug() const;
+
 private:
 
     void ensureValidBankId( uint8_t aBankId ) const;

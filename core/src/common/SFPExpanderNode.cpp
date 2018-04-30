@@ -96,6 +96,21 @@ SFPExpanderSlave::readValues( uint8_t aBankId ) const {
 
 
 //-----------------------------------------------------------------------------
+std::vector<uint32_t>
+SFPExpanderSlave::debug() const {
+
+    std::vector<uint32_t> lValues(8);
+
+    for ( size_t a(0); a<8; ++a) {
+        lValues[a] = this->readI2C(a);
+    }
+    return lValues;
+    
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
 SFPExpanderNode::SFPExpanderNode( const uhal::Node& aNode ) : I2CBaseNode(aNode), SFPExpanderSlave(this, this->getSlaveAddress("i2caddr") ) {
 }
 //-----------------------------------------------------------------------------

@@ -87,6 +87,7 @@ register_i2c() {
       .def("setInversion", &pdt::SFPExpanderSlave::setInversion)
       .def("writeValues", &pdt::SFPExpanderSlave::writeValues)
       .def("readValues", &pdt::SFPExpanderSlave::readValues)
+      .def("debug", &pdt::SFPExpanderSlave::debug)
       ;
 
   // Wrap SFPExpanderNode
