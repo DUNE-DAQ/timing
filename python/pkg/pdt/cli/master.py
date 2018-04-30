@@ -13,7 +13,7 @@ import pdt.cli.definitions as defs
 
 from click import echo, style, secho
 from os.path import join, expandvars
-from pdt.core import SI5344Slave
+from pdt.core import SI5344Slave, SFPExpanderSlave
 
 
 kBoardSim = 0x1
@@ -34,7 +34,7 @@ kBoardNamelMap = {
     kBoardMicrozed: 'microzed'
 }
 
-kBoardNamelMap = {
+kCarrierNamelMap = {
     kCarrierEnclustraA35: 'enclustra-a35',
     kCarrierKC705: 'kc705',
     kCarrierMicrozed: 'microzed',
@@ -68,13 +68,18 @@ def master(obj, device):
     lGenerics = toolbox.readSubNodes(lDevice.getNode('master.global.config'), False)
     lDevice.dispatch()
 
-    # print({ k:v.value() for k,v in lBoardInfo.iteritems()})
+    print({ k:v.value() for k,v in lBoardInfo.iteritems()})
     # raise SystemExit(0)
 
     lMajor = (lVersion >> 16) & 0xff
     lMinor = (lVersion >> 8) & 0xff
     lPatch = (lVersion >> 0) & 0xff
-    echo("Master FW version: {}, board kind: '{}', chans: {}, parts: {}".format(hex(lVersion), kBoardNamelMap[lBoardInfo['board_type'].value()], lGenerics['n_chan'], lGenerics['n_part']))
+    echo("Master FW version: {}, board  '{}' on '{}'".format(
+        hex(lVersion), 
+        style(kBoardNamelMap[lBoardInfo['board_type'].value()], fg='blue'),
+        style(kCarrierNamelMap[lBoardInfo['carrier_type'].value()], fg='blue')
+    ))
+    echo("Design {} - chans: {}, parts: {}".format(hex(lBoardInfo['design_type']), lGenerics['n_chan'], lGenerics['n_part']))
 
     if lMajor < 4:
         secho('ERROR: Incompatible master firmware version. Found {}, required {}'.format(hex(lMajor), hex(kMasterFWMajorRequired)), fg='red')
@@ -172,7 +177,6 @@ def reset(obj, soft):
         
         time.sleep(1)
         
-
         # PLL and I@C reset 
         lDevice.getNode("io.csr.ctrl.pll_rst").write(0x1)
         if lBoardType == kBoardPC059:
