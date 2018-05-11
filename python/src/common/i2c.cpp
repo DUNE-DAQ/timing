@@ -14,8 +14,10 @@
 #include "pdt/I2CBaseNode.hpp"
 #include "pdt/I2CMasterNode.hpp"
 #include "pdt/I2CSlave.hpp"
+#include "pdt/SIChipSlave.hpp"
 // #include "pdt/MiniPODMasterNode.hpp"
 #include "pdt/SI5344Node.hpp"
+#include "pdt/SI5345Node.hpp"
 #include "pdt/SFPExpanderNode.hpp"
 
 // Namespace resolution
@@ -66,18 +68,38 @@ register_i2c() {
       .def("writeI2CPrimitive", &pdt::I2CSlave::writeI2CPrimitive, pdt_I2CSlave_writeI2CPrimitive_overloads())
       ;
 
+  // Wrap SIChipSlave
+  class_<pdt::SIChipSlave, bases<pdt::I2CSlave>, boost::noncopyable > ("SIChipSlave", init<const pdt::I2CBaseNode*, uint8_t>())
+      .def("readPage", &pdt::SIChipSlave::readPage)
+      .def("switchPage", &pdt::SIChipSlave::switchPage)
+      .def("readDeviceVersion", &pdt::SIChipSlave::readDeviceVersion)
+      .def("readClockRegister", &pdt::SIChipSlave::readClockRegister)
+      .def("writeClockRegister", &pdt::SIChipSlave::writeClockRegister)
+      ;
+
   // Wrap SI5344Slave
-  class_<pdt::SI5344Slave, bases<pdt::I2CSlave>, boost::noncopyable > ("SI5344Slave", init<const pdt::I2CBaseNode*, uint8_t>())
-      .def("readPage", &pdt::SI5344Slave::readPage)
-      .def("switchPage", &pdt::SI5344Slave::switchPage)
-      .def("readDeviceVersion", &pdt::SI5344Slave::readDeviceVersion)
-      .def("readClockRegister", &pdt::SI5344Slave::readClockRegister)
-      .def("writeClockRegister", &pdt::SI5344Slave::writeClockRegister)
+  class_<pdt::SI5344Slave, bases<pdt::SIChipSlave>, boost::noncopyable > ("SI5344Slave", init<const pdt::I2CBaseNode*, uint8_t>())
+      // .def("readPage", &pdt::SI5344Slave::readPage)
+      // .def("switchPage", &pdt::SI5344Slave::switchPage)
+      // .def("readDeviceVersion", &pdt::SI5344Slave::readDeviceVersion)
+      // .def("readClockRegister", &pdt::SI5344Slave::readClockRegister)
+      // .def("writeClockRegister", &pdt::SI5344Slave::writeClockRegister)
       .def("configure", &pdt::SI5344Slave::configure)
       ;
 
   // Wrap SI5344Node
   class_<pdt::SI5344Node, bases<pdt::SI5344Slave, pdt::I2CBaseNode> > ("SI5344Node", init<const uhal::Node&>())
+      ;
+
+
+  // Wrap SI5345Slave
+  class_<pdt::SI5345Slave, bases<pdt::SIChipSlave>, boost::noncopyable > ("SI5345Slave", init<const pdt::I2CBaseNode*, uint8_t>())
+      .def("configure", &pdt::SI5345Slave::configure)
+      // .def("test", &pdt::SI5345Slave::test)
+      ;
+
+  // Wrap SI5345Node
+  class_<pdt::SI5345Node, bases<pdt::SI5345Slave, pdt::I2CBaseNode> > ("SI5345Node", init<const uhal::Node&>())
       ;
 
   // Wrap SFPExpanderSlave

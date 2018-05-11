@@ -15,14 +15,13 @@ import pdt
 import pdt.cli.toolbox as toolbox
 import pdt.cli.endpoint as endpoint
 import pdt.cli.master as master
+import pdt.cli.debug as debug
 import pdt.cli.definitions as defs
 
 # 
 from click import echo, style, secho
 from os.path import join, expandvars
 
-
-kMasterFWMajorRequired = 4
 
 class PDTContext: pass
 
@@ -71,5 +70,6 @@ def list(obj):
 if __name__ == '__main__':
     cli.add_command(master.master)
     cli.add_command(endpoint.endpoint)
+    cli.add_command(debug.debug)
     cli(obj=PDTContext())
 # ------------------------------------------------------------------------------

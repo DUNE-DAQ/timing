@@ -13,8 +13,9 @@ import pdt.cli.definitions as defs
 
 from click import echo, style, secho
 from os.path import join, expandvars
-from pdt.core import SI5344Slave, SFPExpanderSlave
+from pdt.core import SI5344Slave, SI5345Slave, SFPExpanderSlave
 
+kMasterFWMajorRequired = 4
 
 kBoardSim = 0x1
 kBoardFMC = 0x0
@@ -38,7 +39,6 @@ kCarrierNamelMap = {
     kCarrierEnclustraA35: 'enclustra-a35',
     kCarrierKC705: 'kc705',
     kCarrierMicrozed: 'microzed',
-    # kBoardKC705: 'kc705'
 }
 
 # ------------------------------------------------------------------------------
@@ -119,7 +119,7 @@ kPC059Rev1 = 3
 kClockConfigMap = {
     kFMCRev1: "SI5344/PDTS0000.txt",
     kFMCRev2: "SI5344/PDTS0003.txt",
-    kPC059Rev1: "SI5344/PDTS0005.txt",
+    kPC059Rev1: "SI5345/PDTS0005.txt",
 }
 
 kUIDRevisionMap = {
@@ -146,34 +146,6 @@ kUIDRevisionMap = {
 
 # kUIDRevisionMap = {
 # }
-
-# ------------------------------------------------------------------------------
-@master.command('debug-sfpexpander', short_help="Debug.")
-@click.pass_obj
-def show_sfpexpander(obj):
-    lDevice = obj.mDevice
-    lBoardType = obj.mBoardType
-
-    if lBoardType != kBoardPC059:
-        secho('No SFP expander on {}'.format(kBoardNamelMap[lBoardInfo['board_type'].value()]))
-        return
-    lI2CBusNode = lDevice.getNode("io.i2c")
-    lSFPExp = SFPExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('SFPExpander').getI2CAddress())
-    lSFPExpStatus = lSFPExp.debug()
-
-    lLabels = [
-        'B0 values', 
-        'B1 values',
-        'B0 enable',
-        'B1 enable',
-        'B0 invert',
-        'B1 invert',
-        'B0 I/O   ',
-        'B1 I/O   ',
-        ]
-    for a,v in enumerate(lSFPExpStatus):
-        echo("{} ({}): {}".format(lLabels[a], hex(a), hex(v)))
-# ------------------------------------------------------------------------------
 
 
 # ------------------------------------------------------------------------------
@@ -258,10 +230,10 @@ def reset(obj, soft):
         # Access the clock chip
         if lBoardType == kBoardPC059:
             lI2CBusNode = lDevice.getNode("io.i2c")
-            lSI5344 = SI5344Slave(lI2CBusNode, lI2CBusNode.getSlave('SI5344').getI2CAddress())
+            lSIChip = SI5345Slave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
         else:
-            lSI5344 = lDevice.getNode('io.pll_i2c')
-        lSIVersion = lSI5344.readDeviceVersion()
+            lSIChip = lDevice.getNode('io.pll_i2c')
+        lSIVersion = lSIChip.readDeviceVersion()
         echo("PLL version : "+style(hex(lSIVersion), fg='blue'))
 
         # Ensure that the board revision has a registered clock config
@@ -274,7 +246,7 @@ def reset(obj, soft):
 
         # Configure the clock chip
         lFullClockConfigPath = expandvars(join('${PDT_TESTS}/etc/clock', lClockConfigPath))
-        lSI5344.configure(lFullClockConfigPath)
+        lSIChip.configure(lFullClockConfigPath)
 
         # Measure the generated clock frequency
         for i in range(2):
