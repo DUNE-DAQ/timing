@@ -250,6 +250,14 @@ def reset(obj, soft):
         lFullClockConfigPath = expandvars(join('${PDT_TESTS}/etc/clock', lClockConfigPath))
         lSIChip.configure(lFullClockConfigPath)
 
+        if lBoardType == kBoardPC059:
+            lDevice.getNode('io.csr.ctrl.cdr_edge').write(1)
+            lDevice.getNode('io.csr.ctrl.sfp_edge').write(1)
+            lDevice.getNode('io.csr.ctrl.hdmi_edge').write(0)
+            lDevice.getNode('io.csr.ctrl.usfp_edge').write(1)
+            lDevice.getNode('io.csr.ctrl.mux').write(0)
+            lDevice.dispatch()
+
         # Measure the generated clock frequency
         for i in range(2):
             lDevice.getNode("io.freq.ctrl.chan_sel").write(i)
