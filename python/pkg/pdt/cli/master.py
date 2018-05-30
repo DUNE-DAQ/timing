@@ -86,11 +86,14 @@ def master(obj, device):
         raise click.Abort()
 
     obj.mDevice = lDevice
+    obj.mMaster = lDevice.getNode('master')
+    
     obj.mGenerics = { k:v.value() for k,v in lGenerics.iteritems()}
     obj.mVersion = lVersion.value()
     obj.mBoardType = lBoardInfo['board_type'].value()
     obj.mCarrierType = lBoardInfo['carrier_type'].value()
     obj.mDesignType = lBoardInfo['design_type'].value()
+    
 # ------------------------------------------------------------------------------
 
 
@@ -167,6 +170,7 @@ def reset(obj, soft):
     echo('Resetting ' + click.style(obj.mDevice.id(), fg='blue'))
 
     lDevice = obj.mDevice
+    lMaster = obj.mMaster
     lBoardType = obj.mBoardType
     lCarrierType = obj.mCarrierType
 
@@ -317,11 +321,11 @@ def reset(obj, soft):
     lDevice.getNode("io.csr.ctrl.rst").write(0)
     lDevice.dispatch()
 
-    lScmdGenNode = lDevice.getNode('master.scmd_gen')
+    lScmdGenNode = lMaster.getNode('scmd_gen')
 
     echo()
     echo("--- Global status ---")
-    lCsrStat = toolbox.readSubNodes(lDevice.getNode('master.global.csr.stat'))
+    lCsrStat = toolbox.readSubNodes(lMaster.getNode('global.csr.stat'))
     for k,v in lCsrStat.iteritems():
         echo("{}: {}".format(k, hex(v)))
     echo()
@@ -371,7 +375,7 @@ def partition(obj, id):
     """
     obj.mPartitionId = id
     try:
-        obj.mPartitionNode = obj.mDevice.getNode('master.partition{}'.format(id))
+        obj.mPartitionNode = obj.mMaster.getNode('partition{}'.format(id))
     except Exception as lExc:
         click.Abort('Partition {} not found in address table'.format(id))
 
@@ -388,11 +392,12 @@ def monitor(obj, watch, period):
     Display the master status, accepted and rejected command counters
     '''
 
-    lDevice = obj.mDevice
+    # lDevice = obj.mDevice
+    lMaster = obj.mMaster
     lPartId = obj.mPartitionId
     lPartNode = obj.mPartitionNode
 
-    lTStampNode = lDevice.getNode('master.tstamp.ctr')
+    lTStampNode = lMaster.getNode('tstamp.ctr')
 
     while(True):
         if watch:
@@ -402,7 +407,7 @@ def monitor(obj, watch, period):
         echo( "-- " + style("Master state", fg='green') + "---")
         echo()
 
-        lScmdGenNode = lDevice.getNode('master.scmd_gen')
+        lScmdGenNode = lMaster.getNode('scmd_gen')
         lScmdGenNode.getNode('sel').write(lPartId)
         lScmdGenNode.getClient().dispatch()
 
@@ -453,7 +458,7 @@ def monitor(obj, watch, period):
         lTimeStamp = lTStampNode.readBlock(2)
         lEventCtr = lPartNode.getNode('evtctr').read()
         lBufCount = lPartNode.getNode('buf.count').read()
-        lDevice.dispatch()
+        lPartNode.getClient().dispatch()
 
         lTime = int(lTimeStamp[0]) + (int(lTimeStamp[1]) << 32)
         echo( "Timestamp: {} ({})".format(style(str(lTime), fg='blue'), hex(lTime)) )
@@ -587,7 +592,7 @@ def readback(obj, readall):
     '''
     Read the content of the timing master readout buffer.
     '''
-    lDevice = obj.mDevice
+    # lDevice = obj.mDevice
     lPartId = obj.mPartitionId
     lPartNode = obj.mPartitionNode
 
@@ -624,20 +629,21 @@ def send(obj, cmd, n):
     CMD (str): Name of the command to inject '''
     # + ','.join(defs.kCommandIDs.keys())
 
-    lDevice = obj.mDevice
+    # lDevice = obj.mDevice
+    lMaster = obj.mMaster
 
-    lGenChanCtrl = lDevice.getNode('master.scmd_gen.chan_ctrl')
+    lGenChanCtrl = lMaster.getNode('scmd_gen.chan_ctrl')
 
     toolbox.resetSubNodes(lGenChanCtrl)
 
     for i in xrange(n):
         lGenChanCtrl.getNode('type').write(defs.kCommandIDs[cmd])
         lGenChanCtrl.getNode('force').write(0x1)
-        lTStamp = lDevice.getNode("master.tstamp.ctr").readBlock(2)
-        lDevice.dispatch()
+        lTStamp = lMaster.getNode("tstamp.ctr").readBlock(2)
+        lMaster.getClient().dispatch()
 
         lGenChanCtrl.getNode('force').write(0x0)
-        lDevice.dispatch()
+        lMaster.getClient().dispatch()
         lTimeStamp = int(lTStamp[0]) + (int(lTStamp[1]) << 32)
         echo("Command sent {}({}) @time {} {}".format(style(cmd, fg='blue'), defs.kCommandIDs[cmd], hex(lTimeStamp), lTimeStamp))
 # ------------------------------------------------------------------------------
@@ -682,11 +688,13 @@ def faketriggen(obj, chan, divider, poisson):
     DIVIDER (int): Frequency divider.
     '''
 
-    lDevice = obj.mDevice
-    lGenChanCtrl = lDevice.getNode('master.scmd_gen.chan_ctrl')
+    # lDevice = obj.mDevice
+    lMaster = obj.mMaster
+
+    lGenChanCtrl = lMaster.getNode('scmd_gen.chan_ctrl')
     kFakeTrigID = 'FakeTrig{}'.format(chan)
 
-    lDevice.getNode('master.scmd_gen.sel').write(chan)
+    lMaster.getNode('scmd_gen.sel').write(chan)
 
     lGenChanCtrl.getNode('type').write(defs.kCommandIDs[kFakeTrigID])
     lGenChanCtrl.getNode('rate_div').write(divider)
@@ -716,10 +724,10 @@ def faketrigclear(obj, chan):
     '''
     Clear the internal trigger generator.
     '''
-    lDevice = obj.mDevice
+    lMaster = obj.mMaster
 
-    lGenChanCtrl = lDevice.getNode('master.scmd_gen.chan_ctrl')
-    lDevice.getNode('master.scmd_gen.sel').write(chan)
+    lGenChanCtrl = lMaster.getNode('scmd_gen.chan_ctrl')
+    lMaster.getNode('scmd_gen.sel').write(chan)
 
     toolbox.resetSubNodes(lGenChanCtrl)
     secho( "> Fake trigger generator {} configuration cleared".format(chan), fg='cyan' )
@@ -743,9 +751,9 @@ def spillgen(obj):
     \b
     FREQ
     '''
-    lDevice = obj.mDevice
+    lMaster = obj.mMaster
 
-    lSpillCtrl = lDevice.getNode('master.spill.csr.ctrl')
+    lSpillCtrl = lMaster.getNode('spill.csr.ctrl')
     lSpillCtrl.getNode('fake_cyc_len').write(16)
     lSpillCtrl.getNode('fake_spill_len').write(8)
     lSpillCtrl.getNode('en_fake').write(1)
