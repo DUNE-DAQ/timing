@@ -86,7 +86,7 @@ def master(obj, device):
         raise click.Abort()
 
     obj.mDevice = lDevice
-    obj.mMaster = lDevice.getNode('master')
+    obj.mMaster = lDevice.getNode('master_top/master')
     
     obj.mGenerics = { k:v.value() for k,v in lGenerics.iteritems()}
     obj.mVersion = lVersion.value()
