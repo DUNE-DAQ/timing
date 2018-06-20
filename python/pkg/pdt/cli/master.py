@@ -63,9 +63,11 @@ def master(obj, device):
         
     echo('Created device ' + click.style(lDevice.id(), fg='blue'))
 
+    lMaster = lDevice.getNode('master_top.master')
+
     lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
-    lVersion = lDevice.getNode('master.global.version').read()
-    lGenerics = toolbox.readSubNodes(lDevice.getNode('master.global.config'), False)
+    lVersion = lMaster.getNode('global.version').read()
+    lGenerics = toolbox.readSubNodes(lMaster.getNode('global.config'), False)
     lDevice.dispatch()
 
     print({ k:v.value() for k,v in lBoardInfo.iteritems()})
@@ -86,7 +88,7 @@ def master(obj, device):
         raise click.Abort()
 
     obj.mDevice = lDevice
-    obj.mMaster = lDevice.getNode('master_top/master')
+    obj.mMaster = lMaster
     
     obj.mGenerics = { k:v.value() for k,v in lGenerics.iteritems()}
     obj.mVersion = lVersion.value()
