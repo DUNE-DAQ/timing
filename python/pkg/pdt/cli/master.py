@@ -326,13 +326,6 @@ def reset(obj, soft):
     for k,v in lCsrStat.iteritems():
         echo("{}: {}".format(k, hex(v)))
     echo()
-
-
-    lScmdGenNode.getNode('ctrl.en').write(1) # Enable sync command generators
-    lDevice.dispatch()
-    echo("Time-sync generator enabled")
-  
-
 # ------------------------------------------------------------------------------
 
 
@@ -392,6 +385,7 @@ def monitor(obj, watch, period):
     lDevice = obj.mDevice
     lPartId = obj.mPartitionId
     lPartNode = obj.mPartitionNode
+    lNumChan = obj.mGenerics['n_chan']
 
     lTStampNode = lDevice.getNode('master.tstamp.ctr')
 
@@ -424,7 +418,7 @@ def monitor(obj, watch, period):
         toolbox.printCounters( lScmdGenNode, {
             'actrs': 'Accept counters',
             'rctrs': 'Reject counters',
-            })
+            }, lNumChan)
 
         # secho( "=> Spill generator control", fg='green')
         # lDump = toolbox.readSubNodes(lDevice.getNode('master.spill.csr.ctrl'))

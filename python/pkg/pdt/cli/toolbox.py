@@ -104,11 +104,9 @@ def formatTStamp( aRawTStamp ):
 
 
 # ------------------------------------------------------------------------------
-def printCounters( aTopNode, aSubNodes ):
+def printCounters( aTopNode, aSubNodes, aNumCtrs=0x10 ):
 
-    lNumCtrs = 0x10
     lBlocks = []
-    # lBlocks = [ aTopNode.getNode(lKey).readBlock(lNumCtrs) for lKey in aSubNodes ]
 
     # try:
     #     aTopNode.getClient().dispatch()
@@ -119,13 +117,13 @@ def printCounters( aTopNode, aSubNodes ):
     
     for lKey in aSubNodes:
         try:
-            ctrs = aTopNode.getNode(lKey).readBlock(lNumCtrs)
+            ctrs = aTopNode.getNode(lKey).readBlock(aNumCtrs)
             aTopNode.getClient().dispatch()
             lBlocks.append(ctrs.value())
 
         except uhal.exception as e:
             print ('Failed to read ', lKey)
-            lBlocks.append([None]*lNumCtrs)
+            lBlocks.append([None]*aNumCtrs)
 
     # Just a bit of math
     lCellWidth = 10
@@ -149,7 +147,7 @@ def printCounters( aTopNode, aSubNodes ):
     print ( lHdr )
     print ( '-'*lLineLen)
 
-    for lId in xrange(lNumCtrs):
+    for lId in xrange(aNumCtrs):
 
         lLine = [ (defs.kCommandNames.get(lId,hex(lId))) ]
         for lBlock in lBlocks:
