@@ -6,6 +6,7 @@ import click
 import click_didyoumean
 import time
 import collections
+import math
 import pdt
 
 import pdt.cli.toolbox as toolbox
@@ -419,11 +420,11 @@ def monitor(obj, watch, period):
             echo( "  {} {}".format(n, hex(lScmdGenChanCtrlDump[n])))
         echo()
 
-        # echo()
-        # printCounters( lScmdGenNode, {
-        #     'actrs': 'Accept counters',
-        #     'rctrs': 'Reject counters',
-        #     })
+        echo()
+        toolbox.printCounters( lScmdGenNode, {
+            'actrs': 'Accept counters',
+            'rctrs': 'Reject counters',
+            })
 
         # secho( "=> Spill generator control", fg='green')
         # lDump = toolbox.readSubNodes(lDevice.getNode('master.spill.csr.ctrl'))
@@ -668,19 +669,38 @@ def validate_freq(ctx, param, value):
 @master.command('faketrig-conf')
 @click.pass_obj
 @click.argument('chan', type=int, callback=toolbox.validate_chan)
-@click.argument('divider', type=click.IntRange(0, 0xf))
+# @click.argument('divider', type=click.IntRange(0, 0x3ff))
+@click.argument('rate', type=int)
 @click.option('--poisson', is_flag=True, default=False, help="Randomize time interval between consecutive triggers.")
-def faketriggen(obj, chan, divider, poisson):
+def faketriggen(obj, chan, rate, poisson):
     '''
     \b
     Enables the internal trigger generator.
     Configures the internal command generator to produce triggers at a defined frequency.
     
-    Rate = 50 Mhz / 2**( 12 + divider ) for divider between 0 and 15
-
+    Rate =  (50MHz / 2^18) / (n+1) where n in [0, 1023]
     \b
     DIVIDER (int): Frequency divider.
     '''
+
+    lClockRate = 50e6
+    # The division from 50MHz to the desired rate is done in three steps:
+    # a) A pre-division by 256
+    # b) Division by a power of two set by n = 2 ^ rate_div_d (ranging from 2^0 -> 2^15)
+    # c) 1-in-n prescaling set by n = rate_div_p
+    lDiv = int(math.ceil(math.log(lClockRate / (rate * 256 * 256), 2)))
+    if lDiv < 0:
+        lDiv = 0
+    elif lDiv > 15:
+        lDiv = 15
+    lPS = int(lClockRate / (rate * 256 * (1 << lDiv)) + 0.5)
+    if lPS == 0 or lPS > 256:
+        raise click.Exception("Req rate is out of range")
+    else:
+        a = lClockRate / float(256 * lPS * (1 << lDiv))
+        secho( "Requested rate, actual rate: {} {}".format(rate, a), fg='cyan' )
+        secho( "prescale, divisor: {} {}".format(lPS, lDiv), fg='cyan')
+
 
     lDevice = obj.mDevice
     lGenChanCtrl = lDevice.getNode('master.scmd_gen.chan_ctrl')
@@ -689,14 +709,15 @@ def faketriggen(obj, chan, divider, poisson):
     lDevice.getNode('master.scmd_gen.sel').write(chan)
 
     lGenChanCtrl.getNode('type').write(defs.kCommandIDs[kFakeTrigID])
-    lGenChanCtrl.getNode('rate_div').write(divider)
+    lGenChanCtrl.getNode('rate_div_d').write(lDiv)
+    lGenChanCtrl.getNode('rate_div_p').write(lPS)
     lGenChanCtrl.getNode('patt').write(poisson)
     lGenChanCtrl.getClient().dispatch()
     echo( "> Trigger rate for {} ({}) set to {}".format( 
         kFakeTrigID,
         hex(defs.kCommandIDs[kFakeTrigID]),
         style(
-            "{:.3e} Hz".format(50e6/(1<<(13+divider))),
+            "{:.3e} Hz".format( a ),
             fg='yellow'
             )
         )
