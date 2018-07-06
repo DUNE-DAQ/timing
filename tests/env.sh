@@ -14,6 +14,7 @@ function pathadd() {
 
 }
 
+
 declare -a missing_pypkg
 
 function chkpypkg() {
@@ -29,7 +30,11 @@ chkpypkg uhal
 chkpypkg click
 chkpypkg click_didyoumean
 
-(( ${#missing_pypkg[@]} > 0 )) &&  return 1
+if (( ${#missing_pypkg[@]} > 0 )); then
+  echo "Aborting."
+  unset missing_pypkg
+  return 1
+fi
 unset missing_pypkg
 
 CACTUS_ROOT=/opt/cactus
