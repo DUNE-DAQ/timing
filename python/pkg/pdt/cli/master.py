@@ -680,7 +680,7 @@ def validate_freq(ctx, param, value):
 @click.pass_obj
 @click.argument('chan', type=int, callback=toolbox.validate_chan)
 # @click.argument('divider', type=click.IntRange(0, 0x3ff))
-@click.argument('rate', type=int)
+@click.argument('rate', type=float)
 @click.option('--poisson', is_flag=True, default=False, help="Randomize time interval between consecutive triggers.")
 def faketriggen(obj, chan, rate, poisson):
     '''
