@@ -5,10 +5,10 @@
   <connection id="PDTS_SECONDARY"     uri="ipbusudp-2.0://192.168.200.17:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_fmc_trig/top.xml" />
   <connection id="PDTS_TERTIARY"      uri="ipbusudp-2.0://192.168.200.32:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_pc059_v4a8/top_pc059.xml" />
 
-  <connection id="PDTS_AIDA_TLU"      uri="ipbusudp-2.0://192.168.200.30:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_v4a10/top.xml" />
-  <connection id="PDTS_FANOUT_0"      uri="ipbusudp-2.0://192.168.200.35:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_v4a10/top.xml" />
-  <connection id="PDTS_FANOUT_1"      uri="ipbusudp-2.0://192.168.200.33:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_v4a10/top.xml" />
-  <connection id="PDTS_FANOUT_2"      uri="ipbusudp-2.0://192.168.200.34:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_v4a10/top.xml" />
+  <connection id="PDTS_AIDA_TLU"      uri="ipbusudp-2.0://192.168.200.30:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_fmc_v4a10/top_pc059.xml" />
+  <connection id="PDTS_FANOUT_0"      uri="ipbusudp-2.0://192.168.200.35:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_fmc_v4a10/top_pc059.xml" />
+  <connection id="PDTS_FANOUT_1"      uri="ipbusudp-2.0://192.168.200.33:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_fmc_v4a10/top_pc059.xml" />
+  <connection id="PDTS_FANOUT_2"      uri="ipbusudp-2.0://192.168.200.34:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_fmc_v4a10/top_pc059.xml" />
 
   <connection id="PDTS_SIM"           uri="ipbusudp-2.0://192.168.201.16:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_sim_v4a8-val/top_sim.xml" />
   <connection id="PDTS_PRIMARY_TUN"   uri="chtcp-2.0://localhost:60708?target=192.168.200.16:50001" address_table="file:///${PDT_TESTS}/etc/addrtab/ouroboros_fmc_trig/top.xml" />  
