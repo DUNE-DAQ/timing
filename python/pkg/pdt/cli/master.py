@@ -586,7 +586,8 @@ kEventSize = 6
 @partition.command('readback', short_help='Read the timing master readout buffer.')
 @click.pass_obj
 @click.option('--events/--all', ' /-a', 'readall', default=False, help="Buffer readout mode.\n- events: only completed events are readout.\n- all: the content of the buffer is fully read-out.")
-def readback(obj, readall):
+@click.option('--keep', '-k', is_flag=True, default=False, help='Continuous buffer readout')
+def readback(obj, readall, keep):
     '''
     Read the content of the timing master readout buffer.
     '''
@@ -594,24 +595,24 @@ def readback(obj, readall):
     lPartId = obj.mPartitionId
     lPartNode = obj.mPartitionNode
 
-    lBufCount = lPartNode.getNode('buf.count').read()
-    lPartNode.getClient().dispatch()
+    while(True):
+        lBufCount = lPartNode.getNode('buf.count').read()
+        lPartNode.getClient().dispatch()
 
-    echo ( "Words available in readout buffer: "+hex(lBufCount))
-    
-    # lEventsToRead = int(lBufCount) / kEventSize
-    # echo (lEventsToRead)
+        echo ( "Words available in readout buffer: "+hex(lBufCount))
+        
+        lWordsToRead = int(lBufCount) if readall else (int(lBufCount) / kEventSize)*kEventSize
 
-    lWordsToRead = int(lBufCount) if readall else (int(lBufCount) / kEventSize)*kEventSize
+        # if lWordsToRead == 0:
+            # echo("Nothing to read, goodbye!")
 
-    if lWordsToRead == 0:
-        echo("Nothing to read, goodbye!")
+        lBufData = lPartNode.getNode('buf.data').readBlock(lWordsToRead)
+        lPartNode.getClient().dispatch()
 
-    lBufData = lPartNode.getNode('buf.data').readBlock(lWordsToRead)
-    lPartNode.getClient().dispatch()
-
-    for i, lWord in enumerate(lBufData):
-        echo ( '{:04d} {}'.format(i, hex(lWord)))
+        for i, lWord in enumerate(lBufData):
+            echo ( '{:04d} {}'.format(i, hex(lWord)))
+        if not keep:
+            break
 # ------------------------------------------------------------------------------
 
 
