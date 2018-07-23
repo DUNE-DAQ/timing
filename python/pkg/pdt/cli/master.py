@@ -240,14 +240,7 @@ def reset(obj, soft):
         # Access the clock chip
         if lBoardType == kBoardPC059:
             lI2CBusNode = lDevice.getNode("io.i2c")
-            # TODO PAR 2018-07-19: The fanout has an SI5344, not an
-            # SI5345, so deal with that
-            if 'SI5345' in lUID.getSlaves():
-                lSlave=lI2CBusNode.getSlave('SI5345')
-                lSIChip = SI5345Slave(lI2CBusNode, lSlave.getI2CAddress())
-            else:
-                lSlave=lI2CBusNode.getSlave('SI5344')
-                lSIChip = SI5344Slave(lI2CBusNode, lSlave.getI2CAddress())
+            lSIChip = SI5345Slave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
         else:
             lSIChip = lDevice.getNode('io.pll_i2c')
         lSIVersion = lSIChip.readDeviceVersion()

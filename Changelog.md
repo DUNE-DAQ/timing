@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 
 ## [Unreleased]
+### Changed
+
+### Added
+- Support for the new fine-grained fake trigger generator
+
+
+## [4.a.4] 2018-05-23
 ### Added
 - Board/carrier/design type detection via `io.config` registers.
 - `SFPExpander` class to simplify the `pc059` setup.
