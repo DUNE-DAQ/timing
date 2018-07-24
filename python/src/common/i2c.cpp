@@ -18,7 +18,7 @@
 // #include "pdt/MiniPODMasterNode.hpp"
 #include "pdt/SI5344Node.hpp"
 #include "pdt/SI534xNode.hpp"
-#include "pdt/SFPExpanderNode.hpp"
+#include "pdt/I2CExpanderNode.hpp"
 
 // Namespace resolution
 using namespace boost::python;
@@ -102,18 +102,18 @@ register_i2c() {
   class_<pdt::SI534xNode, bases<pdt::SI534xSlave, pdt::I2CBaseNode> > ("SI534xNode", init<const uhal::Node&>())
       ;
 
-  // Wrap SFPExpanderSlave
-  class_<pdt::SFPExpanderSlave, bases<pdt::I2CSlave>, boost::noncopyable > ("SFPExpanderSlave", init<const pdt::I2CBaseNode*, uint8_t>())
-      .def("enable", &pdt::SFPExpanderSlave::enable)
-      .def("setIO", &pdt::SFPExpanderSlave::setIO)
-      .def("setInversion", &pdt::SFPExpanderSlave::setInversion)
-      .def("writeValues", &pdt::SFPExpanderSlave::writeValues)
-      .def("readValues", &pdt::SFPExpanderSlave::readValues)
-      .def("debug", &pdt::SFPExpanderSlave::debug)
+  // Wrap I2CExpanderSlave
+  class_<pdt::I2CExpanderSlave, bases<pdt::I2CSlave>, boost::noncopyable > ("I2CExpanderSlave", init<const pdt::I2CBaseNode*, uint8_t>())
+      .def("enable", &pdt::I2CExpanderSlave::enable)
+      .def("setIO", &pdt::I2CExpanderSlave::setIO)
+      .def("setInversion", &pdt::I2CExpanderSlave::setInversion)
+      .def("writeValues", &pdt::I2CExpanderSlave::writeValues)
+      .def("readValues", &pdt::I2CExpanderSlave::readValues)
+      .def("debug", &pdt::I2CExpanderSlave::debug)
       ;
 
-  // Wrap SFPExpanderNode
-  class_<pdt::SFPExpanderNode, bases<pdt::SFPExpanderSlave, pdt::I2CBaseNode> > ("SFPExpanderNode", init<const uhal::Node&>())
+  // Wrap I2CExpanderNode
+  class_<pdt::I2CExpanderNode, bases<pdt::I2CExpanderSlave, pdt::I2CBaseNode> > ("I2CExpanderNode", init<const uhal::Node&>())
       ;
 
 }

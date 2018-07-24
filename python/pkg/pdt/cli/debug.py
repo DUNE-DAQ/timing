@@ -13,7 +13,7 @@ import pdt.cli.definitions as defs
 
 from click import echo, style, secho
 from os.path import join, expandvars
-from pdt.core import SI5344Slave, SI534xSlave, SFPExpanderSlave
+from pdt.core import SI5344Slave, SI534xSlave, I2CExpanderSlave
 
 kBoardSim = 0x1
 kBoardFMC = 0x0
@@ -86,7 +86,7 @@ def sfpexpander(obj):
         secho('No SFP expander on {}'.format(kBoardNamelMap[lBoardInfo['board_type'].value()]))
         return
     lI2CBusNode = lDevice.getNode("io.i2c")
-    lSFPExp = SFPExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('SFPExpander').getI2CAddress())
+    lSFPExp = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('SFPExpander').getI2CAddress())
     lSFPExpStatus = lSFPExp.debug()
 
     lLabels = [

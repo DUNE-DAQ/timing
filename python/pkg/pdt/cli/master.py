@@ -14,7 +14,7 @@ import pdt.cli.definitions as defs
 
 from click import echo, style, secho
 from os.path import join, expandvars
-from pdt.core import SI5344Slave, SI534xSlave, SFPExpanderSlave
+from pdt.core import SI5344Slave, SI534xSlave, I2CExpanderSlave
 
 kMasterFWMajorRequired = 4
 
@@ -210,8 +210,9 @@ def reset(obj, soft, fanout):
             lDevice.getNode('io.csr.ctrl.rst_i2cmux').write(0x0)
         lDevice.dispatch()
 
+
         # Detect the on-board eprom and read the board UID
-        if lBoardType == kBoardPC059:
+        if lBoardType in [kBoardPC059, kBoardTLU]:
             lUID = lDevice.getNode('io.i2c')
         else:
             lUID = lDevice.getNode('io.uid_i2c')
@@ -221,18 +222,20 @@ def reset(obj, soft, fanout):
             echo("  {}: {}".format(lSlave, hex(lUID.getSlaveAddress(lSlave))))
 
         if (
+            lBoardType == kBoardTLU or
             lBoardType == kBoardPC059 or
             (lBoardType == kBoardFMC and lCarrierType == kCarrierEnclustraA35)
             ):
             lUID.getSlave('AX3_Switch').writeI2C(0x01, 0x7f)
             x = lUID.getSlave('AX3_Switch').readI2C(0x01)
             echo("I2C enable lines: {}".format(x))
-        elif lBoardType == kBoardKC705:
+        elif lCarrierType == kCarrierKC705:
             lUID.getSlave('KC705_Switch').writeI2CPrimitive([0x10])
             # x = lUID.getSlave('KC705_Switch').readI2CPrimitive(1)
             echo("KC705 I2C switch enabled (hopefully)".format())
         else:
             click.ClickException("Unknown board kind {}".format(lBoardType))
+
 
 
         # If not a TLU, read the unique ID from the prom 
@@ -301,7 +304,7 @@ def reset(obj, soft, fanout):
             lDevice.dispatch()
         elif lBoardType == kBoardPC059:
             lI2CBusNode = lDevice.getNode("io.i2c")
-            lSFPExp = SFPExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('SFPExpander').getI2CAddress())
+            lSFPExp = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('SFPExpander').getI2CAddress())
 
             # Set invert registers to default for both banks
             lSFPExp.setInversion(0, 0x00)
@@ -348,8 +351,8 @@ def reset(obj, soft, fanout):
             # print "\tIC7 read back bank 1: 0x%X" % res[0]
             # # #I2C EXPANDER CONFIGURATION END
 
-            lExp1 = SFPExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander1').getI2CAddress())
-            lExp2 = SFPExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander2').getI2CAddress())
+            lExp1 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander1').getI2CAddress())
+            lExp2 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander2').getI2CAddress())
 
             # Bank 0
             lExp1.setInversion(0, 0x00)
@@ -357,9 +360,9 @@ def reset(obj, soft, fanout):
             lExp1.writeValues(0, 0x00)
 
             # Bank 1
-            lExp1.setInversion(0, 0x00)
-            lExp1.setIO(0, 0x00)
-            lExp1.writeValues(0, 0x80)
+            lExp1.setInversion(1, 0x00)
+            lExp1.setIO(1, 0x00)
+            lExp1.writeValues(1, 0x80)
 
 
             # Bank 0
@@ -368,9 +371,9 @@ def reset(obj, soft, fanout):
             lExp2.writeValues(0, 0xF0)
 
             # Bank 1
-            lExp2.setInversion(0, 0x00)
-            lExp2.setIO(0, 0x00)
-            lExp2.writeValues(0, 0xF0)
+            lExp2.setInversion(1, 0x00)
+            lExp2.setIO(1, 0x00)
+            lExp2.writeValues(1, 0xF0)
         else:
             click.ClickException("Unknown board kind {}".format(lBoardType))
 
@@ -415,7 +418,8 @@ def freq(obj):
         freqs[i] = int(fq) * 119.20928 / 1000000 if fv else 'NaN'
 
     print( "Freq PLL:", freqs[0] )
-    print( "Freq CDR:", freqs[1] )
+    if lBoardType == kBoardTLU:
+        print( "Freq CDR:", freqs[1] )
         
 # ------------------------------------------------------------------------------
 

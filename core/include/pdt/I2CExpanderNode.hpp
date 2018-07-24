@@ -11,16 +11,16 @@ namespace pdt
 PDTExceptionClass(SFPExpanderBankIDError, "Clock configuration error");
 
 /**
- * @class      SFPExpanderSlave
+ * @class      I2CExpanderSlave
  *
  * @brief      I2C slave class to control SFP expander chips.
  * @author     Alessandro Thea
  * @date       April 2018
  */
-class SFPExpanderSlave : public I2CSlave {
+class I2CExpanderSlave : public I2CSlave {
 public:
-    SFPExpanderSlave(const I2CBaseNode* aMaster, uint8_t aSlaveAddress);
-    virtual ~SFPExpanderSlave();
+    I2CExpanderSlave(const I2CBaseNode* aMaster, uint8_t aSlaveAddress);
+    virtual ~I2CExpanderSlave();
   
     /**
      * @brief      Sets the inversion status for a set of channels.
@@ -73,19 +73,19 @@ private:
 };
 
 /**
- * @class      SFPExpanderNode
+ * @class      I2CExpanderNode
  *
  * @brief      uhal::Node implementing single I2C Master Slave connection to
  *             control SFP expander chips.
  * @author     Alessandro Thea
  * @date       April 2018
  */
-class SFPExpanderNode : public I2CBaseNode, public SFPExpanderSlave {
-    UHAL_DERIVEDNODE(SFPExpanderNode);
+class I2CExpanderNode : public I2CBaseNode, public I2CExpanderSlave {
+    UHAL_DERIVEDNODE(I2CExpanderNode);
 public:
-    SFPExpanderNode(const uhal::Node& aNode);
-    SFPExpanderNode(const SFPExpanderNode& aOther);
-    virtual ~SFPExpanderNode();
+    I2CExpanderNode(const uhal::Node& aNode);
+    I2CExpanderNode(const I2CExpanderNode& aOther);
+    virtual ~I2CExpanderNode();
 
 };
 
