@@ -682,7 +682,7 @@ def faketriggen(obj, chan, rate, poisson):
     Enables the internal trigger generator.
     Configures the internal command generator to produce triggers at a defined frequency.
     
-    Rate =  (50MHz / 2^18) / (n+1) where n in [0, 1023]
+    Rate =  (50MHz / 2^(d+8)) / p where n in [0,15] and p in [1,256]
     \b
     DIVIDER (int): Frequency divider.
     '''

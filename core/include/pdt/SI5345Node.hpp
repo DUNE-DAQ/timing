@@ -23,7 +23,6 @@ public:
     SI5345Slave(const I2CBaseNode* aMaster, uint8_t aSlaveAddress);
     virtual ~SI5345Slave();
 
-    void configure0g(const std::string& aFilename) const;
     void configure(const std::string& aFilename) const;
 
     std::map<uint32_t, uint32_t> registers() const;
