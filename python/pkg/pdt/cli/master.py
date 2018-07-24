@@ -123,12 +123,14 @@ def ipy(ctx):
 kFMCRev1 = 1
 kFMCRev2 = 2
 kPC059Rev1 = 3
-kTLURev1 = 4
+kPC059Fanout = 4
+kTLURev1 = 5
 
 kClockConfigMap = {
     kFMCRev1: "SI5344/PDTS0000.txt",
     kFMCRev2: "SI5344/PDTS0003.txt",
     kPC059Rev1: "SI5345/PDTS0005.txt",
+    kPC059Fanout: "devel/PDTS_PC059_FANOUT.txt",
     kTLURev1: "devel/PDTS_TLU_MASTER.txt"
 }
 
@@ -260,6 +262,9 @@ def reset(obj, soft, fanout):
         # Ensure that the board revision has a registered clock config
         if lBoardType == kBoardTLU:
             lClockConfigPath = kClockConfigMap[kTLURev1]
+        elif lBoardType == kBoardPC059 and fanout:
+            secho("Overriding clock config - fanout mode", fg='green')
+            lClockConfigPath = kClockConfigMap[kPC059Fanout]
         else:
             try:
                 lClockConfigPath = kClockConfigMap[lRevision]    
@@ -396,7 +401,7 @@ def reset(obj, soft, fanout):
 def freq(obj):
     lDevice = obj.mDevice
     lBoardType = obj.mBoardType
-    
+
     # Measure the generated clock frequency
     freqs = {}
     for i in range(1 if lBoardType == kBoardTLU else 2):
