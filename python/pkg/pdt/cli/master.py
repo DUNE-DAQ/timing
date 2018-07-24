@@ -395,7 +395,9 @@ def reset(obj, soft, fanout):
 @click.pass_obj
 def freq(obj):
     lDevice = obj.mDevice
-            # Measure the generated clock frequency
+    lBoardType = obj.mBoardType
+    
+    # Measure the generated clock frequency
     freqs = {}
     for i in range(1 if lBoardType == kBoardTLU else 2):
         lDevice.getNode("io.freq.ctrl.chan_sel").write(i)
