@@ -12,16 +12,16 @@ namespace pdt
 PDTExceptionClass(SI5345ConfigError, "Clock configuration error");
 
 /**
- * @class      SI5345Slave
+ * @class      SI534xSlave
  *
  * @brief      I2C slave class to control SI5345 chips.
  * @author     Alessandro Thea
  * @date       August 2017
  */
-class SI5345Slave : public SIChipSlave {
+class SI534xSlave : public SIChipSlave {
 public:
-    SI5345Slave(const I2CBaseNode* aMaster, uint8_t aSlaveAddress);
-    virtual ~SI5345Slave();
+    SI534xSlave(const I2CBaseNode* aMaster, uint8_t aSlaveAddress);
+    virtual ~SI534xSlave();
 
     void configure(const std::string& aFilename) const;
 
@@ -33,23 +33,23 @@ private:
     void seekHeader(std::ifstream& aFile) const;
     std::vector<RegisterSetting_t> readConfigSection( std::ifstream& aFile, std::string aTag ) const;
 
-    void uploadConfig( const std::vector<SI5345Slave::RegisterSetting_t>& aConfig ) const;
+    void uploadConfig( const std::vector<SI534xSlave::RegisterSetting_t>& aConfig ) const;
 };
 
 /**
- * @class      SI5345Node
+ * @class      SI534xNode
  *
  * @brief      uhal::Node implementing single I2C Master Slave connection to
  *             control SI5345 chips
  * @author     Alessandro Thea
  * @date       August 2013
  */
-class SI5345Node : public I2CBaseNode, public SI5345Slave {
-    UHAL_DERIVEDNODE(SI5345Node);
+class SI534xNode : public I2CBaseNode, public SI534xSlave {
+    UHAL_DERIVEDNODE(SI534xNode);
 public:
-    SI5345Node(const uhal::Node& aNode);
-    SI5345Node(const SI5345Node& aOther);
-    virtual ~SI5345Node();
+    SI534xNode(const uhal::Node& aNode);
+    SI534xNode(const SI534xNode& aOther);
+    virtual ~SI534xNode();
 
 };
 

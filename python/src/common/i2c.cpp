@@ -17,7 +17,7 @@
 #include "pdt/SIChipSlave.hpp"
 // #include "pdt/MiniPODMasterNode.hpp"
 #include "pdt/SI5344Node.hpp"
-#include "pdt/SI5345Node.hpp"
+#include "pdt/SI534xNode.hpp"
 #include "pdt/SFPExpanderNode.hpp"
 
 // Namespace resolution
@@ -92,14 +92,14 @@ register_i2c() {
       ;
 
 
-  // Wrap SI5345Slave
-  class_<pdt::SI5345Slave, bases<pdt::SIChipSlave>, boost::noncopyable > ("SI5345Slave", init<const pdt::I2CBaseNode*, uint8_t>())
-      .def("configure", &pdt::SI5345Slave::configure)
-      // .def("test", &pdt::SI5345Slave::test)
+  // Wrap SI534xSlave
+  class_<pdt::SI534xSlave, bases<pdt::SIChipSlave>, boost::noncopyable > ("SI534xSlave", init<const pdt::I2CBaseNode*, uint8_t>())
+      .def("configure", &pdt::SI534xSlave::configure)
+      // .def("test", &pdt::SI534xSlave::test)
       ;
 
-  // Wrap SI5345Node
-  class_<pdt::SI5345Node, bases<pdt::SI5345Slave, pdt::I2CBaseNode> > ("SI5345Node", init<const uhal::Node&>())
+  // Wrap SI534xNode
+  class_<pdt::SI534xNode, bases<pdt::SI534xSlave, pdt::I2CBaseNode> > ("SI534xNode", init<const uhal::Node&>())
       ;
 
   // Wrap SFPExpanderSlave

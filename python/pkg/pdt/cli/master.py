@@ -14,7 +14,7 @@ import pdt.cli.definitions as defs
 
 from click import echo, style, secho
 from os.path import join, expandvars
-from pdt.core import SI5344Slave, SI5345Slave, SFPExpanderSlave
+from pdt.core import SI5344Slave, SI534xSlave, SFPExpanderSlave
 
 kMasterFWMajorRequired = 4
 
@@ -22,6 +22,7 @@ kBoardSim = 0x1
 kBoardFMC = 0x0
 kBoardPC059 = 0x2
 kBoardMicrozed = 0x3
+kBoardTLU = 0x4
 # kBoardKC705 = 'kc705'
 
 kCarrierEnclustraA35 = 0x0
@@ -33,7 +34,8 @@ kBoardNamelMap = {
     kBoardSim: 'sim',
     kBoardFMC: 'fmc',
     kBoardPC059: 'pc059',
-    kBoardMicrozed: 'microzed'
+    kBoardMicrozed: 'microzed',
+    kBoardTLU: 'tlu'
 }
 
 kCarrierNamelMap = {
@@ -121,11 +123,13 @@ def ipy(ctx):
 kFMCRev1 = 1
 kFMCRev2 = 2
 kPC059Rev1 = 3
+kTLURev1 = 4
 
 kClockConfigMap = {
     kFMCRev1: "SI5344/PDTS0000.txt",
     kFMCRev2: "SI5344/PDTS0003.txt",
     kPC059Rev1: "SI5345/PDTS0005.txt",
+    kTLURev1: "devel/PDTS_TLU_MASTER.txt"
 }
 
 kUIDRevisionMap = {
@@ -160,8 +164,9 @@ kUIDRevisionMap = {
 # ------------------------------------------------------------------------------
 @master.command('reset', short_help="Perform a hard reset on the timing master.")
 @click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
+@click.option('--fanout', is_flag=True, default=False, help='Configures the board in fanout mode (pc059 only)')
 @click.pass_obj
-def reset(obj, soft):
+def reset(obj, soft, fanout):
     '''
     Perform a hard reset on the timing master, including
 
@@ -179,7 +184,7 @@ def reset(obj, soft):
     lCarrierType = obj.mCarrierType
 
     # Global soft reset
-    lDevice.getNode("io.csr.ctrl.soft_rst").write(0x1)
+    lDevice.getNode('io.csr.ctrl.soft_rst').write(0x1)
     lDevice.dispatch()
 
 
@@ -188,25 +193,28 @@ def reset(obj, soft):
         time.sleep(1)
         
         # PLL and I@C reset 
-        lDevice.getNode("io.csr.ctrl.pll_rst").write(0x1)
+        lDevice.getNode('io.csr.ctrl.pll_rst').write(0x1)
         if lBoardType == kBoardPC059:
-            lDevice.getNode("io.csr.ctrl.rst_i2c").write(0x1)
-            lDevice.getNode("io.csr.ctrl.rst_i2cmux").write(0x1)
+            lDevice.getNode('io.csr.ctrl.rst_i2c').write(0x1)
+            lDevice.getNode('io.csr.ctrl.rst_i2cmux').write(0x1)
+
+            lDevice.getNode('io.csr.ctrl.master_src').write(fanout)
 
         lDevice.dispatch()
-        lDevice.getNode("io.csr.ctrl.pll_rst").write(0x0)
+
+        lDevice.getNode('io.csr.ctrl.pll_rst').write(0x0)
         if lBoardType == kBoardPC059:
-            lDevice.getNode("io.csr.ctrl.rst_i2c").write(0x0)
-            lDevice.getNode("io.csr.ctrl.rst_i2cmux").write(0x0)
+            lDevice.getNode('io.csr.ctrl.rst_i2c').write(0x0)
+            lDevice.getNode('io.csr.ctrl.rst_i2cmux').write(0x0)
         lDevice.dispatch()
 
         # Detect the on-board eprom and read the board UID
         if lBoardType == kBoardPC059:
-            lUID = lDevice.getNode("io.i2c")
+            lUID = lDevice.getNode('io.i2c')
         else:
-            lUID = lDevice.getNode("io.uid_i2c")
+            lUID = lDevice.getNode('io.uid_i2c')
 
-        echo("UID I2C Slaves")
+        echo('UID I2C Slaves')
         for lSlave in lUID.getSlaves():
             echo("  {}: {}".format(lSlave, hex(lUID.getSlaveAddress(lSlave))))
 
@@ -225,32 +233,38 @@ def reset(obj, soft):
             click.ClickException("Unknown board kind {}".format(lBoardType))
 
 
-        lValues = lUID.getSlave('FMC_UID_PROM').readI2CArray(0xfa, 6)
-        lUniqueID = 0x0
-        for lVal in lValues:
-            lUniqueID = ( lUniqueID << 8 ) | lVal
-        echo("Timing Board UID: "+style(hex(lUniqueID), fg="blue"))
+        # If not a TLU, read the unique ID from the prom 
+        if lBoardType != kBoardTLU:
+            lValues = lUID.getSlave('FMC_UID_PROM').readI2CArray(0xfa, 6)
+            lUniqueID = 0x0
+            for lVal in lValues:
+                lUniqueID = ( lUniqueID << 8 ) | lVal
+            echo("Timing Board PROM UID: "+style(hex(lUniqueID), fg="blue"))
 
-        # Ensure that the board is known to the revision DB
-        try:
-            lRevision = kUIDRevisionMap[lUniqueID]
-        except KeyError:
-            raise click.ClickException("No revision associated to UID "+hex(lUniqueID))
+
+            # Ensure that the board is known to the revision DB
+            try:
+                lRevision = kUIDRevisionMap[lUniqueID]
+            except KeyError:
+                raise click.ClickException("No revision associated to UID "+hex(lUniqueID))
 
         # Access the clock chip
-        if lBoardType == kBoardPC059:
+        if lBoardType in [kBoardPC059, kBoardTLU]:
             lI2CBusNode = lDevice.getNode("io.i2c")
-            lSIChip = SI5345Slave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
+            lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
         else:
             lSIChip = lDevice.getNode('io.pll_i2c')
         lSIVersion = lSIChip.readDeviceVersion()
         echo("PLL version : "+style(hex(lSIVersion), fg='blue'))
 
         # Ensure that the board revision has a registered clock config
-        try:
-            lClockConfigPath = kClockConfigMap[lRevision]    
-        except KeyError:
-            raise ClickException("Board revision " << lRevision << " has no associated clock configuration")
+        if lBoardType == kBoardTLU:
+            lClockConfigPath = kClockConfigMap[kTLURev1]
+        else:
+            try:
+                lClockConfigPath = kClockConfigMap[lRevision]    
+            except KeyError:
+                raise ClickException("Board revision " << lRevision << " has no associated clock configuration")
 
         echo("Clock configuration to load "+style(lClockConfigPath, fg='green') )
 
@@ -267,7 +281,7 @@ def reset(obj, soft):
             lDevice.dispatch()
 
         # Measure the generated clock frequency
-        for i in range(2):
+        for i in range(1 if lBoardType == kBoardTLU else 2):
             lDevice.getNode("io.freq.ctrl.chan_sel").write(i)
             lDevice.getNode("io.freq.ctrl.en_crap_mode").write(0)
             lDevice.dispatch()
@@ -283,21 +297,6 @@ def reset(obj, soft):
         elif lBoardType == kBoardPC059:
             lI2CBusNode = lDevice.getNode("io.i2c")
             lSFPExp = SFPExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('SFPExpander').getI2CAddress())
-            # # Bank 0 - Set invert registers to default
-            # lSFPExp.writeI2C(0x4, 0x00)
-            # # Bank 1 - Set invert registers to default
-            # lSFPExp.writeI2C(0x5, 0x00)
-
-            # # Bank 0 - configure for output
-            # lSFPExp.writeI2C(0x6, 0x00)
-            # # Bank 1 - configure for input
-            # lSFPExp.writeI2C(0x7, 0xff)
-
-            # # Bank 0 - enable all SFPGs
-            # lSFPExp.writeI2C(0x2, 0x00)
-            # secho("SFPs 0-7 enabled", fg='cyan')
-
-            # print ( lSFPExp.debug() )
 
             # Set invert registers to default for both banks
             lSFPExp.setInversion(0, 0x00)
@@ -309,11 +308,64 @@ def reset(obj, soft):
 
             # Bank 0 - enable all SFPGs (enable low)
             lSFPExp.enable(0, 0x00)
-
-            # print ( lSFPExp.debug() )
-
             secho("SFPs 0-7 enabled", fg='cyan')
+        elif lBoardType == kBoardTLU:
+            # # #I2C EXPANDER CONFIGURATION BEGIN
+            # IC6=PCA9539PW(master_I2C, 0x74)
+            # #BANK 0
+            # IC6.setInvertReg(0, 0x00)# 0= normal
+            # IC6.setIOReg(0, 0x00)# 0= output 
+            # IC6.setOutputs(0, 0x00) <<<<<<<<<<<<<<<<<<<
+            # res= IC6.getInputs(0)
+            # print "\tIC6 read back bank 0: 0x%X" % res[0]
+            # #
+            # #BANK 1
+            # IC6.setInvertReg(1, 0x00)# 0= normal
+            # IC6.setIOReg(1, 0x00)# 0= output 
+            # IC6.setOutputs(1, 0x80) <<<<<<<<<<<<<<<<<<<
+            # res= IC6.getInputs(1)
+            # print "\tIC6 read back bank 1: 0x%X" % res[0]
 
+            # # # #
+            # IC7=PCA9539PW(master_I2C, 0x75)
+            # #BANK 0
+            # IC7.setInvertReg(0, 0x00)# 0= normal
+            # IC7.setIOReg(0, 0x00)# 0= output 
+            # IC7.setOutputs(0, 0xF0) <<<<<<<<<<<<<<<<<<<
+            # res= IC7.getInputs(0)
+            # print "\tIC7 read back bank 0: 0x%X" % res[0]
+            # #
+            # #BANK 1
+            # IC7.setInvertReg(1, 0x00)# 0= normal
+            # IC7.setIOReg(1, 0x00)# 0= output 
+            # IC7.setOutputs(1, 0xF0) <<<<<<<<<<<<<<<<<<<
+            # res= IC7.getInputs(1)
+            # print "\tIC7 read back bank 1: 0x%X" % res[0]
+            # # #I2C EXPANDER CONFIGURATION END
+
+            lExp1 = SFPExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander1').getI2CAddress())
+            lExp2 = SFPExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander2').getI2CAddress())
+
+            # Bank 0
+            lExp1.setInversion(0, 0x00)
+            lExp1.setIO(0, 0x00)
+            lExp1.writeValues(0, 0x00)
+
+            # Bank 1
+            lExp1.setInversion(0, 0x00)
+            lExp1.setIO(0, 0x00)
+            lExp1.writeValues(0, 0x80)
+
+
+            # Bank 0
+            lExp2.setInversion(0, 0x00)
+            lExp2.setIO(0, 0x00)
+            lExp2.writeValues(0, 0xF0)
+
+            # Bank 1
+            lExp2.setInversion(0, 0x00)
+            lExp2.setIO(0, 0x00)
+            lExp2.writeValues(0, 0xF0)
         else:
             click.ClickException("Unknown board kind {}".format(lBoardType))
 
@@ -339,13 +391,13 @@ def reset(obj, soft):
 
 
 # ------------------------------------------------------------------------------
-@master.command('freq', short_help="Measure some fequencies.")
+@master.command('freq', short_help="Measure some frequencies.")
 @click.pass_obj
 def freq(obj):
     lDevice = obj.mDevice
             # Measure the generated clock frequency
     freqs = {}
-    for i in range(2):
+    for i in range(1 if lBoardType == kBoardTLU else 2):
         lDevice.getNode("io.freq.ctrl.chan_sel").write(i)
         lDevice.getNode("io.freq.ctrl.en_crap_mode").write(0)
         lDevice.dispatch()

@@ -1,4 +1,4 @@
-#include "pdt/SI5345Node.hpp"
+#include "pdt/SI534xNode.hpp"
 
 // PDT headers
 #include "pdt/toolbox.hpp"
@@ -16,17 +16,17 @@
 namespace pdt {
 
 // uHAL Node registation
-UHAL_REGISTER_DERIVED_NODE(SI5345Node);
+UHAL_REGISTER_DERIVED_NODE(SI534xNode);
 
 //-----------------------------------------------------------------------------
-SI5345Slave::SI5345Slave( const I2CBaseNode* aMaster, uint8_t aAddr ) :
+SI534xSlave::SI534xSlave( const I2CBaseNode* aMaster, uint8_t aAddr ) :
 SIChipSlave( aMaster, aAddr ) {
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-SI5345Slave::~SI5345Slave( ) {
+SI534xSlave::~SI534xSlave( ) {
 }
 //-----------------------------------------------------------------------------
 
@@ -34,7 +34,7 @@ SI5345Slave::~SI5345Slave( ) {
 
 //-----------------------------------------------------------------------------
 void
-SI5345Slave::seekHeader( std::ifstream& aFile ) const {
+SI534xSlave::seekHeader( std::ifstream& aFile ) const {
 
     std::string lLine;
 
@@ -61,8 +61,8 @@ SI5345Slave::seekHeader( std::ifstream& aFile ) const {
 // read data
 // Stop on conf end
 
-std::vector<SI5345Slave::RegisterSetting_t>
-SI5345Slave::readConfigSection( std::ifstream& aFile, std::string aTag ) const {
+std::vector<SI534xSlave::RegisterSetting_t>
+SI534xSlave::readConfigSection( std::ifstream& aFile, std::string aTag ) const {
 
     // Line buffer
     std::string lLine;
@@ -117,7 +117,7 @@ SI5345Slave::readConfigSection( std::ifstream& aFile, std::string aTag ) const {
 
 //-----------------------------------------------------------------------------
 void
-SI5345Slave::configure( const std::string& aPath ) const {
+SI534xSlave::configure( const std::string& aPath ) const {
 
     throwIfNotFile(aPath);
 
@@ -148,7 +148,7 @@ SI5345Slave::configure( const std::string& aPath ) const {
 
 //-----------------------------------------------------------------------------
 void 
-SI5345Slave::uploadConfig( const std::vector<SI5345Slave::RegisterSetting_t>& aConfig ) const {
+SI534xSlave::uploadConfig( const std::vector<SI534xSlave::RegisterSetting_t>& aConfig ) const {
 
     size_t k(0), lNotifyPercent(10);
     size_t lNotifyEvery = ( lNotifyPercent < aConfig.size() ? aConfig.size()/lNotifyPercent : 1);
@@ -187,7 +187,7 @@ SI5345Slave::uploadConfig( const std::vector<SI5345Slave::RegisterSetting_t>& aC
 
 //-----------------------------------------------------------------------------
 // void
-// SI5345Slave::configure0g( const std::string& aPath ) const {
+// SI534xSlave::configure0g( const std::string& aPath ) const {
 
 // 	throwIfNotFile(aPath);
 
@@ -295,7 +295,7 @@ SI5345Slave::uploadConfig( const std::vector<SI5345Slave::RegisterSetting_t>& aC
 
 //-----------------------------------------------------------------------------
 std::map<uint32_t, uint32_t>
-SI5345Slave::registers( ) const {
+SI534xSlave::registers( ) const {
     //  boost::format fmthex("%d");
     std::map<uint32_t, uint32_t> values;
 
@@ -340,19 +340,19 @@ SI5345Slave::registers( ) const {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-SI5345Node::SI5345Node( const uhal::Node& aNode ) : I2CBaseNode(aNode), SI5345Slave(this, this->getSlaveAddress("i2caddr") ) {
+SI534xNode::SI534xNode( const uhal::Node& aNode ) : I2CBaseNode(aNode), SI534xSlave(this, this->getSlaveAddress("i2caddr") ) {
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-SI5345Node::SI5345Node( const SI5345Node& aOther ) : I2CBaseNode(aOther), SI5345Slave(this, this->getSlaveAddress("i2caddr") ) {
+SI534xNode::SI534xNode( const SI534xNode& aOther ) : I2CBaseNode(aOther), SI534xSlave(this, this->getSlaveAddress("i2caddr") ) {
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-SI5345Node::~SI5345Node() {
+SI534xNode::~SI534xNode() {
 }
 //-----------------------------------------------------------------------------
 

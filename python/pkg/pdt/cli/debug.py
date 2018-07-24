@@ -13,7 +13,7 @@ import pdt.cli.definitions as defs
 
 from click import echo, style, secho
 from os.path import join, expandvars
-from pdt.core import SI5344Slave, SI5345Slave, SFPExpanderSlave
+from pdt.core import SI5344Slave, SI534xSlave, SFPExpanderSlave
 
 kBoardSim = 0x1
 kBoardFMC = 0x0
@@ -110,7 +110,7 @@ def si5345(obj):
     lDevice = obj.mDevice
 
     lI2CBusNode = lDevice.getNode('io.i2c')
-    lSI5345 = SI5345Slave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
+    lSI5345 = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
     lClockConfigPath = 'SI5345/PDTS0005.txt'
     lFullClockConfigPath = expandvars(join('${PDT_TESTS}/etc/clock', lClockConfigPath))
 
