@@ -104,11 +104,11 @@ register_i2c() {
 
   // Wrap I2CExpanderSlave
   class_<pdt::I2CExpanderSlave, bases<pdt::I2CSlave>, boost::noncopyable > ("I2CExpanderSlave", init<const pdt::I2CBaseNode*, uint8_t>())
-      .def("enable", &pdt::I2CExpanderSlave::enable)
+      // .def("enable", &pdt::I2CExpanderSlave::enable)
       .def("setIO", &pdt::I2CExpanderSlave::setIO)
       .def("setInversion", &pdt::I2CExpanderSlave::setInversion)
-      .def("writeValues", &pdt::I2CExpanderSlave::writeValues)
-      .def("readValues", &pdt::I2CExpanderSlave::readValues)
+      .def("setOutputs", &pdt::I2CExpanderSlave::setOutputs)
+      .def("readInputs", &pdt::I2CExpanderSlave::readInputs)
       .def("debug", &pdt::I2CExpanderSlave::debug)
       ;
 

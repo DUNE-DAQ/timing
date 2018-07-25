@@ -64,21 +64,10 @@ I2CExpanderSlave::setIO( uint8_t aBankId, uint32_t aIOMask ) const {
 
 //-----------------------------------------------------------------------------
 void
-I2CExpanderSlave::enable( uint8_t aBankId, uint32_t aEnableMask ) const {
+I2CExpanderSlave::setOutputs( uint8_t aBankId, uint32_t aValues ) const {
 
     this->ensureValidBankId(aBankId);
-    this->writeI2C(0x2+aBankId, aEnableMask);
-
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-void
-I2CExpanderSlave::writeValues( uint8_t aBankId, uint32_t aValues ) const {
-
-    this->ensureValidBankId(aBankId);
-    this->writeI2C(0x0+aBankId, aValues);
+    this->writeI2C(0x2+aBankId, aValues);
     
 }
 //-----------------------------------------------------------------------------
@@ -86,7 +75,7 @@ I2CExpanderSlave::writeValues( uint8_t aBankId, uint32_t aValues ) const {
 
 //-----------------------------------------------------------------------------
 uint32_t
-I2CExpanderSlave::readValues( uint8_t aBankId ) const {
+I2CExpanderSlave::readInputs( uint8_t aBankId ) const {
 
     this->ensureValidBankId(aBankId);
     return this->readI2C(0x0+aBankId);

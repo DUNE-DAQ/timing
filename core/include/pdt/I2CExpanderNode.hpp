@@ -38,15 +38,6 @@ public:
      */
     void setIO( uint8_t aBankId, uint32_t aIOMask ) const;
 
-
-    /**
-     * @brief      Enable a set of channels
-     *
-     * @param[in]  aBankId       A bank identifier
-     * @param[in]  aChannelMask  A channel mask
-     */
-    void enable( uint8_t aBankId, uint32_t aEnableMask ) const;
-
     /**
      * @brief      Reads inputs values
      *
@@ -54,7 +45,7 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    uint32_t readValues( uint8_t aBankId ) const;
+    uint32_t readInputs( uint8_t aBankId ) const;
 
     /**
      * @brief      Writes outputs values.
@@ -62,7 +53,7 @@ public:
      * @param[in]  aBankId  A bank identifier
      * @param[in]  aValues  A values
      */
-    void writeValues( uint8_t aBankId,  uint32_t aValues ) const;
+    void setOutputs( uint8_t aBankId,  uint32_t aValues ) const;
 
     std::vector<uint32_t> debug() const;
 

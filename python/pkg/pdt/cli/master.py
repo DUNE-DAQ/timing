@@ -73,7 +73,7 @@ def master(obj, device):
     lGenerics = toolbox.readSubNodes(lMaster.getNode('global.config'), False)
     lDevice.dispatch()
 
-    print({ k:v.value() for k,v in lBoardInfo.iteritems()})
+    # print({ k:v.value() for k,v in lBoardInfo.iteritems()})
     # raise SystemExit(0)
 
     lMajor = (lVersion >> 16) & 0xff
@@ -315,7 +315,7 @@ def reset(obj, soft, fanout):
             lSFPExp.setIO(1, 0xff)
 
             # Bank 0 - enable all SFPGs (enable low)
-            lSFPExp.enable(0, 0x00)
+            lSFPExp.setOutputs(0, 0x00)
             secho("SFPs 0-7 enabled", fg='cyan')
         elif lBoardType == kBoardTLU:
             # # #I2C EXPANDER CONFIGURATION BEGIN
@@ -357,23 +357,23 @@ def reset(obj, soft, fanout):
             # Bank 0
             lExp1.setInversion(0, 0x00)
             lExp1.setIO(0, 0x00)
-            lExp1.writeValues(0, 0x00)
+            lExp1.setOutputs(0, 0x00)
 
             # Bank 1
             lExp1.setInversion(1, 0x00)
             lExp1.setIO(1, 0x00)
-            lExp1.writeValues(1, 0x80)
+            lExp1.setOutputs(1, 0x80)
 
 
             # Bank 0
             lExp2.setInversion(0, 0x00)
             lExp2.setIO(0, 0x00)
-            lExp2.writeValues(0, 0xF0)
+            lExp2.setOutputs(0, 0xF0)
 
             # Bank 1
             lExp2.setInversion(1, 0x00)
             lExp2.setIO(1, 0x00)
-            lExp2.writeValues(1, 0xF0)
+            lExp2.setOutputs(1, 0xF0)
         else:
             click.ClickException("Unknown board kind {}".format(lBoardType))
 
@@ -418,7 +418,7 @@ def freq(obj):
         freqs[i] = int(fq) * 119.20928 / 1000000 if fv else 'NaN'
 
     print( "Freq PLL:", freqs[0] )
-    if lBoardType == kBoardTLU:
+    if lBoardType != kBoardTLU:
         print( "Freq CDR:", freqs[1] )
         
 # ------------------------------------------------------------------------------
