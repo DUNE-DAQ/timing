@@ -157,6 +157,7 @@ kUIDRevisionMap = {
     0xd88039d92491: kPC059Rev1,
     0xd88039d9248e: kPC059Rev1,
     0xd88039d98ae9: kPC059Rev1,
+    0xd88039d92498: kPC059Rev1,
 }
 
 # kUIDRevisionMap = {
