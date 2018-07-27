@@ -18,31 +18,36 @@ from pdt.core import SI5344Slave, SI534xSlave, I2CExpanderSlave
 
 kMasterFWMajorRequired = 4
 
-kBoardSim = 0x1
-kBoardFMC = 0x0
-kBoardPC059 = 0x2
-kBoardMicrozed = 0x3
-kBoardTLU = 0x4
+
+from pdt.cli.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
+from pdt.cli.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
+from pdt.cli.definitions import kBoardNamelMap, kCarrierNamelMap
+
+# kBoardSim = 0x1
+# kBoardFMC = 0x0
+# kBoardPC059 = 0x2
+# kBoardMicrozed = 0x3
+# kBoardTLU = 0x4
 # kBoardKC705 = 'kc705'
 
-kCarrierEnclustraA35 = 0x0
-kCarrierKC705 = 0x1
-kCarrierMicrozed = 0x2
+# kCarrierEnclustraA35 = 0x0
+# kCarrierKC705 = 0x1
+# kCarrierMicrozed = 0x2
 
 
-kBoardNamelMap = {
-    kBoardSim: 'sim',
-    kBoardFMC: 'fmc',
-    kBoardPC059: 'pc059',
-    kBoardMicrozed: 'microzed',
-    kBoardTLU: 'tlu'
-}
+# kBoardNamelMap = {
+#     kBoardSim: 'sim',
+#     kBoardFMC: 'fmc',
+#     kBoardPC059: 'pc059',
+#     kBoardMicrozed: 'microzed',
+#     kBoardTLU: 'tlu'
+# }
 
-kCarrierNamelMap = {
-    kCarrierEnclustraA35: 'enclustra-a35',
-    kCarrierKC705: 'kc705',
-    kCarrierMicrozed: 'microzed',
-}
+# kCarrierNamelMap = {
+#     kCarrierEnclustraA35: 'enclustra-a35',
+#     kCarrierKC705: 'kc705',
+#     kCarrierMicrozed: 'microzed',
+# }
 
 # ------------------------------------------------------------------------------
 #    __  ___         __         
