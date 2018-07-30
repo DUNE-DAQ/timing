@@ -213,11 +213,11 @@ def reset(obj, soft, fanout):
         lDevice.dispatch()
 
         lDevice.getNode('io.csr.ctrl.pll_rst').write(0x0)
-        if lBoardType in kBoardPC059:
+        if lBoardType == kBoardPC059:
             lDevice.getNode('io.csr.ctrl.rst_i2c').write(0x0)
             lDevice.getNode('io.csr.ctrl.rst_i2cmux').write(0x0)
         
-        elif lBoardType in kBoardTLU:
+        elif lBoardType == kBoardTLU:
             lDevice.getNode('io.csr.ctrl.rst_i2c').write(0x0)
 
         lDevice.dispatch()
