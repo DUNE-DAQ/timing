@@ -110,7 +110,7 @@ kClockConfigMap = {
     kFMCRev1: "SI5344/PDTS0000.txt",
     kFMCRev2: "SI5344/PDTS0003.txt",
     kPC059Rev1: "SI5345/PDTS0005.txt",
-    kPC059Fanout: "devel/PDTS_PC059_FANOUT.txt",
+    kPC059Fanout: "devel/PDTS_PC059_FANOUT_SFP_IN.txt",
     kTLURev1: "devel/PDTS_TLU_MASTER.txt"
 }
 
