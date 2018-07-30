@@ -31,12 +31,28 @@ kCarrierKC705 = 0x1
 kCarrierMicrozed = 0x2
 
 
+kDesingMaster = 0x0
+kDesignOuroboros = 0x1
+kDesignOuroborosSim = 0x2
+kDesignEndpoint = 0x4
+kDesingFanout = 0x5
+kDesingTLU = 0x6
+
+kDesignNameMap = {
+    kDesingMaster: 'master',
+    kDesignOuroboros: 'ouroboros',
+    kDesignOuroborosSim: 'ouroboros-sim',
+    kDesignEndpoint: 'endpoint',
+    kDesingFanout: 'fanout',
+    kDesingTLU: 'overlord',
+}
+
 kBoardNamelMap = {
     kBoardSim: 'sim',
     kBoardFMC: 'fmc',
     kBoardPC059: 'pc059',
     kBoardMicrozed: 'microzed',
-    kBoardTLU: 'tlu'
+    kBoardTLU: 'tlu',
 }
 
 kCarrierNamelMap = {

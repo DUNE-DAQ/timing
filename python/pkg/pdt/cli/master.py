@@ -21,34 +21,8 @@ kMasterFWMajorRequired = 4
 
 from pdt.cli.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
 from pdt.cli.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
-from pdt.cli.definitions import kBoardNamelMap, kCarrierNamelMap
-
-# kBoardSim = 0x1
-# kBoardFMC = 0x0
-# kBoardPC059 = 0x2
-# kBoardMicrozed = 0x3
-# kBoardTLU = 0x4
-# kBoardKC705 = 'kc705'
-
-# kCarrierEnclustraA35 = 0x0
-# kCarrierKC705 = 0x1
-# kCarrierMicrozed = 0x2
-
-
-# kBoardNamelMap = {
-#     kBoardSim: 'sim',
-#     kBoardFMC: 'fmc',
-#     kBoardPC059: 'pc059',
-#     kBoardMicrozed: 'microzed',
-#     kBoardTLU: 'tlu'
-# }
-
-# kCarrierNamelMap = {
-#     kCarrierEnclustraA35: 'enclustra-a35',
-#     kCarrierKC705: 'kc705',
-#     kCarrierMicrozed: 'microzed',
-# }
-
+from pdt.cli.definitions import kDesingMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesingFanout
+from pdt.cli.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
 # ------------------------------------------------------------------------------
 #    __  ___         __         
 #   /  |/  /__ ____ / /____ ____
@@ -84,8 +58,9 @@ def master(obj, device):
     lMajor = (lVersion >> 16) & 0xff
     lMinor = (lVersion >> 8) & 0xff
     lPatch = (lVersion >> 0) & 0xff
-    echo("Master FW version: {}, board  '{}' on '{}'".format(
+    echo("Master FW version: {}, desing '{}' on board '{}' on carrier '{}'".format(
         hex(lVersion), 
+        style(kDesignNameMap[lBoardInfo['design_type'].value()], fg='blue'),
         style(kBoardNamelMap[lBoardInfo['board_type'].value()], fg='blue'),
         style(kCarrierNamelMap[lBoardInfo['carrier_type'].value()], fg='blue')
     ))
@@ -190,6 +165,9 @@ def reset(obj, soft, fanout):
     lMaster = obj.mMaster
     lBoardType = obj.mBoardType
     lCarrierType = obj.mCarrierType
+
+    if ( lBoardType == kBoardPC059 and fanout ):
+        secho("Fanout mode enabled", fg='green')
 
     # Global soft reset
     lDevice.getNode('io.csr.ctrl.soft_rst').write(0x1)
