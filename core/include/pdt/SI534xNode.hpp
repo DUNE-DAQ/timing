@@ -25,7 +25,7 @@ public:
 
     void configure(const std::string& aFilename) const;
 
-    std::map<uint32_t, uint32_t> registers() const;
+    std::map<uint16_t, uint8_t> registers() const;
 
 private:
     typedef boost::tuple<uint16_t, uint8_t>  RegisterSetting_t;

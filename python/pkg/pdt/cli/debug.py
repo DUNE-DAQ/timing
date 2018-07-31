@@ -92,14 +92,48 @@ def si5345(obj):
 
     lI2CBusNode = lDevice.getNode('io.i2c')
     lSI5345 = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
-    lClockConfigPath = 'SI5345/PDTS0005.txt'
-    lFullClockConfigPath = expandvars(join('${PDT_TESTS}/etc/clock', lClockConfigPath))
 
-    # toolbox.hookDebugger()
-    lSI5345.configure(lFullClockConfigPath)
+    def decRng( word, ibit, nbits=1):
+        return (word >> ibit) & ((1<<nbits)-1)
+
+    w = lSI5345.readClockRegister(0xc)
+
+    registers = collections.OrderedDict()
+    registers["SYSINCAL"] = decRng(w, 0)
+    registers["LOSXAXB"] = decRng(w, 1)
+    registers["XAXB_ERR"] = decRng(w, 3)
+    registers["SMBUS_TIMEOUT"] = decRng(w, 5)
+
+    w = lSI5345.readClockRegister(0xd)
+
+    registers["LOS"] = decRng(w, 0, 4)
+    registers["OOS"] = decRng(w, 4, 4)
+
+    w = lSI5345.readClockRegister(0xe)
+
+    registers["LOL"] = decRng(w, 1)
+    registers["HOLD"] = decRng(w, 5)
+
+    w = lSI5345.readClockRegister(0xf)
+    registers["CAL_PLL"] = decRng(w, 5)
+
+    w = lSI5345.readClockRegister(0x11)
+    registers["SYSINCAL_FLG"] = decRng(w, 0)
+    registers["LOSXAXB_FLG"] = decRng(w, 1)
+    registers["XAXB_ERR_FLG"] = decRng(w, 3)
+    registers["SMBUS_TIMEOUT_FLG"] = decRng(w, 5)
+
+    for r,v in registers.iteritems():
+        echo("{}: {}".format(r,hex(v)))
+
+
+
+
+
 # ------------------------------------------------------------------------------
 
 
+# ------------------------------------------------------------------------------
 @debug.command('inspect')
 @click.argument('nodes')
 @click.pass_obj
@@ -115,7 +149,5 @@ def inspect(obj, nodes):
 
     for k in sorted(lNodeVals):
         print(k,lNodeVals[k])
+# ------------------------------------------------------------------------------
 
-
-
-    pass

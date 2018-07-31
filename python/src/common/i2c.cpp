@@ -95,7 +95,7 @@ register_i2c() {
   // Wrap SI534xSlave
   class_<pdt::SI534xSlave, bases<pdt::SIChipSlave>, boost::noncopyable > ("SI534xSlave", init<const pdt::I2CBaseNode*, uint8_t>())
       .def("configure", &pdt::SI534xSlave::configure)
-      // .def("test", &pdt::SI534xSlave::test)
+      // .def("registers", &pdt::SI534xSlave::registers)
       ;
 
   // Wrap SI534xNode

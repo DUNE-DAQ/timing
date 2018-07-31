@@ -28,12 +28,35 @@ public:
      */
     uint8_t readPage() const;
     
+    /**
+     * @brief      { function_description }
+     *
+     * @param[in]  aPage  A page
+     */
     void switchPage(uint8_t aPage) const;
 
+    /**
+     * @brief      Reads a device version.
+     *
+     * @return     { description_of_the_return_value }
+     */
     uint32_t readDeviceVersion() const;
 
+    /**
+     * @brief      Reads a clock register.
+     *
+     * @param[in]  aAddr  A address
+     *
+     * @return     { description_of_the_return_value }
+     */
     uint8_t readClockRegister( uint16_t aAddr ) const;
 
+    /**
+     * @brief      Writes a clock register.
+     *
+     * @param[in]  aAddr  A address
+     * @param[in]  aData  A data
+     */
     void writeClockRegister( uint16_t aAddr, uint8_t aData) const;
 
 
