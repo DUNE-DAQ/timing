@@ -31,14 +31,33 @@ SI534xSlave::~SI534xSlave( ) {
 //-----------------------------------------------------------------------------
 
 
+//-----------------------------------------------------------------------------
+std::string
+SI534xSlave::readConfigID() const {
+    std::string id;
+
+    for ( size_t i(0); i<8; ++i) {
+        id += (char)readClockRegister(0x26b+i);
+    }
+    return id;
+
+}
+//-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
-void
+std::string
 SI534xSlave::seekHeader( std::ifstream& aFile ) const {
 
     std::string lLine;
+    std::string lDesignID;
 
     while( std::getline(aFile, lLine) ) {
+
+        // Section end found. Break here
+        if (boost::starts_with(lLine, "# Design ID:")) {
+            lDesignID = lLine.substr(13);
+        }
 
         // Skip comments
         if( lLine[0] == '#' ) continue;
@@ -53,6 +72,10 @@ SI534xSlave::seekHeader( std::ifstream& aFile ) const {
             throw SI5345ConfigError("Incomplete file: End of file detected while seeking the header.");
         }
     }
+    
+    PDT_LOG(pdt::kDebug) << "Found desing ID " << lDesignID;
+
+    return lDesignID;
 }
 
 //-----------------------------------------------------------------------------
@@ -71,7 +94,6 @@ SI534xSlave::readConfigSection( std::ifstream& aFile, std::string aTag ) const {
 
     std::vector<RegisterSetting_t> lConfig;
     while( std::getline(aFile, lLine) ) {
-
 
         // Is it a comment 
         if( lLine[0] == '#' ) {
@@ -96,8 +118,8 @@ SI534xSlave::readConfigSection( std::ifstream& aFile, std::string aTag ) const {
         if( lLine.length() == 0 ) continue;
 
         if ( !lSectionFound ) {
-            PDT_LOG(kError) << "Bugger";
-            throw SI5345ConfigError("Bugger");
+            PDT_LOG(kError) << "Main configuration section missing";
+            throw SI5345ConfigError("Main configuration section missing");
         }
 
         uint32_t lAddress, lData;
@@ -123,9 +145,10 @@ SI534xSlave::configure( const std::string& aPath ) const {
 
     std::ifstream lFile(aPath);
     std::string lLine;
+    std::string lConfDesignID;
 
     // Seek the header line first
-    seekHeader(lFile);
+    lConfDesignID = seekHeader(lFile);
 
     auto lPreamble = this->readConfigSection(lFile, "preamble");
     PDT_LOG(kDebug) << "Preamble size = " << lPreamble.size();
@@ -136,11 +159,26 @@ SI534xSlave::configure( const std::string& aPath ) const {
 
     lFile.close();
 
+    try {
+        this->writeClockRegister(0x1E, 0x2);
+    } catch ( pdt::I2CException& lExc ) {
+        // Do nothing.
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     this->uploadConfig(lPreamble);
     std::this_thread::sleep_for(std::chrono::milliseconds(300));
     this->uploadConfig(lRegisters);
     this->uploadConfig(lPostAmble);
+
+    std::string lChipDesignID = this->readConfigID();
+
+    if ( lConfDesignID != lChipDesignID ) {
+        std::ostringstream lMsg;
+        lMsg << "Post-configuration check failed: Loaded design ID " << lChipDesignID << " does not match the configurationd design id " << lConfDesignID << std::endl;
+        throw SI5345ConfigError(lMsg.str());
+    }
 
 }
 //-----------------------------------------------------------------------------

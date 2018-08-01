@@ -27,10 +27,12 @@ public:
 
     std::map<uint16_t, uint8_t> registers() const;
 
+    std::string readConfigID() const;
+
 private:
     typedef boost::tuple<uint16_t, uint8_t>  RegisterSetting_t;
 
-    void seekHeader(std::ifstream& aFile) const;
+    std::string seekHeader(std::ifstream& aFile) const;
     std::vector<RegisterSetting_t> readConfigSection( std::ifstream& aFile, std::string aTag ) const;
 
     void uploadConfig( const std::vector<SI534xSlave::RegisterSetting_t>& aConfig ) const;

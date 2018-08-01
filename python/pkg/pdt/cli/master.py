@@ -64,7 +64,7 @@ def master(obj, device):
         style(kBoardNamelMap[lBoardInfo['board_type'].value()], fg='blue'),
         style(kCarrierNamelMap[lBoardInfo['carrier_type'].value()], fg='blue')
     ))
-    echo("Design {} - chans: {}, parts: {}".format(hex(lBoardInfo['design_type']), lGenerics['n_chan'], lGenerics['n_part']))
+    echo("Chans: {}, parts: {}".format(lGenerics['n_chan'], lGenerics['n_part']))
 
     if lMajor < 4:
         secho('ERROR: Incompatible master firmware version. Found {}, required {}'.format(hex(lMajor), hex(kMasterFWMajorRequired)), fg='red')
@@ -111,7 +111,8 @@ kClockConfigMap = {
     kFMCRev2: "SI5344/PDTS0003.txt",
     kPC059Rev1: "SI5345/PDTS0005.txt",
     kPC059Fanout: "devel/PDTS_PC059_FANOUT_SFP_IN.txt",
-    kTLURev1: "devel/PDTS_TLU_MASTER.txt"
+    # kTLURev1: "devel/PDTS_TLU_MASTER.txt"
+    kTLURev1: "devel/PDTS_TLU_MASTER_ONLYLEMOIN.txt"
 }
 
 kUIDRevisionMap = {
@@ -229,14 +230,16 @@ def reset(obj, soft, fanout):
 
 
         # If not a TLU, read the unique ID from the prom 
+        # if lBoardType != kBoardTLU:
+
+        lPROMSlave = 'UID_PROM' if lBoardType == kBoardTLU else 'FMC_UID_PROM'
+        lValues = lUID.getSlave(lPROMSlave).readI2CArray(0xfa, 6)
+        lUniqueID = 0x0
+        for lVal in lValues:
+            lUniqueID = ( lUniqueID << 8 ) | lVal
+        echo("Timing Board PROM UID: "+style(hex(lUniqueID), fg="blue"))
+
         if lBoardType != kBoardTLU:
-            lValues = lUID.getSlave('FMC_UID_PROM').readI2CArray(0xfa, 6)
-            lUniqueID = 0x0
-            for lVal in lValues:
-                lUniqueID = ( lUniqueID << 8 ) | lVal
-            echo("Timing Board PROM UID: "+style(hex(lUniqueID), fg="blue"))
-
-
             # Ensure that the board is known to the revision DB
             try:
                 lRevision = kUIDRevisionMap[lUniqueID]
@@ -264,11 +267,12 @@ def reset(obj, soft, fanout):
             except KeyError:
                 raise ClickException("Board revision " << lRevision << " has no associated clock configuration")
 
-        echo("Clock configuration to load "+style(lClockConfigPath, fg='green') )
+        echo("SI3545 Clock configuration file: "+style(lClockConfigPath, fg='green') )
 
         # Configure the clock chip
         lFullClockConfigPath = expandvars(join('${PDT_TESTS}/etc/clock', lClockConfigPath))
         lSIChip.configure(lFullClockConfigPath)
+        echo("SI3545 configuration id: {}".format(style(lSIChip.readConfigID(), fg='green')))
 
         if lBoardType == kBoardPC059:
             lDevice.getNode('io.csr.ctrl.cdr_edge').write(1)
@@ -308,62 +312,30 @@ def reset(obj, soft, fanout):
             lSFPExp.setOutputs(0, 0x00)
             secho("SFPs 0-7 enabled", fg='cyan')
         elif lBoardType == kBoardTLU:
-            # # #I2C EXPANDER CONFIGURATION BEGIN
-            # IC6=PCA9539PW(master_I2C, 0x74)
-            # #BANK 0
-            # IC6.setInvertReg(0, 0x00)# 0= normal
-            # IC6.setIOReg(0, 0x00)# 0= output 
-            # IC6.setOutputs(0, 0x00) <<<<<<<<<<<<<<<<<<<
-            # res= IC6.getInputs(0)
-            # print "\tIC6 read back bank 0: 0x%X" % res[0]
-            # #
-            # #BANK 1
-            # IC6.setInvertReg(1, 0x00)# 0= normal
-            # IC6.setIOReg(1, 0x00)# 0= output 
-            # IC6.setOutputs(1, 0x80) <<<<<<<<<<<<<<<<<<<
-            # res= IC6.getInputs(1)
-            # print "\tIC6 read back bank 1: 0x%X" % res[0]
 
-            # # # #
-            # IC7=PCA9539PW(master_I2C, 0x75)
-            # #BANK 0
-            # IC7.setInvertReg(0, 0x00)# 0= normal
-            # IC7.setIOReg(0, 0x00)# 0= output 
-            # IC7.setOutputs(0, 0xF0) <<<<<<<<<<<<<<<<<<<
-            # res= IC7.getInputs(0)
-            # print "\tIC7 read back bank 0: 0x%X" % res[0]
-            # #
-            # #BANK 1
-            # IC7.setInvertReg(1, 0x00)# 0= normal
-            # IC7.setIOReg(1, 0x00)# 0= output 
-            # IC7.setOutputs(1, 0xF0) <<<<<<<<<<<<<<<<<<<
-            # res= IC7.getInputs(1)
-            # print "\tIC7 read back bank 1: 0x%X" % res[0]
-            # # #I2C EXPANDER CONFIGURATION END
-
-            lExp1 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander1').getI2CAddress())
-            lExp2 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander2').getI2CAddress())
+            lIC6 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander1').getI2CAddress())
+            lC7 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander2').getI2CAddress())
 
             # Bank 0
-            lExp1.setInversion(0, 0x00)
-            lExp1.setIO(0, 0x00)
-            lExp1.setOutputs(0, 0x00)
+            lIC6.setInversion(0, 0x00)
+            lIC6.setIO(0, 0x00)
+            lIC6.setOutputs(0, 0x00)
 
             # Bank 1
-            lExp1.setInversion(1, 0x00)
-            lExp1.setIO(1, 0x00)
-            lExp1.setOutputs(1, 0x80)
+            lIC6.setInversion(1, 0x00)
+            lIC6.setIO(1, 0x00)
+            lIC6.setOutputs(1, 0x80)
 
 
             # Bank 0
-            lExp2.setInversion(0, 0x00)
-            lExp2.setIO(0, 0x00)
-            lExp2.setOutputs(0, 0xF0)
+            lC7.setInversion(0, 0x00)
+            lC7.setIO(0, 0x00)
+            lC7.setOutputs(0, 0x00)
 
             # Bank 1
-            lExp2.setInversion(1, 0x00)
-            lExp2.setIO(1, 0x00)
-            lExp2.setOutputs(1, 0xF0)
+            lC7.setInversion(1, 0x00)
+            lC7.setIO(1, 0x00)
+            lC7.setOutputs(1, 0x00)
         else:
             click.ClickException("Unknown board kind {}".format(lBoardType))
 

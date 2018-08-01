@@ -23,27 +23,10 @@ public:
     SI5344Slave(const I2CBaseNode* aMaster, uint8_t aSlaveAddress);
     virtual ~SI5344Slave();
 
-    /**
-     * @brief      Reads the current page.
-     *
-     * @return     { description_of_the_return_value }
-     */
-    // uint8_t readPage() const;
-    
-    // void switchPage(uint8_t aPage) const;
-
-    // uint32_t readDeviceVersion() const;
 
     void configure(const std::string& aFilename) const;
-
-    // uint8_t readClockRegister( uint16_t aAddr ) const;
-
-    // void writeClockRegister( uint16_t aAddr, uint8_t aData) const;
-
-    // void reset() const;
-    // void intcalib() const;
-    // void sleep(const bool& s) const;
-    // void debug() const;
+    
+    std::string readConfigID() const;
 
     std::map<uint32_t, uint32_t> registers() const;
 

@@ -17,7 +17,7 @@ from pdt.core import SI5344Slave, SI534xSlave, I2CExpanderSlave
 
 from pdt.cli.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
 from pdt.cli.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
-from pdt.cli.definitions import kBoardNamelMap, kCarrierNamelMap
+from pdt.cli.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
 
 
 # ------------------------------------------------------------------------------
@@ -42,11 +42,11 @@ def debug(obj, device):
     # print({ k:v.value() for k,v in lBoardInfo.iteritems()})
     # raise SystemExit(0)
 
-    echo("| Board  '{}' on '{}'".format(
+    echo("Design '{}' on board '{}' on carrier '{}'".format(
+        style(kDesignNameMap[lBoardInfo['design_type'].value()], fg='blue'),
         style(kBoardNamelMap[lBoardInfo['board_type'].value()], fg='blue'),
         style(kCarrierNamelMap[lBoardInfo['carrier_type'].value()], fg='blue')
     ))
-    echo("| Design {}".format(hex(lBoardInfo['design_type'])))
 
     obj.mDevice = lDevice
     obj.mBoardType = lBoardInfo['board_type'].value()
@@ -87,47 +87,68 @@ def sfpexpander(obj):
 # ------------------------------------------------------------------------------
 @debug.command()
 @click.pass_obj
-def si5345(obj):
+@click.option('--soft-rst', 'softrst', is_flag=True)
+def si5345(obj, softrst):
+    def decRng( word, ibit, nbits=1):
+        return (word >> ibit) & ((1<<nbits)-1)
+
     lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
 
     lI2CBusNode = lDevice.getNode('io.i2c')
     lSI5345 = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
 
-    def decRng( word, ibit, nbits=1):
-        return (word >> ibit) & ((1<<nbits)-1)
+
+    if softrst:
+        secho("Resetting", fg='yellow')
+        lSI5345.writeClockRegister(0x1e, 0x2)
+
+    secho("Si3545 configuration id: {}".format(lSI5345.readConfigID()), fg='green')
 
     w = lSI5345.readClockRegister(0xc)
 
     registers = collections.OrderedDict()
-    registers["SYSINCAL"] = decRng(w, 0)
-    registers["LOSXAXB"] = decRng(w, 1)
-    registers["XAXB_ERR"] = decRng(w, 3)
-    registers["SMBUS_TIMEOUT"] = decRng(w, 5)
+    registers['SYSINCAL'] = decRng(w, 0)
+    registers['LOSXAXB'] = decRng(w, 1)
+    registers['XAXB_ERR'] = decRng(w, 3)
+    registers['SMBUS_TIMEOUT'] = decRng(w, 5)
 
     w = lSI5345.readClockRegister(0xd)
 
-    registers["LOS"] = decRng(w, 0, 4)
-    registers["OOS"] = decRng(w, 4, 4)
+    registers['LOS'] = decRng(w, 0, 4)
+    registers['OOS'] = decRng(w, 4, 4)
 
     w = lSI5345.readClockRegister(0xe)
 
-    registers["LOL"] = decRng(w, 1)
-    registers["HOLD"] = decRng(w, 5)
+    registers['LOL'] = decRng(w, 1)
+    registers['HOLD'] = decRng(w, 5)
 
     w = lSI5345.readClockRegister(0xf)
-    registers["CAL_PLL"] = decRng(w, 5)
+    registers['CAL_PLL'] = decRng(w, 5)
 
     w = lSI5345.readClockRegister(0x11)
-    registers["SYSINCAL_FLG"] = decRng(w, 0)
-    registers["LOSXAXB_FLG"] = decRng(w, 1)
-    registers["XAXB_ERR_FLG"] = decRng(w, 3)
-    registers["SMBUS_TIMEOUT_FLG"] = decRng(w, 5)
+    registers['SYSINCAL_FLG'] = decRng(w, 0)
+    registers['LOSXAXB_FLG'] = decRng(w, 1)
+    registers['XAXB_ERR_FLG'] = decRng(w, 3)
+    registers['SMBUS_TIMEOUT_FLG'] = decRng(w, 5)
 
     for r,v in registers.iteritems():
-        echo("{}: {}".format(r,hex(v)))
+        echo('{}: {}'.format(r,hex(v)))
 
+    # Measure the generated clock frequency
+    lFreqNode = lDevice.getNode('io.freq')
+    freqs = {}
+    for i in range(1 if lBoardType == kBoardTLU else 2):
+        lFreqNode.getNode('ctrl.chan_sel').write(i)
+        lFreqNode.getNode('ctrl.en_crap_mode').write(0)
+        lFreqNode.getClient().dispatch()
+        time.sleep(2)
+        fq = lFreqNode.getNode('freq.count').read()
+        fv = lFreqNode.getNode('freq.valid').read()
+        lFreqNode.getClient().dispatch()
+        freqs[i] = int(fq) * 119.20928 / 1000000 if fv else 'NaN'
 
-
+    print( "Freq PLL:", freqs[0] )
 
 
 # ------------------------------------------------------------------------------

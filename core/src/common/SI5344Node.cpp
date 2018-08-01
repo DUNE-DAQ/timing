@@ -27,91 +27,18 @@ SI5344Slave::~SI5344Slave( ) {
 //-----------------------------------------------------------------------------
 
 
-// //-----------------------------------------------------------------------------
-// uint8_t
-// SI5344Slave::readPage( ) const {
+//-----------------------------------------------------------------------------
+std::string
+SI5344Slave::readConfigID() const {
+    std::string id;
 
-//     PDT_LOG(kDebug) << "<- Reading page ";
+    for ( size_t i(0); i<8; ++i) {
+        id += (char)readClockRegister(0x26b+i);
+    }
+    return id;
 
-// 	// Read from the page address (0x1?)
-// 	return readI2C(0x1);
-// }
-// //-----------------------------------------------------------------------------
-
-
-// //-----------------------------------------------------------------------------
-// void
-// SI5344Slave::switchPage( uint8_t aPage ) const {
-
-// 	// Prepare a data block with address and new page
-// 	// std::vector<uint8_t> lData = {0x1, aPage};
-//     PDT_LOG(kDebug) << "-> Switching to page " 
-//         << std::showbase
-//         << std:: hex
-//         << (uint32_t) aPage;
-// 	writeI2C(0x1, aPage);
-// }
-// //-----------------------------------------------------------------------------
-
-
-// //-----------------------------------------------------------------------------
-// uint32_t
-// SI5344Slave::readDeviceVersion( ) const {
-
-// 	// Go to the right page
-// 	switchPage(0x0);
-// 	// Read 2 words from 0x2
-// 	auto lVersion = readI2CArray(0x2, 2);
-	
-// 	return (((uint32_t)lVersion[1] << 8) + (uint32_t)lVersion[0]);
-// }
-// //-----------------------------------------------------------------------------
-
-
-// //-----------------------------------------------------------------------------
-// uint8_t
-// SI5344Slave::readClockRegister( uint16_t aAddr ) const {
-
-// 	uint8_t lRegAddr = (aAddr & 0xff);
-// 	uint8_t lPageAddr = (aAddr >> 8) & 0xff;
-//     PDT_LOG(kDebug) << std::showbase << std::hex 
-//         << "Read Address " << (uint32_t)aAddr 
-//         << " reg: " << (uint32_t)lRegAddr 
-//         << " page: " << (uint32_t)lPageAddr;
-// 	// Change page only when required.
-// 	// (The SI5344 don't like to have the page register id to be written all the time.)
-//     uint8_t lCurrentPage = readPage();
-// 	if ( lPageAddr != lCurrentPage ) {
-// 		switchPage(lPageAddr);
-// 	}
-
-// 	// Read the register
-// 	return readI2C( lRegAddr );
-// }
-// //-----------------------------------------------------------------------------
-
-
-// //-----------------------------------------------------------------------------
-// void
-// SI5344Slave::writeClockRegister( uint16_t aAddr, uint8_t aData ) const {
-
-// 	uint8_t lRegAddr = (aAddr & 0xff);
-// 	uint8_t lPageAddr = (aAddr >> 8) & 0xff;
-
-//     PDT_LOG(kDebug) << std::showbase << std::hex 
-//         << "Write Address " << (uint32_t)aAddr 
-//         << " reg: " << (uint32_t)lRegAddr 
-//         << " page: " << (uint32_t)lPageAddr;
-// 	// Change page only when required.
-// 	// (The SI5344 don't like to have the page register id to be written all the time.)
-// 	uint8_t lCurrentPage = readPage();
-// 	if ( lPageAddr != lCurrentPage ) {
-// 		switchPage(lPageAddr);
-// 	}
-
-// 	return writeI2C( lRegAddr, aData );
-// }
-// //-----------------------------------------------------------------------------
+}
+//-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------

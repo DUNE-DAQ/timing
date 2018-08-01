@@ -85,6 +85,7 @@ register_i2c() {
       // .def("readClockRegister", &pdt::SI5344Slave::readClockRegister)
       // .def("writeClockRegister", &pdt::SI5344Slave::writeClockRegister)
       .def("configure", &pdt::SI5344Slave::configure)
+      .def("readConfigID", &pdt::SI5344Slave::readConfigID)
       ;
 
   // Wrap SI5344Node
@@ -95,6 +96,7 @@ register_i2c() {
   // Wrap SI534xSlave
   class_<pdt::SI534xSlave, bases<pdt::SIChipSlave>, boost::noncopyable > ("SI534xSlave", init<const pdt::I2CBaseNode*, uint8_t>())
       .def("configure", &pdt::SI534xSlave::configure)
+      .def("readConfigID", &pdt::SI534xSlave::readConfigID)
       // .def("registers", &pdt::SI534xSlave::registers)
       ;
 
