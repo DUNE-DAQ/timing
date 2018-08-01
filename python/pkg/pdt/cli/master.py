@@ -110,7 +110,8 @@ kClockConfigMap = {
     kFMCRev1: "SI5344/PDTS0000.txt",
     kFMCRev2: "SI5344/PDTS0003.txt",
     kPC059Rev1: "SI5345/PDTS0005.txt",
-    kPC059Fanout: "devel/PDTS_PC059_FANOUT_SFP_IN.txt",
+    kPC059Fanout: "devel/PDTS_PC059_FANOUT.txt",
+    # kPC059Fanout: "devel/PDTS_PC059_FANOUT_SFP_IN.txt",
     # kTLURev1: "devel/PDTS_TLU_MASTER.txt"
     kTLURev1: "devel/PDTS_TLU_MASTER_ONLYLEMOIN.txt"
 }
@@ -314,7 +315,7 @@ def reset(obj, soft, fanout):
         elif lBoardType == kBoardTLU:
 
             lIC6 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander1').getI2CAddress())
-            lC7 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander2').getI2CAddress())
+            lIC7 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander2').getI2CAddress())
 
             # Bank 0
             lIC6.setInversion(0, 0x00)
@@ -328,14 +329,14 @@ def reset(obj, soft, fanout):
 
 
             # Bank 0
-            lC7.setInversion(0, 0x00)
-            lC7.setIO(0, 0x00)
-            lC7.setOutputs(0, 0x00)
+            lIC7.setInversion(0, 0x00)
+            lIC7.setIO(0, 0x00)
+            lIC7.setOutputs(0, 0xF0)
 
             # Bank 1
-            lC7.setInversion(1, 0x00)
-            lC7.setIO(1, 0x00)
-            lC7.setOutputs(1, 0x00)
+            lIC7.setInversion(1, 0x00)
+            lIC7.setIO(1, 0x00)
+            lIC7.setOutputs(1, 0x00)
         else:
             click.ClickException("Unknown board kind {}".format(lBoardType))
 
