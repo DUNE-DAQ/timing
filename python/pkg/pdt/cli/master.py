@@ -146,12 +146,6 @@ kUIDRevisionMap = {
 # kUIDRevisionMap = {
 # }
 
-
-def readMasterSrc(lDevice):
-    xxx = lDevice.getNode('io.csr.ctrl.master_src').read()
-    lDevice.dispatch()
-    print("fanout master_src",xxx)
-
 # ------------------------------------------------------------------------------
 @master.command('reset', short_help="Perform a hard reset on the timing master.")
 @click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
@@ -350,12 +344,6 @@ def reset(obj, soft, fanout):
             lIC7.setOutputs(1, 0x00)
         else:
             click.ClickException("Unknown board kind {}".format(lBoardType))
-
-    # xxxx
-    xxx = lDevice.getNode('io.csr.ctrl.master_src').read()
-    lDevice.dispatch()
-    print("fanout",xxx)
-    # xxxx
 
     # Reset controls
     # lDevice.getNode("io.csr.ctrl.rst").write(1)
