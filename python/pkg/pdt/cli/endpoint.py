@@ -101,6 +101,8 @@ def enable(obj, on, partition):
     for i, ep in obj.mEndpoints.iteritems():
         if on:
             ep.getNode('csr.ctrl.tgrp').write(partition)
+            ep.getNode('csr.ctrl.ctr_rst').write(0x1)
+            ep.getNode('csr.ctrl.ctr_rst').write(0x0)
             ep.getClient().dispatch()
         ep.getNode('csr.ctrl.ep_en').write(on)
         ep.getNode('csr.ctrl.buf_en').write(on)
