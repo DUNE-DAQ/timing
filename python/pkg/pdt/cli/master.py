@@ -103,15 +103,16 @@ def ipy(ctx):
 kFMCRev1 = 1
 kFMCRev2 = 2
 kPC059Rev1 = 3
-kPC059Fanout = 4
-kTLURev1 = 5
+kPC059FanoutHDMI = 4
+kPC059FanoutSFP = 5
+kTLURev1 = 6
 
 kClockConfigMap = {
     kFMCRev1: "SI5344/PDTS0000.txt",
     kFMCRev2: "SI5344/PDTS0003.txt",
     kPC059Rev1: "SI5345/PDTS0005.txt",
-    kPC059Fanout: "devel/PDTS_PC059_FANOUT.txt",
-    # kPC059Fanout: "devel/PDTS_PC059_FANOUT_SFP_IN.txt",
+    kPC059FanoutHDMI: "devel/PDTS_PC059_FANOUT.txt",
+    kPC059FanoutSFP: "devel/PDTS_PC059_FANOUT_SFP_IN.txt",
     # kTLURev1: "devel/PDTS_TLU_MASTER.txt"
     kTLURev1: "devel/PDTS_TLU_MASTER_ONLYLEMOIN.txt"
 }
@@ -146,10 +147,15 @@ kUIDRevisionMap = {
 # }
 
 
+def readMasterSrc(lDevice):
+    xxx = lDevice.getNode('io.csr.ctrl.master_src').read()
+    lDevice.dispatch()
+    print("fanout master_src",xxx)
+
 # ------------------------------------------------------------------------------
 @master.command('reset', short_help="Perform a hard reset on the timing master.")
 @click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
-@click.option('--fanout', is_flag=True, default=False, help='Configures the board in fanout mode (pc059 only)')
+@click.option('--fanout-mode', 'fanout', type=click.IntRange(0, 3), default=0, help='Configures the board in fanout mode (pc059 only)')
 @click.pass_obj
 def reset(obj, soft, fanout):
     '''
@@ -185,7 +191,7 @@ def reset(obj, soft, fanout):
         if lBoardType == kBoardPC059:
             lDevice.getNode('io.csr.ctrl.rst_i2c').write(0x1)
             lDevice.getNode('io.csr.ctrl.rst_i2cmux').write(0x1)
-            lDevice.getNode('io.csr.ctrl.master_src').write(fanout)
+
 
         elif lBoardType == kBoardTLU:
             lDevice.getNode('io.csr.ctrl.rst_i2c').write(0x1)
@@ -229,7 +235,7 @@ def reset(obj, soft, fanout):
             click.ClickException("Unknown board kind {}".format(lBoardType))
 
 
-
+        # 
         # If not a TLU, read the unique ID from the prom 
         # if lBoardType != kBoardTLU:
 
@@ -259,14 +265,15 @@ def reset(obj, soft, fanout):
         # Ensure that the board revision has a registered clock config
         if lBoardType == kBoardTLU:
             lClockConfigPath = kClockConfigMap[kTLURev1]
-        elif lBoardType == kBoardPC059 and fanout:
+        elif lBoardType == kBoardPC059 and fanout in [1,2]:
             secho("Overriding clock config - fanout mode", fg='green')
-            lClockConfigPath = kClockConfigMap[kPC059Fanout]
+            lClockConfigPath = kClockConfigMap[kPC059FanoutHDMI if fanout == 1 else kPC059FanoutSFP]
         else:
             try:
                 lClockConfigPath = kClockConfigMap[lRevision]    
             except KeyError:
                 raise ClickException("Board revision " << lRevision << " has no associated clock configuration")
+
 
         echo("SI3545 Clock configuration file: "+style(lClockConfigPath, fg='green') )
 
@@ -275,13 +282,16 @@ def reset(obj, soft, fanout):
         lSIChip.configure(lFullClockConfigPath)
         echo("SI3545 configuration id: {}".format(style(lSIChip.readConfigID(), fg='green')))
 
+
         if lBoardType == kBoardPC059:
+            lDevice.getNode('io.csr.ctrl.master_src').write(fanout)
             lDevice.getNode('io.csr.ctrl.cdr_edge').write(1)
             lDevice.getNode('io.csr.ctrl.sfp_edge').write(1)
             lDevice.getNode('io.csr.ctrl.hdmi_edge').write(0)
             lDevice.getNode('io.csr.ctrl.usfp_edge').write(1)
             lDevice.getNode('io.csr.ctrl.mux').write(0)
             lDevice.dispatch()
+
 
         # Measure the generated clock frequency
         for i in range(1 if lBoardType == kBoardTLU else 2):
@@ -294,6 +304,7 @@ def reset(obj, soft, fanout):
             lDevice.dispatch()
             print( "Freq:", i, int(fv), int(fq) * 119.20928 / 1000000 )
         
+
         if lBoardType == kBoardFMC:
             lDevice.getNode("io.csr.ctrl.sfp_tx_dis").write(0)
             lDevice.dispatch()
@@ -340,15 +351,19 @@ def reset(obj, soft, fanout):
         else:
             click.ClickException("Unknown board kind {}".format(lBoardType))
 
-
+    # xxxx
+    xxx = lDevice.getNode('io.csr.ctrl.master_src').read()
+    lDevice.dispatch()
+    print("fanout",xxx)
+    # xxxx
 
     # Reset controls
-    lDevice.getNode("io.csr.ctrl.rst").write(1)
-    lDevice.dispatch()
-    lDevice.getNode("io.csr.ctrl.rst").write(0)
-    lDevice.dispatch()
+    # lDevice.getNode("io.csr.ctrl.rst").write(1)
+    # lDevice.dispatch()
+    # lDevice.getNode("io.csr.ctrl.rst").write(0)
+    # lDevice.dispatch()
 
-    lScmdGenNode = lMaster.getNode('scmd_gen')
+    # lScmdGenNode = lMaster.getNode('scmd_gen')
 
     echo()
     echo("--- Global status ---")
@@ -356,6 +371,11 @@ def reset(obj, soft, fanout):
     for k,v in lCsrStat.iteritems():
         echo("{}: {}".format(k, hex(v)))
     echo()
+
+    xxx = lDevice.getNode('io.csr.ctrl.master_src').read()
+    lDevice.dispatch()
+    print("fanout",xxx)
+
 # ------------------------------------------------------------------------------
 
 
