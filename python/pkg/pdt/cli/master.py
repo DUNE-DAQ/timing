@@ -360,10 +360,6 @@ def reset(obj, soft, fanout):
         echo("{}: {}".format(k, hex(v)))
     echo()
 
-    xxx = lDevice.getNode('io.csr.ctrl.master_src').read()
-    lDevice.dispatch()
-    print("fanout",xxx)
-
 # ------------------------------------------------------------------------------
 
 
