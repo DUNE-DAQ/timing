@@ -16,7 +16,7 @@ Packager = Alessandro Thea
 
 PACKAGE_VER_MAJOR = 4
 PACKAGE_VER_MINOR = 1
-PACKAGE_VER_PATCH = 0
+PACKAGE_VER_PATCH = 1
 PACKAGE_RELEASE = 0
 
 PackageRequires = cactuscore-uhal-uhal >= 2.5.0, cactuscore-uhal-uhal < 2.6.0
