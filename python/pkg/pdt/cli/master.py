@@ -58,7 +58,7 @@ def master(obj, device):
     lMajor = (lVersion >> 16) & 0xff
     lMinor = (lVersion >> 8) & 0xff
     lPatch = (lVersion >> 0) & 0xff
-    echo("Master FW version: {}, desing '{}' on board '{}' on carrier '{}'".format(
+    echo("Master FW version: {}, design '{}' on board '{}' on carrier '{}'".format(
         hex(lVersion), 
         style(kDesignNameMap[lBoardInfo['design_type'].value()], fg='blue'),
         style(kBoardNamelMap[lBoardInfo['board_type'].value()], fg='blue'),
@@ -151,7 +151,8 @@ kUIDRevisionMap = {
 @click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
 @click.option('--fanout-mode', 'fanout', type=click.IntRange(0, 3), default=0, help='Configures the board in fanout mode (pc059 only)')
 @click.pass_obj
-def reset(obj, soft, fanout):
+@click.pass_context
+def reset(ctx, obj, soft, fanout):
     '''
     Perform a hard reset on the timing master, including
 
@@ -159,6 +160,12 @@ def reset(obj, soft, fanout):
     - ipbus registers
     - i2c buses
     - pll and pll configuration
+
+    \b
+    Fanout mode:
+    0 = local master
+    1 = hdmi
+    2 = sfp
     '''
 
     echo('Resetting ' + click.style(obj.mDevice.id(), fg='blue'))
@@ -286,18 +293,7 @@ def reset(obj, soft, fanout):
             lDevice.getNode('io.csr.ctrl.mux').write(0)
             lDevice.dispatch()
 
-
-        # Measure the generated clock frequency
-        for i in range(1 if lBoardType == kBoardTLU else 2):
-            lDevice.getNode("io.freq.ctrl.chan_sel").write(i)
-            lDevice.getNode("io.freq.ctrl.en_crap_mode").write(0)
-            lDevice.dispatch()
-            time.sleep(2)
-            fq = lDevice.getNode("io.freq.freq.count").read()
-            fv = lDevice.getNode("io.freq.freq.valid").read()
-            lDevice.dispatch()
-            print( "Freq:", i, int(fv), int(fq) * 119.20928 / 1000000 )
-        
+        ctx.invoke(freq)
 
         if lBoardType == kBoardFMC:
             lDevice.getNode("io.csr.ctrl.sfp_tx_dis").write(0)
@@ -342,6 +338,14 @@ def reset(obj, soft, fanout):
             lIC7.setInversion(1, 0x00)
             lIC7.setIO(1, 0x00)
             lIC7.setOutputs(1, 0x00)
+
+
+            # Enable all busy outputs (CTB connection test)
+            # lIC6.setOutputs(0, 0x88)
+            # lIC6.setOutputs(0, 0x88)
+            # lIC7.setOutputs(0, 0xF0)
+            # lIC7.setOutputs(0, 0xE0)
+
         else:
             click.ClickException("Unknown board kind {}".format(lBoardType))
 
@@ -703,7 +707,6 @@ def validate_freq(ctx, param, value):
 @master.command('faketrig-conf')
 @click.pass_obj
 @click.argument('chan', type=int, callback=toolbox.validate_chan)
-# @click.argument('divider', type=click.IntRange(0, 0x3ff))
 @click.argument('rate', type=float)
 @click.option('--poisson', is_flag=True, default=False, help="Randomize time interval between consecutive triggers.")
 def faketriggen(obj, chan, rate, poisson):

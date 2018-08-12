@@ -117,16 +117,16 @@ def enable(obj, on, partition):
 # ------------------------------------------------------------------------------
 # -----------------
 kEpStates = collections.OrderedDict([
-    (0b0000,'Standing by'), #when W_RST, -- Starting state after reset
-    (0b0001,'Waiting SFP for signal'), #when W_SFP, -- Waiting for SFP LOS to go low
-    (0b0010,'Waiting CDR lock'), #when W_CDR, -- Waiting for CDR lock
-    (0b0011,'Waiting for comman alignment'), #when W_ALIGN, -- Waiting for comma alignment, stable 50MHz phase
-    (0b0100,'Waiting for good frequency check'), #when W_FREQ, -- Waiting for good frequency check
-    (0b0101,'Waiting for 8b10 decoder good packet'), #when W_LOCK, -- Waiting for 8b10 decoder good packet
-    (0b0110,'Waiting for time stamp initialisation'), #when W_RDY, -- Waiting for time stamp initialisation
-    (0b1000,'Ready'), #when RUN, -- Good to go
-    (0b1100,'Error in Rx'), #when ERR_R, -- Error in rx
-    (0b1101,'Error in time stamp check'), #when ERR_T; -- Error in time stamp check
+        (0b0000 , 'Standing by')                           , # when W_RST, -- Starting state after reset
+        (0b0001 , 'Waiting SFP for signal')                , # when W_SFP, -- Waiting for SFP LOS to go low
+        (0b0010 , 'Waiting CDR lock')                      , # when W_CDR, -- Waiting for CDR lock
+        (0b0011 , 'Waiting for good frequency check')      , # when W_FREQ, -- Waiting for good frequency check
+        (0b0100 , 'Waiting for comma alignment')           , # when W_ALIGN, -- Waiting for comma alignment           , stable 50MHz phase
+        (0b0101 , 'Waiting for 8b10 decoder good packet')  , # when W_LOCK, -- Waiting for 8b10 decoder good packet
+        (0b0110 , 'Waiting for time stamp initialisation') , # when W_RDY, -- Waiting for time stamp initialisation
+        (0b1000 , 'Ready')                                 , # when RUN, -- Good to go
+        (0b1100 , 'Error in Rx')                           , # when ERR_R, -- Error in rx
+        (0b1101 , 'Error in time stamp check')             , # when ERR_T; -- Error in time stamp check
     ])
 # -----------------
 

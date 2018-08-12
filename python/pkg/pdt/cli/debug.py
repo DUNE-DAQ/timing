@@ -15,6 +15,8 @@ from click import echo, style, secho
 from os.path import join, expandvars
 from pdt.core import SI5344Slave, SI534xSlave, I2CExpanderSlave
 
+
+from pdt.cli.master import freq
 from pdt.cli.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
 from pdt.cli.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from pdt.cli.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
@@ -55,6 +57,26 @@ def debug(obj, device):
 # ------------------------------------------------------------------------------
 
 
+@debug.command('uid', short_help="Unique ID reader.")
+@click.pass_obj
+def uuid(obj):
+
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+
+    # Detect the on-board eprom and read the board UID
+    if lBoardType in [kBoardPC059, kBoardTLU]:
+        lUID = lDevice.getNode('io.i2c')
+    else:
+        lUID = lDevice.getNode('io.uid_i2c')
+
+    lPROMSlave = 'UID_PROM' if lBoardType == kBoardTLU else 'FMC_UID_PROM'
+    lValues = lUID.getSlave(lPROMSlave).readI2CArray(0xfa, 6)
+    lUniqueID = 0x0
+    for lVal in lValues:
+        lUniqueID = ( lUniqueID << 8 ) | lVal
+    echo("Timing Board PROM UID: "+style(hex(lUniqueID), fg="blue"))
+
 
 # ------------------------------------------------------------------------------
 @debug.command('sfpexpander', short_help="Debug.")
@@ -87,8 +109,9 @@ def sfpexpander(obj):
 # ------------------------------------------------------------------------------
 @debug.command()
 @click.pass_obj
+@click.pass_context
 @click.option('--soft-rst', 'softrst', is_flag=True)
-def si5345(obj, softrst):
+def si5345(ctx, obj, softrst):
     def decRng( word, ibit, nbits=1):
         return (word >> ibit) & ((1<<nbits)-1)
 
@@ -135,20 +158,7 @@ def si5345(obj, softrst):
     for r,v in registers.iteritems():
         echo('{}: {}'.format(r,hex(v)))
 
-    # Measure the generated clock frequency
-    lFreqNode = lDevice.getNode('io.freq')
-    freqs = {}
-    for i in range(1 if lBoardType == kBoardTLU else 2):
-        lFreqNode.getNode('ctrl.chan_sel').write(i)
-        lFreqNode.getNode('ctrl.en_crap_mode').write(0)
-        lFreqNode.getClient().dispatch()
-        time.sleep(2)
-        fq = lFreqNode.getNode('freq.count').read()
-        fv = lFreqNode.getNode('freq.valid').read()
-        lFreqNode.getClient().dispatch()
-        freqs[i] = int(fq) * 119.20928 / 1000000 if fv else 'NaN'
-
-    print( "Freq PLL:", freqs[0] )
+    ctx.invoke(freq)
 
 
 # ------------------------------------------------------------------------------
