@@ -150,7 +150,7 @@ kUIDRevisionMap = {
 @master.command('reset', short_help="Perform a hard reset on the timing master.")
 @click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
 @click.option('--fanout-mode', 'fanout', type=click.IntRange(0, 3), default=0, help='Configures the board in fanout mode (pc059 only)')
-@click.option('--use-pll-cfg', 'forcepllcfg', type=click.Path(exists=True))
+@click.option('--force-pll-cfg', 'forcepllcfg', type=click.Path(exists=True))
 @click.pass_obj
 @click.pass_context
 def reset(ctx, obj, soft, fanout, forcepllcfg):
