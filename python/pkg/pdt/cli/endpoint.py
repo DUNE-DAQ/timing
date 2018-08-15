@@ -127,7 +127,12 @@ kEpStates = collections.OrderedDict([
         (0b1000 , 'Ready')                                 , # when RUN, -- Good to go
         (0b1100 , 'Error in Rx')                           , # when ERR_R, -- Error in rx
         (0b1101 , 'Error in time stamp check')             , # when ERR_T; -- Error in time stamp check
+        (0b1110 , 'Error in physical layer after lock')       , # when ERR_P; -- Physical layer error after lock)
     ])
+
+def fmtEpState(aState):
+    aState = aState.value()
+    return '{} ({})'.format(kEpStates[aState], hex(aState)) if aState in kEpStates else hex(aState)
 # -----------------
 
 @endpoint.command('monitor', short_help='Display the status of timing endpoint.')
@@ -149,6 +154,7 @@ def monitor(obj, watch, period):
     lTStampNode = lEndPointNode.getNode('tstamp')
     lEvCtrNode = lEndPointNode.getNode('evtctr')
     lBufCountNode = lEndPointNode.getNode('buf.count')
+
 
     while(True):
         if watch:
@@ -173,6 +179,7 @@ def monitor(obj, watch, period):
         lTimeStamp = lTStampNode.readBlock(2)
         lDevice.dispatch()
 
+
         lEPSummary = Texttable(max_width=0)
         lEPSummary.set_deco(Texttable.VLINES | Texttable.BORDER | Texttable.HEADER )
         lEPSummary.set_chars(['-', '|', '+', '-'])
@@ -180,7 +187,7 @@ def monitor(obj, watch, period):
         lEPSummary.set_cols_dtype(['t']*(len(lEPKeys)+1))
         lEPSummary.add_row(
                 ['State']+
-                ['{} ({})'.format(kEpStates[int(lEPData[p]['statdump']['ep_stat'])], hex(lEPData[p]['statdump']['ep_stat'])) for p in lEPKeys
+                [fmtEpState(lEPData[p]['statdump']['ep_stat']) for p in lEPKeys
                 ]
         )
         lEPSummary.add_row(
