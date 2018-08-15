@@ -13,7 +13,7 @@ import pdt.cli.toolbox as toolbox
 import pdt.cli.definitions as defs
 
 from click import echo, style, secho
-from os.path import join, expandvars
+from os.path import join, expandvars, basename
 from pdt.core import SI5344Slave, SI534xSlave, I2CExpanderSlave
 
 kMasterFWMajorRequired = 4
@@ -150,9 +150,10 @@ kUIDRevisionMap = {
 @master.command('reset', short_help="Perform a hard reset on the timing master.")
 @click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
 @click.option('--fanout-mode', 'fanout', type=click.IntRange(0, 3), default=0, help='Configures the board in fanout mode (pc059 only)')
+@click.option('--use-pll-cfg', 'forcepllcfg', type=click.Path(exists=True))
 @click.pass_obj
 @click.pass_context
-def reset(ctx, obj, soft, fanout):
+def reset(ctx, obj, soft, fanout, forcepllcfg):
     '''
     Perform a hard reset on the timing master, including
 
@@ -264,22 +265,28 @@ def reset(ctx, obj, soft, fanout):
         echo("PLL version : "+style(hex(lSIVersion), fg='blue'))
 
         # Ensure that the board revision has a registered clock config
-        if lBoardType == kBoardTLU:
-            lClockConfigPath = kClockConfigMap[kTLURev1]
-        elif lBoardType == kBoardPC059 and fanout in [1,2]:
-            secho("Overriding clock config - fanout mode", fg='green')
-            lClockConfigPath = kClockConfigMap[kPC059FanoutHDMI if fanout == 1 else kPC059FanoutSFP]
+        if forcepllcfg is not None:
+            lFullClockConfigPath = forcepllcfg
+            echo("Using SI3545 Clock configuration file: "+style(basename(lFullClockConfigPath), fg='green') )
+
         else:
-            try:
-                lClockConfigPath = kClockConfigMap[lRevision]    
-            except KeyError:
-                raise ClickException("Board revision " << lRevision << " has no associated clock configuration")
+            if lBoardType == kBoardTLU:
+                lClockConfigPath = kClockConfigMap[kTLURev1]
+            elif lBoardType == kBoardPC059 and fanout in [1,2]:
+                secho("Overriding clock config - fanout mode", fg='green')
+                lClockConfigPath = kClockConfigMap[kPC059FanoutHDMI if fanout == 1 else kPC059FanoutSFP]
+            else:
+                try:
+                    lClockConfigPath = kClockConfigMap[lRevision]    
+                except KeyError:
+                    raise ClickException("Board revision " << lRevision << " has no associated clock configuration")
 
 
-        echo("SI3545 Clock configuration file: "+style(lClockConfigPath, fg='green') )
+            echo("SI3545 Clock configuration file: "+style(lClockConfigPath, fg='green') )
 
-        # Configure the clock chip
-        lFullClockConfigPath = expandvars(join('${PDT_TESTS}/etc/clock', lClockConfigPath))
+            # Configure the clock chip
+            lFullClockConfigPath = expandvars(join('${PDT_TESTS}/etc/clock', lClockConfigPath))
+
         lSIChip.configure(lFullClockConfigPath)
         echo("SI3545 configuration id: {}".format(style(lSIChip.readConfigID(), fg='green')))
 
