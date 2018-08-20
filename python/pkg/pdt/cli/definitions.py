@@ -80,3 +80,8 @@ kEpStates = collections.OrderedDict([
         (0b1101 , 'Error in time stamp check')             , # when ERR_T; -- Error in time stamp check
         (0b1110 , 'Error in physical layer after lock')       , # when ERR_P; -- Physical layer error after lock)
     ])
+
+def fmtEpState(aState):
+    aState = aState.value()
+    return '{} ({})'.format(kEpStates[aState], hex(aState)) if aState in kEpStates else hex(aState)
+# -----------------

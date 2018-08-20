@@ -117,10 +117,6 @@ def enable(obj, on, partition):
 # ------------------------------------------------------------------------------
 
 
-def fmtEpState(aState):
-    aState = aState.value()
-    return '{} ({})'.format(kEpStates[aState], hex(aState)) if aState in defs.kEpStates else hex(aState)
-# -----------------
 
 @endpoint.command('monitor', short_help='Display the status of timing endpoint.')
 @click.pass_obj
@@ -174,7 +170,7 @@ def monitor(obj, watch, period):
         lEPSummary.set_cols_dtype(['t']*(len(lEPKeys)+1))
         lEPSummary.add_row(
                 ['State']+
-                [fmtEpState(lEPData[p]['statdump']['ep_stat']) for p in lEPKeys
+                [defs.fmtEpState(lEPData[p]['statdump']['ep_stat']) for p in lEPKeys
                 ]
         )
         lEPSummary.add_row(

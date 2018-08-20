@@ -71,6 +71,7 @@ def master(obj, device):
 
     obj.mDevice = lDevice
     obj.mMaster = lMaster
+    obj.mExtTrig = lDevice.getNode('master_top.trig')
     
     obj.mGenerics = { k:v.value() for k,v in lGenerics.iteritems()}
     obj.mVersion = lVersion.value()
@@ -416,7 +417,7 @@ def partition(obj, id):
 @click.pass_obj
 @click.option('--watch', '-w', is_flag=True, default=False, help='Turn on automatic refresh')
 @click.option('--period','-p', type=click.IntRange(0, 240), default=2, help='Period of automatic refresh')
-def monitor(obj, watch, period):
+def partmonitor(obj, watch, period):
     '''
     Display the master status, accepted and rejected command counters
     '''
@@ -458,7 +459,7 @@ def monitor(obj, watch, period):
         toolbox.printCounters( lScmdGenNode, {
             'actrs': 'Accept counters',
             'rctrs': 'Reject counters',
-            }, lNumChan)
+            }, lNumChan, 'Chan', {})
 
         # secho( "=> Spill generator control", fg='green')
         # lDump = toolbox.readSubNodes(lDevice.getNode('master.spill.csr.ctrl'))
@@ -809,4 +810,78 @@ def spillgen(obj):
     lSpillCtrl.getClient().dispatch()
 # ------------------------------------------------------------------------------
 
+# ------------------------------------------------------------------------------
+# -- cyc_len and spill_len are in units of 1 / (50MHz / 2^24) = 0.34s
+@master.group('ext-trig')
+@click.pass_obj
+def externaltrigger(obj):
+    pass
+
+
+@externaltrigger.command('ept', short_help="Monitor trigger input status")
+@click.option('--on/--off', default=True, help='enable/disable triggers')
+@click.pass_obj
+@click.pass_context
+def exttrgenable(ctx, obj, on):
+
+    lExtTrig = obj.mExtTrig
+
+    
+    lExtTrig.getNode('csr.ctrl.ep_en').write(on)
+    lExtTrig.getClient().dispatch()
+    secho("Trigger endpoint " + ("enabled" if on else "disabled"), fg='green')
+
+    ctx.invoke(exttrgmonitor)
+
+@externaltrigger.command('enable', short_help="Enable external triggers")
+@click.option('--on/--off', default=True, help='enable/disable triggers')
+@click.pass_obj
+@click.pass_context
+def exttrgenable(ctx, obj, on):
+
+    lExtTrig = obj.mExtTrig
+
+    lExtTrig.getNode('csr.ctrl.ext_trig_en').write(on)
+    lExtTrig.getClient().dispatch()
+    secho("External triggers " + ("enabled" if on else "disabled"), fg='green')
+    ctx.invoke(exttrgmonitor)
+
+
+@externaltrigger.command('monitor', short_help="Monitor trigger input status")
+@click.option('--watch', '-w', is_flag=True, default=False, help='Turn on automatic refresh')
+@click.option('--period','-p', type=click.IntRange(0, 240), default=2, help='Period of automatic refresh')
+@click.pass_obj
+def exttrgmonitor(obj, watch, period):
+    
+    lExtTrig = obj.mExtTrig
+
+
+    while(True):
+        if watch:
+            click.clear()
+        
+        echo()
+
+        echo('Monitoring external trigger')
+        
+        lCtrlDump = toolbox.readSubNodes(lExtTrig.getNode('csr.ctrl'))
+        lStatDump = toolbox.readSubNodes(lExtTrig.getNode('csr.stat'))
+
+        echo( "Endpoint State: {}".format(style(defs.fmtEpState(lStatDump['ep_stat']), fg='blue')))
+        echo( "Control registers" )
+        for n in sorted(lCtrlDump):
+            echo( "  {} {}".format(n, hex(lCtrlDump[n])))
+        echo()
+        echo( "Status registers" )
+        for n in sorted(lStatDump):
+            echo( "  {} {}".format(n, hex(lStatDump[n])))
+        echo()
+
+        toolbox.printCounters( lExtTrig, {
+            'ctrs': 'Counters',
+        })
+        if watch:
+            time.sleep(period)
+        else:
+            break
 

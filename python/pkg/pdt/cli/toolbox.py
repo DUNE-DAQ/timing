@@ -104,7 +104,7 @@ def formatTStamp( aRawTStamp ):
 
 
 # ------------------------------------------------------------------------------
-def printCounters( aTopNode, aSubNodes, aNumCtrs=0x10 ):
+def printCounters( aTopNode, aSubNodes, aNumCtrs=0x10, aTitle='Cmd', aLegend=defs.kCommandNames ):
 
     lBlocks = []
 
@@ -141,7 +141,7 @@ def printCounters( aTopNode, aSubNodes, aNumCtrs=0x10 ):
     echo ( lTitle )
 
     # Build the title
-    lLine = ['Cmd'] +( ['cnts', 'hex' ]*len(aSubNodes) )
+    lLine = [aTitle] +( ['cnts', 'hex' ]*len(aSubNodes) )
     lHdr = '|'.join(['']+[kCellFmt.format(lCell) for lCell in lLine]+[''])
     print ( '-'*lLineLen)
     print ( lHdr )
@@ -149,7 +149,7 @@ def printCounters( aTopNode, aSubNodes, aNumCtrs=0x10 ):
 
     for lId in xrange(aNumCtrs):
 
-        lLine = [ (defs.kCommandNames.get(lId,hex(lId))) ]
+        lLine = [ (aLegend.get(lId,hex(lId))) ]
         for lBlock in lBlocks:
             lLine += [lBlock[lId],hex(lBlock[lId])] if lBlock[lId] is not None else ['fail']*2
         print( '|'.join(['']+[kCellFmt.format(lCell) for lCell in lLine]+['']))
