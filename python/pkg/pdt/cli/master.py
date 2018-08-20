@@ -58,17 +58,16 @@ def master(obj, device):
     lMajor = (lVersion >> 16) & 0xff
     lMinor = (lVersion >> 8) & 0xff
     lPatch = (lVersion >> 0) & 0xff
-    echo("Master FW version: {}, design '{}' on board '{}' on carrier '{}'".format(
-        hex(lVersion), 
+    echo("ID: design '{}' on board '{}' on carrier '{}'".format(
         style(kDesignNameMap[lBoardInfo['design_type'].value()], fg='blue'),
         style(kBoardNamelMap[lBoardInfo['board_type'].value()], fg='blue'),
         style(kCarrierNamelMap[lBoardInfo['carrier_type'].value()], fg='blue')
     ))
-    echo("Chans: {}, parts: {}".format(lGenerics['n_chan'], lGenerics['n_part']))
+    echo("Master FW version: {}, partitions: {}, channels: {}".format(hex(lVersion), lGenerics['n_part'], lGenerics['n_chan']))
 
-    if lMajor < 4:
-        secho('ERROR: Incompatible master firmware version. Found {}, required {}'.format(hex(lMajor), hex(kMasterFWMajorRequired)), fg='red')
-        raise click.Abort()
+    # if lMajor < 4:
+    #     secho('ERROR: Incompatible master firmware version. Found {}, required {}'.format(hex(lMajor), hex(kMasterFWMajorRequired)), fg='red')
+    #     raise click.Abort()
 
     obj.mDevice = lDevice
     obj.mMaster = lMaster
@@ -176,12 +175,13 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
     lMaster = obj.mMaster
     lBoardType = obj.mBoardType
     lCarrierType = obj.mCarrierType
+    lIO = lDevice.getNode('io')
 
     if ( lBoardType == kBoardPC059 and fanout ):
         secho("Fanout mode enabled", fg='green')
 
     # Global soft reset
-    lDevice.getNode('io.csr.ctrl.soft_rst').write(0x1)
+    lIO.getNode('csr.ctrl.soft_rst').write(0x1)
     lDevice.dispatch()
 
 
@@ -190,33 +190,33 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
         time.sleep(1)
         
         # PLL and I@C reset 
-        lDevice.getNode('io.csr.ctrl.pll_rst').write(0x1)
+        lIO.getNode('csr.ctrl.pll_rst').write(0x1)
         if lBoardType == kBoardPC059:
-            lDevice.getNode('io.csr.ctrl.rst_i2c').write(0x1)
-            lDevice.getNode('io.csr.ctrl.rst_i2cmux').write(0x1)
+            lIO.getNode('csr.ctrl.rst_i2c').write(0x1)
+            lIO.getNode('csr.ctrl.rst_i2cmux').write(0x1)
 
 
         elif lBoardType == kBoardTLU:
-            lDevice.getNode('io.csr.ctrl.rst_i2c').write(0x1)
+            lIO.getNode('csr.ctrl.rst_i2c').write(0x1)
 
         lDevice.dispatch()
 
-        lDevice.getNode('io.csr.ctrl.pll_rst').write(0x0)
+        lIO.getNode('csr.ctrl.pll_rst').write(0x0)
         if lBoardType == kBoardPC059:
-            lDevice.getNode('io.csr.ctrl.rst_i2c').write(0x0)
-            lDevice.getNode('io.csr.ctrl.rst_i2cmux').write(0x0)
+            lIO.getNode('csr.ctrl.rst_i2c').write(0x0)
+            lIO.getNode('csr.ctrl.rst_i2cmux').write(0x0)
         
         elif lBoardType == kBoardTLU:
-            lDevice.getNode('io.csr.ctrl.rst_i2c').write(0x0)
+            lIO.getNode('csr.ctrl.rst_i2c').write(0x0)
 
         lDevice.dispatch()
 
 
         # Detect the on-board eprom and read the board UID
         if lBoardType in [kBoardPC059, kBoardTLU]:
-            lUID = lDevice.getNode('io.i2c')
+            lUID = lIO.getNode('i2c')
         else:
-            lUID = lDevice.getNode('io.uid_i2c')
+            lUID = lIO.getNode('uid_i2c')
 
         echo('UID I2C Slaves')
         for lSlave in lUID.getSlaves():
@@ -261,7 +261,7 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
             lI2CBusNode = lDevice.getNode("io.i2c")
             lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
         else:
-            lSIChip = lDevice.getNode('io.pll_i2c')
+            lSIChip = lIO.getNode('pll_i2c')
         lSIVersion = lSIChip.readDeviceVersion()
         echo("PLL version : "+style(hex(lSIVersion), fg='blue'))
 
@@ -293,13 +293,17 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
 
 
         if lBoardType == kBoardPC059:
-            lDevice.getNode('io.csr.ctrl.master_src').write(fanout)
-            lDevice.getNode('io.csr.ctrl.cdr_edge').write(1)
-            lDevice.getNode('io.csr.ctrl.sfp_edge').write(1)
-            lDevice.getNode('io.csr.ctrl.hdmi_edge').write(0)
-            lDevice.getNode('io.csr.ctrl.usfp_edge').write(1)
-            lDevice.getNode('io.csr.ctrl.mux').write(0)
+            lIO.getNode('csr.ctrl.master_src').write(fanout)
+            lIO.getNode('csr.ctrl.cdr_edge').write(1)
+            lIO.getNode('csr.ctrl.sfp_edge').write(1)
+            lIO.getNode('csr.ctrl.hdmi_edge').write(0)
+            lIO.getNode('csr.ctrl.usfp_edge').write(1)
+            lIO.getNode('csr.ctrl.mux').write(0)
             lDevice.dispatch()
+        elif lBoardType == kBoardTLU:
+            lIO.getNode('csr.ctrl.hdmi_edge').write(0)
+            lIO.getNode('csr.ctrl.hdmi_inv_o').write(0)
+            lIO.getNode('csr.ctrl.hdmi_inv_i').write(0)
 
         ctx.invoke(freq)
 
@@ -334,36 +338,25 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
             # Bank 1
             lIC6.setInversion(1, 0x00)
             lIC6.setIO(1, 0x00)
-            lIC6.setOutputs(1, 0x80)
+            lIC6.setOutputs(1, 0x88)
 
 
             # Bank 0
             lIC7.setInversion(0, 0x00)
             lIC7.setIO(0, 0x00)
-            lIC7.setOutputs(0, 0xF0)
+            lIC7.setOutputs(0, 0xf0)
 
             # Bank 1
             lIC7.setInversion(1, 0x00)
             lIC7.setIO(1, 0x00)
-            lIC7.setOutputs(1, 0x00)
+            lIC7.setOutputs(1, 0xf0)
 
+            lI2CBusNode = lDevice.getNode("io.i2c")
+            lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
 
-            # Enable all busy outputs (CTB connection test)
-            # lIC6.setOutputs(0, 0x88)
-            # lIC6.setOutputs(0, 0x88)
-            # lIC7.setOutputs(0, 0xF0)
-            # lIC7.setOutputs(0, 0xE0)
-
+            lSIChip.writeI2CArray(0x113, [0x9, 0x33])
         else:
             click.ClickException("Unknown board kind {}".format(lBoardType))
-
-    # Reset controls
-    # lDevice.getNode("io.csr.ctrl.rst").write(1)
-    # lDevice.dispatch()
-    # lDevice.getNode("io.csr.ctrl.rst").write(0)
-    # lDevice.dispatch()
-
-    # lScmdGenNode = lMaster.getNode('scmd_gen')
 
     echo()
     echo("--- Global status ---")
@@ -371,7 +364,6 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
     for k,v in lCsrStat.iteritems():
         echo("{}: {}".format(k, hex(v)))
     echo()
-
 # ------------------------------------------------------------------------------
 
 
@@ -818,29 +810,3 @@ def spillgen(obj):
 # ------------------------------------------------------------------------------
 
 
-
-# ------------------------------------------------------------------------------
-@master.command('sfp', short_help='Query the sfp parameters.')
-@click.pass_obj
-def sfp(obj):
-    '''
-    Read the content of the timing master readout buffer.
-    '''
-    lDevice = obj.mDevice
-
-    lSfp = lDevice.getNode('io.sfp_i2c')
-    print ( lSfp )
-    print ( lSfp.getSlave('eeprom') )
-    print ( hex(lSfp.getSlave('eeprom').getI2CAddress()) )
-    # print ( lSfp.getSlave('eeprom').readI2C(0x0) )
-
-    try:
-        import IPython
-    except ImportError:
-        echo('Failed to load IPython')
-        return
-
-    echo('Starting IPython - {} connected to variable \'board\''.format( lDevice.id() ))
-    IPython.embed()
-
-# ------------------------------------------------------------------------------

@@ -107,7 +107,7 @@ def io(obj, device):
 
 
 # ------------------------------------------------------------------------------
-@io.command('reset', short_help="Perform a hard reset of the board io infrastructure.")
+@io.command('reset', short_help="Perform a hard reset on the timing master.")
 @click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
 @click.option('--fanout-mode', 'fanout', type=click.IntRange(0, 3), default=0, help='Configures the board in fanout mode (pc059 only)')
 @click.option('--force-pll-cfg', 'forcepllcfg', type=click.Path(exists=True))
@@ -115,7 +115,7 @@ def io(obj, device):
 @click.pass_context
 def reset(ctx, obj, soft, fanout, forcepllcfg):
     '''
-    Perform a hard reset on the board io including
+    Perform a hard reset on the timing master, including
 
     \b
     - ipbus registers
@@ -132,14 +132,16 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
     echo('Resetting ' + click.style(obj.mDevice.id(), fg='blue'))
 
     lDevice = obj.mDevice
+    lMaster = obj.mMaster
     lBoardType = obj.mBoardType
     lCarrierType = obj.mCarrierType
+    lIO = lDevice.getNode('io')
 
     if ( lBoardType == kBoardPC059 and fanout ):
         secho("Fanout mode enabled", fg='green')
 
     # Global soft reset
-    lDevice.getNode('io.csr.ctrl.soft_rst').write(0x1)
+    lIO.getNode('csr.ctrl.soft_rst').write(0x1)
     lDevice.dispatch()
 
 
@@ -148,33 +150,33 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
         time.sleep(1)
         
         # PLL and I@C reset 
-        lDevice.getNode('io.csr.ctrl.pll_rst').write(0x1)
+        lIO.getNode('csr.ctrl.pll_rst').write(0x1)
         if lBoardType == kBoardPC059:
-            lDevice.getNode('io.csr.ctrl.rst_i2c').write(0x1)
-            lDevice.getNode('io.csr.ctrl.rst_i2cmux').write(0x1)
+            lIO.getNode('csr.ctrl.rst_i2c').write(0x1)
+            lIO.getNode('csr.ctrl.rst_i2cmux').write(0x1)
 
 
         elif lBoardType == kBoardTLU:
-            lDevice.getNode('io.csr.ctrl.rst_i2c').write(0x1)
+            lIO.getNode('csr.ctrl.rst_i2c').write(0x1)
 
         lDevice.dispatch()
 
-        lDevice.getNode('io.csr.ctrl.pll_rst').write(0x0)
+        lIO.getNode('csr.ctrl.pll_rst').write(0x0)
         if lBoardType == kBoardPC059:
-            lDevice.getNode('io.csr.ctrl.rst_i2c').write(0x0)
-            lDevice.getNode('io.csr.ctrl.rst_i2cmux').write(0x0)
+            lIO.getNode('csr.ctrl.rst_i2c').write(0x0)
+            lIO.getNode('csr.ctrl.rst_i2cmux').write(0x0)
         
         elif lBoardType == kBoardTLU:
-            lDevice.getNode('io.csr.ctrl.rst_i2c').write(0x0)
+            lIO.getNode('csr.ctrl.rst_i2c').write(0x0)
 
         lDevice.dispatch()
 
 
         # Detect the on-board eprom and read the board UID
         if lBoardType in [kBoardPC059, kBoardTLU]:
-            lUID = lDevice.getNode('io.i2c')
+            lUID = lIO.getNode('i2c')
         else:
-            lUID = lDevice.getNode('io.uid_i2c')
+            lUID = lIO.getNode('uid_i2c')
 
         echo('UID I2C Slaves')
         for lSlave in lUID.getSlaves():
@@ -219,7 +221,7 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
             lI2CBusNode = lDevice.getNode("io.i2c")
             lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
         else:
-            lSIChip = lDevice.getNode('io.pll_i2c')
+            lSIChip = lIO.getNode('pll_i2c')
         lSIVersion = lSIChip.readDeviceVersion()
         echo("PLL version : "+style(hex(lSIVersion), fg='blue'))
 
@@ -251,13 +253,17 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
 
 
         if lBoardType == kBoardPC059:
-            lDevice.getNode('io.csr.ctrl.master_src').write(fanout)
-            lDevice.getNode('io.csr.ctrl.cdr_edge').write(1)
-            lDevice.getNode('io.csr.ctrl.sfp_edge').write(1)
-            lDevice.getNode('io.csr.ctrl.hdmi_edge').write(0)
-            lDevice.getNode('io.csr.ctrl.usfp_edge').write(1)
-            lDevice.getNode('io.csr.ctrl.mux').write(0)
+            lIO.getNode('csr.ctrl.master_src').write(fanout)
+            lIO.getNode('csr.ctrl.cdr_edge').write(1)
+            lIO.getNode('csr.ctrl.sfp_edge').write(1)
+            lIO.getNode('csr.ctrl.hdmi_edge').write(0)
+            lIO.getNode('csr.ctrl.usfp_edge').write(1)
+            lIO.getNode('csr.ctrl.mux').write(0)
             lDevice.dispatch()
+        elif lBoardType == kBoardTLU:
+            lIO.getNode('csr.ctrl.hdmi_edge').write(0)
+            lIO.getNode('csr.ctrl.hdmi_inv_o').write(0)
+            lIO.getNode('csr.ctrl.hdmi_inv_i').write(0)
 
         ctx.invoke(freq)
 
@@ -292,29 +298,31 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
             # Bank 1
             lIC6.setInversion(1, 0x00)
             lIC6.setIO(1, 0x00)
-            lIC6.setOutputs(1, 0x80)
+            lIC6.setOutputs(1, 0x88)
 
 
             # Bank 0
             lIC7.setInversion(0, 0x00)
             lIC7.setIO(0, 0x00)
-            lIC7.setOutputs(0, 0xF0)
+            lIC7.setOutputs(0, 0xf0)
 
             # Bank 1
             lIC7.setInversion(1, 0x00)
             lIC7.setIO(1, 0x00)
-            lIC7.setOutputs(1, 0x00)
+            lIC7.setOutputs(1, 0xf0)
 
+            lI2CBusNode = lDevice.getNode("io.i2c")
+            lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
 
-            # Enable all busy outputs (CTB connection test)
-            # lIC6.setOutputs(0, 0x88)
-            # lIC6.setOutputs(0, 0x88)
-            # lIC7.setOutputs(0, 0xF0)
-            # lIC7.setOutputs(0, 0xE0)
-
+            lSIChip.writeI2CArray(0x113, [0x9, 0x33])
         else:
             click.ClickException("Unknown board kind {}".format(lBoardType))
 
+    echo()
+    echo("--- Global status ---")
+    lCsrStat = toolbox.readSubNodes(lMaster.getNode('global.csr.stat'))
+    for k,v in lCsrStat.iteritems():
+        echo("{}: {}".format(k, hex(v)))
     echo()
 # ------------------------------------------------------------------------------
 

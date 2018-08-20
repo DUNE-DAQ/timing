@@ -5,7 +5,7 @@
   <connection id="SECONDARY"         uri="ipbusudp-2.0://192.168.200.17:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroloop_fmc_v4b1/top.xml" />
   <connection id="TERTIARY"          uri="ipbusudp-2.0://192.168.200.32:50001" address_table="file://${PDT_TESTS}/etc/addrtab/ouroboros_pc059_v4b1/top_pc059.xml" />
 
-  <connection id="PROD_MASTER"       uri="ipbusudp-2.0://192.168.200.64:50001" address_table="file://${PDT_TESTS}/etc/addrtab/overlord_tlu_v4b1/top.xml" />
+  <connection id="PROD_MASTER"       uri="ipbusudp-2.0://192.168.200.64:50001" address_table="file://${PDT_TESTS}/etc/addrtab/overlord_tlu_trigtest/top.xml" />
   <connection id="PROD_FANOUT_0"     uri="ipbusudp-2.0://192.168.200.65:50001" address_table="file://${PDT_TESTS}/etc/addrtab/fanout_pc059_v4b1/top.xml" />
   <connection id="PROD_FANOUT_1"     uri="ipbusudp-2.0://192.168.200.66:50001" address_table="file://${PDT_TESTS}/etc/addrtab/fanout_pc059_v4b1/top.xml" />
   <connection id="PROD_FANOUT_2"     uri="ipbusudp-2.0://192.168.200.67:50001" address_table="file://${PDT_TESTS}/etc/addrtab/fanout_pc059_v4b1/top.xml" />
@@ -15,7 +15,7 @@
   <connection id="SECONDARY_TUN"     uri="chtcp-2.0://localhost:60708?target=192.168.200.17:50001" address_table="file:///${PDT_TESTS}/etc/addrtab/ouroloop_fmc_v4b1/top.xml" />    
   <connection id="TERTIARY_TUN"      uri="chtcp-2.0://localhost:60708?target=192.168.200.32:50001" address_table="file:///${PDT_TESTS}/etc/addrtab/ouroboros_pc059_v4b1/top_pc059.xml" />    
 
-  <connection id="PROD_MASTER_TUN"   uri="chtcp-2.0://localhost:60708?target=192.168.200.64:50001" address_table="file://${PDT_TESTS}/etc/addrtab/overlord_tlu_v4b1/top.xml" />
+  <connection id="PROD_MASTER_TUN"   uri="chtcp-2.0://localhost:60708?target=192.168.200.64:50001" address_table="file://${PDT_TESTS}/etc/addrtab/overlord_tlu_trigtest/top_tlu.xml" />
   <connection id="PROD_FANOUT_0_TUN" uri="chtcp-2.0://localhost:60708?target=192.168.200.65:50001" address_table="file://${PDT_TESTS}/etc/addrtab/fanout_pc059_v4b1/top.xml" />
   <connection id="PROD_FANOUT_1_TUN" uri="chtcp-2.0://localhost:60708?target=192.168.200.66:50001" address_table="file://${PDT_TESTS}/etc/addrtab/fanout_pc059_v4b1/top.xml" />
   <connection id="PROD_FANOUT_2_TUN" uri="chtcp-2.0://localhost:60708?target=192.168.200.67:50001" address_table="file://${PDT_TESTS}/etc/addrtab/fanout_pc059_v4b1/top.xml" />
