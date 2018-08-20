@@ -16,6 +16,7 @@ import pdt.cli.toolbox as toolbox
 import pdt.cli.endpoint as endpoint
 import pdt.cli.master as master
 import pdt.cli.debug as debug
+import pdt.cli.io as io
 import pdt.cli.definitions as defs
 
 # 
@@ -71,5 +72,6 @@ if __name__ == '__main__':
     cli.add_command(master.master)
     cli.add_command(endpoint.endpoint)
     cli.add_command(debug.debug)
+    cli.add_command(io.io)
     cli(obj=PDTContext())
 # ------------------------------------------------------------------------------

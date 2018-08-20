@@ -30,6 +30,7 @@ kBoardTLU = 0x4
 kCarrierEnclustraA35 = 0x0
 kCarrierKC705 = 0x1
 kCarrierMicrozed = 0x2
+kCarrierATFC = 0x3
 
 
 kDesingMaster = 0x0
@@ -60,5 +61,7 @@ kCarrierNamelMap = {
     kCarrierEnclustraA35: 'enclustra-a35',
     kCarrierKC705: 'kc705',
     kCarrierMicrozed: 'microzed',
+    kCarrierATFC: 'atfc',
+
 }
 # -----------------------------------------------------------------------------

@@ -374,8 +374,6 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
 # ------------------------------------------------------------------------------
 
 
-
-
 # ------------------------------------------------------------------------------
 @master.command('freq', short_help="Measure some frequencies.")
 @click.pass_obj
@@ -397,9 +395,9 @@ def freq(obj):
 
     print( "Freq PLL:", freqs[0] )
     if lBoardType != kBoardTLU:
-        print( "Freq CDR:", freqs[1] )
-        
+        print( "Freq CDR:", freqs[1] )   
 # ------------------------------------------------------------------------------
+
 
 # ------------------------------------------------------------------------------
 @master.group('part', invoke_without_command=True)
