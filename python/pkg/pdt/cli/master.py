@@ -360,7 +360,7 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
             click.ClickException("Unknown board kind {}".format(lBoardType))
 
     echo()
-    echo("--- Global status ---")
+    echo( "--- " + style("Global status", fg='green') + " ---")
     lCsrStat = toolbox.readSubNodes(lMaster.getNode('global.csr.stat'))
     for k,v in lCsrStat.iteritems():
         echo("{}: {}".format(k, hex(v)))

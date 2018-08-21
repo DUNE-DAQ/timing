@@ -55,8 +55,10 @@ SI534xSlave::seekHeader( std::ifstream& aFile ) const {
     std::string lLine;
     uint32_t lLineNum;
     for( lLineNum = 1; std::getline(aFile, lLine); ++lLineNum) {
-    // for( std::string lLine, uint32_t lLineNum(0); std::getline(lFile, lLine); ++lLineNum) {
-    // while( std::getline(aFile, lLine) ) {
+
+        // Gracefully deal with those damn dos-encoded files
+        if ( lLine.back() == '\r' )
+            lLine.pop_back();
 
         // Section end found. Break here
         if (boost::starts_with(lLine, "# Design ID:")) {
@@ -100,9 +102,11 @@ SI534xSlave::readConfigSection( std::ifstream& aFile, std::string aTag ) const {
     std::string lLine;
     uint32_t lLineNum;
     for( lLineNum = 1; std::getline(aFile, lLine); ++lLineNum) {
-    // for( std::string lLine, uint32_t lLineNum(0); std::getline(lFile, lLine); ++lLineNum) {
-    // while( std::getline(aFile, lLine) ) {
 
+        // Gracefully deal with those damn dos-encoded files
+        if ( lLine.back() == '\r' )
+            lLine.pop_back();
+        
         // Is it a comment 
         if( lLine[0] == '#' ) {
 

@@ -59,6 +59,10 @@ SI5344Slave::configure( const std::string& aPath ) const {
     uint32_t lLineNum;
     for( lLineNum = 1; std::getline(lFile, lLine); ++lLineNum) {
 
+        // Gracefully deal with damn dos-encoded files
+        if ( lLine.back() == '\r' )
+            lLine.pop_back();
+
         // Is it a comment 
         if( lLine[0] == '#' ) {
             continue;
@@ -77,7 +81,8 @@ SI5344Slave::configure( const std::string& aPath ) const {
         if ( !lHeaderFound ) {
             std::ostringstream lMsg;
             lMsg << "Error at line " << lLineNum << ": data found before the header";
-        	PDT_LOG(kError) << lMsg.str();
+            PDT_LOG(kError) << lMsg.str();
+        	PDT_LOG(kError) << "'" << lLine << "'";
         	throw SI5344ConfigError(lMsg.str());
         }
 
