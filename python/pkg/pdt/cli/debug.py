@@ -107,28 +107,36 @@ def sfpexpander(obj):
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-@debug.command()
+@debug.command('pll-status')
 @click.pass_obj
 @click.pass_context
 @click.option('--soft-rst', 'softrst', is_flag=True)
-def si5345(ctx, obj, softrst):
+def pllstatus(ctx, obj, softrst):
     def decRng( word, ibit, nbits=1):
         return (word >> ibit) & ((1<<nbits)-1)
 
     lDevice = obj.mDevice
     lBoardType = obj.mBoardType
+    lIO = lDevice.getNode('io')
 
-    lI2CBusNode = lDevice.getNode('io.i2c')
-    lSI5345 = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
+
+    # Access the clock chip
+    if lBoardType in [kBoardPC059, kBoardTLU]:
+        lI2CBusNode = lIO.getNode("i2c")
+        lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
+    else:
+        lSIChip = lIO.getNode('pll_i2c')
+    # lI2CBusNode = lDevice.getNode('io.i2c')
+    # lSI5345 = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
 
 
     if softrst:
         secho("Resetting", fg='yellow')
-        lSI5345.writeClockRegister(0x1e, 0x2)
+        lSIChip.writeClockRegister(0x1e, 0x2)
 
-    secho("Si3545 configuration id: {}".format(lSI5345.readConfigID()), fg='green')
+    secho("Si3545 configuration id: {}".format(lSIChip.readConfigID()), fg='green')
 
-    w = lSI5345.readClockRegister(0xc)
+    w = lSIChip.readClockRegister(0xc)
 
     registers = collections.OrderedDict()
     registers['SYSINCAL'] = decRng(w, 0)
@@ -136,20 +144,20 @@ def si5345(ctx, obj, softrst):
     registers['XAXB_ERR'] = decRng(w, 3)
     registers['SMBUS_TIMEOUT'] = decRng(w, 5)
 
-    w = lSI5345.readClockRegister(0xd)
+    w = lSIChip.readClockRegister(0xd)
 
     registers['LOS'] = decRng(w, 0, 4)
     registers['OOS'] = decRng(w, 4, 4)
 
-    w = lSI5345.readClockRegister(0xe)
+    w = lSIChip.readClockRegister(0xe)
 
     registers['LOL'] = decRng(w, 1)
     registers['HOLD'] = decRng(w, 5)
 
-    w = lSI5345.readClockRegister(0xf)
+    w = lSIChip.readClockRegister(0xf)
     registers['CAL_PLL'] = decRng(w, 5)
 
-    w = lSI5345.readClockRegister(0x11)
+    w = lSIChip.readClockRegister(0x11)
     registers['SYSINCAL_FLG'] = decRng(w, 0)
     registers['LOSXAXB_FLG'] = decRng(w, 1)
     registers['XAXB_ERR_FLG'] = decRng(w, 3)
