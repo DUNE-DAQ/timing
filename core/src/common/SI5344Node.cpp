@@ -49,15 +49,15 @@ SI5344Slave::configure( const std::string& aPath ) const {
 
     std::ifstream lFile(aPath);
 
-    // std::string lLine;
     bool lHeaderFound(false);
 
 	typedef boost::tuple<uint16_t, uint8_t>  RegisterSetting;
 
     // std::map<uint16_t, uint8_t> lConfig;
     std::vector<RegisterSetting> lConfig;
-    for( std::string lLine, uint32_t lLineNum(0); std::getline(lFile, lLine); ++lLineNum) {
-    // while( std::getline(lFile, lLine) ) {
+    std::string lLine;
+    uint32_t lLineNum;
+    for( lLineNum = 0; std::getline(lFile, lLine); ++lLineNum) {
 
         // Is it a comment 
         if( lLine[0] == '#' ) {
@@ -75,7 +75,8 @@ SI5344Slave::configure( const std::string& aPath ) const {
         }
 
         if ( !lHeaderFound ) {
-            std::ostringstream lMsg << "Error at line " << lLineNum << ": data found before the header";
+            std::ostringstream lMsg;
+            lMsg << "Error at line " << lLineNum << ": data found before the header";
         	PDT_LOG(kError) << lMsg.str();
         	throw SI5344ConfigError(lMsg.str());
         }
