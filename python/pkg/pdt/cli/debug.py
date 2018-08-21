@@ -147,7 +147,7 @@ def pllstatus(ctx, obj, softrst):
     w = lSIChip.readClockRegister(0xd)
 
     registers['LOS'] = decRng(w, 0, 4)
-    registers['OOS'] = decRng(w, 4, 4)
+    registers['OOF'] = decRng(w, 4, 4)
 
     w = lSIChip.readClockRegister(0xe)
 
@@ -162,6 +162,9 @@ def pllstatus(ctx, obj, softrst):
     registers['LOSXAXB_FLG'] = decRng(w, 1)
     registers['XAXB_ERR_FLG'] = decRng(w, 3)
     registers['SMBUS_TIMEOUT_FLG'] = decRng(w, 5)
+
+    w = lSIChip.readClockRegister(0x12)
+    registers['OOF (sticky)'] = decRng(w, 4, 4)
 
     toolbox.printRegTable(registers)
 

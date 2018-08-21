@@ -104,8 +104,8 @@ def printRegTable(aRegs, aHeader=True):
     lRegTable.set_chars(['-', '|', '+', '-'])
     if aHeader:
         lRegTable.header( ['name', 'value'] )
-    for k in sorted(aRegs):
-        lRegTable.add_row( [str(k), hex(aRegs[k])] )
+    for k,v in aRegs.iteritems():
+        lRegTable.add_row( [str(k), hex(v)] )
         
     echo  ( lRegTable.draw() )
 # ------------------------------------------------------------------------------
