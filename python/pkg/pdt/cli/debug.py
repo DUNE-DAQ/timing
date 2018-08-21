@@ -163,8 +163,7 @@ def pllstatus(ctx, obj, softrst):
     registers['XAXB_ERR_FLG'] = decRng(w, 3)
     registers['SMBUS_TIMEOUT_FLG'] = decRng(w, 5)
 
-    for r,v in registers.iteritems():
-        echo('{}: {}'.format(r,hex(v)))
+    toolbox.printRegTable(registers)
 
     ctx.invoke(freq)
 
