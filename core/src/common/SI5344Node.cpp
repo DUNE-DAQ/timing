@@ -57,7 +57,7 @@ SI5344Slave::configure( const std::string& aPath ) const {
     std::vector<RegisterSetting> lConfig;
     std::string lLine;
     uint32_t lLineNum;
-    for( lLineNum = 0; std::getline(lFile, lLine); ++lLineNum) {
+    for( lLineNum = 1; std::getline(lFile, lLine); ++lLineNum) {
 
         // Is it a comment 
         if( lLine[0] == '#' ) {

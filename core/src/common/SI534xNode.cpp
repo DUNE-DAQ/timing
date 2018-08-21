@@ -54,7 +54,7 @@ SI534xSlave::seekHeader( std::ifstream& aFile ) const {
 
     std::string lLine;
     uint32_t lLineNum;
-    for( lLineNum = 0; std::getline(aFile, lLine); ++lLineNum) {
+    for( lLineNum = 1; std::getline(aFile, lLine); ++lLineNum) {
     // for( std::string lLine, uint32_t lLineNum(0); std::getline(lFile, lLine); ++lLineNum) {
     // while( std::getline(aFile, lLine) ) {
 
@@ -99,7 +99,7 @@ SI534xSlave::readConfigSection( std::ifstream& aFile, std::string aTag ) const {
     std::vector<RegisterSetting_t> lConfig;
     std::string lLine;
     uint32_t lLineNum;
-    for( lLineNum = 0; std::getline(aFile, lLine); ++lLineNum) {
+    for( lLineNum = 1; std::getline(aFile, lLine); ++lLineNum) {
     // for( std::string lLine, uint32_t lLineNum(0); std::getline(lFile, lLine); ++lLineNum) {
     // while( std::getline(aFile, lLine) ) {
 
