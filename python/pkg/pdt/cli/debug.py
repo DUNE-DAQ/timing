@@ -136,6 +136,13 @@ def pllstatus(ctx, obj, softrst):
 
     secho("Si3545 configuration id: {}".format(lSIChip.readConfigID()), fg='green')
 
+    secho("Device Information", fg='cyan')
+    lVersion = collections.OrderedDict()
+    lVersion['Part number'] = lSIChip.readDeviceVersion()
+    lVersion['Device grade'] = lSIChip.readClockRegister(0x4)
+    lVersion['Device revision'] = lSIChip.readClockRegister(0x5)
+    toolbox.printRegTable(lVersion)
+
     w = lSIChip.readClockRegister(0xc)
 
     registers = collections.OrderedDict()
@@ -166,6 +173,7 @@ def pllstatus(ctx, obj, softrst):
     w = lSIChip.readClockRegister(0x12)
     registers['OOF (sticky)'] = decRng(w, 4, 4)
 
+    secho("Status registers", fg='cyan')
     toolbox.printRegTable(registers)
 
     ctx.invoke(freq)
