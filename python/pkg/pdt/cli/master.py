@@ -478,10 +478,10 @@ def partmonitor(obj, watch, period):
         lStatDump = toolbox.readSubNodes(lPartNode.getNode('csr.stat'))
 
         echo()
-        echo( "--- " + style("Control registers", fg='green') + " ---")
+        secho("Control registers", fg='cyan')
         toolbox.printRegTable(lCtrlDump, False)
         echo()
-        echo( "--- " + style("Status registers", fg='green') + " ---")
+        secho("Status registers", fg='cyan')
         toolbox.printRegTable(lStatDump, False)
 
         # echo( "Control registers" )
@@ -877,10 +877,10 @@ def exttrgmonitor(obj, watch, period):
 
         echo( "Endpoint State: {}".format(style(defs.fmtEpState(lStatDump['ep_stat']), fg='blue')))
         echo()
-        echo( "--- " + style("Control registers", fg='green') + " ---")
+        secho("Control registers", fg='cyan')
         toolbox.printRegTable(lCtrlDump, False)
         echo()
-        echo( "--- " + style("Status registers", fg='green') + " ---")
+        secho("Status registers", fg='cyan')
         toolbox.printRegTable(lStatDump, False)
         echo()
 
