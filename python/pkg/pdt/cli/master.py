@@ -477,13 +477,20 @@ def partmonitor(obj, watch, period):
         lCtrlDump = toolbox.readSubNodes(lPartNode.getNode('csr.ctrl'))
         lStatDump = toolbox.readSubNodes(lPartNode.getNode('csr.stat'))
 
-        echo( "Control registers" )
-        for n in sorted(lCtrlDump):
-            echo( "  {} {}".format(n, hex(lCtrlDump[n])))
         echo()
-        echo( "Status registers" )
-        for n in sorted(lStatDump):
-            echo( "  {} {}".format(n, hex(lStatDump[n])))
+        echo( "--- " + style("Control registers", fg='green') + " ---")
+        toolbox.printRegTable(lCtrlDump, False)
+        echo()
+        echo( "--- " + style("Status registers", fg='green') + " ---")
+        toolbox.printRegTable(lStatDump, False)
+
+        # echo( "Control registers" )
+        # for n in sorted(lCtrlDump):
+        #     echo( "  {} {}".format(n, hex(lCtrlDump[n])))
+        # echo()
+        # echo( "Status registers" )
+        # for n in sorted(lStatDump):
+        #     echo( "  {} {}".format(n, hex(lStatDump[n])))
         echo()
 
         lTimeStamp = lTStampNode.readBlock(2)
@@ -862,19 +869,19 @@ def exttrgmonitor(obj, watch, period):
         
         echo()
 
-        echo('Monitoring external trigger')
+        secho('External trigger endpoint', fg='blue')
+        echo()
         
         lCtrlDump = toolbox.readSubNodes(lExtTrig.getNode('csr.ctrl'))
         lStatDump = toolbox.readSubNodes(lExtTrig.getNode('csr.stat'))
 
         echo( "Endpoint State: {}".format(style(defs.fmtEpState(lStatDump['ep_stat']), fg='blue')))
-        echo( "Control registers" )
-        for n in sorted(lCtrlDump):
-            echo( "  {} {}".format(n, hex(lCtrlDump[n])))
         echo()
-        echo( "Status registers" )
-        for n in sorted(lStatDump):
-            echo( "  {} {}".format(n, hex(lStatDump[n])))
+        echo( "--- " + style("Control registers", fg='green') + " ---")
+        toolbox.printRegTable(lCtrlDump, False)
+        echo()
+        echo( "--- " + style("Status registers", fg='green') + " ---")
+        toolbox.printRegTable(lStatDump, False)
         echo()
 
         toolbox.printCounters( lExtTrig, {

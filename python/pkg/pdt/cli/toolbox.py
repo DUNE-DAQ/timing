@@ -5,6 +5,7 @@ import definitions as defs
 import click
 
 from click import echo, style, secho
+from click_texttable import Texttable
 
 # ------------------------------------------------------------------------------
 def sanitizeConnectionPaths(aConnectionPaths):
@@ -94,6 +95,20 @@ def validate_chan(ctx, param, value):
         )
     return value
 # -----------------
+
+
+# ------------------------------------------------------------------------------
+def printRegTable(aRegs, aHeader=True):
+    lRegTable = Texttable(max_width=0)
+    lRegTable.set_deco(Texttable.VLINES | Texttable.BORDER | Texttable.HEADER)
+    lRegTable.set_chars(['-', '|', '+', '-'])
+    if aHeader:
+        lRegTable.header( ['name', 'value'] )
+    for k in sorted(aRegs):
+        lRegTable.add_row( [str(k), hex(aRegs[k])] )
+        
+    echo  ( lRegTable.draw() )
+# ------------------------------------------------------------------------------
 
 
 # ------------------------------------------------------------------------------
