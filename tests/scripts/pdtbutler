@@ -23,6 +23,9 @@ import pdt.cli.definitions as defs
 from click import echo, style, secho
 from os.path import join, expandvars
 
+kLogLevelMap = {
+        0: pdt.core.kError,
+    }
 
 class PDTContext: pass
 
@@ -36,14 +39,14 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 @click.pass_context
 @click.option('-c', '--connections', default='${PDT_TESTS}/etc/connections.xml', help='Path to uhal connection file(s)')
 @click.option('-t', '--timeout', default=None, help='uhal timeout (sec)')
-def cli(ctx, connections, timeout):
+@click.option('-v', '--verbose', count=True)
+def cli(ctx, connections, timeout, verbose):
     
     # Set uhal log level
     uhal.setLogLevelTo(uhal.LogLevel.NOTICE)
+    pdt.core.setLogThreshold(kLogLevelMap.get(verbose, pdt.core.kDebug))
 
-    # click.secho('Connection paths: {}'.format(connections), fg='blue')
     lConnections  = toolbox.sanitizeConnectionPaths(connections)
-    # click.secho('Connection paths: {}'.format(lConnections), fg='blue')
 
     ctx.obj.mConnectionManager = uhal.ConnectionManager(str(lConnections))
     ctx.obj.mTimeout = timeout

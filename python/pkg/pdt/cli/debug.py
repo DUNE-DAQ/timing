@@ -13,7 +13,7 @@ import pdt.cli.definitions as defs
 
 from click import echo, style, secho
 from os.path import join, expandvars
-from pdt.core import SI5344Slave, SI534xSlave, I2CExpanderSlave
+from pdt.core import SI534xSlave, I2CExpanderSlave
 
 
 from pdt.cli.master import freq

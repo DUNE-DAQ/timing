@@ -14,7 +14,7 @@ import pdt.cli.definitions as defs
 
 from click import echo, style, secho
 from os.path import join, expandvars, basename
-from pdt.core import SI5344Slave, SI534xSlave, I2CExpanderSlave
+from pdt.core import SI534xSlave, I2CExpanderSlave
 
 from pdt.cli.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
 from pdt.cli.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
@@ -228,7 +228,7 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
         # Ensure that the board revision has a registered clock config
         if forcepllcfg is not None:
             lFullClockConfigPath = forcepllcfg
-            echo("Using SI3545 Clock configuration file: "+style(basename(lFullClockConfigPath), fg='green') )
+            echo("Using PLL Clock configuration file: "+style(basename(lFullClockConfigPath), fg='green') )
 
         else:
             if lBoardType == kBoardTLU:
@@ -243,7 +243,7 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
                     raise ClickException("Board revision " << lRevision << " has no associated clock configuration")
 
 
-            echo("SI3545 Clock configuration file: "+style(lClockConfigPath, fg='green') )
+            echo("PLL Clock configuration file: "+style(lClockConfigPath, fg='green') )
 
             # Configure the clock chip
             lFullClockConfigPath = expandvars(join('${PDT_TESTS}/etc/clock', lClockConfigPath))

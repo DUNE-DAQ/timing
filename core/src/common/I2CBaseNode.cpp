@@ -362,7 +362,7 @@ void I2CBaseNode::waitUntilFinished(bool aRequireAcknowledgement, bool aRequireB
         if (arbitrationLost) {
             // This is an instant error at any time
             pdt::I2CException lExc("I2C error: bus arbitration lost. Is another application running?");
-            PDT_LOG(kError) << lExc.what();
+            // PDT_LOG(kError) << lExc.what();
             throw lExc;
         }
 
@@ -382,19 +382,19 @@ void I2CBaseNode::waitUntilFinished(bool aRequireAcknowledgement, bool aRequireB
 
     if (lAttempt > lMaxRetry) {
         pdt::I2CException lExc("I2C error: Transaction timeout - the 'Transfer in Progress' bit remained high for too long");
-        PDT_LOG(kError) << lExc.what();
+        // PDT_LOG(kError) << lExc.what();
         throw lExc;
     }
 
     if (aRequireAcknowledgement && !lReceivedAcknowledge) {
         pdt::I2CException lExc("I2C error: No acknowledge received");
-        PDT_LOG(kError) << lExc.what();
+        // PDT_LOG(kError) << lExc.what();
         throw lExc;
     }
 
     if (aRequireBusIdleAtEnd && lBusy) {
         pdt::I2CException lExc("I2C error: Transfer finished but bus still busy");
-        PDT_LOG(kError) << lExc.what();
+        // PDT_LOG(kError) << lExc.what();
         throw lExc;
     }
 }

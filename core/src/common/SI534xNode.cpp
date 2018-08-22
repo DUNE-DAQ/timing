@@ -75,7 +75,7 @@ SI534xSlave::seekHeader( std::ifstream& aFile ) const {
         if ( lLine == "Address,Data" ) break;
 
         if ( aFile.eof() ) {
-            throw SI5345ConfigError("Incomplete file: End of file detected while seeking the header.");
+            throw SI534xConfigError("Incomplete file: End of file detected while seeking the header.");
         }
     }
     
@@ -106,9 +106,11 @@ SI534xSlave::readConfigSection( std::ifstream& aFile, std::string aTag ) const {
         // Gracefully deal with those damn dos-encoded files
         if ( lLine.back() == '\r' )
             lLine.pop_back();
-        
+
         // Is it a comment 
         if( lLine[0] == '#' ) {
+
+            if ( aTag.empty() ) continue;
 
             if (boost::starts_with(lLine, "# Start configuration "+aTag)) {
                 lSectionFound = true;
@@ -122,16 +124,22 @@ SI534xSlave::readConfigSection( std::ifstream& aFile, std::string aTag ) const {
             continue;
         }
 
+        // Oops
         if ( aFile.eof() ) {
-            throw SI5345ConfigError("Incomplete file: End of file detected before the end of "+aTag+" section.");
+            if ( aTag.empty() )
+                return lConfig;
+            else
+                throw SI534xConfigError("Incomplete file: End of file detected before the end of "+aTag+" section.");
         }
 
         // Stop if the line is empty
         if( lLine.length() == 0 ) continue;
 
-        if ( !lSectionFound ) {
-            PDT_LOG(kError) << "Main configuration section missing";
-            throw SI5345ConfigError("Main configuration section missing");
+        // If no sec
+        if ( !lSectionFound and !aTag.empty()) {
+            std::ostringstream lMsg;
+            lMsg << "Missing configuration section '" << aTag << "'";
+            throw SI534xMissingConfigSectionError(lMsg.str());
         }
 
         uint32_t lAddress, lData;
@@ -161,12 +169,30 @@ SI534xSlave::configure( const std::string& aPath ) const {
 
     // Seek the header line first
     lConfDesignID = seekHeader(lFile);
+    // lFile.tellp();
 
-    auto lPreamble = this->readConfigSection(lFile, "preamble");
+    // auto lPreamble = this->readConfigSection(lFile, "preamble");
+    // PDT_LOG(kDebug) << "Preamble size = " << lPreamble.size();
+    // auto lRegisters = this->readConfigSection(lFile, "registers");
+    // PDT_LOG(kDebug) << "Registers size = " << lRegisters.size();
+    // auto lPostAmble = this->readConfigSection(lFile, "postamble");
+    // PDT_LOG(kDebug) << "PostAmble size = " << lPostAmble.size();
+
+
+    std::vector<SI534xSlave::RegisterSetting_t> lPreamble, lRegisters, lPostAmble; 
+    
+    try {
+        lPreamble = this->readConfigSection(lFile, "preamble");
+        lRegisters = this->readConfigSection(lFile, "registers");
+        lPostAmble = this->readConfigSection(lFile, "postamble");
+    } catch ( SI534xMissingConfigSectionError ) {
+        lPreamble.clear();
+        lRegisters = this->readConfigSection(lFile, "");
+        lPostAmble.clear();
+    }
+
     PDT_LOG(kDebug) << "Preamble size = " << lPreamble.size();
-    auto lRegisters = this->readConfigSection(lFile, "registers");
     PDT_LOG(kDebug) << "Registers size = " << lRegisters.size();
-    auto lPostAmble = this->readConfigSection(lFile, "postamble");
     PDT_LOG(kDebug) << "PostAmble size = " << lPostAmble.size();
 
     lFile.close();
@@ -189,7 +215,7 @@ SI534xSlave::configure( const std::string& aPath ) const {
     if ( lConfDesignID != lChipDesignID ) {
         std::ostringstream lMsg;
         lMsg << "Post-configuration check failed: Loaded design ID " << lChipDesignID << " does not match the configurationd design id " << lConfDesignID << std::endl;
-        throw SI5345ConfigError(lMsg.str());
+        throw SI534xConfigError(lMsg.str());
     }
 
 }

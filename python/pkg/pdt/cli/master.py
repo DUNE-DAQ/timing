@@ -14,7 +14,7 @@ import pdt.cli.definitions as defs
 
 from click import echo, style, secho
 from os.path import join, expandvars, basename
-from pdt.core import SI5344Slave, SI534xSlave, I2CExpanderSlave
+from pdt.core import SI534xSlave, I2CExpanderSlave
 
 kMasterFWMajorRequired = 4
 
@@ -269,7 +269,7 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
         # Ensure that the board revision has a registered clock config
         if forcepllcfg is not None:
             lFullClockConfigPath = forcepllcfg
-            echo("Using SI3545 Clock configuration file: "+style(basename(lFullClockConfigPath), fg='green') )
+            echo("Using PLL Clock configuration file: "+style(basename(lFullClockConfigPath), fg='green') )
 
         else:
             if lBoardType == kBoardTLU:
@@ -284,7 +284,7 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
                     raise ClickException("Board revision " << lRevision << " has no associated clock configuration")
 
 
-            echo("SI3545 Clock configuration file: "+style(lClockConfigPath, fg='green') )
+            echo("PLL Clock configuration file: "+style(lClockConfigPath, fg='green') )
 
             # Configure the clock chip
             lFullClockConfigPath = expandvars(join('${PDT_TESTS}/etc/clock', lClockConfigPath))
@@ -483,14 +483,6 @@ def partmonitor(obj, watch, period):
         echo()
         secho("Status registers", fg='cyan')
         toolbox.printRegTable(lStatDump, False)
-
-        # echo( "Control registers" )
-        # for n in sorted(lCtrlDump):
-        #     echo( "  {} {}".format(n, hex(lCtrlDump[n])))
-        # echo()
-        # echo( "Status registers" )
-        # for n in sorted(lStatDump):
-        #     echo( "  {} {}".format(n, hex(lStatDump[n])))
         echo()
 
         lTimeStamp = lTStampNode.readBlock(2)

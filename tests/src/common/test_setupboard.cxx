@@ -6,7 +6,7 @@
 
 #include "pdt/Logger.hpp"
 #include "pdt/toolbox.hpp"
-#include "pdt/SI5344Node.hpp"
+#include "pdt/SI534xNode.hpp"
 #include "pdt/I2CMasterNode.hpp"
 
 #include "uhal/ConnectionManager.hpp"
@@ -140,7 +140,7 @@ int main(int argc, char const *argv[])
 
    	//-----------------------------------------------------
    	PDT_LOG(pdt::kNotice) << "Reading PLL version information";
-	const pdt::SI5344Node&  lClock = lOuro.getNode<pdt::SI5344Node>("io.pll_i2c");
+	const pdt::SI534xNode&  lClock = lOuro.getNode<pdt::SI534xNode>("io.pll_i2c");
 	std::cout << "si5344 clock i2c clock prescale " << std::showbase << std::hex << (uint32_t)lClock.getI2CClockPrescale() << std::endl;
 
    	// PDT_LOG(pdt::kInfo) << "Resetting pll's i2c bus";

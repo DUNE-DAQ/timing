@@ -9,7 +9,8 @@
 namespace pdt 
 {
 
-PDTExceptionClass(SI5345ConfigError, "Clock configuration error");
+PDTExceptionClass(SI534xConfigError, "Clock configuration error");
+PDTExceptionClass(SI534xMissingConfigSectionError, "Missing configuration section error");
 
 /**
  * @class      SI534xSlave
