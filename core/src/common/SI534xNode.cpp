@@ -169,7 +169,7 @@ SI534xSlave::configure( const std::string& aPath ) const {
 
     // Seek the header line first
     lConfDesignID = seekHeader(lFile);
-    // lFile.tellp();
+    std::ifstream::pos_type lHdrEnd = lFile.tellg();
 
     // auto lPreamble = this->readConfigSection(lFile, "preamble");
     // PDT_LOG(kDebug) << "Preamble size = " << lPreamble.size();
@@ -186,6 +186,7 @@ SI534xSlave::configure( const std::string& aPath ) const {
         lRegisters = this->readConfigSection(lFile, "registers");
         lPostAmble = this->readConfigSection(lFile, "postamble");
     } catch ( SI534xMissingConfigSectionError ) {
+        lFile.seekg(lHdrEnd);
         lPreamble.clear();
         lRegisters = this->readConfigSection(lFile, "");
         lPostAmble.clear();
