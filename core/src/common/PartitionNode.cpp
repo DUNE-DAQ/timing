@@ -213,4 +213,21 @@ PartitionNode::stop( uint32_t aTimeout /*milliseconds*/ ) const {
 }
 //-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
+PartitionCounts
+PartitionNode::readCommandCounts() const {
+
+    const uhal::Node& lAccCtrs = getNode("actrs");
+    const uhal::Node& lRejCtrs = getNode("rctrs");
+    
+    uhal::ValVector<uint32_t> lAccepted = lAccCtrs.readBlock(lAccCtrs.getSize());
+    uhal::ValVector<uint32_t> lRejected = lRejCtrs.readBlock(lRejCtrs.getSize());
+    getClient().dispatch();
+
+    return {lAccepted.value(), lRejected.value()};
+
+}
+//-----------------------------------------------------------------------------
+
 } // namespace pdt

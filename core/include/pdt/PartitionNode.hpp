@@ -16,6 +16,11 @@ namespace pdt {
 PDTExceptionClass(EventReadError, "Error while reading events from the partition");
 PDTExceptionClass(RunRequestTimeoutExpired, "Timeout when waiting for a run request");
 
+struct PartitionCounts {
+    std::vector<uint32_t> accepted;
+    std::vector<uint32_t> rejected;
+};
+
 /**
  * @brief      Class for partition node.
  */
@@ -120,6 +125,15 @@ public:
      * @param[in]  aTimeout  in milliseconds
      */
     void stop( uint32_t aTimeout = 5000 ) const;
+
+
+    /**
+     * @brief      Reads command counts.
+     *
+     * @return     { description_of_the_return_value }
+     */
+    PartitionCounts readCommandCounts() const;
+
 
 
 };
