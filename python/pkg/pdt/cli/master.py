@@ -65,9 +65,9 @@ def master(obj, device):
     ))
     echo("Master FW version: {}, partitions: {}, channels: {}".format(hex(lVersion), lGenerics['n_part'], lGenerics['n_chan']))
 
-    # if lMajor < 4:
-    #     secho('ERROR: Incompatible master firmware version. Found {}, required {}'.format(hex(lMajor), hex(kMasterFWMajorRequired)), fg='red')
-    #     raise click.Abort()
+    if lMajor < 4:
+        secho('ERROR: Incompatible master firmware version. Found {}, required {}'.format(hex(lMajor), hex(kMasterFWMajorRequired)), fg='red')
+        raise click.Abort()
 
     obj.mDevice = lDevice
     obj.mMaster = lMaster
