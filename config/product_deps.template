@@ -4,7 +4,7 @@
 # The name and version of the product
 parent __PRODUCT__ __VERSION__
 
-defaultqual e14:s50
+defaultqual e15:s64
 
 fcldir -
 bindir -
@@ -27,4 +27,6 @@ end_product_list
 qualifier	uhal
 e14:prof:s50	e14:s50:prof	
 e14:s50:debug	e14:s50:debug	
+e15:prof:s64	e15:s64:prof    	
+e15:s64:debug	e15:s64:debug           
 end_qualifier_list
