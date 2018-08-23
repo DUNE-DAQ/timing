@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <connections>
-  <connection id="PRIMARY"           uri="ipbusudp-2.0://192.168.200.16:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v42b/ouroloop_fmc/top.xml" />
-  <connection id="SECONDARY"         uri="ipbusudp-2.0://192.168.200.17:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v42b/ouroloop_fmc/top.xml" />
-  <connection id="TERTIARY"          uri="ipbusudp-2.0://192.168.200.32:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v42b/ouroboros_pc059/top_pc059.xml" />
+  <connection id="PRIMARY"           uri="ipbusudp-2.0://192.168.200.16:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v4b2/ouroboros_fmc/top.xml" />
+  <connection id="SECONDARY"         uri="ipbusudp-2.0://192.168.200.17:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v4b2/ouroboros_fmc/top.xml" />
+  <connection id="TERTIARY"          uri="ipbusudp-2.0://192.168.200.32:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v4b2/ouroboros_pc059/top_pc059.xml" />
 
-  <connection id="PROD_MASTER"       uri="ipbusudp-2.0://192.168.200.64:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v42b/overlord_tlu/top.xml" />
-  <connection id="PROD_FANOUT_0"     uri="ipbusudp-2.0://192.168.200.65:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v42b/fanout_pc059/top.xml" />
-  <connection id="PROD_FANOUT_1"     uri="ipbusudp-2.0://192.168.200.66:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v42b/fanout_pc059/top.xml" />
-  <connection id="PROD_FANOUT_2"     uri="ipbusudp-2.0://192.168.200.67:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v42b/fanout_pc059/top.xml" />
+  <connection id="PROD_MASTER"       uri="ipbusudp-2.0://192.168.200.64:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v4b2/overlord_tlu/top.xml" />
+  <connection id="PROD_FANOUT_0"     uri="ipbusudp-2.0://192.168.200.65:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v4b2/fanout_pc059/top.xml" />
+  <connection id="PROD_FANOUT_1"     uri="ipbusudp-2.0://192.168.200.66:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v4b2/fanout_pc059/top.xml" />
+  <connection id="PROD_FANOUT_2"     uri="ipbusudp-2.0://192.168.200.67:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v4b2/fanout_pc059/top.xml" />
 
-  <connection id="SIM"               uri="ipbusudp-2.0://192.168.201.16:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v42b/ouroboros_sim/top_sim.xml" />
-  <connection id="PRIMARY_TUN"       uri="chtcp-2.0://localhost:60708?target=192.168.200.16:50001" address_table="file:///${PDT_TESTS}/etc/addrtab/v42b/ouroloop_fmc/top.xml" />  
-  <connection id="SECONDARY_TUN"     uri="chtcp-2.0://localhost:60708?target=192.168.200.17:50001" address_table="file:///${PDT_TESTS}/etc/addrtab/v42b/ouroloop_fmc/top.xml" />    
-  <connection id="TERTIARY_TUN"      uri="chtcp-2.0://localhost:60708?target=192.168.200.32:50001" address_table="file:///${PDT_TESTS}/etc/addrtab/v42b/ouroboros_pc059/top_pc059.xml" />    
+  <connection id="SIM"               uri="ipbusudp-2.0://192.168.201.16:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v4b2/ouroboros_sim/top_sim.xml" />
+  <connection id="PRIMARY_TUN"       uri="chtcp-2.0://localhost:60708?target=192.168.200.16:50001" address_table="file:///${PDT_TESTS}/etc/addrtab/v4b2/ouroboros_fmc/top.xml" />  
+  <connection id="SECONDARY_TUN"     uri="chtcp-2.0://localhost:60708?target=192.168.200.17:50001" address_table="file:///${PDT_TESTS}/etc/addrtab/v4b2/ouroboros_fmc/top.xml" />    
+  <connection id="TERTIARY_TUN"      uri="chtcp-2.0://localhost:60708?target=192.168.200.32:50001" address_table="file:///${PDT_TESTS}/etc/addrtab/v4b2/ouroboros_pc059/top_pc059.xml" />    
 
-  <connection id="PROD_MASTER_TUN"   uri="chtcp-2.0://localhost:60708?target=192.168.200.64:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v42b/overlord_tlu/top_tlu.xml" />
-  <connection id="PROD_FANOUT_0_TUN" uri="chtcp-2.0://localhost:60708?target=192.168.200.65:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v42b/fanout_pc059/top.xml" />
-  <connection id="PROD_FANOUT_1_TUN" uri="chtcp-2.0://localhost:60708?target=192.168.200.66:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v42b/fanout_pc059/top.xml" />
-  <connection id="PROD_FANOUT_2_TUN" uri="chtcp-2.0://localhost:60708?target=192.168.200.67:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v42b/fanout_pc059/top.xml" />
+  <connection id="PROD_MASTER_TUN"   uri="chtcp-2.0://localhost:60708?target=192.168.200.64:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v4b2/overlord_tlu/top_tlu.xml" />
+  <connection id="PROD_FANOUT_0_TUN" uri="chtcp-2.0://localhost:60708?target=192.168.200.65:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v4b2/fanout_pc059/top.xml" />
+  <connection id="PROD_FANOUT_1_TUN" uri="chtcp-2.0://localhost:60708?target=192.168.200.66:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v4b2/fanout_pc059/top.xml" />
+  <connection id="PROD_FANOUT_2_TUN" uri="chtcp-2.0://localhost:60708?target=192.168.200.67:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v4b2/fanout_pc059/top.xml" />
 
 </connections>
     
