@@ -200,7 +200,7 @@ def monitor(obj, watch, period):
         echo ( lEPSummary.draw() )
 
         echo()
-        echo( "--- " + style("Endpoint state", fg='green') + " ---")
+        echo( "--- " + style("Endpoint state", fg='cyan') + " ---")
 
         lEPStats = Texttable(max_width=0)
         lEPStats.set_deco(Texttable.VLINES | Texttable.BORDER | Texttable.HEADER)
@@ -221,7 +221,7 @@ def monitor(obj, watch, period):
         echo ( lEPStats.draw() )
 
         echo()
-        echo( "--- " + style("Command counters", fg='green') + " ---")
+        echo( "--- " + style("Command counters", fg='cyan') + " ---")
 
         lEPCtrs = Texttable(max_width=0)
         lEPCtrs.set_deco(Texttable.VLINES | Texttable.BORDER | Texttable.HEADER)

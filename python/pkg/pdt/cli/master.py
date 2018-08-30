@@ -228,7 +228,13 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
             lBoardType == kBoardPC059 or
             (lBoardType == kBoardFMC and lCarrierType == kCarrierEnclustraA35)
             ):
-            lUID.getSlave('AX3_Switch').writeI2C(0x01, 0x7f)
+
+            try:
+                # Wake up the switch
+                lUID.getSlave('AX3_Switch').writeI2C(0x01, 0x7f)
+            except RuntimeError:
+                pass
+
             x = lUID.getSlave('AX3_Switch').readI2C(0x01)
             echo("I2C enable lines: {}".format(x))
         elif lCarrierType == kCarrierKC705:
@@ -416,7 +422,7 @@ def partition(obj, id):
 @partition.command('monitor', short_help='Display the status of the timing master.')
 @click.pass_obj
 @click.option('--watch', '-w', is_flag=True, default=False, help='Turn on automatic refresh')
-@click.option('--period','-p', type=click.IntRange(0, 240), default=2, help='Period of automatic refresh')
+@click.option('--period','-p', type=click.IntRange(0, 10), default=2, help='Automatic refresh period')
 def partmonitor(obj, watch, period):
     '''
     Display the master status, accepted and rejected command counters
@@ -518,8 +524,9 @@ def read_mask(ctx, param, value):
 # ------------------------------------------------------------------------------
 @partition.command('configure', short_help='Prepares partition for data taking.')
 @click.option('--trgmask', '-m', type=str, callback=lambda c, p, v: int(v, 16), default='0xf', help='Trigger mask (in hex).')
+@click.option('--spill-gate/--no-spill-gate', 'spillgate', default=True, help='Enable the spill gate')
 @click.pass_obj
-def configure(obj, trgmask):
+def configure(obj, trgmask, spillgate):
     '''
     Configures partition for data taking
 
@@ -547,9 +554,9 @@ def configure(obj, trgmask):
     echo("  Phys mask {}".format(hex(trgmask)))
 
     lPartNode.reset(); 
-    lPartNode.writeTriggerMask(lTrgMask);
+    lPartNode.configure(lTrgMask, spillgate);
     lPartNode.enable();
-    secho("Partition {} enabled".format(lPartId), fg='green')
+    secho("Partition {} enabled and configured".format(lPartId), fg='green')
 
 # ------------------------------------------------------------------------------
 
@@ -623,7 +630,11 @@ def readback(obj, readall, keep):
     '''
     Read the content of the timing master readout buffer.
     '''
-    # lDevice = obj.mDevice
+    def chunks(l, n):
+        """Yield successive n-sized chunks from l."""
+        for i in range(0, len(l), n):
+            yield l[i:i + n]
+
     lPartId = obj.mPartitionId
     lPartNode = obj.mPartitionNode
 
@@ -641,8 +652,16 @@ def readback(obj, readall, keep):
         lBufData = lPartNode.getNode('buf.data').readBlock(lWordsToRead)
         lPartNode.getClient().dispatch()
 
-        for i, lWord in enumerate(lBufData):
-            echo ( '{:04d} {}'.format(i, hex(lWord)))
+
+
+        for i,c in enumerate(chunks(lBufData, 6)):
+            ts = (c[3]<<32) +c[2]
+            # print ('header:', hex(c[0]), hex(c[1]))
+            print ('ev {} - ts    : {} ({})'.format(i, ts, hex(ts)))
+
+
+        # for i, lWord in enumerate(lBufData):
+            # echo ( '{:04d} {}'.format(i, hex(lWord)))
         if not keep:
             break
 # ------------------------------------------------------------------------------
@@ -815,23 +834,33 @@ def spillgen(obj):
 @click.pass_obj
 def externaltrigger(obj):
     pass
+# ------------------------------------------------------------------------------
 
 
-@externaltrigger.command('ept', short_help="Monitor trigger input status")
-@click.option('--on/--off', default=True, help='enable/disable triggers')
+# ------------------------------------------------------------------------------
+@externaltrigger.command('ept', short_help="Control the trigger return endpoint")
+@click.argument('action', default='enable', type=click.Choice(['enable', 'disable', 'reset']))
 @click.pass_obj
 @click.pass_context
-def exttrgenable(ctx, obj, on):
+def exttrgept(ctx, obj, action):
 
     lExtTrig = obj.mExtTrig
 
-    
-    lExtTrig.getNode('csr.ctrl.ep_en').write(on)
+    # Disable comes first
+    if action in ['disable','reset']:
+        lExtTrig.getNode('csr.ctrl.ep_en').write(0x0)
+    # And then enable
+    if action in ['enable','reset']:
+        lExtTrig.getNode('csr.ctrl.ep_en').write(0x1)
+
     lExtTrig.getClient().dispatch()
-    secho("Trigger endpoint " + ("enabled" if on else "disabled"), fg='green')
+    secho("Trigger endpoint action '" + action + "' completed", fg='green')
 
     ctx.invoke(exttrgmonitor)
+# ------------------------------------------------------------------------------
 
+
+# ------------------------------------------------------------------------------
 @externaltrigger.command('enable', short_help="Enable external triggers")
 @click.option('--on/--off', default=True, help='enable/disable triggers')
 @click.pass_obj
@@ -844,11 +873,13 @@ def exttrgenable(ctx, obj, on):
     lExtTrig.getClient().dispatch()
     secho("External triggers " + ("enabled" if on else "disabled"), fg='green')
     ctx.invoke(exttrgmonitor)
+# ------------------------------------------------------------------------------
 
 
+# ------------------------------------------------------------------------------
 @externaltrigger.command('monitor', short_help="Monitor trigger input status")
 @click.option('--watch', '-w', is_flag=True, default=False, help='Turn on automatic refresh')
-@click.option('--period','-p', type=click.IntRange(0, 240), default=2, help='Period of automatic refresh')
+@click.option('--period','-p', type=click.IntRange(0, 10), default=2, help='Automatic refresh period')
 @click.pass_obj
 def exttrgmonitor(obj, watch, period):
     
@@ -883,4 +914,5 @@ def exttrgmonitor(obj, watch, period):
             time.sleep(period)
         else:
             break
+# ------------------------------------------------------------------------------
 

@@ -27,7 +27,8 @@ void
 register_partition() {
   class_<pdt::PartitionNode, bases<uhal::Node> > ("PartitionNode", init<const uhal::Node&>())
       .def("readTriggerMask", &pdt::PartitionNode::readTriggerMask)
-      .def("writeTriggerMask", &pdt::PartitionNode::writeTriggerMask)
+      // .def("writeTriggerMask", &pdt::PartitionNode::writeTriggerMask)
+      .def("configure", &pdt::PartitionNode::configure)
       .def("enableTriggers", &pdt::PartitionNode::enableTriggers, pdt_PartitionNode_enableTriggers_overloads())
       .def("readBufferWordCount", &pdt::PartitionNode::readBufferWordCount)
       .def("numEventsInBuffer", &pdt::PartitionNode::numEventsInBuffer)

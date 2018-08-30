@@ -90,8 +90,10 @@ public:
      *
      * @param[in]  aMask  A mask
      */
-    void writeTriggerMask( uint32_t aMask ) const;
+    // void writeTriggerMask( uint32_t aMask ) const;
 
+    void configure( uint32_t aTrigMask, bool aEnableSpillGate ) const;
+    
     /**
      * @brief      Enables the triggers.
      *

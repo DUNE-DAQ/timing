@@ -37,9 +37,20 @@ PartitionNode::enable(bool aEnable, bool aDispatch) const {
 
 
 //-----------------------------------------------------------------------------
+// void
+// PartitionNode::writeTriggerMask( uint32_t aMask) const {
+//     getNode("csr.ctrl.trig_mask").write(aMask);
+//     getClient().dispatch();
+// }
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
 void
-PartitionNode::writeTriggerMask( uint32_t aMask) const {
-    getNode("csr.ctrl.trig_mask").write(aMask);
+PartitionNode::configure( uint32_t aTrigMask, bool aEnableSpillGate ) const {
+    getNode("csr.ctrl.rate_ctrl_en").write(0x1);
+    getNode("csr.ctrl.trig_mask").write(aTrigMask);
+    getNode("csr.ctrl.spill_gate_en").write(aEnableSpillGate);
     getClient().dispatch();
 }
 //-----------------------------------------------------------------------------
