@@ -38,11 +38,12 @@ kCarrierATFC = 0x3
 
 
 kDesingMaster = 0x0
-kDesignOuroboros = 0x1
-kDesignOuroborosSim = 0x2
+kDesignOuroborosSim = 0x1
+kDesignOuroboros = 0x2
 kDesignEndpoint = 0x4
 kDesingFanout = 0x5
 kDesingTLU = 0x6
+kDesingEndpoBICRT = 0x7
 
 kDesignNameMap = {
     kDesingMaster: 'master',
@@ -51,6 +52,7 @@ kDesignNameMap = {
     kDesignEndpoint: 'endpoint',
     kDesingFanout: 'fanout',
     kDesingTLU: 'overlord',
+    kDesingEndpoBICRT: 'endpoint-bi-crt',
 }
 
 kBoardNamelMap = {

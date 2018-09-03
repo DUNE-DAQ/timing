@@ -132,7 +132,6 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
     echo('Resetting ' + click.style(obj.mDevice.id(), fg='blue'))
 
     lDevice = obj.mDevice
-    lMaster = obj.mMaster
     lBoardType = obj.mBoardType
     lCarrierType = obj.mCarrierType
     lIO = lDevice.getNode('io')
@@ -187,7 +186,13 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
             lBoardType == kBoardPC059 or
             (lBoardType == kBoardFMC and lCarrierType == kCarrierEnclustraA35)
             ):
-            lUID.getSlave('AX3_Switch').writeI2C(0x01, 0x7f)
+
+            try:
+                # Wake up the switch
+                lUID.getSlave('AX3_Switch').writeI2C(0x01, 0x7f)
+            except RuntimeError:
+                pass
+
             x = lUID.getSlave('AX3_Switch').readI2C(0x01)
             echo("I2C enable lines: {}".format(x))
         elif lCarrierType == kCarrierKC705:
@@ -265,7 +270,7 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
             lIO.getNode('csr.ctrl.hdmi_inv_o').write(0)
             lIO.getNode('csr.ctrl.hdmi_inv_i').write(0)
 
-        ctx.invoke(freq)
+        ctx.invoke(pllstatus)
 
         if lBoardType == kBoardFMC:
             lDevice.getNode("io.csr.ctrl.sfp_tx_dis").write(0)
@@ -319,11 +324,11 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
             click.ClickException("Unknown board kind {}".format(lBoardType))
 
     echo()
-    echo("--- Global status ---")
-    lCsrStat = toolbox.readSubNodes(lMaster.getNode('global.csr.stat'))
-    for k,v in lCsrStat.iteritems():
-        echo("{}: {}".format(k, hex(v)))
-    echo()
+    # echo( "--- " + style("Global status", fg='green') + " ---")
+    # lCsrStat = toolbox.readSubNodes(lMaster.getNode('global.csr.stat'))
+    # for k,v in lCsrStat.iteritems():
+    #     echo("{}: {}".format(k, hex(v)))
+    # echo()
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
@@ -348,5 +353,135 @@ def freq(obj):
     print( "Freq PLL:", freqs[0] )
     if lBoardType != kBoardTLU:
         print( "Freq CDR:", freqs[1] )   
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@io.command('pll-status')
+@click.pass_obj
+@click.pass_context
+# @click.option('--soft-rst', 'softrst', is_flag=True)
+def pllstatus(ctx, obj):
+    def decRng( word, ibit, nbits=1):
+        return (word >> ibit) & ((1<<nbits)-1)
+
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+    lIO = lDevice.getNode('io')
+
+
+    # Access the clock chip
+    if lBoardType in [kBoardPC059, kBoardTLU]:
+        lI2CBusNode = lIO.getNode("i2c")
+        lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
+    else:
+        lSIChip = lIO.getNode('pll_i2c')
+    # lI2CBusNode = lDevice.getNode('io.i2c')
+    # lSI5345 = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
+
+
+    # if softrst:
+    #     secho("Resetting", fg='yellow')
+    #     lSIChip.writeClockRegister(0x1e, 0x2)
+
+    secho("Si3545 configuration id: {}".format(lSIChip.readConfigID()), fg='green')
+
+    secho("Device Information", fg='cyan')
+    lVersion = collections.OrderedDict()
+    lVersion['Part number'] = lSIChip.readDeviceVersion()
+    lVersion['Device grade'] = lSIChip.readClockRegister(0x4)
+    lVersion['Device revision'] = lSIChip.readClockRegister(0x5)
+    toolbox.printRegTable(lVersion)
+
+    w = lSIChip.readClockRegister(0xc)
+
+    registers = collections.OrderedDict()
+    registers['SYSINCAL'] = decRng(w, 0)
+    registers['LOSXAXB'] = decRng(w, 1)
+    registers['XAXB_ERR'] = decRng(w, 3)
+    registers['SMBUS_TIMEOUT'] = decRng(w, 5)
+
+    w = lSIChip.readClockRegister(0xd)
+
+    registers['LOS'] = decRng(w, 0, 4)
+    registers['OOF'] = decRng(w, 4, 4)
+
+    w = lSIChip.readClockRegister(0xe)
+
+    registers['LOL'] = decRng(w, 1)
+    registers['HOLD'] = decRng(w, 5)
+
+    w = lSIChip.readClockRegister(0xf)
+    registers['CAL_PLL'] = decRng(w, 5)
+
+    w = lSIChip.readClockRegister(0x11)
+    registers['SYSINCAL_FLG'] = decRng(w, 0)
+    registers['LOSXAXB_FLG'] = decRng(w, 1)
+    registers['XAXB_ERR_FLG'] = decRng(w, 3)
+    registers['SMBUS_TIMEOUT_FLG'] = decRng(w, 5)
+
+    w = lSIChip.readClockRegister(0x12)
+    registers['OOF (sticky)'] = decRng(w, 4, 4)
+
+    secho("Status registers", fg='cyan')
+    toolbox.printRegTable(registers)
+
+    ctx.invoke(freq)
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@io.command('dac-setup')
+@click.pass_obj
+@click.pass_context
+def dacsetup(ctx, obj):
+
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+    lI2CBusNode = lDevice.getNode('io.i2c')
+
+    for lSlave in sorted(lI2CBusNode.getSlaves()):
+        echo("  {}: {}".format(lSlave, hex(lI2CBusNode.getSlaveAddress(lSlave))))
+
+
+    lDAC1 = lI2CBusNode.getSlave('DAC1')
+    lDAC2 = lI2CBusNode.getSlave('DAC2')
+
+
+    def intRef(dacNode, internal):
+        if internal:
+            cmdDAC= [0x00,0x01]
+        else:
+            cmdDAC= [0x00,0x00]
+        dacNode.writeI2CArray(0x38, cmdDAC)
+
+    def writeDAC(dacNode, chan, dacCode):
+        print ("DAC value:"  , hex(dacCode))
+        if chan<0 or chan>7:
+            print ("writeDAC ERROR: channel",chan,"not in range 0-7 (bit mask)")
+            return -1
+        if dacCode<0:
+            print ("writeDAC ERROR: value",dacCode,"<0. Default to 0")
+            dacCode=0
+        elif dacCode>0xFFFF :
+            print ("writeDAC ERROR: value",dacCode,">0xFFFF. Default to 0xFFFF")
+            dacCode=0xFFFF
+
+        addr = 0x18 + ( chan & 0x7)
+        seq = [
+            ((dacCode >> 8) & 0xff),
+            (dacCode & 0xff),
+        ]
+
+        dacNode.writeI2CArray(addr, seq)
+
+    intRef(lDAC1, False)
+    intRef(lDAC2, False)
+
+    writeDAC(lDAC1, 7, 0x589D )
+    writeDAC(lDAC2, 7, 0x589D )
+
+
+
 # ------------------------------------------------------------------------------
 

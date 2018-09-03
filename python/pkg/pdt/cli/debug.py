@@ -57,6 +57,42 @@ def debug(obj, device):
 # ------------------------------------------------------------------------------
 
 
+# ------------------------------------------------------------------------------
+@debug.command('inspect')
+@click.argument('nodes')
+@click.pass_obj
+def inspect(obj, nodes):
+    lDevice = obj.mDevice
+
+    print(nodes)
+    lNodeIds = lDevice.getNodes(nodes.encode('ascii','replace'))
+    print(lNodeIds)
+    lNodeVals = {n:lDevice.getNode(n).read() for n in lNodeIds}
+
+    lDevice.dispatch()
+
+    for k in sorted(lNodeVals):
+        print(k,lNodeVals[k])
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@debug.command()
+@click.pass_context
+def ipy(ctx):
+    '''
+    Start an interactive IPython session.
+
+    The board HwInterface is accessible as 'lDevice'
+    '''
+    lDevice = ctx.obj.mDevice
+
+    from IPython import embed
+    embed()
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
 @debug.command('uid', short_help="Unique ID reader.")
 @click.pass_obj
 def uuid(obj):
@@ -76,6 +112,7 @@ def uuid(obj):
     for lVal in lValues:
         lUniqueID = ( lUniqueID << 8 ) | lVal
     echo("Timing Board PROM UID: "+style(hex(lUniqueID), fg="blue"))
+# ------------------------------------------------------------------------------
 
 
 # ------------------------------------------------------------------------------
@@ -106,97 +143,5 @@ def sfpexpander(obj):
         echo("{} ({}): {}".format(lLabels[a], hex(a), hex(v)))
 # ------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------
-@debug.command('pll-status')
-@click.pass_obj
-@click.pass_context
-@click.option('--soft-rst', 'softrst', is_flag=True)
-def pllstatus(ctx, obj, softrst):
-    def decRng( word, ibit, nbits=1):
-        return (word >> ibit) & ((1<<nbits)-1)
 
-    lDevice = obj.mDevice
-    lBoardType = obj.mBoardType
-    lIO = lDevice.getNode('io')
-
-
-    # Access the clock chip
-    if lBoardType in [kBoardPC059, kBoardTLU]:
-        lI2CBusNode = lIO.getNode("i2c")
-        lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
-    else:
-        lSIChip = lIO.getNode('pll_i2c')
-    # lI2CBusNode = lDevice.getNode('io.i2c')
-    # lSI5345 = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
-
-
-    if softrst:
-        secho("Resetting", fg='yellow')
-        lSIChip.writeClockRegister(0x1e, 0x2)
-
-    secho("Si3545 configuration id: {}".format(lSIChip.readConfigID()), fg='green')
-
-    secho("Device Information", fg='cyan')
-    lVersion = collections.OrderedDict()
-    lVersion['Part number'] = lSIChip.readDeviceVersion()
-    lVersion['Device grade'] = lSIChip.readClockRegister(0x4)
-    lVersion['Device revision'] = lSIChip.readClockRegister(0x5)
-    toolbox.printRegTable(lVersion)
-
-    w = lSIChip.readClockRegister(0xc)
-
-    registers = collections.OrderedDict()
-    registers['SYSINCAL'] = decRng(w, 0)
-    registers['LOSXAXB'] = decRng(w, 1)
-    registers['XAXB_ERR'] = decRng(w, 3)
-    registers['SMBUS_TIMEOUT'] = decRng(w, 5)
-
-    w = lSIChip.readClockRegister(0xd)
-
-    registers['LOS'] = decRng(w, 0, 4)
-    registers['OOF'] = decRng(w, 4, 4)
-
-    w = lSIChip.readClockRegister(0xe)
-
-    registers['LOL'] = decRng(w, 1)
-    registers['HOLD'] = decRng(w, 5)
-
-    w = lSIChip.readClockRegister(0xf)
-    registers['CAL_PLL'] = decRng(w, 5)
-
-    w = lSIChip.readClockRegister(0x11)
-    registers['SYSINCAL_FLG'] = decRng(w, 0)
-    registers['LOSXAXB_FLG'] = decRng(w, 1)
-    registers['XAXB_ERR_FLG'] = decRng(w, 3)
-    registers['SMBUS_TIMEOUT_FLG'] = decRng(w, 5)
-
-    w = lSIChip.readClockRegister(0x12)
-    registers['OOF (sticky)'] = decRng(w, 4, 4)
-
-    secho("Status registers", fg='cyan')
-    toolbox.printRegTable(registers)
-
-    ctx.invoke(freq)
-
-
-# ------------------------------------------------------------------------------
-
-
-# ------------------------------------------------------------------------------
-@debug.command('inspect')
-@click.argument('nodes')
-@click.pass_obj
-def inspect(obj, nodes):
-    lDevice = obj.mDevice
-
-    print(nodes)
-    lNodeIds = lDevice.getNodes(nodes.encode('ascii','replace'))
-    print(lNodeIds)
-    lNodeVals = {n:lDevice.getNode(n).read() for n in lNodeIds}
-
-    lDevice.dispatch()
-
-    for k in sorted(lNodeVals):
-        print(k,lNodeVals[k])
-# ------------------------------------------------------------------------------
 
