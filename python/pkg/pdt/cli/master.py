@@ -128,235 +128,6 @@ kUIDRevisionMap = {
     0xd88039d92498: kPC059Rev1,
 }
 
-# kUIDRevisionMap = {
-# }
-
-# # ------------------------------------------------------------------------------
-# @master.command('reset', short_help="Perform a hard reset on the timing master.")
-# @click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
-# @click.option('--fanout-mode', 'fanout', type=click.IntRange(0, 3), default=0, help='Configures the board in fanout mode (pc059 only)')
-# @click.option('--force-pll-cfg', 'forcepllcfg', type=click.Path(exists=True))
-# @click.pass_obj
-# @click.pass_context
-# def reset(ctx, obj, soft, fanout, forcepllcfg):
-#     '''
-#     Perform a hard reset on the timing master, including
-
-#     \b
-#     - ipbus registers
-#     - i2c buses
-#     - pll and pll configuration
-
-#     \b
-#     Fanout mode:
-#     0 = local master
-#     1 = hdmi
-#     2 = sfp
-#     '''
-
-#     echo('Resetting ' + click.style(obj.mDevice.id(), fg='blue'))
-
-#     lDevice = obj.mDevice
-#     lMaster = obj.mMaster
-#     lBoardType = obj.mBoardType
-#     lCarrierType = obj.mCarrierType
-#     lIO = lDevice.getNode('io')
-
-#     if ( lBoardType == kBoardPC059 and fanout ):
-#         secho("Fanout mode enabled", fg='green')
-
-#     # Global soft reset
-#     lIO.getNode('csr.ctrl.soft_rst').write(0x1)
-#     lDevice.dispatch()
-
-
-#     if not (soft or lBoardType == kBoardSim):
-        
-#         time.sleep(1)
-        
-#         # PLL and I@C reset 
-#         lIO.getNode('csr.ctrl.pll_rst').write(0x1)
-#         if lBoardType == kBoardPC059:
-#             lIO.getNode('csr.ctrl.rst_i2c').write(0x1)
-#             lIO.getNode('csr.ctrl.rst_i2cmux').write(0x1)
-
-
-#         elif lBoardType == kBoardTLU:
-#             lIO.getNode('csr.ctrl.rst_i2c').write(0x1)
-
-#         lDevice.dispatch()
-
-#         lIO.getNode('csr.ctrl.pll_rst').write(0x0)
-#         if lBoardType == kBoardPC059:
-#             lIO.getNode('csr.ctrl.rst_i2c').write(0x0)
-#             lIO.getNode('csr.ctrl.rst_i2cmux').write(0x0)
-        
-#         elif lBoardType == kBoardTLU:
-#             lIO.getNode('csr.ctrl.rst_i2c').write(0x0)
-
-#         lDevice.dispatch()
-
-
-#         # Detect the on-board eprom and read the board UID
-#         if lBoardType in [kBoardPC059, kBoardTLU]:
-#             lUID = lIO.getNode('i2c')
-#         else:
-#             lUID = lIO.getNode('uid_i2c')
-
-#         echo('UID I2C Slaves')
-#         for lSlave in lUID.getSlaves():
-#             echo("  {}: {}".format(lSlave, hex(lUID.getSlaveAddress(lSlave))))
-
-#         if (
-#             lBoardType == kBoardTLU or
-#             lBoardType == kBoardPC059 or
-#             (lBoardType == kBoardFMC and lCarrierType == kCarrierEnclustraA35)
-#             ):
-
-#             try:
-#                 # Wake up the switch
-#                 lUID.getSlave('AX3_Switch').writeI2C(0x01, 0x7f)
-#             except RuntimeError:
-#                 pass
-
-#             x = lUID.getSlave('AX3_Switch').readI2C(0x01)
-#             echo("I2C enable lines: {}".format(x))
-#         elif lCarrierType == kCarrierKC705:
-#             lUID.getSlave('KC705_Switch').writeI2CPrimitive([0x10])
-#             # x = lUID.getSlave('KC705_Switch').readI2CPrimitive(1)
-#             echo("KC705 I2C switch enabled (hopefully)".format())
-#         else:
-#             click.ClickException("Unknown board kind {}".format(lBoardType))
-
-
-#         # 
-#         # If not a TLU, read the unique ID from the prom 
-#         # if lBoardType != kBoardTLU:
-
-#         lPROMSlave = 'UID_PROM' if lBoardType == kBoardTLU else 'FMC_UID_PROM'
-#         lValues = lUID.getSlave(lPROMSlave).readI2CArray(0xfa, 6)
-#         lUniqueID = 0x0
-#         for lVal in lValues:
-#             lUniqueID = ( lUniqueID << 8 ) | lVal
-#         echo("Timing Board PROM UID: "+style(hex(lUniqueID), fg="blue"))
-
-#         if lBoardType != kBoardTLU:
-#             # Ensure that the board is known to the revision DB
-#             try:
-#                 lRevision = kUIDRevisionMap[lUniqueID]
-#             except KeyError:
-#                 raise click.ClickException("No revision associated to UID "+hex(lUniqueID))
-
-#         # Access the clock chip
-#         if lBoardType in [kBoardPC059, kBoardTLU]:
-#             lI2CBusNode = lDevice.getNode("io.i2c")
-#             lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
-#         else:
-#             lSIChip = lIO.getNode('pll_i2c')
-#         lSIVersion = lSIChip.readDeviceVersion()
-#         echo("PLL version : "+style(hex(lSIVersion), fg='blue'))
-
-#         # Ensure that the board revision has a registered clock config
-#         if forcepllcfg is not None:
-#             lFullClockConfigPath = forcepllcfg
-#             echo("Using PLL Clock configuration file: "+style(basename(lFullClockConfigPath), fg='green') )
-
-#         else:
-#             if lBoardType == kBoardTLU:
-#                 lClockConfigPath = kClockConfigMap[kTLURev1]
-#             elif lBoardType == kBoardPC059 and fanout in [1,2]:
-#                 secho("Overriding clock config - fanout mode", fg='green')
-#                 lClockConfigPath = kClockConfigMap[kPC059FanoutHDMI if fanout == 1 else kPC059FanoutSFP]
-#             else:
-#                 try:
-#                     lClockConfigPath = kClockConfigMap[lRevision]    
-#                 except KeyError:
-#                     raise ClickException("Board revision " << lRevision << " has no associated clock configuration")
-
-
-#             echo("PLL Clock configuration file: "+style(lClockConfigPath, fg='green') )
-
-#             # Configure the clock chip
-#             lFullClockConfigPath = expandvars(join('${PDT_TESTS}/etc/clock', lClockConfigPath))
-
-#         lSIChip.configure(lFullClockConfigPath)
-#         echo("SI3545 configuration id: {}".format(style(lSIChip.readConfigID(), fg='green')))
-
-
-#         if lBoardType == kBoardPC059:
-#             lIO.getNode('csr.ctrl.master_src').write(fanout)
-#             lIO.getNode('csr.ctrl.cdr_edge').write(1)
-#             lIO.getNode('csr.ctrl.sfp_edge').write(1)
-#             lIO.getNode('csr.ctrl.hdmi_edge').write(0)
-#             lIO.getNode('csr.ctrl.usfp_edge').write(1)
-#             lIO.getNode('csr.ctrl.mux').write(0)
-#             lDevice.dispatch()
-#         elif lBoardType == kBoardTLU:
-#             lIO.getNode('csr.ctrl.hdmi_edge').write(0)
-#             lIO.getNode('csr.ctrl.hdmi_inv_o').write(0)
-#             lIO.getNode('csr.ctrl.hdmi_inv_i').write(0)
-
-#         ctx.invoke(freq)
-
-#         if lBoardType == kBoardFMC:
-#             lDevice.getNode("io.csr.ctrl.sfp_tx_dis").write(0)
-#             lDevice.dispatch()
-#         elif lBoardType == kBoardPC059:
-#             lI2CBusNode = lDevice.getNode("io.i2c")
-#             lSFPExp = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('SFPExpander').getI2CAddress())
-
-#             # Set invert registers to default for both banks
-#             lSFPExp.setInversion(0, 0x00)
-#             lSFPExp.setInversion(1, 0x00)
-
-#             # BAnk 0 input, bank 1 output
-#             lSFPExp.setIO(0, 0x00)
-#             lSFPExp.setIO(1, 0xff)
-
-#             # Bank 0 - enable all SFPGs (enable low)
-#             lSFPExp.setOutputs(0, 0x00)
-#             secho("SFPs 0-7 enabled", fg='cyan')
-#         elif lBoardType == kBoardTLU:
-
-#             lIC6 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander1').getI2CAddress())
-#             lIC7 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander2').getI2CAddress())
-
-#             # Bank 0
-#             lIC6.setInversion(0, 0x00)
-#             lIC6.setIO(0, 0x00)
-#             lIC6.setOutputs(0, 0x00)
-
-#             # Bank 1
-#             lIC6.setInversion(1, 0x00)
-#             lIC6.setIO(1, 0x00)
-#             lIC6.setOutputs(1, 0x88)
-
-
-#             # Bank 0
-#             lIC7.setInversion(0, 0x00)
-#             lIC7.setIO(0, 0x00)
-#             lIC7.setOutputs(0, 0xf0)
-
-#             # Bank 1
-#             lIC7.setInversion(1, 0x00)
-#             lIC7.setIO(1, 0x00)
-#             lIC7.setOutputs(1, 0xf0)
-
-#             lI2CBusNode = lDevice.getNode("io.i2c")
-#             lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
-
-#             lSIChip.writeI2CArray(0x113, [0x9, 0x33])
-#         else:
-#             click.ClickException("Unknown board kind {}".format(lBoardType))
-
-#     echo()
-#     echo( "--- " + style("Global status", fg='green') + " ---")
-#     lCsrStat = toolbox.readSubNodes(lMaster.getNode('global.csr.stat'))
-#     for k,v in lCsrStat.iteritems():
-#         echo("{}: {}".format(k, hex(v)))
-#     echo()
-# # ------------------------------------------------------------------------------
-
 
 # ------------------------------------------------------------------------------
 @master.command('freq', short_help="Measure some frequencies.")
@@ -432,20 +203,14 @@ def partmonitor(obj, watch, period):
         lScmdGenNode.getNode('sel').write(lPartId)
         lScmdGenNode.getClient().dispatch()
 
-        secho( "=> Time sync generator", fg='green')
-        lScmdGenCtrlDump = toolbox.readSubNodes(lScmdGenNode.getNode('ctrl'))
-        for n in sorted(lScmdGenCtrlDump):
-            echo( "  {} {}".format(n, hex(lScmdGenCtrlDump[n])))
+        # echo()
+        # secho( "=> Cmd generator control", fg='cyan')
 
-        echo()
-        secho( "=> Cmd generator control", fg='green')
+        # lScmdGenChanCtrlDump = toolbox.readSubNodes(lScmdGenNode.getNode('chan_ctrl'))
+        # toolbox.printRegTable(lScmdGenChanCtrlDump, False)
 
-        lScmdGenChanCtrlDump = toolbox.readSubNodes(lScmdGenNode.getNode('chan_ctrl'))
-        for n in sorted(lScmdGenChanCtrlDump):
-            echo( "  {} {}".format(n, hex(lScmdGenChanCtrlDump[n])))
-        echo()
-
-        echo()
+        # echo()
+        secho( "=> Cmd generator counters", fg='cyan')
         toolbox.printCounters( lScmdGenNode, {
             'actrs': 'Accept counters',
             'rctrs': 'Reject counters',
@@ -460,19 +225,38 @@ def partmonitor(obj, watch, period):
         # lDump = toolbox.readSubNodes(lDevice.getNode('master.spill.csr.stat'))
         # for n in sorted(lDump):
         #     echo( "  {} {}".format(n, hex(lDump[n])))
-        # echo()
+        echo()
 
         secho( "=> Partition {}".format(lPartId), fg='green')
 
         lCtrlDump = toolbox.readSubNodes(lPartNode.getNode('csr.ctrl'))
         lStatDump = toolbox.readSubNodes(lPartNode.getNode('csr.stat'))
 
-        echo()
-        secho("Control registers", fg='cyan')
-        toolbox.printRegTable(lCtrlDump, False)
-        echo()
-        secho("Status registers", fg='cyan')
-        toolbox.printRegTable(lStatDump, False)
+        # echo()
+        # secho("Control registers", fg='cyan')
+        # toolbox.printRegTable(lCtrlDump, False)
+        # echo()
+        # secho("Status registers", fg='cyan')
+        # toolbox.printRegTable(lStatDump, False)
+        # echo()
+
+        #-------------- Temp
+        ctrls = toolbox.formatRegTable(lCtrlDump, False).split('\n')
+        ctrls.insert(0, style("Control ", fg="cyan"))
+        stats = toolbox.formatRegTable(lStatDump, False).split('\n')
+        stats.insert(0, style("Status registers", fg='cyan'))
+
+        col1 = max([len(toolbox.escape_ansi(l)) for l in ctrls])
+        col2 = max([len(toolbox.escape_ansi(l)) for l in stats])
+
+        nrows = max(len(ctrls), len(stats));
+
+        ctrls += [''] * (nrows - len(ctrls))
+        stats += [''] * (nrows - len(stats))
+        fmt = '\'{:<%d}\' \'{:<%d}\'' % (col1, col2)
+        for c,s in zip(ctrls, stats):
+            print (c + ' '*(col1-len(toolbox.escape_ansi(c))), '' ,s + ' '*(col2-len(toolbox.escape_ansi(s))))
+        #-------------- Temp
         echo()
 
         lTimeStamp = lTStampNode.readBlock(2)
@@ -652,11 +436,12 @@ def readback(obj, readall, keep):
 
 
 # ------------------------------------------------------------------------------
-@master.command('send', short_help='Inject a single command.')
+@master.command('send-cmd', short_help='Inject a single command.')
 @click.pass_obj
 @click.argument('cmd', type=click.Choice(defs.kCommandIDs.keys()))
+@click.argument('chan', type=int, callback=toolbox.validate_chan)
 @click.option('-n', type=int, default=1)
-def send(obj, cmd, n):
+def sendcmd(obj, cmd, chan, n):
     '''
     Inject a single command.
 
@@ -665,7 +450,7 @@ def send(obj, cmd, n):
 
     # lDevice = obj.mDevice
     lMaster = obj.mMaster
-
+    lMaster.getNode('scmd_gen.sel').write(chan)
     lGenChanCtrl = lMaster.getNode('scmd_gen.chan_ctrl')
 
     toolbox.resetSubNodes(lGenChanCtrl)
@@ -679,7 +464,7 @@ def send(obj, cmd, n):
         lGenChanCtrl.getNode('force').write(0x0)
         lMaster.getClient().dispatch()
         lTimeStamp = int(lTStamp[0]) + (int(lTStamp[1]) << 32)
-        echo("Command sent {}({}) @time {} {}".format(style(cmd, fg='blue'), defs.kCommandIDs[cmd], hex(lTimeStamp), lTimeStamp))
+        echo("Command sent {}({}) from generator {} @time {} {}".format(style(cmd, fg='blue'), defs.kCommandIDs[cmd], chan, hex(lTimeStamp), lTimeStamp))
 # ------------------------------------------------------------------------------
 
 

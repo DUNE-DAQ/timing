@@ -16,7 +16,7 @@
 #include "pdt/I2CSlave.hpp"
 #include "pdt/SIChipSlave.hpp"
 // #include "pdt/MiniPODMasterNode.hpp"
-// #include "pdt/SI5344Node.hpp"
+#include "pdt/DACNode.hpp"
 #include "pdt/SI534xNode.hpp"
 #include "pdt/I2CExpanderNode.hpp"
 
@@ -77,22 +77,6 @@ register_i2c() {
       .def("writeClockRegister", &pdt::SIChipSlave::writeClockRegister)
       ;
 
-  // // Wrap SI5344Slave
-  // class_<pdt::SI5344Slave, bases<pdt::SIChipSlave>, boost::noncopyable > ("SI5344Slave", init<const pdt::I2CBaseNode*, uint8_t>())
-  //     // .def("readPage", &pdt::SI5344Slave::readPage)
-  //     // .def("switchPage", &pdt::SI5344Slave::switchPage)
-  //     // .def("readDeviceVersion", &pdt::SI5344Slave::readDeviceVersion)
-  //     // .def("readClockRegister", &pdt::SI5344Slave::readClockRegister)
-  //     // .def("writeClockRegister", &pdt::SI5344Slave::writeClockRegister)
-  //     .def("configure", &pdt::SI5344Slave::configure)
-  //     .def("readConfigID", &pdt::SI5344Slave::readConfigID)
-  //     ;
-
-  // // Wrap SI5344Node
-  // class_<pdt::SI5344Node, bases<pdt::SI5344Slave, pdt::I2CBaseNode> > ("SI5344Node", init<const uhal::Node&>())
-  //     ;
-
-
   // Wrap SI534xSlave
   class_<pdt::SI534xSlave, bases<pdt::SIChipSlave>, boost::noncopyable > ("SI534xSlave", init<const pdt::I2CBaseNode*, uint8_t>())
       .def("configure", &pdt::SI534xSlave::configure)
@@ -106,7 +90,6 @@ register_i2c() {
 
   // Wrap I2CExpanderSlave
   class_<pdt::I2CExpanderSlave, bases<pdt::I2CSlave>, boost::noncopyable > ("I2CExpanderSlave", init<const pdt::I2CBaseNode*, uint8_t>())
-      // .def("enable", &pdt::I2CExpanderSlave::enable)
       .def("setIO", &pdt::I2CExpanderSlave::setIO)
       .def("setInversion", &pdt::I2CExpanderSlave::setInversion)
       .def("setOutputs", &pdt::I2CExpanderSlave::setOutputs)
@@ -116,6 +99,16 @@ register_i2c() {
 
   // Wrap I2CExpanderNode
   class_<pdt::I2CExpanderNode, bases<pdt::I2CExpanderSlave, pdt::I2CBaseNode> > ("I2CExpanderNode", init<const uhal::Node&>())
+      ;
+
+  // Wrap DACSlave
+  class_<pdt::DACSlave, bases<pdt::I2CSlave>, boost::noncopyable > ("DACSlave", init<const pdt::I2CBaseNode*, uint8_t>())
+      .def("setInteralRef", &pdt::DACSlave::setInteralRef)
+      .def("setDAC", &pdt::DACSlave::setDAC)
+      ;
+
+  // Wrap DACNode
+  class_<pdt::DACNode, bases<pdt::DACSlave, pdt::I2CBaseNode> > ("DACNode", init<const uhal::Node&>())
       ;
 
 }

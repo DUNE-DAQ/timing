@@ -104,12 +104,39 @@ def printRegTable(aRegs, aHeader=True):
     lRegTable.set_chars(['-', '|', '+', '-'])
     if aHeader:
         lRegTable.header( ['name', 'value'] )
-    for k,v in aRegs.iteritems():
-        lRegTable.add_row( [str(k), hex(v)] )
+    # for k,v in aRegs.iteritems():
+    #     lRegTable.add_row( [str(k), hex(v)] )
+
+    for k in sorted(aRegs):
+        lRegTable.add_row( [str(k), hex(aRegs[k])] )
         
     echo  ( lRegTable.draw() )
 # ------------------------------------------------------------------------------
 
+
+# ------------------------------------------------------------------------------
+def formatRegTable(aRegs, aHeader=True):
+    lRegTable = Texttable(max_width=0)
+    lRegTable.set_deco(Texttable.VLINES | Texttable.BORDER | Texttable.HEADER)
+    lRegTable.set_chars(['-', '|', '+', '-'])
+    if aHeader:
+        lRegTable.header( ['name', 'value'] )
+    # for k,v in aRegs.iteritems():
+    #     lRegTable.add_row( [str(k), hex(v)] )
+
+    for k in sorted(aRegs):
+        lRegTable.add_row( [str(k), hex(aRegs[k])] )
+        
+    return lRegTable.draw()
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+kReEscapeAnsi = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -/]*[@-~]')
+
+def escape_ansi(line):
+    return kReEscapeAnsi.sub('', line)
+# ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
 def formatTStamp( aRawTStamp ):

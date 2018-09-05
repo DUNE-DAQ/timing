@@ -1,0 +1,59 @@
+#include "pdt/DACNode.hpp"
+
+namespace pdt {
+
+// uHAL Node registation
+UHAL_REGISTER_DERIVED_NODE(DACNode);
+
+//-----------------------------------------------------------------------------
+DACSlave::DACSlave( const I2CBaseNode* aMaster, uint8_t aAddr ) :
+I2CSlave( aMaster, aAddr ) {
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void
+DACSlave::setInteralRef( bool aInternal ) const {
+    this->writeI2CArray(0x38, {0x0, aInternal});
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void
+DACSlave::setDAC(uint8_t aChan, uint32_t aCode) const {
+
+        if (aChan<0 or aChan>7) {
+            throw DACChannelOutOfRange();
+        }
+
+        if ( aCode > 0xffff ) {
+            throw DACValueOutOfRange();
+        }
+
+        uint32_t lAddr = 0x18 + (aChan & 0x7);
+
+        this->writeI2CArray(lAddr, {((aCode >> 8) & 0xff), (aCode & 0xff)});
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+DACNode::DACNode( const uhal::Node& aNode ) : I2CBaseNode(aNode), DACSlave(this, this->getSlaveAddress("i2caddr") ) {
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+DACNode::DACNode( const DACNode& aOther ) : I2CBaseNode(aOther), DACSlave(this, this->getSlaveAddress("i2caddr") ) {
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+DACNode::~DACNode() {
+}
+//-----------------------------------------------------------------------------
+
+} // namespace pdt

@@ -14,7 +14,7 @@ import pdt.cli.definitions as defs
 
 from click import echo, style, secho
 from os.path import join, expandvars, basename
-from pdt.core import SI534xSlave, I2CExpanderSlave
+from pdt.core import SI534xSlave, I2CExpanderSlave, DACSlave
 
 from pdt.cli.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
 from pdt.cli.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
@@ -36,7 +36,7 @@ kClockConfigMap = {
     kPC059FanoutHDMI: "devel/PDTS_PC059_FANOUT.txt",
     kPC059FanoutSFP: "devel/PDTS_PC059_FANOUT_SFP_IN.txt",
     # kTLURev1: "devel/PDTS_TLU_MASTER.txt"
-    kTLURev1: "devel/PDTS_TLU_MASTER_ONLYLEMOIN.txt"
+    # kTLURev1: "devel/PDTS_TLU_MASTER_ONLYLEMOIN.txt"
 }
 
 kUIDRevisionMap = {
@@ -320,15 +320,26 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
             lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
 
             lSIChip.writeI2CArray(0x113, [0x9, 0x33])
+
+            # BI signals are NIM
+            lBISignalThreshold = 0x589D
+
+            lDAC1.setInteralRef(False);
+            lDAC2.setInteralRef(False);
+            lDAC1.setDAC(7, lBISignalThreshold);
+            lDAC2.setDAC(7, lBISignalThreshold);
+
+            secho("DAC1 and DAC2 set to " + hex(lBISignalThreshold), fg='cyan')
+
         else:
             click.ClickException("Unknown board kind {}".format(lBoardType))
 
     echo()
-    # echo( "--- " + style("Global status", fg='green') + " ---")
-    # lCsrStat = toolbox.readSubNodes(lMaster.getNode('global.csr.stat'))
-    # for k,v in lCsrStat.iteritems():
-    #     echo("{}: {}".format(k, hex(v)))
-    # echo()
+    echo( "--- " + style("IO status", fg='cyan') + " ---")
+    lCsrStat = toolbox.readSubNodes(lIO.getNode('csr.stat'))
+    toolbox.printRegTable(lCsrStat, False)
+
+    echo()
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
@@ -376,13 +387,6 @@ def pllstatus(ctx, obj):
         lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
     else:
         lSIChip = lIO.getNode('pll_i2c')
-    # lI2CBusNode = lDevice.getNode('io.i2c')
-    # lSI5345 = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
-
-
-    # if softrst:
-    #     secho("Resetting", fg='yellow')
-    #     lSIChip.writeClockRegister(0x1e, 0x2)
 
     secho("Si3545 configuration id: {}".format(lSIChip.readConfigID()), fg='green')
 
@@ -432,9 +436,10 @@ def pllstatus(ctx, obj):
 
 # ------------------------------------------------------------------------------
 @io.command('dac-setup')
+@click.argument('value', type=click.IntRange(0,0xffff))
 @click.pass_obj
 @click.pass_context
-def dacsetup(ctx, obj):
+def dacsetup(ctx, obj, value):
 
     lDevice = obj.mDevice
     lBoardType = obj.mBoardType
@@ -444,43 +449,49 @@ def dacsetup(ctx, obj):
         echo("  {}: {}".format(lSlave, hex(lI2CBusNode.getSlaveAddress(lSlave))))
 
 
-    lDAC1 = lI2CBusNode.getSlave('DAC1')
-    lDAC2 = lI2CBusNode.getSlave('DAC2')
+    lDAC1 = DACSlave(lI2CBusNode, lI2CBusNode.getSlave('DAC1').getI2CAddress())
+    lDAC2 = DACSlave(lI2CBusNode, lI2CBusNode.getSlave('DAC2').getI2CAddress())
 
+    # def intRef(dacNode, internal):
+    #     if internal:
+    #         cmdDAC= [0x00,0x01]
+    #     else:
+    #         cmdDAC= [0x00,0x00]
+    #     dacNode.writeI2CArray(0x38, cmdDAC)
 
-    def intRef(dacNode, internal):
-        if internal:
-            cmdDAC= [0x00,0x01]
-        else:
-            cmdDAC= [0x00,0x00]
-        dacNode.writeI2CArray(0x38, cmdDAC)
+    # def writeDAC(dacNode, chan, dacCode):
+    #     print ("DAC value:"  , hex(dacCode))
+    #     if chan<0 or chan>7:
+    #         print ("writeDAC ERROR: channel",chan,"not in range 0-7 (bit mask)")
+    #         return -1
+    #     if dacCode<0:
+    #         print ("writeDAC ERROR: value",dacCode,"<0. Default to 0")
+    #         dacCode=0
+    #     elif dacCode>0xFFFF :
+    #         print ("writeDAC ERROR: value",dacCode,">0xFFFF. Default to 0xFFFF")
+    #         dacCode=0xFFFF
 
-    def writeDAC(dacNode, chan, dacCode):
-        print ("DAC value:"  , hex(dacCode))
-        if chan<0 or chan>7:
-            print ("writeDAC ERROR: channel",chan,"not in range 0-7 (bit mask)")
-            return -1
-        if dacCode<0:
-            print ("writeDAC ERROR: value",dacCode,"<0. Default to 0")
-            dacCode=0
-        elif dacCode>0xFFFF :
-            print ("writeDAC ERROR: value",dacCode,">0xFFFF. Default to 0xFFFF")
-            dacCode=0xFFFF
+    #     addr = 0x18 + ( chan & 0x7)
+    #     seq = [
+    #         ((dacCode >> 8) & 0xff),
+    #         (dacCode & 0xff),
+    #     ]
 
-        addr = 0x18 + ( chan & 0x7)
-        seq = [
-            ((dacCode >> 8) & 0xff),
-            (dacCode & 0xff),
-        ]
+    #     dacNode.writeI2CArray(addr, seq)
 
-        dacNode.writeI2CArray(addr, seq)
+    # intRef(lDAC1, False)
+    # intRef(lDAC2, False)
 
-    intRef(lDAC1, False)
-    intRef(lDAC2, False)
+    # writeDAC(lDAC1, 7, 0x589D )
+    # writeDAC(lDAC2, 7, 0x589D )
+    # dacval = 0x589D
 
-    writeDAC(lDAC1, 7, 0x589D )
-    writeDAC(lDAC2, 7, 0x589D )
+    lDAC1.setInteralRef(False);
+    lDAC2.setInteralRef(False);
+    lDAC1.setDAC(7, value);
+    lDAC2.setDAC(7, value);
 
+    secho("DAC1 and DAC2 set to " + hex(value), fg='cyan')
 
 
 # ------------------------------------------------------------------------------
