@@ -34,9 +34,8 @@ kClockConfigMap = {
     kFMCRev2: "SI5344/PDTS0003.txt",
     kPC059Rev1: "SI5345/PDTS0005.txt",
     kPC059FanoutHDMI: "devel/PDTS_PC059_FANOUT.txt",
-    kPC059FanoutSFP: "devel/PDTS_PC059_FANOUT_SFP_IN.txt",
-    # kTLURev1: "devel/PDTS_TLU_MASTER.txt"
-    # kTLURev1: "devel/PDTS_TLU_MASTER_ONLYLEMOIN.txt"
+    kPC059FanoutSFP: "wr/FANOUT_PLL_WIDEBW_SFPIN.txt",
+    kTLURev1: "wr/TLU_EXTCLK_10MHZ_NOZDM.txt"
 }
 
 kUIDRevisionMap = {
@@ -316,10 +315,15 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
             lIC7.setIO(1, 0x00)
             lIC7.setOutputs(1, 0xf0)
 
+            # Tweak the PLL swing
             lI2CBusNode = lDevice.getNode("io.i2c")
             lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
 
             lSIChip.writeI2CArray(0x113, [0x9, 0x33])
+
+
+            lDAC1 = DACSlave(lI2CBusNode, lI2CBusNode.getSlave('DAC1').getI2CAddress())
+            lDAC2 = DACSlave(lI2CBusNode, lI2CBusNode.getSlave('DAC2').getI2CAddress())
 
             # BI signals are NIM
             lBISignalThreshold = 0x589D
@@ -333,6 +337,10 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
 
         else:
             click.ClickException("Unknown board kind {}".format(lBoardType))
+
+        lIO.getNode('csr.ctrl.rst_lock_mon').write(0x1)
+        lIO.getNode('csr.ctrl.rst_lock_mon').write(0x0)
+        lIO.getClient().dispatch()
 
     echo()
     echo( "--- " + style("IO status", fg='cyan') + " ---")

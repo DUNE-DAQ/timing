@@ -34,7 +34,7 @@ DACSlave::setDAC(uint8_t aChan, uint32_t aCode) const {
 
         uint32_t lAddr = 0x18 + (aChan & 0x7);
 
-        this->writeI2CArray(lAddr, {((aCode >> 8) & 0xff), (aCode & 0xff)});
+        this->writeI2CArray(lAddr, {(uint8_t)((aCode >> 8) & 0xff), (uint8_t)(aCode & 0xff)});
 }
 //-----------------------------------------------------------------------------
 
