@@ -12,12 +12,13 @@ import collections
 
 # PDT imports
 import pdt
-import pdt.cli.toolbox as toolbox
-import pdt.cli.endpoint as endpoint
-import pdt.cli.master as master
-import pdt.cli.debug as debug
-import pdt.cli.io as io
 import pdt.cli.definitions as defs
+import pdt.cli.toolbox as toolbox
+import pdt.cli.io as io
+import pdt.cli.master as master
+import pdt.cli.endpoint as endpoint
+import pdt.cli.crt as crt
+import pdt.cli.debug as debug
 
 # 
 from click import echo, style, secho
@@ -72,9 +73,10 @@ def list(obj):
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
+    cli.add_command(io.io)
     cli.add_command(master.master)
     cli.add_command(endpoint.endpoint)
+    cli.add_command(crt.crt)
     cli.add_command(debug.debug)
-    cli.add_command(io.io)
     cli(obj=PDTContext())
 # ------------------------------------------------------------------------------

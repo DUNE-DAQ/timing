@@ -7,7 +7,7 @@ UHAL_REGISTER_DERIVED_NODE(DACNode);
 
 //-----------------------------------------------------------------------------
 DACSlave::DACSlave( const I2CBaseNode* aMaster, uint8_t aAddr ) :
-I2CSlave( aMaster, aAddr ) {
+    I2CSlave( aMaster, aAddr ) {
 }
 //-----------------------------------------------------------------------------
 
@@ -24,17 +24,17 @@ DACSlave::setInteralRef( bool aInternal ) const {
 void
 DACSlave::setDAC(uint8_t aChan, uint32_t aCode) const {
 
-        if (aChan<0 or aChan>7) {
-            throw DACChannelOutOfRange();
-        }
+    if (aChan<0 or aChan>7) {
+        throw DACChannelOutOfRange();
+    }
 
-        if ( aCode > 0xffff ) {
-            throw DACValueOutOfRange();
-        }
+    if ( aCode > 0xffff ) {
+        throw DACValueOutOfRange();
+    }
 
-        uint32_t lAddr = 0x18 + (aChan & 0x7);
+    uint32_t lAddr = 0x18 + (aChan & 0x7);
 
-        this->writeI2CArray(lAddr, {(uint8_t)((aCode >> 8) & 0xff), (uint8_t)(aCode & 0xff)});
+    this->writeI2CArray(lAddr, {(uint8_t)((aCode >> 8) & 0xff), (uint8_t)(aCode & 0xff)});
 }
 //-----------------------------------------------------------------------------
 

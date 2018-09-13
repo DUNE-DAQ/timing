@@ -343,11 +343,6 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
         lIO.getClient().dispatch()
 
     echo()
-    echo( "--- " + style("IO status", fg='cyan') + " ---")
-    lCsrStat = toolbox.readSubNodes(lIO.getNode('csr.stat'))
-    toolbox.printRegTable(lCsrStat, False)
-
-    echo()
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
@@ -357,6 +352,7 @@ def freq(obj):
     lDevice = obj.mDevice
     lBoardType = obj.mBoardType
 
+    secho("PLL Clock frequency measurement:", fg='cyan')
     # Measure the generated clock frequency
     freqs = {}
     for i in range(1 if lBoardType == kBoardTLU else 2):
@@ -376,11 +372,11 @@ def freq(obj):
 
 
 # ------------------------------------------------------------------------------
-@io.command('pll-status')
+@io.command('clk-status')
 @click.pass_obj
 @click.pass_context
-# @click.option('--soft-rst', 'softrst', is_flag=True)
-def pllstatus(ctx, obj):
+@click.option('-v', 'verbose', is_flag=True)
+def pllstatus(ctx, obj, verbose):
     def decRng( word, ibit, nbits=1):
         return (word >> ibit) & ((1<<nbits)-1)
 
@@ -388,6 +384,14 @@ def pllstatus(ctx, obj):
     lBoardType = obj.mBoardType
     lIO = lDevice.getNode('io')
 
+    echo()
+    echo( "--- " + style("IO status", fg='cyan') + " ---")
+    lCsrStat = toolbox.readSubNodes(lIO.getNode('csr.stat'))
+    toolbox.printRegTable(lCsrStat, False)
+
+    echo()
+    ctx.invoke(freq)
+    echo()
 
     # Access the clock chip
     if lBoardType in [kBoardPC059, kBoardTLU]:
@@ -396,14 +400,14 @@ def pllstatus(ctx, obj):
     else:
         lSIChip = lIO.getNode('pll_i2c')
 
-    secho("Si3545 configuration id: {}".format(lSIChip.readConfigID()), fg='green')
-
-    secho("Device Information", fg='cyan')
-    lVersion = collections.OrderedDict()
-    lVersion['Part number'] = lSIChip.readDeviceVersion()
-    lVersion['Device grade'] = lSIChip.readClockRegister(0x4)
-    lVersion['Device revision'] = lSIChip.readClockRegister(0x5)
-    toolbox.printRegTable(lVersion)
+    echo("PLL Configuration id: {}".format(style(lSIChip.readConfigID(), fg='cyan')))
+    if verbose:
+        secho("PLL Information", fg='cyan')
+        lVersion = collections.OrderedDict()
+        lVersion['Part number'] = lSIChip.readDeviceVersion()
+        lVersion['Device grade'] = lSIChip.readClockRegister(0x4)
+        lVersion['Device revision'] = lSIChip.readClockRegister(0x5)
+        toolbox.printRegTable(lVersion)
 
     w = lSIChip.readClockRegister(0xc)
 
@@ -435,10 +439,9 @@ def pllstatus(ctx, obj):
     w = lSIChip.readClockRegister(0x12)
     registers['OOF (sticky)'] = decRng(w, 4, 4)
 
-    secho("Status registers", fg='cyan')
+    secho("PLL Status", fg='cyan')
     toolbox.printRegTable(registers)
 
-    ctx.invoke(freq)
 # ------------------------------------------------------------------------------
 
 
