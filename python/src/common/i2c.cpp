@@ -50,6 +50,7 @@ register_i2c() {
       .def("writeI2CPrimitive", &pdt::I2CBaseNode::writeI2CPrimitive, pdt_I2CBaseNode_writeI2CPrimitive_overloads())
       .def("getSlaves", &pdt::I2CBaseNode::getSlaves)
       .def("getSlaveAddress", &pdt::I2CBaseNode::getSlaveAddress)
+      .def("scan", &pdt::I2CBaseNode::scan)
       ;
 
   // Wrap pdt::I2CMasterNode

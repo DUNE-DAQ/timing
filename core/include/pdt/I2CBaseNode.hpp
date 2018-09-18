@@ -54,12 +54,10 @@ public:
     virtual std::vector<uint8_t> readI2CArray(uint8_t aSlaveAddress, uint32_t i2cAddress, uint32_t aNumWords) const;
     virtual void writeI2CArray(uint8_t aSlaveAddress, uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop = true ) const;
 
-    virtual std::vector<uint8_t> readI2CPrimitive(uint8_t aSlaveAddress, uint32_t aNumBytes) const {
-         return readBlockI2C(aSlaveAddress, aNumBytes); 
-    };
-    virtual void writeI2CPrimitive(uint8_t aSlaveAddress, const std::vector<uint8_t>& aData, bool aSendStop = true) const {
-        writeBlockI2C( aSlaveAddress, aData, aSendStop );
-    };
+    virtual std::vector<uint8_t> readI2CPrimitive(uint8_t aSlaveAddress, uint32_t aNumBytes) const;
+    virtual void writeI2CPrimitive(uint8_t aSlaveAddress, const std::vector<uint8_t>& aData, bool aSendStop = true) const;
+
+    void scan() const;
 protected:
 
     // low level i2c functions

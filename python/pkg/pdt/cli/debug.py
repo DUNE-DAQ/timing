@@ -64,15 +64,12 @@ def debug(obj, device):
 def inspect(obj, nodes):
     lDevice = obj.mDevice
 
-    print(nodes)
     lNodeIds = lDevice.getNodes(nodes.encode('ascii','replace'))
-    print(lNodeIds)
     lNodeVals = {n:lDevice.getNode(n).read() for n in lNodeIds}
 
     lDevice.dispatch()
 
-    for k in sorted(lNodeVals):
-        print(k,lNodeVals[k])
+    printRegTable(lNodeVals, False)
 # ------------------------------------------------------------------------------
 
 
@@ -144,4 +141,116 @@ def sfpexpander(obj):
 # ------------------------------------------------------------------------------
 
 
+# ------------------------------------------------------------------------------
+@debug.command('scan-i2c', short_help="Debug.")
+@click.pass_obj
+def sfp_status(obj):
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
 
+    lNodes = []
+
+    if lBoardType == kBoardFMC:
+        lNodes = ['io.sfp_i2c','io.uid_i2c','io.pll_i2c']
+    elif lBoardType == kBoardPC059:
+        lNodes = ['io.i2c', 'io.usfp_i2c']
+    elif lBoardType == kBoardTLU:
+        lNodes = ['io.i2c']
+        
+
+    for n in lNodes:
+        lI2CBusNode = lDevice.getNode(n)
+        print('Scanning',lI2CBusNode)
+        lI2CBusNode.scan()
+
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@debug.command('sfp-status', short_help="Debug.")
+@click.pass_obj
+def sfp_status(obj):
+
+
+    def asciidecode( v ): 
+        return (''.join([chr(c) for c in v])).rstrip()
+
+    def tempdecode( v ):
+        lSign = -1 if ((v[0]>>7) & 0x1) else 1
+        x = lSign*((v[0] & 0x7f) + v[1]/float(0xff))
+        return '{:.3f} C'.format(x)
+
+    def vccdecode( v ):
+        return '{:.4f} V'.format(((v[0] << 8) + v[1])/float(10000))
+
+    def biascurdecode( v ):
+        return '{:.3f} mA'.format(((v[0] << 8) + v[1])*2e-3)
+
+    def powerdecode( v ):
+        return '{:.3f} mW'.format(((v[0] << 8) + v[1])*1e-3)
+
+
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+
+    if lBoardType != kBoardFMC:
+        secho('No SFP  on {}'.format(kBoardNamelMap[lBoardType]))
+        return
+    lI2CBusNode = lDevice.getNode("io.sfp_i2c")
+    lI2CBusNode.scan()
+    lEEProm = lI2CBusNode.getSlave('eeprom')
+
+    echo()
+    lVenInfoEnc = collections.OrderedDict()
+    lVenInfoEnc['Name'] = asciidecode(lEEProm.readI2CArray(20,16))
+    lVenInfoEnc['OUI'] = '{}.{}.{}'.format(*(lEEProm.readI2CArray(37,3)))
+    lVenInfoEnc['Part Number'] = asciidecode(lEEProm.readI2CArray(40,16))
+    lVenInfoEnc['Revision'] = asciidecode(lEEProm.readI2CArray(56,4))
+    lVenInfoEnc['Serial Number'] = asciidecode(lEEProm.readI2CArray(68,16))
+    lVenInfoEnc['Day'] = asciidecode(lEEProm.readI2CArray(88,2))
+    lVenInfoEnc['Month'] = asciidecode(lEEProm.readI2CArray(86,2))
+    lVenInfoEnc['Year'] = asciidecode(lEEProm.readI2CArray(84,2))
+
+    secho("SFP Vendor info", fg='cyan')
+    # for k,v in lVenInfoEnc.items():
+    #     v = ''.join([chr(c) for c in v])
+    #     echo(' - '+k+': '+style(v, fg='cyan'))
+    echo(toolbox.formatDictTable(lVenInfoEnc, aHdr=False, aSort=False))
+    echo()
+    lLaserWl = lEEProm.readI2CArray(60,2)
+    lLaserWl = (lLaserWl[0] << 8) + lLaserWl[1]
+    echo('Laser Wavelength: '+style(str(lLaserWl)+'nm', fg='cyan'))
+
+    lRegs = collections.OrderedDict()
+
+    lRegs['Identifier'] = lEEProm.readI2C(0)
+    lRegs['Ext Identifier'] = lEEProm.readI2C(1)
+    lRegs['Connector'] = lEEProm.readI2C(2)
+
+    # Transciever Compatinility
+    lTransComp = lEEProm.readI2CArray(3, 8)
+
+    lRegs['Encoding'] = lEEProm.readI2C(11)
+    lRegs['BR, Nominal'] = lEEProm.readI2C(12)
+    lRegs['Rate ID'] = lEEProm.readI2C(13)
+
+    toolbox.printRegTable(lRegs, aHeader=False, sort=False)
+
+    echo()
+    secho("SFP Diagnostic info", fg='cyan')
+
+    lCtrlDiag = lI2CBusNode.getSlave('diag')
+    lReadings = collections.OrderedDict()
+
+    lReadings['Temp'] = tempdecode(lCtrlDiag.readI2CArray(96, 2))
+    lReadings['Vcc']  = vccdecode(lCtrlDiag.readI2CArray(98, 2))
+    lReadings['TX bias']  = biascurdecode(lCtrlDiag.readI2CArray(100, 2))
+    lReadings['TX power']  = powerdecode(lCtrlDiag.readI2CArray(102, 2))
+    lReadings['Rx power']  = powerdecode(lCtrlDiag.readI2CArray(104, 2))
+    lReadings['TX disable'] = bin(lCtrlDiag.readI2C(110))
+
+    # for k,v in lReadings.iteritems():
+        # print (k, v)
+
+    echo(toolbox.formatDictTable(lReadings, aHdr=False, aSort=False))
+# ------------------------------------------------------------------------------

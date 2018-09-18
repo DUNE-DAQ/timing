@@ -16,7 +16,7 @@ from click import echo, style, secho
 from os.path import join, expandvars, basename
 from pdt.core import SI534xSlave, I2CExpanderSlave
 
-kMasterFWMajorRequired = 4
+kMasterFWMajorRequired = 5
 
 
 from pdt.cli.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
@@ -174,11 +174,11 @@ def partition(obj, id):
 
 
 # ------------------------------------------------------------------------------
-@partition.command('monitor', short_help='Display the status of the timing master.')
+@partition.command('status', short_help='Display the status of the timing master.')
 @click.pass_obj
 @click.option('--watch', '-w', is_flag=True, default=False, help='Turn on automatic refresh')
 @click.option('--period','-p', type=click.IntRange(0, 10), default=2, help='Automatic refresh period')
-def partmonitor(obj, watch, period):
+def partstatus(obj, watch, period):
     '''
     Display the master status, accepted and rejected command counters
     '''
@@ -597,6 +597,90 @@ def spillgen(obj):
     lSpillCtrl.getClient().dispatch()
 # ------------------------------------------------------------------------------
 
+
+# ------------------------------------------------------------------------------
+@master.group('align')
+@click.pass_obj
+def align(obj):
+    lMaster = obj.mMaster
+    obj.mGlobal = lMaster.getNode('global')
+    obj.mACmd = lMaster.getNode('acmd')
+    obj.mEcho = lMaster.getNode('echo')
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@align.command('measure-delay', short_help="Control the trigger return endpoint")
+@click.argument('addr', type=toolbox.IntRange(0x0,0x100))
+@click.pass_obj
+@click.pass_context
+def align_measuredelay(ctx, obj, addr):
+
+    lACmd = obj.mACmd
+    lEcho = obj.mEcho
+    lGlobal = obj.mGlobal
+
+    lACmd.getNode('csr.ctrl.addr').write(addr)
+    lACmd.getNode('csr.ctrl.tx_en').write(0x1)
+    # lACmd.getNode('csr.ctrl.update').write(0x1)
+    lACmd.getNode('csr.ctrl.go').write(0x1)
+    lACmd.getNode('csr.ctrl.go').write(0x0)
+    lACmd.getClient().dispatch()
+
+    # time.sleep(0.1)
+
+    # lDone = lACmd.getNode('csr.stat.done').read()
+    # lACmd.getClient().dispatch()
+
+    # print('Done', hex(lDone))
+
+    time.sleep(1)
+
+    # Dont' assume it's on
+    lGlobal.getNode('csr.ctrl.ep_en').write(0x0)
+    lGlobal.getNode('csr.ctrl.ep_en').write(0x1)
+    lGlobal.getClient().dispatch()
+
+    time.sleep(0.1)
+
+    lEptStat = lGlobal.getNode('csr.stat.ep_stat').read()
+    lEptRdy = lGlobal.getNode('csr.stat.ep_rdy').read()
+    lGlobal.getClient().dispatch()
+
+    print ('stat', hex(lEptStat))
+    print ('rdy ', hex(lEptRdy))
+
+    # lACmd.getNode('csr.ctrl.addr').write(addr)
+    # lACmd.getNode('csr.ctrl.tx_en').write(0x1)
+    # lACmd.getNode('csr.ctrl.update').write(0x1)
+    # lACmd.getNode('csr.ctrl.go').write(0x1)
+    # lACmd.getNode('csr.ctrl.go').write(0x0)
+    # lACmd.getClient().dispatch()
+
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@align.command('program-delay', short_help="Control the trigger return endpoint")
+@click.argument('addr', type=toolbox.IntRange(0x0,0x100))
+@click.argument('coarse', type=toolbox.IntRange(0x0,0x100))
+@click.pass_obj
+@click.pass_context
+def align_programedelay(ctx, obj, addr, coarse):
+
+    lACmd = obj.mACmd
+    lEcho = obj.mEcho
+    lGlobal = obj.mGlobal
+
+    lACmd.getNode('csr.ctrl.addr').write(addr)
+    lACmd.getNode('csr.ctrl.cdel').write(coarse)
+    lACmd.getNode('csr.ctrl.update').write(0x1)
+    lACmd.getNode('csr.ctrl.go').write(0x1)
+    lACmd.getNode('csr.ctrl.go').write(0x0)
+    lACmd.getClient().dispatch()
+# ------------------------------------------------------------------------------
+
+
 # ------------------------------------------------------------------------------
 # -- cyc_len and spill_len are in units of 1 / (50MHz / 2^24) = 0.34s
 @master.group('ext-trig')
@@ -607,11 +691,11 @@ def externaltrigger(obj):
 
 
 # ------------------------------------------------------------------------------
-@externaltrigger.command('ept', short_help="Control the trigger return endpoint")
+@externaltrigger.command('delay', short_help="Control the trigger return endpoint")
 @click.argument('action', default='enable', type=click.Choice(['enable', 'disable', 'reset']))
 @click.pass_obj
 @click.pass_context
-def exttrgept(ctx, obj, action):
+def exttrg_ept(ctx, obj, action):
 
     lExtTrig = obj.mExtTrig
 
@@ -634,7 +718,7 @@ def exttrgept(ctx, obj, action):
 @click.option('--on/--off', default=True, help='enable/disable triggers')
 @click.pass_obj
 @click.pass_context
-def exttrgenable(ctx, obj, on):
+def exttrg_enable(ctx, obj, on):
 
     lExtTrig = obj.mExtTrig
 
@@ -650,7 +734,7 @@ def exttrgenable(ctx, obj, on):
 @click.option('--watch', '-w', is_flag=True, default=False, help='Turn on automatic refresh')
 @click.option('--period','-p', type=click.IntRange(0, 10), default=2, help='Automatic refresh period')
 @click.pass_obj
-def exttrgmonitor(obj, watch, period):
+def exttrg_monitor(obj, watch, period):
     
     lExtTrig = obj.mExtTrig
 

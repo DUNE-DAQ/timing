@@ -9,29 +9,6 @@ from click import echo, style, secho
 from click_texttable import Texttable
 import time
 
-# -----------------
-def split_ints(ctx, param, value):
-
-    sep = ','
-    dash = '-'
-
-    numbers = []
-    for item in value.split(sep):
-        nums = item.split(dash)
-        if len(nums) == 1:
-            # single entry
-            numbers.append(int(item))
-        elif len(nums) == 2:
-            # range
-            i, j = int(nums[0]), int(nums[1])
-            if i > j:
-                click.ClickException('Invalid interval '+item)
-            numbers.extend(xrange(i,j+1))
-        else:
-           click.ClickException('Malformed option (comma separated list expected): {}'.format(value))
-
-    return numbers
-# -----------------
 
 # ------------------------------------------------------------------------------
 #    ____        __          _      __ 
@@ -42,7 +19,7 @@ def split_ints(ctx, param, value):
 @click.group('ept', invoke_without_command=True)
 @click.pass_obj
 @click.argument('device', callback=toolbox.validate_device)
-@click.argument('ids', callback=split_ints)
+@click.argument('ids', callback=toolbox.split_ints)
 def endpoint(obj, device, ids):
     '''
     Endpoint master commands.
@@ -91,8 +68,9 @@ def endpoint(obj, device, ids):
 @endpoint.command('enable')
 @click.pass_obj
 @click.option('--on/--off', default=True, help='enable/disable the endpoint')
-@click.option('--partition', '-p', type=click.IntRange(0,4), help='Target partition', default=0)
-def enable(obj, on, partition):
+@click.option('--partition', '-p', type=click.IntRange(0,4), help='Partition', default=0)
+@click.option('--address', '-a', type=toolbox.IntRange(0x0,0x100), help='Address', default=None)
+def enable(obj, on, partition, address):
     '''
     Activate timing endpoint wrapper block.
     '''
@@ -101,6 +79,12 @@ def enable(obj, on, partition):
     for i, ep in obj.mEndpoints.iteritems():
         if on:
             ep.getNode('csr.ctrl.tgrp').write(partition)
+            if address is not None:
+                ep.getNode('csr.ctrl.int_addr').write(0x1)
+                ep.getNode('csr.ctrl.addr').write(address)
+            else:
+                ep.getNode('csr.ctrl.int_addr').write(0x0)
+
             ep.getNode('csr.ctrl.ctr_rst').write(0x1)
             ep.getNode('csr.ctrl.ctr_rst').write(0x0)
             ep.getClient().dispatch()
@@ -118,11 +102,11 @@ def enable(obj, on, partition):
 
 
 
-@endpoint.command('monitor', short_help='Display the status of timing endpoint.')
+@endpoint.command('status', short_help='Display the status of timing endpoint.')
 @click.pass_obj
 @click.option('--watch', '-w', is_flag=True, default=False, help='Turn on automatic refresh')
 @click.option('--period', '-p', type=click.IntRange(0, 240), default=2, help='Period of automatic refresh')
-def monitor(obj, watch, period):
+def status(obj, watch, period):
     '''
     Display the endpoint status, accepted and rejected command counters
     '''
@@ -176,6 +160,10 @@ def monitor(obj, watch, period):
         lEPSummary.add_row(
                 ['Partition']+
                 [str(lEPData[p]['ctrldump']['tgrp']) for p in lEPKeys]
+        )
+        lEPSummary.add_row(
+                ['Address']+
+                [str(lEPData[p]['ctrldump']['addr']) for p in lEPKeys]
         )
         lEPSummary.add_row(
                 ['Timestamp']+

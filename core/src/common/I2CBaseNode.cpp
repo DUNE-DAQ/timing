@@ -133,7 +133,7 @@ I2CBaseNode::writeI2C(uint8_t aSlaveAddress, uint32_t i2cAddress, uint8_t aData,
 std::vector<uint8_t>
 I2CBaseNode::readI2CArray(uint8_t aSlaveAddress, uint32_t i2cAddress, uint32_t aNumWords) const {
     // write one word containing the address
-    std::vector<uint8_t> lArray(1, i2cAddress & 0xff);
+    std::vector<uint8_t> lArray{(uint8_t)(i2cAddress & 0xff)};
     this->writeBlockI2C(aSlaveAddress, lArray);
     // request the content at the specific address
     return this->readBlockI2C(aSlaveAddress, aNumWords);
@@ -152,6 +152,20 @@ I2CBaseNode::writeI2CArray(uint8_t aSlaveAddress, uint32_t i2cAddress, std::vect
         block[i+1] = aData[i];
 
     this->writeBlockI2C(aSlaveAddress, block, aSendStop);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+std::vector<uint8_t> 
+I2CBaseNode::readI2CPrimitive(uint8_t aSlaveAddress, uint32_t aNumBytes) const {
+    return this->readBlockI2C(aSlaveAddress, aNumBytes); 
+};
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void
+I2CBaseNode::writeI2CPrimitive(uint8_t aSlaveAddress, const std::vector<uint8_t>& aData, bool aSendStop) const {
+    this->writeBlockI2C( aSlaveAddress, aData, aSendStop );
 }
 //-----------------------------------------------------------------------------
 
@@ -229,6 +243,24 @@ I2CBaseNode::readBlockI2C(uint8_t aSlaveAddress, uint32_t lNumBytes) const {
 }
 //-----------------------------------------------------------------------------
 
+void
+I2CBaseNode::scan() const {
+
+    // Reset bus before beginning
+    reset();
+
+    for( uint8_t iAddr(0); iAddr<0x7f; ++iAddr) {
+        // Open the connection & send the target i2c address. Bit 0 set to 1 (read)
+        try {
+            sendI2CCommandAndWriteData(kStartCmd, (iAddr << 1) | 0x01);
+            sendI2CCommandAndReadData(kStopCmd | kAckCmd);
+        } catch (const pdt::I2CException& lExc) {
+            // PDT_LOG(kError) << std::showbase << std::hex << (uint32_t)iAddr << "  " << lExc.what();
+            continue;
+        }
+        PDT_LOG(kNotice) << std::showbase << std::hex << (uint32_t)iAddr << " found";
+    }
+}
 
 //-----------------------------------------------------------------------------
 void 
@@ -344,25 +376,22 @@ void I2CBaseNode::waitUntilFinished(bool aRequireAcknowledgement, bool aRequireB
     unsigned lAttempt = 1;
     bool lReceivedAcknowledge, lBusy;
 
+    const uhal::Node& lStatusNode = getNode(kStatusNode);
+
     while (lAttempt <= lMaxRetry) {
         usleep(10);
         // Get the status
-        uhal::ValWord<uint32_t> i2c_status = getNode(kStatusNode).read();
+        uhal::ValWord<uint32_t> i2c_status = lStatusNode.read();
         getClient().dispatch();
-        // lReceivedAcknowledge = !(i2c_status & 0x80);
+
         lReceivedAcknowledge = !(i2c_status & kReceivedAckBit);
-        // lBusy = (i2c_status & 0x40);
         lBusy = (i2c_status & kBusyBit);
-        // bool arbitrationLost = (i2c_status & 0x20);
         bool arbitrationLost = (i2c_status & kArbitrationLostBit);
-        // bool transferInProgress = (i2c_status & 0x02);
         bool transferInProgress = (i2c_status & kInProgressBit);
-        //bool interruptFlag = (i2c_status & 0x01);
 
         if (arbitrationLost) {
             // This is an instant error at any time
             pdt::I2CException lExc("I2C error: bus arbitration lost. Is another application running?");
-            // PDT_LOG(kError) << lExc.what();
             throw lExc;
         }
 
@@ -382,19 +411,16 @@ void I2CBaseNode::waitUntilFinished(bool aRequireAcknowledgement, bool aRequireB
 
     if (lAttempt > lMaxRetry) {
         pdt::I2CException lExc("I2C error: Transaction timeout - the 'Transfer in Progress' bit remained high for too long");
-        // PDT_LOG(kError) << lExc.what();
         throw lExc;
     }
 
     if (aRequireAcknowledgement && !lReceivedAcknowledge) {
         pdt::I2CException lExc("I2C error: No acknowledge received");
-        // PDT_LOG(kError) << lExc.what();
         throw lExc;
     }
 
     if (aRequireBusIdleAtEnd && lBusy) {
         pdt::I2CException lExc("I2C error: Transfer finished but bus still busy");
-        // PDT_LOG(kError) << lExc.what();
         throw lExc;
     }
 }

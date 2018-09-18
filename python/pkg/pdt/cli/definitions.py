@@ -80,7 +80,8 @@ kEpStates = collections.OrderedDict([
         ( 0x3, 'Waiting for good frequency check')      , # 0b0011 when W_FREQ, -- Waiting for good frequency check
         ( 0x4, 'Waiting for comma alignment')           , # 0b0100 when W_ALIGN, -- Waiting for comma alignment           , stable 50MHz phase
         ( 0x5, 'Waiting for 8b10 decoder good packet')  , # 0b0101 when W_LOCK, -- Waiting for 8b10 decoder good packet
-        ( 0x6, 'Waiting for time stamp initialisation') , # 0b0110 when W_RDY, -- Waiting for time stamp initialisation
+        ( 0x6, 'Waiting for phase adjustment command')  , # 0b0110 when W_PHASE, -- Waiting for phase adjustment command
+        ( 0x7, 'Waiting for time stamp initialisation') , # 0b0111 when W_RDY, -- Waiting for time stamp initialisation
         ( 0x8, 'Ready')                                 , # 0b1000 when RUN, -- Good to go
         ( 0xc, 'Error in Rx')                           , # 0b1100 when ERR_R, -- Error in rx
         ( 0xd, 'Error in time stamp check')             , # 0b1101 when ERR_T; -- Error in time stamp check
