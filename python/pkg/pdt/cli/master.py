@@ -609,13 +609,93 @@ def align(obj):
 # ------------------------------------------------------------------------------
 
 
+
 # ------------------------------------------------------------------------------
-@align.command('measure-delay', short_help="Control the trigger return endpoint")
+def enableEptAndWaitForReady( aGlobal, aTimeout=2 ):
+    aGlobal.getNode('csr.ctrl.ep_en').write(0x0)
+    aGlobal.getNode('csr.ctrl.ep_en').write(0x1)
+    aGlobal.getClient().dispatch()
+
+    # Wait for the endpoint to be happy
+    lTOutStart = time.time()
+    while time.time() < lTOutStart + aTimeout:
+        time.sleep(0.1)
+
+        lEptStat = aGlobal.getNode('csr.stat.ep_stat').read()
+        lEptRdy = aGlobal.getNode('csr.stat.ep_rdy').read()
+        aGlobal.getClient().dispatch()
+
+        print ('stat', hex(lEptStat))
+        print ('rdy ', hex(lEptRdy))
+        if int(lEptRdy) == 1:
+            break
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+def sendEchoAndMeasureDelay( aEcho, aTimeout=2 ):
+    aEcho.getNode('csr.ctrl.go').write(0x1)
+    aEcho.getClient().dispatch()
+    lTOutStart = time.time()
+    while time.time() < lTOutStart + aTimeout:
+        time.sleep(0.1)
+
+        lDone = aEcho.getNode('csr.stat.rx_done').read()
+        aEcho.getClient().dispatch()
+
+        print ('done', hex(lDone))
+        if int(lDone) == 1:
+            break
+    if not int(lDone):
+        # raise RuntimeError("aaaa")
+        return None
+
+    lTimeRxL = aEcho.getNode('csr.rx_l').read()
+    lTimeRxH = aEcho.getNode('csr.rx_h').read()
+    lTimeTxL = aEcho.getNode('csr.tx_l').read()
+    lTimeTxH = aEcho.getNode('csr.tx_h').read()
+    aEcho.getClient().dispatch()
+
+    lTimeRx = (lTimeRxH << 32) + lTimeRxL
+    lTimeTx = (lTimeTxH << 32) + lTimeTxL
+
+    return lTimeTx, lTimeRx
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+def pushNewDelay( aACmd, aAddr, aCDel):
+    # Keep the TX sfp on
+    toolbox.resetSubNodes(aACmd.getNode('csr.ctrl'), dispatch=False)
+    aACmd.getNode('csr.ctrl.tx_en').write(0x1)
+    aACmd.getNode('csr.ctrl.addr').write(aAddr)
+    aACmd.getNode('csr.ctrl.cdel').write(aCDel)
+    aACmd.getNode('csr.ctrl.update').write(0x1)
+    aACmd.getNode('csr.ctrl.go').write(0x1)
+    aACmd.getNode('csr.ctrl.go').write(0x0)
+    aACmd.getClient().dispatch()
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+def enableEndpointSFP(aACmd, aAddr, aEnable=1):
+    toolbox.resetSubNodes(aACmd.getNode('csr.ctrl'))
+    aACmd.getNode('csr.ctrl.addr').write(aAddr)
+    aACmd.getNode('csr.ctrl.tx_en').write(aEnable)
+    aACmd.getNode('csr.ctrl.go').write(0x1)
+    aACmd.getNode('csr.ctrl.go').write(0x0)
+    aACmd.getClient().dispatch()    
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@align.command('apply-delay', short_help="Control the trigger return endpoint")
 @click.argument('addr', type=toolbox.IntRange(0x0,0x100))
+@click.argument('delay', type=toolbox.IntRange(0x0,0x3f))
 @click.option('--mux', '-m', type=click.IntRange(0,7), help='Mux select (fanout only)')
 @click.pass_obj
 @click.pass_context
-def align_measuredelay(ctx, obj, addr, mux):
+def align_applydelay(ctx, obj, addr, delay, mux):
 
     lDevice = obj.mDevice
     lACmd = obj.mACmd
@@ -631,162 +711,77 @@ def align_measuredelay(ctx, obj, addr, mux):
             raise RuntimeError('Mux is only available on PC059 boards')
 
 
-
-    toolbox.resetSubNodes(lACmd.getNode('csr.ctrl'))
-    lACmd.getNode('csr.ctrl.addr').write(addr)
-    lACmd.getNode('csr.ctrl.tx_en').write(0x1)
-    # lACmd.getNode('csr.ctrl.update').write(0x1)
-    lACmd.getNode('csr.ctrl.go').write(0x1)
-    lACmd.getNode('csr.ctrl.go').write(0x0)
-    lACmd.getClient().dispatch()
+    enableEndpointSFP(lACmd, addr)
 
     time.sleep(0.1)
 
-    # lDone = lACmd.getNode('csr.stat.done').read()
-    # lACmd.getClient().dispatch()
+    enableEptAndWaitForReady(lGlobal)
 
-    # print('Done', hex(lDone))
-
-    # time.sleep(1)
-
-    # Dont' assume it's on
-    lGlobal.getNode('csr.ctrl.ep_en').write(0x0)
-    lGlobal.getNode('csr.ctrl.ep_en').write(0x1)
-    lGlobal.getClient().dispatch()
-
-    # Wait for the endpoint to be happy
-    lTOut = 2
-    lTOutStart = time.time()
-    while time.time() < lTOutStart + lTOut:
-        time.sleep(0.1)
-
-        lEptStat = lGlobal.getNode('csr.stat.ep_stat').read()
-        lEptRdy = lGlobal.getNode('csr.stat.ep_rdy').read()
-        lGlobal.getClient().dispatch()
-
-        print ('stat', hex(lEptStat))
-        print ('rdy ', hex(lEptRdy))
-        if int(lEptRdy) == 1:
-            break
-
-
-    #------------
-    lEcho.getNode('csr.ctrl.go').write(0x1)
-    lEcho.getClient().dispatch()
-    lTOutStart = time.time()
-    while time.time() < lTOutStart + lTOut:
-        time.sleep(0.1)
-
-        lDone = lEcho.getNode('csr.stat.rx_done').read()
-        lEcho.getClient().dispatch()
-
-        print ('done', hex(lDone))
-        if int(lDone) == 1:
-            break
-    # if not int(lDone):
-        # raise RuntimeError("aaaa")
-
-    lTimeRxL = lEcho.getNode('csr.rx_l').read()
-    lTimeRxH = lEcho.getNode('csr.rx_h').read()
-    lTimeTxL = lEcho.getNode('csr.tx_l').read()
-    lTimeTxH = lEcho.getNode('csr.tx_h').read()
-    lEcho.getClient().dispatch()
-
-    lTimeRx = (lTimeRxH << 32) + lTimeRxL
-    lTimeTx = (lTimeTxH << 32) + lTimeTxL
+    lTimeTx, lTimeRx = sendEchoAndMeasureDelay(lEcho)
 
     print(lTimeTx, lTimeRx, lTimeRx-lTimeTx)
     #------------
 
     lGlobal.getNode('csr.ctrl.ep_en').write(0x0)
 
-    # toolbox.resetSubNodes(lACmd.getNode('csr.ctrl'))
-    lACmd.getNode('csr.ctrl.addr').write(addr)
-    lACmd.getNode('csr.ctrl.cdel').write(0x20)
-    lACmd.getNode('csr.ctrl.update').write(0x1)
-    lACmd.getNode('csr.ctrl.go').write(0x1)
-    lACmd.getNode('csr.ctrl.go').write(0x0)
-    lACmd.getClient().dispatch()
+    pushNewDelay(lACmd, addr, delay)
 
     time.sleep(1)
 
-    # Dont' assume it's on
-    lGlobal.getNode('csr.ctrl.ep_en').write(0x1)
-    lGlobal.getClient().dispatch()
-
-    # Wait for the endpoint to be happy
-    lTOut = 2
-    lTOutStart = time.time()
-    while time.time() < lTOutStart + lTOut:
-        time.sleep(0.1)
-
-        lEptStat = lGlobal.getNode('csr.stat.ep_stat').read()
-        lEptRdy = lGlobal.getNode('csr.stat.ep_rdy').read()
-        lGlobal.getClient().dispatch()
-
-        print ('stat', hex(lEptStat))
-        print ('rdy ', hex(lEptRdy))
-        if int(lEptRdy) == 1:
-            break
+    enableEptAndWaitForReady(lGlobal)
 
     #------------
-    lEcho.getNode('csr.ctrl.go').write(0x1)
-    lEcho.getClient().dispatch()
-    lTOutStart = time.time()
-    while time.time() < lTOutStart + lTOut:
-        time.sleep(0.1)
+    lTimeTx, lTimeRx = sendEchoAndMeasureDelay(lEcho)
 
-        lDone = lEcho.getNode('csr.stat.rx_done').read()
-        lEcho.getClient().dispatch()
-
-        print ('done', hex(lDone))
-        if int(lDone) == 1:
-            break
-    # if not int(lDone):
-        # raise RuntimeError("aaaa")
-
-    lTimeRxL = lEcho.getNode('csr.rx_l').read()
-    lTimeRxH = lEcho.getNode('csr.rx_h').read()
-    lTimeTxL = lEcho.getNode('csr.tx_l').read()
-    lTimeTxH = lEcho.getNode('csr.tx_h').read()
-    lEcho.getClient().dispatch()
-
-    lTimeRx = (lTimeRxH << 32) + lTimeRxL
-    lTimeTx = (lTimeTxH << 32) + lTimeTxL
-
+    #------------
     print(lTimeTx, lTimeRx, lTimeRx-lTimeTx)
-    #------------
 
 
+    enableEndpointSFP(lACmd, addr, 0x0)
 
-    toolbox.resetSubNodes(lACmd.getNode('csr.ctrl'))
-    lACmd.getNode('csr.ctrl.addr').write(addr)
-    lACmd.getNode('csr.ctrl.tx_en').write(0x0)
-    lACmd.getNode('csr.ctrl.go').write(0x1)
-    lACmd.getNode('csr.ctrl.go').write(0x0)
-    lACmd.getClient().dispatch()
-
-# ------------------------------------------------------------------------------
-
+    # toolbox.resetSubNodes(lACmd.getNode('csr.ctrl'))
+    # lACmd.getNode('csr.ctrl.addr').write(addr)
+    # lACmd.getNode('csr.ctrl.tx_en').write(0x0)
+    # lACmd.getNode('csr.ctrl.go').write(0x1)
+    # lACmd.getNode('csr.ctrl.go').write(0x0)
+    # lACmd.getClient().dispatch()
 
 # ------------------------------------------------------------------------------
-@align.command('program-delay', short_help="Control the trigger return endpoint")
+
+
+# ------------------------------------------------------------------------------
+@align.command('measure-delay', short_help="Control the trigger return endpoint")
 @click.argument('addr', type=toolbox.IntRange(0x0,0x100))
-@click.argument('coarse', type=toolbox.IntRange(0x0,0x100))
+@click.option('--mux', '-m', type=click.IntRange(0,7), help='Mux select (fanout only)')
 @click.pass_obj
 @click.pass_context
-def align_programedelay(ctx, obj, addr, coarse):
+def align_measuredelay(ctx, obj, addr, mux):
 
+    lDevice = obj.mDevice
     lACmd = obj.mACmd
     lEcho = obj.mEcho
     lGlobal = obj.mGlobal
 
-    lACmd.getNode('csr.ctrl.addr').write(addr)
-    lACmd.getNode('csr.ctrl.cdel').write(coarse)
-    lACmd.getNode('csr.ctrl.update').write(0x1)
-    lACmd.getNode('csr.ctrl.go').write(0x1)
-    lACmd.getNode('csr.ctrl.go').write(0x0)
-    lACmd.getClient().dispatch()
+
+    if mux is not None:
+        if lBoardType == kBoardPC059:
+            lDevice.getNode('io.csr.ctrl.mux').write(mux)
+            echo('SFP input mux set to {}'.format(mux))
+        else:
+            raise RuntimeError('Mux is only available on PC059 boards')
+
+
+    enableEndpointSFP(lACmd, addr)
+
+    time.sleep(0.1)
+
+    enableEptAndWaitForReady(lGlobal)
+
+    lTimeTx, lTimeRx = sendEchoAndMeasureDelay(lEcho)
+    print(lTimeTx, lTimeRx, lTimeRx-lTimeTx)
+
+    enableEndpointSFP(lACmd, addr, 0x0)
+    
 # ------------------------------------------------------------------------------
 
 
