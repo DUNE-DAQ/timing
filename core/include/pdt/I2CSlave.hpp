@@ -54,6 +54,8 @@ public:
     std::vector<uint8_t> readI2CPrimitive(uint32_t aNumBytes) const;
     void writeI2CPrimitive(const std::vector<uint8_t>& aData, bool aSendStop = true) const;
 
+    bool ping() const;
+
 private:
     const I2CBaseNode* mMaster;
 

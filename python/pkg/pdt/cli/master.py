@@ -612,14 +612,27 @@ def align(obj):
 # ------------------------------------------------------------------------------
 @align.command('measure-delay', short_help="Control the trigger return endpoint")
 @click.argument('addr', type=toolbox.IntRange(0x0,0x100))
+@click.option('--mux', '-m', type=click.IntRange(0,7), help='Mux select (fanout only)')
 @click.pass_obj
 @click.pass_context
-def align_measuredelay(ctx, obj, addr):
+def align_measuredelay(ctx, obj, addr, mux):
 
+    lDevice = obj.mDevice
     lACmd = obj.mACmd
     lEcho = obj.mEcho
     lGlobal = obj.mGlobal
+    lBoardType = obj.mBoardType
 
+    if mux is not None:
+        if lBoardType == kBoardPC059:
+            lDevice.getNode('io.csr.ctrl.mux').write(mux)
+            echo('SFP input mux set to {}'.format(mux))
+        else:
+            raise RuntimeError('Mux is only available on PC059 boards')
+
+
+
+    toolbox.resetSubNodes(lACmd.getNode('csr.ctrl'))
     lACmd.getNode('csr.ctrl.addr').write(addr)
     lACmd.getNode('csr.ctrl.tx_en').write(0x1)
     # lACmd.getNode('csr.ctrl.update').write(0x1)
@@ -627,35 +640,131 @@ def align_measuredelay(ctx, obj, addr):
     lACmd.getNode('csr.ctrl.go').write(0x0)
     lACmd.getClient().dispatch()
 
-    # time.sleep(0.1)
+    time.sleep(0.1)
 
     # lDone = lACmd.getNode('csr.stat.done').read()
     # lACmd.getClient().dispatch()
 
     # print('Done', hex(lDone))
 
-    time.sleep(1)
+    # time.sleep(1)
 
     # Dont' assume it's on
     lGlobal.getNode('csr.ctrl.ep_en').write(0x0)
     lGlobal.getNode('csr.ctrl.ep_en').write(0x1)
     lGlobal.getClient().dispatch()
 
-    time.sleep(0.1)
+    # Wait for the endpoint to be happy
+    lTOut = 2
+    lTOutStart = time.time()
+    while time.time() < lTOutStart + lTOut:
+        time.sleep(0.1)
 
-    lEptStat = lGlobal.getNode('csr.stat.ep_stat').read()
-    lEptRdy = lGlobal.getNode('csr.stat.ep_rdy').read()
+        lEptStat = lGlobal.getNode('csr.stat.ep_stat').read()
+        lEptRdy = lGlobal.getNode('csr.stat.ep_rdy').read()
+        lGlobal.getClient().dispatch()
+
+        print ('stat', hex(lEptStat))
+        print ('rdy ', hex(lEptRdy))
+        if int(lEptRdy) == 1:
+            break
+
+
+    #------------
+    lEcho.getNode('csr.ctrl.go').write(0x1)
+    lEcho.getClient().dispatch()
+    lTOutStart = time.time()
+    while time.time() < lTOutStart + lTOut:
+        time.sleep(0.1)
+
+        lDone = lEcho.getNode('csr.stat.rx_done').read()
+        lEcho.getClient().dispatch()
+
+        print ('done', hex(lDone))
+        if int(lDone) == 1:
+            break
+    # if not int(lDone):
+        # raise RuntimeError("aaaa")
+
+    lTimeRxL = lEcho.getNode('csr.rx_l').read()
+    lTimeRxH = lEcho.getNode('csr.rx_h').read()
+    lTimeTxL = lEcho.getNode('csr.tx_l').read()
+    lTimeTxH = lEcho.getNode('csr.tx_h').read()
+    lEcho.getClient().dispatch()
+
+    lTimeRx = (lTimeRxH << 32) + lTimeRxL
+    lTimeTx = (lTimeTxH << 32) + lTimeTxL
+
+    print(lTimeTx, lTimeRx, lTimeRx-lTimeTx)
+    #------------
+
+    lGlobal.getNode('csr.ctrl.ep_en').write(0x0)
+
+    # toolbox.resetSubNodes(lACmd.getNode('csr.ctrl'))
+    lACmd.getNode('csr.ctrl.addr').write(addr)
+    lACmd.getNode('csr.ctrl.cdel').write(0x20)
+    lACmd.getNode('csr.ctrl.update').write(0x1)
+    lACmd.getNode('csr.ctrl.go').write(0x1)
+    lACmd.getNode('csr.ctrl.go').write(0x0)
+    lACmd.getClient().dispatch()
+
+    time.sleep(1)
+
+    # Dont' assume it's on
+    lGlobal.getNode('csr.ctrl.ep_en').write(0x1)
     lGlobal.getClient().dispatch()
 
-    print ('stat', hex(lEptStat))
-    print ('rdy ', hex(lEptRdy))
+    # Wait for the endpoint to be happy
+    lTOut = 2
+    lTOutStart = time.time()
+    while time.time() < lTOutStart + lTOut:
+        time.sleep(0.1)
 
-    # lACmd.getNode('csr.ctrl.addr').write(addr)
-    # lACmd.getNode('csr.ctrl.tx_en').write(0x1)
-    # lACmd.getNode('csr.ctrl.update').write(0x1)
-    # lACmd.getNode('csr.ctrl.go').write(0x1)
-    # lACmd.getNode('csr.ctrl.go').write(0x0)
-    # lACmd.getClient().dispatch()
+        lEptStat = lGlobal.getNode('csr.stat.ep_stat').read()
+        lEptRdy = lGlobal.getNode('csr.stat.ep_rdy').read()
+        lGlobal.getClient().dispatch()
+
+        print ('stat', hex(lEptStat))
+        print ('rdy ', hex(lEptRdy))
+        if int(lEptRdy) == 1:
+            break
+
+    #------------
+    lEcho.getNode('csr.ctrl.go').write(0x1)
+    lEcho.getClient().dispatch()
+    lTOutStart = time.time()
+    while time.time() < lTOutStart + lTOut:
+        time.sleep(0.1)
+
+        lDone = lEcho.getNode('csr.stat.rx_done').read()
+        lEcho.getClient().dispatch()
+
+        print ('done', hex(lDone))
+        if int(lDone) == 1:
+            break
+    # if not int(lDone):
+        # raise RuntimeError("aaaa")
+
+    lTimeRxL = lEcho.getNode('csr.rx_l').read()
+    lTimeRxH = lEcho.getNode('csr.rx_h').read()
+    lTimeTxL = lEcho.getNode('csr.tx_l').read()
+    lTimeTxH = lEcho.getNode('csr.tx_h').read()
+    lEcho.getClient().dispatch()
+
+    lTimeRx = (lTimeRxH << 32) + lTimeRxL
+    lTimeTx = (lTimeTxH << 32) + lTimeTxL
+
+    print(lTimeTx, lTimeRx, lTimeRx-lTimeTx)
+    #------------
+
+
+
+    toolbox.resetSubNodes(lACmd.getNode('csr.ctrl'))
+    lACmd.getNode('csr.ctrl.addr').write(addr)
+    lACmd.getNode('csr.ctrl.tx_en').write(0x0)
+    lACmd.getNode('csr.ctrl.go').write(0x1)
+    lACmd.getNode('csr.ctrl.go').write(0x0)
+    lACmd.getClient().dispatch()
 
 # ------------------------------------------------------------------------------
 
@@ -675,6 +784,24 @@ def align_programedelay(ctx, obj, addr, coarse):
     lACmd.getNode('csr.ctrl.addr').write(addr)
     lACmd.getNode('csr.ctrl.cdel').write(coarse)
     lACmd.getNode('csr.ctrl.update').write(0x1)
+    lACmd.getNode('csr.ctrl.go').write(0x1)
+    lACmd.getNode('csr.ctrl.go').write(0x0)
+    lACmd.getClient().dispatch()
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@align.command('all-tx-off', short_help="Control the trigger return endpoint")
+@click.pass_obj
+@click.pass_context
+def align_alltxoff(ctx, obj):
+
+    lACmd = obj.mACmd
+
+    toolbox.resetSubNodes(lACmd.getNode('csr.ctrl'))
+
+    lACmd.getNode('csr.ctrl.addr').write(0x00)
+    lACmd.getNode('csr.ctrl.tx_en').write(0x0)
     lACmd.getNode('csr.ctrl.go').write(0x1)
     lACmd.getNode('csr.ctrl.go').write(0x0)
     lACmd.getClient().dispatch()

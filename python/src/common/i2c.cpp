@@ -50,6 +50,7 @@ register_i2c() {
       .def("writeI2CPrimitive", &pdt::I2CBaseNode::writeI2CPrimitive, pdt_I2CBaseNode_writeI2CPrimitive_overloads())
       .def("getSlaves", &pdt::I2CBaseNode::getSlaves)
       .def("getSlaveAddress", &pdt::I2CBaseNode::getSlaveAddress)
+      .def("ping", &pdt::I2CBaseNode::ping)
       .def("scan", &pdt::I2CBaseNode::scan)
       ;
 
@@ -67,6 +68,7 @@ register_i2c() {
       .def("writeI2CArray", &pdt::I2CSlave::writeI2CArray, pdt_I2CSlave_writeI2CArray_overloads())
       .def("readI2CPrimitive", &pdt::I2CSlave::readI2CPrimitive)
       .def("writeI2CPrimitive", &pdt::I2CSlave::writeI2CPrimitive, pdt_I2CSlave_writeI2CPrimitive_overloads())
+      .def("ping", &pdt::I2CSlave::ping)
       ;
 
   // Wrap SIChipSlave

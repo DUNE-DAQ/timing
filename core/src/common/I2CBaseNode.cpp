@@ -243,8 +243,33 @@ I2CBaseNode::readBlockI2C(uint8_t aSlaveAddress, uint32_t lNumBytes) const {
 }
 //-----------------------------------------------------------------------------
 
-void
+
+//-----------------------------------------------------------------------------
+bool
+I2CBaseNode::ping(uint8_t aSlaveAddress) const {
+
+    std::vector<uint8_t> lAddrVector;
+
+    // Reset bus before beginning
+    reset();
+
+    try {
+        sendI2CCommandAndWriteData(kStartCmd, (aSlaveAddress << 1) | 0x01);
+        sendI2CCommandAndReadData(kStopCmd | kAckCmd);
+        return true;
+    } catch (const pdt::I2CException& lExc) {
+        // PDT_LOG(kError) << std::showbase << std::hex << (uint32_t)iAddr << "  " << lExc.what();
+        return false;
+    }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+std::vector<uint8_t> 
 I2CBaseNode::scan() const {
+
+    std::vector<uint8_t> lAddrVector;
 
     // Reset bus before beginning
     reset();
@@ -258,9 +283,13 @@ I2CBaseNode::scan() const {
             // PDT_LOG(kError) << std::showbase << std::hex << (uint32_t)iAddr << "  " << lExc.what();
             continue;
         }
-        PDT_LOG(kNotice) << std::showbase << std::hex << (uint32_t)iAddr << " found";
+        lAddrVector.push_back(iAddr);
+        // PDT_LOG(kNotice) << std::showbase << std::hex << (uint32_t)iAddr << " found";
     }
+
+    return lAddrVector;
 }
+//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void 

@@ -45,7 +45,7 @@ def cli(ctx, connections, timeout, verbose):
     
     # Set uhal log level
     uhal.setLogLevelTo(uhal.LogLevel.NOTICE)
-    pdt.core.setLogThreshold(kLogLevelMap.get(verbose, pdt.core.kDebug))
+    pdt.core.setLogThreshold(kLogLevelMap.get(verbose, pdt.core.kDebug1))
 
     lConnections  = toolbox.sanitizeConnectionPaths(connections)
 

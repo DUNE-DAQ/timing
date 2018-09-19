@@ -191,7 +191,7 @@ def formatRegTable(aRegs, aHeader=True, sort=True):
 
     lRegs = sorted(aRegs) if sort else aRegs
     for k in lRegs:
-        lRegTable.add_row( [str(k), hex(lRegs[k])] )
+        lRegTable.add_row( [str(k), hex(aRegs[k])] )
         
     return lRegTable.draw()
 # ------------------------------------------------------------------------------

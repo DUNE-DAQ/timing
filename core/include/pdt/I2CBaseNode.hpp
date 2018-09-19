@@ -57,7 +57,9 @@ public:
     virtual std::vector<uint8_t> readI2CPrimitive(uint8_t aSlaveAddress, uint32_t aNumBytes) const;
     virtual void writeI2CPrimitive(uint8_t aSlaveAddress, const std::vector<uint8_t>& aData, bool aSendStop = true) const;
 
-    void scan() const;
+    bool ping(uint8_t aSlaveAddress) const;
+
+    std::vector<uint8_t> scan() const;
 protected:
 
     // low level i2c functions
