@@ -798,17 +798,17 @@ def align_measuredelay(ctx, obj, addr, mux):
 
 
 # ------------------------------------------------------------------------------
-@align.command('all-tx-off', short_help="Control the trigger return endpoint")
+@align.command('toggle-tx', short_help="Control the trigger return endpoint")
+@click.option('--on/--off', default=True, help='enable/disable _ALL_ enpoint tx')
 @click.pass_obj
-@click.pass_context
-def align_alltxoff(ctx, obj):
+def align_toggletx(obj, on):
 
     lACmd = obj.mACmd
 
     toolbox.resetSubNodes(lACmd.getNode('csr.ctrl'))
 
     lACmd.getNode('csr.ctrl.addr').write(0x00)
-    lACmd.getNode('csr.ctrl.tx_en').write(0x0)
+    lACmd.getNode('csr.ctrl.tx_en').write(on)
     lACmd.getNode('csr.ctrl.go').write(0x1)
     lACmd.getNode('csr.ctrl.go').write(0x0)
     lACmd.getClient().dispatch()
