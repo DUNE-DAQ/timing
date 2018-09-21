@@ -264,10 +264,10 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
             lIO.getNode('csr.ctrl.usfp_edge').write(1)
             lIO.getNode('csr.ctrl.mux').write(0)
             lDevice.dispatch()
-        elif lBoardType == kBoardTLU:
-            lIO.getNode('csr.ctrl.hdmi_edge').write(0)
-            lIO.getNode('csr.ctrl.hdmi_inv_o').write(0)
-            lIO.getNode('csr.ctrl.hdmi_inv_i').write(0)
+        # elif lBoardType == kBoardTLU:
+        #     lIO.getNode('csr.ctrl.hdmi_edge').write(0)
+        #     lIO.getNode('csr.ctrl.hdmi_inv_o').write(0)
+        #     lIO.getNode('csr.ctrl.hdmi_inv_i').write(0)
 
         ctx.invoke(pllstatus)
 

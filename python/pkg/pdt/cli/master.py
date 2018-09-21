@@ -8,7 +8,10 @@ import time
 import collections
 import math
 import pdt
+import traceback
+import StringIO
 
+# PDT imports
 import pdt.cli.toolbox as toolbox
 import pdt.cli.definitions as defs
 
@@ -647,8 +650,7 @@ def sendEchoAndMeasureDelay( aEcho, aTimeout=2 ):
         if int(lDone) == 1:
             break
     if not int(lDone):
-        # raise RuntimeError("aaaa")
-        return None
+        raise RuntimeError("aaaa")
 
     lTimeRxL = aEcho.getNode('csr.rx_l').read()
     lTimeRxH = aEcho.getNode('csr.rx_h').read()
@@ -664,7 +666,7 @@ def sendEchoAndMeasureDelay( aEcho, aTimeout=2 ):
 
 
 # ------------------------------------------------------------------------------
-def pushNewDelay( aACmd, aAddr, aCDel):
+def pushDelay( aACmd, aAddr, aCDel):
     # Keep the TX sfp on
     toolbox.resetSubNodes(aACmd.getNode('csr.ctrl'), dispatch=False)
     aACmd.getNode('csr.ctrl.tx_en').write(0x1)
@@ -674,6 +676,7 @@ def pushNewDelay( aACmd, aAddr, aCDel):
     aACmd.getNode('csr.ctrl.go').write(0x1)
     aACmd.getNode('csr.ctrl.go').write(0x0)
     aACmd.getClient().dispatch()
+    secho('Coarse delay {} applied'.format(aCDel), fg='green')
 # ------------------------------------------------------------------------------
 
 
@@ -691,11 +694,12 @@ def enableEndpointSFP(aACmd, aAddr, aEnable=1):
 # ------------------------------------------------------------------------------
 @align.command('apply-delay', short_help="Control the trigger return endpoint")
 @click.argument('addr', type=toolbox.IntRange(0x0,0x100))
-@click.argument('delay', type=toolbox.IntRange(0x0,0x3f))
+@click.argument('delay', type=toolbox.IntRange(0x0,0x32))
 @click.option('--mux', '-m', type=click.IntRange(0,7), help='Mux select (fanout only)')
+@click.option('--force', '-f', is_flag=True, default=False, help='Mux select (fanout only)')
 @click.pass_obj
 @click.pass_context
-def align_applydelay(ctx, obj, addr, delay, mux):
+def align_applydelay(ctx, obj, addr, delay, mux, force):
 
     lDevice = obj.mDevice
     lACmd = obj.mACmd
@@ -711,41 +715,46 @@ def align_applydelay(ctx, obj, addr, delay, mux):
             raise RuntimeError('Mux is only available on PC059 boards')
 
 
-    enableEndpointSFP(lACmd, addr)
+    try:
+        if not force:
+            # Switch off all TX SFPs
+            enableEndpointSFP(lACmd, 0x0, False)
+            # Turn on the current target
+            enableEndpointSFP(lACmd, addr)
 
-    time.sleep(0.1)
+            time.sleep(0.1)
 
-    enableEptAndWaitForReady(lGlobal)
+            enableEptAndWaitForReady(lGlobal)
 
-    lTimeTx, lTimeRx = sendEchoAndMeasureDelay(lEcho)
+            lTimeTx, lTimeRx = sendEchoAndMeasureDelay(lEcho)
 
-    print(lTimeTx, lTimeRx, lTimeRx-lTimeTx)
-    #------------
+            print(lTimeTx, lTimeRx, lTimeRx-lTimeTx)
+            #------------
 
-    lGlobal.getNode('csr.ctrl.ep_en').write(0x0)
+            lGlobal.getNode('csr.ctrl.ep_en').write(0x0)
 
-    pushNewDelay(lACmd, addr, delay)
+        pushDelay(lACmd, addr, delay)
 
-    time.sleep(1)
+        if not force:
+            time.sleep(1)
 
-    enableEptAndWaitForReady(lGlobal)
+            enableEptAndWaitForReady(lGlobal)
 
-    #------------
-    lTimeTx, lTimeRx = sendEchoAndMeasureDelay(lEcho)
+            #------------
+            lTimeTx, lTimeRx = sendEchoAndMeasureDelay(lEcho)
 
-    #------------
-    print(lTimeTx, lTimeRx, lTimeRx-lTimeTx)
+            #------------
+            print(lTimeTx, lTimeRx, lTimeRx-lTimeTx)
+    except Exception:
+        lExc = StringIO.StringIO()
+        traceback.print_exc(file=lExc)
+        print ("Exception in user code:")
+        print ('-'*60)
+        secho(lExc.getvalue(), fg='red')
+        print ('-'*60)
 
 
-    enableEndpointSFP(lACmd, addr, 0x0)
-
-    # toolbox.resetSubNodes(lACmd.getNode('csr.ctrl'))
-    # lACmd.getNode('csr.ctrl.addr').write(addr)
-    # lACmd.getNode('csr.ctrl.tx_en').write(0x0)
-    # lACmd.getNode('csr.ctrl.go').write(0x1)
-    # lACmd.getNode('csr.ctrl.go').write(0x0)
-    # lACmd.getClient().dispatch()
-
+    enableEndpointSFP(lACmd, 0x0, False)
 # ------------------------------------------------------------------------------
 
 
@@ -761,6 +770,7 @@ def align_measuredelay(ctx, obj, addr, mux):
     lACmd = obj.mACmd
     lEcho = obj.mEcho
     lGlobal = obj.mGlobal
+    lBoardType = obj.mBoardType
 
 
     if mux is not None:
@@ -770,7 +780,9 @@ def align_measuredelay(ctx, obj, addr, mux):
         else:
             raise RuntimeError('Mux is only available on PC059 boards')
 
-
+    # Switch off all TX SFPs
+    enableEndpointSFP(lACmd, 0x0, False)
+    # Turn on the current target
     enableEndpointSFP(lACmd, addr)
 
     time.sleep(0.1)
@@ -781,7 +793,7 @@ def align_measuredelay(ctx, obj, addr, mux):
     print(lTimeTx, lTimeRx, lTimeRx-lTimeTx)
 
     enableEndpointSFP(lACmd, addr, 0x0)
-    
+
 # ------------------------------------------------------------------------------
 
 
