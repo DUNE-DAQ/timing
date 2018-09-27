@@ -3,6 +3,7 @@ import re
 
 import definitions as defs
 import click
+import time
 
 from click import echo, style, secho
 from click_texttable import Texttable
@@ -232,7 +233,11 @@ def escape_ansi(line):
 # ------------------------------------------------------------------------------
 def formatTStamp( aRawTStamp ):
     ts = int(aRawTStamp[0]) + int((aRawTStamp[1]) << 32)
-    return ts
+    
+    lSubSec = ts % defs.kSPSClockInHz
+    lSecFromEpoch = ts / defs.kSPSClockInHz
+
+    return time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.localtime(lSecFromEpoch))
 # ------------------------------------------------------------------------------
 
 

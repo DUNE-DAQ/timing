@@ -28,7 +28,7 @@
   <connection id="PROD_FANOUT_2_TUN" uri="chtcp-2.0://localhost:60708?target=192.168.200.67:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v5a1/fanout_pc059/top.xml" />
 
 
-  <connection id="SIM"               uri="ipbusudp-2.0://192.168.201.16:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v5a0/ouroboros_sim/top_sim.xml" />
+  <connection id="SIM"               uri="ipbusudp-2.0://192.168.201.16:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v5a1/ouroboros_sim/top_sim.xml" />
 
 </connections>
     

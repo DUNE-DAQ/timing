@@ -72,7 +72,7 @@ def master(obj, device):
         style(str(lGenerics['n_chan']), fg='cyan'),
     ))
 
-    if lMajor < 4:
+    if lMajor < kMasterFWMajorRequired:
         secho('ERROR: Incompatible master firmware version. Found {}, required {}'.format(hex(lMajor), hex(kMasterFWMajorRequired)), fg='red')
         raise click.Abort()
 
@@ -141,27 +141,37 @@ kUIDRevisionMap = {
 @click.pass_obj
 def fixtime(obj):
 
-    lMaster = obj.mMaster
-    lTStampNode = lMaster.getNode('tstamp.ctr')
 
-    lTimeStamp = lTStampNode.readBlock(2)
-    lTStampNode.getClient().dispatch()
+    lMaster = obj.mMaster
+    lTStampReadNode = lMaster.getNode('tstamp.ctr.val')
+    lTStampWriteNode = lMaster.getNode('tstamp.ctr.set')
+
+    lTimeStamp = lTStampReadNode.readBlock(2)
+    lTStampReadNode.getClient().dispatch()
+
     lTime = int(lTimeStamp[0]) + (int(lTimeStamp[1]) << 32)
     secho('Old Timestamp {}'.format(hex(lTime)), fg='cyan')
 
-    # Setting timestamp
-    lNow = int(time.time()*50e6)
+    # Take the local time and split it up
+    lNow = int(time.time()*defs.kSPSClockInHz)
     lNowH = (lNow >> 32) & ((1<<32)-1)
     lNowL = (lNow >> 0) & ((1<<32)-1)
 
-    lTStampNode.writeBlock([lNowH, lNowL])
-    lTStampNode.getClient().dispatch()
+    # push it on the board
+    lTStampWriteNode.writeBlock([lNowL, lNowH])
+    lTStampWriteNode.getClient().dispatch()
 
-    lTimeStamp = lTStampNode.readBlock(2)
-    lTStampNode.getClient().dispatch()
+    # Read it back
+    lTimeStamp = lTStampReadNode.readBlock(2)
+    lTStampReadNode.getClient().dispatch()
+    x = time.time()
+    lTime = (int(lTimeStamp[1]) << 32) + int(lTimeStamp[0])
 
-    lTime = int(lTimeStamp[0]) + (int(lTimeStamp[1]) << 32)
     secho('New Timestamp {}'.format(hex(lTime)), fg='cyan')
+
+    print(float(lTime)/defs.kSPSClockInHz - x)
+
+    print (toolbox.formatTStamp(lTimeStamp))
 
 # ------------------------------------------------------------------------------
 
@@ -202,7 +212,7 @@ def partstatus(obj, watch, period):
     lPartNode = obj.mPartitionNode
     lNumChan = obj.mGenerics['n_chan']
 
-    lTStampNode = lMaster.getNode('tstamp.ctr')
+    lTStampNode = lMaster.getNode('tstamp.ctr.val')
 
     while(True):
         if watch:
@@ -270,15 +280,15 @@ def partstatus(obj, watch, period):
         for c,s in zip(ctrls, stats):
             print (c + ' '*(col1-len(toolbox.escape_ansi(c))), '' ,s + ' '*(col2-len(toolbox.escape_ansi(s))))
         #-------------- Temp
-        echo()
+        echo()  
 
         lTimeStamp = lTStampNode.readBlock(2)
         lEventCtr = lPartNode.getNode('evtctr').read()
         lBufCount = lPartNode.getNode('buf.count').read()
         lPartNode.getClient().dispatch()
 
-        lTime = int(lTimeStamp[0]) + (int(lTimeStamp[1]) << 32)
-        echo( "Timestamp: {} ({})".format(style(str(lTime), fg='blue'), hex(lTime)) )
+        lTime = (int(lTimeStamp[1]) << 32) << int(lTimeStamp[0])
+        echo( "Timestamp: {} ({}) - {}".format(style(str(lTime), fg='blue'), hex(lTime), toolbox.formatTStamp(lTimeStamp)))
         echo( "EventCounter: {}".format(lEventCtr))
         lBufState = style('OK', fg='green') if lStatDump['buf_err'] == 0 else style('Error', fg='red')
         # lStatDump['buf_empty']
@@ -471,7 +481,7 @@ def sendcmd(obj, cmd, chan, n):
     for i in xrange(n):
         lGenChanCtrl.getNode('type').write(defs.kCommandIDs[cmd])
         lGenChanCtrl.getNode('force').write(0x1)
-        lTStamp = lMaster.getNode("tstamp.ctr").readBlock(2)
+        lTStamp = lMaster.getNode("tstamp.ctr.val").readBlock(2)
         lMaster.getClient().dispatch()
 
         lGenChanCtrl.getNode('force').write(0x0)
@@ -706,8 +716,8 @@ def enableEndpointSFP(aACmd, aAddr, aEnable=1):
 @align.command('apply-delay', short_help="Control the trigger return endpoint")
 @click.argument('addr', type=toolbox.IntRange(0x0,0x100))
 @click.argument('delay', type=toolbox.IntRange(0x0,0x32))
-@click.option('--mux', '-m', type=click.IntRange(0,7), help='Mux select (fanout only)')
-@click.option('--force', '-f', is_flag=True, default=False, help='Mux select (fanout only)')
+@click.option('--mux', '-m', type=click.IntRange(0,7), help='Mux select')
+@click.option('--force', '-f', is_flag=True, default=False, help='Skip RTT measurement')
 @click.pass_obj
 @click.pass_context
 def align_applydelay(ctx, obj, addr, delay, mux, force):
@@ -724,7 +734,6 @@ def align_applydelay(ctx, obj, addr, delay, mux, force):
             echo('SFP input mux set to {}'.format(mux))
         else:
             raise RuntimeError('Mux is only available on PC059 boards')
-
 
     try:
         if not force:

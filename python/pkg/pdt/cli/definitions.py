@@ -1,5 +1,7 @@
 import collections
 
+kSPSClockInHz = int(50e6)
+
 
 kCommandIDs = collections.OrderedDict([
 
