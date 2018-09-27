@@ -66,7 +66,11 @@ def master(obj, device):
         style(kBoardNamelMap[lBoardInfo['board_type'].value()], fg='blue'),
         style(kCarrierNamelMap[lBoardInfo['carrier_type'].value()], fg='blue')
     ))
-    echo("Master FW version: {}, partitions: {}, channels: {}".format(hex(lVersion), lGenerics['n_part'], lGenerics['n_chan']))
+    echo("Master FW rev: {}, partitions: {}, channels: {}".format(
+        style(hex(lVersion), fg='cyan'),
+        style(str(lGenerics['n_part']), fg='cyan'),
+        style(str(lGenerics['n_chan']), fg='cyan'),
+    ))
 
     if lMajor < 4:
         secho('ERROR: Incompatible master firmware version. Found {}, required {}'.format(hex(lMajor), hex(kMasterFWMajorRequired)), fg='red')
@@ -133,28 +137,34 @@ kUIDRevisionMap = {
 
 
 # ------------------------------------------------------------------------------
-@master.command('freq', short_help="Measure some frequencies.")
+@master.command('fixtime', short_help="Measure some frequencies.")
 @click.pass_obj
-def freq(obj):
-    lDevice = obj.mDevice
-    lBoardType = obj.mBoardType
+def fixtime(obj):
 
-    # Measure the generated clock frequency
-    freqs = {}
-    for i in range(1 if lBoardType == kBoardTLU else 2):
-        lDevice.getNode("io.freq.ctrl.chan_sel").write(i)
-        lDevice.getNode("io.freq.ctrl.en_crap_mode").write(0)
-        lDevice.dispatch()
-        time.sleep(2)
-        fq = lDevice.getNode("io.freq.freq.count").read()
-        fv = lDevice.getNode("io.freq.freq.valid").read()
-        lDevice.dispatch()
-        freqs[i] = int(fq) * 119.20928 / 1000000 if fv else 'NaN'
+    lMaster = obj.mMaster
+    lTStampNode = lMaster.getNode('tstamp.ctr')
 
-    print( "Freq PLL:", freqs[0] )
-    if lBoardType != kBoardTLU:
-        print( "Freq CDR:", freqs[1] )   
+    lTimeStamp = lTStampNode.readBlock(2)
+    lTStampNode.getClient().dispatch()
+    lTime = int(lTimeStamp[0]) + (int(lTimeStamp[1]) << 32)
+    secho('Old Timestamp {}'.format(hex(lTime)), fg='cyan')
+
+    # Setting timestamp
+    lNow = int(time.time()*50e6)
+    lNowH = (lNow >> 32) & ((1<<32)-1)
+    lNowL = (lNow >> 0) & ((1<<32)-1)
+
+    lTStampNode.writeBlock([lNowH, lNowL])
+    lTStampNode.getClient().dispatch()
+
+    lTimeStamp = lTStampNode.readBlock(2)
+    lTStampNode.getClient().dispatch()
+
+    lTime = int(lTimeStamp[0]) + (int(lTimeStamp[1]) << 32)
+    secho('New Timestamp {}'.format(hex(lTime)), fg='cyan')
+
 # ------------------------------------------------------------------------------
+
 
 
 # ------------------------------------------------------------------------------
@@ -577,9 +587,9 @@ def faketrigclear(obj, chan):
 
 # ------------------------------------------------------------------------------
 # -- cyc_len and spill_len are in units of 1 / (50MHz / 2^24) = 0.34s
-@master.command()
+@master.command('fake-spillgen')
 @click.pass_obj
-def spillgen(obj):
+def fake_spillgen(obj):
     '''
     \b
     Enables the internal spill generator.
@@ -596,7 +606,8 @@ def spillgen(obj):
     lSpillCtrl = lMaster.getNode('spill.csr.ctrl')
     lSpillCtrl.getNode('fake_cyc_len').write(16)
     lSpillCtrl.getNode('fake_spill_len').write(8)
-    lSpillCtrl.getNode('en_fake').write(1)
+    lSpillCtrl.getNode('src').write(1)
+    lSpillCtrl.getNode('en').write(1)
     lSpillCtrl.getClient().dispatch()
 # ------------------------------------------------------------------------------
 
@@ -799,15 +810,16 @@ def align_measuredelay(ctx, obj, addr, mux):
 
 # ------------------------------------------------------------------------------
 @align.command('toggle-tx', short_help="Control the trigger return endpoint")
+@click.argument('addr', type=toolbox.IntRange(0x0,0x100))
 @click.option('--on/--off', default=True, help='enable/disable _ALL_ enpoint tx')
 @click.pass_obj
-def align_toggletx(obj, on):
+def align_toggletx(obj, addr, on):
 
     lACmd = obj.mACmd
 
     toolbox.resetSubNodes(lACmd.getNode('csr.ctrl'))
 
-    lACmd.getNode('csr.ctrl.addr').write(0x00)
+    lACmd.getNode('csr.ctrl.addr').write(addr)
     lACmd.getNode('csr.ctrl.tx_en').write(on)
     lACmd.getNode('csr.ctrl.go').write(0x1)
     lACmd.getNode('csr.ctrl.go').write(0x0)

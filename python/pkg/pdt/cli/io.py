@@ -258,10 +258,10 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
 
         if lBoardType == kBoardPC059:
             lIO.getNode('csr.ctrl.master_src').write(fanout)
-            lIO.getNode('csr.ctrl.cdr_edge').write(1)
-            lIO.getNode('csr.ctrl.sfp_edge').write(1)
-            lIO.getNode('csr.ctrl.hdmi_edge').write(0)
-            lIO.getNode('csr.ctrl.usfp_edge').write(1)
+            # lIO.getNode('csr.ctrl.cdr_edge').write(1)
+            # lIO.getNode('csr.ctrl.sfp_edge').write(1)
+            # lIO.getNode('csr.ctrl.hdmi_edge').write(0)
+            # lIO.getNode('csr.ctrl.usfp_edge').write(1)
             lIO.getNode('csr.ctrl.mux').write(0)
             lDevice.dispatch()
         # elif lBoardType == kBoardTLU:
@@ -269,7 +269,7 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
         #     lIO.getNode('csr.ctrl.hdmi_inv_o').write(0)
         #     lIO.getNode('csr.ctrl.hdmi_inv_i').write(0)
 
-        ctx.invoke(pllstatus)
+        ctx.invoke(clkstatus)
 
         if lBoardType == kBoardFMC:
             lDevice.getNode("io.csr.ctrl.sfp_tx_dis").write(0)
@@ -342,6 +342,7 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
         lIO.getNode('csr.ctrl.rst_lock_mon').write(0x0)
         lIO.getClient().dispatch()
 
+
     echo()
 # ------------------------------------------------------------------------------
 
@@ -372,11 +373,11 @@ def freq(obj):
 
 
 # ------------------------------------------------------------------------------
-@io.command('clk-status')
+@io.command('status')
 @click.pass_obj
 @click.pass_context
 @click.option('-v', 'verbose', is_flag=True)
-def pllstatus(ctx, obj, verbose):
+def status(ctx, obj, verbose):
     def decRng( word, ibit, nbits=1):
         return (word >> ibit) & ((1<<nbits)-1)
 
@@ -388,6 +389,24 @@ def pllstatus(ctx, obj, verbose):
     echo( "--- " + style("IO status", fg='cyan') + " ---")
     lCsrStat = toolbox.readSubNodes(lIO.getNode('csr.stat'))
     toolbox.printRegTable(lCsrStat, False)
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@io.command('clk-status')
+@click.pass_obj
+@click.pass_context
+@click.option('-v', 'verbose', is_flag=True)
+def clkstatus(ctx, obj, verbose):
+    def decRng( word, ibit, nbits=1):
+        return (word >> ibit) & ((1<<nbits)-1)
+
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+    lIO = lDevice.getNode('io')
+
+    echo()
+    ctx.invoke(status)
 
     echo()
     ctx.invoke(freq)

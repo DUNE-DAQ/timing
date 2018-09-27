@@ -16,7 +16,6 @@ from os.path import join, expandvars
 from pdt.core import SI534xSlave, I2CExpanderSlave
 
 
-from pdt.cli.master import freq
 from pdt.cli.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
 from pdt.cli.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from pdt.cli.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
@@ -321,7 +320,7 @@ def readSFPStatus(aEEProm, aDiag):
     lReadings['Vcc']  = vccdecode(aDiag.readI2CArray(98, 2))
     lReadings['TX bias']  = biascurdecode(aDiag.readI2CArray(100, 2))
     lReadings['TX power']  = powerdecode(aDiag.readI2CArray(102, 2))
-    lReadings['Rx power']  = powerdecode(aDiag.readI2CArray(104, 2))
+    lReadings['RX power']  = powerdecode(aDiag.readI2CArray(104, 2))
     lMiscStatus = aDiag.readI2C(110)
     lReadings['TX disable'] = (lMiscStatus >> 7) & 0x1
 

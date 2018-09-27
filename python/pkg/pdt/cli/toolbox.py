@@ -126,6 +126,14 @@ def validate_device(ctx, param, value):
 
 
 # -----------------
+def complete_device(ctx, args, incomplete):
+    lDevices = ctx.obj.mConnectionManager.getDevices()
+
+    return [k for k in lDevices if incomplete in k]
+# -----------------
+
+
+# -----------------
 def validate_partition(ctx, param, value):
     
     lMaxParts = ctx.obj.mGenerics['n_part']

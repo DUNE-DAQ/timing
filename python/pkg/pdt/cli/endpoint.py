@@ -52,12 +52,12 @@ def endpoint(obj, device, ids):
         secho('WARNING: multiple enpoint versions detected', fg='yellow')
         secho()
 
-        lVTable = Texttable(max_width=0)
-        lVTable.set_deco(Texttable.VLINES | Texttable.BORDER)
-        lVTable.set_chars(['-', '|', '+', '-'])
-        lVTable.header( sorted(lVersions.keys()) )
-        lVTable.add_row( [hex(lVersions[p].value()) for p in sorted(lVersions.keys()) ] )
-        echo  ( lVTable.draw() )
+    lVTable = Texttable(max_width=0)
+    lVTable.set_deco(Texttable.VLINES | Texttable.BORDER)
+    lVTable.set_chars(['-', '|', '+', '-'])
+    lVTable.header( sorted(lVersions.keys()) )
+    lVTable.add_row( [hex(lVersions[p].value()) for p in sorted(lVersions.keys()) ] )
+    echo  ( lVTable.draw() )
 
     obj.mDevice = lDevice
     obj.mEndpoints = lEndpoints
