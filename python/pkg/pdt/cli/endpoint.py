@@ -171,7 +171,7 @@ def status(obj, watch, period):
         )
         lEPSummary.add_row(
                 ['Timestamp (hex)']+
-                [hex(toolbox.formatTStamp(lEPData[p]['tstamp'])) for p in lEPKeys]
+                [hex(toolbox.tstamp2int(lEPData[p]['tstamp'])) for p in lEPKeys]
         )        
         lEPSummary.add_row(
                 ['EventCounter']+

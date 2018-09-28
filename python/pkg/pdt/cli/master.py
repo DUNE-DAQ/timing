@@ -139,7 +139,7 @@ kUIDRevisionMap = {
 # ------------------------------------------------------------------------------
 @master.command('fixtime', short_help="Measure some frequencies.")
 @click.pass_obj
-def fixtime(obj):
+def synctime(obj):
 
 
     lMaster = obj.mMaster
@@ -597,9 +597,27 @@ def faketrigclear(obj, chan):
 
 # ------------------------------------------------------------------------------
 # -- cyc_len and spill_len are in units of 1 / (50MHz / 2^24) = 0.34s
+@master.command('spillenable')
+@click.pass_obj
+def spillenable(obj):
+    '''
+    \b
+    Enables the internal spill generator.
+    '''
+    lMaster = obj.mMaster
+
+    lSpillCtrl = lMaster.getNode('spill.csr.ctrl')
+    lSpillCtrl.getNode('src').write(0)
+    lSpillCtrl.getNode('en').write(1)
+    lSpillCtrl.getClient().dispatch()
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+# -- cyc_len and spill_len are in units of 1 / (50MHz / 2^24) = 0.34s
 @master.command('fake-spillgen')
 @click.pass_obj
-def fake_spillgen(obj):
+def fakespillgen(obj):
     '''
     \b
     Enables the internal spill generator.
@@ -653,6 +671,9 @@ def enableEptAndWaitForReady( aGlobal, aTimeout=2 ):
         print ('rdy ', hex(lEptRdy))
         if int(lEptRdy) == 1:
             break
+    if int(lEptRdy) == 0:
+        raise RuntimeError('Failed to bring up the RTT endpoint. Current state {}'.format(hex(lEptStat)))
+
 # ------------------------------------------------------------------------------
 
 

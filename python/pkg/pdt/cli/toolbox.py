@@ -242,6 +242,12 @@ def formatTStamp( aRawTStamp ):
 
 
 # ------------------------------------------------------------------------------
+def tstamp2int( aRawTStamp ):
+    return int(aRawTStamp[0]) + int((aRawTStamp[1]) << 32)
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
 def printCounters( aTopNode, aSubNodes, aNumCtrs=0x10, aTitle='Cmd', aLegend=defs.kCommandNames ):
 
     lBlocks = []
