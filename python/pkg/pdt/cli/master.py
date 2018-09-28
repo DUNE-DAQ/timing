@@ -137,7 +137,7 @@ kUIDRevisionMap = {
 
 
 # ------------------------------------------------------------------------------
-@master.command('fixtime', short_help="Measure some frequencies.")
+@master.command('synctime', short_help="Measure some frequencies.")
 @click.pass_obj
 def synctime(obj):
 
@@ -866,7 +866,7 @@ def externaltrigger(obj):
 
 
 # ------------------------------------------------------------------------------
-@externaltrigger.command('delay', short_help="Control the trigger return endpoint")
+@externaltrigger.command('ept', short_help="Control the trigger return endpoint")
 @click.argument('action', default='enable', type=click.Choice(['enable', 'disable', 'reset']))
 @click.pass_obj
 @click.pass_context
@@ -884,7 +884,7 @@ def exttrg_ept(ctx, obj, action):
     lExtTrig.getClient().dispatch()
     secho("Trigger endpoint action '" + action + "' completed", fg='green')
 
-    ctx.invoke(exttrgmonitor)
+    ctx.invoke(exttrg_status)
 # ------------------------------------------------------------------------------
 
 
@@ -900,19 +900,18 @@ def exttrg_enable(ctx, obj, on):
     lExtTrig.getNode('csr.ctrl.ext_trig_en').write(on)
     lExtTrig.getClient().dispatch()
     secho("External triggers " + ("enabled" if on else "disabled"), fg='green')
-    ctx.invoke(exttrgmonitor)
+    ctx.invoke(exttrg_status)
 # ------------------------------------------------------------------------------
 
 
 # ------------------------------------------------------------------------------
-@externaltrigger.command('monitor', short_help="Monitor trigger input status")
+@externaltrigger.command('status', short_help="Monitor trigger input status")
 @click.option('--watch', '-w', is_flag=True, default=False, help='Turn on automatic refresh')
 @click.option('--period','-p', type=click.IntRange(0, 10), default=2, help='Automatic refresh period')
 @click.pass_obj
-def exttrg_monitor(obj, watch, period):
+def exttrg_status(obj, watch, period):
     
     lExtTrig = obj.mExtTrig
-
 
     while(True):
         if watch:
