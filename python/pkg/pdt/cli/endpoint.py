@@ -241,6 +241,7 @@ def readback(obj, readall):
     Read the content of the endpoint master readout buffer.
     '''
     lDevice = obj.mDevice
+    lEndpoints = obj.mEndpoints
     
     for p,n in lEndpoints.iteritems():
 
@@ -252,7 +253,7 @@ def readback(obj, readall):
         # lEventsToRead = int(lBufCount) / kEventSize
         # echo (lEventsToRead)
 
-        lWordsToRead = int(lBufCount) if readall else (int(lBufCount) / kEventSize)*kEventSize
+        lWordsToRead = int(lBufCount) if readall else (int(lBufCount) / defs.kEventSize)*defs.kEventSize
 
         echo (lWordsToRead )
         if lWordsToRead == 0:

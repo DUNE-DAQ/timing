@@ -411,7 +411,6 @@ def stop(obj):
     # d(3) <= tstamp(63 downto 32); -- DAQ word 3
     # d(4) <= evtctr; -- DAQ word 4
     # d(5) <= X"00000000"; -- Dummy checksum (not implemented yet)
-kEventSize = 6
 
 @partition.command('readback', short_help='Read the timing master readout buffer.')
 @click.pass_obj
@@ -435,7 +434,7 @@ def readback(obj, readall, keep):
 
         echo ( "Words available in readout buffer: "+hex(lBufCount))
         
-        lWordsToRead = int(lBufCount) if readall else (int(lBufCount) / kEventSize)*kEventSize
+        lWordsToRead = int(lBufCount) if readall else (int(lBufCount) / defs.kEventSize)*defs.kEventSize
 
         # if lWordsToRead == 0:
             # echo("Nothing to read, goodbye!")

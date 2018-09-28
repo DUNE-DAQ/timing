@@ -1,7 +1,7 @@
 import collections
 
 kSPSClockInHz = int(50e6)
-
+kEventSize = 6
 
 kCommandIDs = collections.OrderedDict([
 
