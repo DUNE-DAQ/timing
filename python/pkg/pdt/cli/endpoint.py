@@ -242,24 +242,25 @@ def readback(obj, readall):
     '''
     lDevice = obj.mDevice
     
-    lEndPointNode = lDevice.getNode('endpoint')
-    lBufCount = lEndPointNode.getNode('buf.count').read()
-    lEndPointNode.getClient().dispatch()
+    for p,n in lEndpoints.iteritems():
 
-    echo ( "Words available in readout buffer: "+hex(lBufCount))
-    
-    # lEventsToRead = int(lBufCount) / kEventSize
-    # echo (lEventsToRead)
+        lBufCount = n.getNode('buf.count').read()
+        n.getClient().dispatch()
 
-    lWordsToRead = int(lBufCount) if readall else (int(lBufCount) / kEventSize)*kEventSize
+        echo ( "Words available in readout buffer: "+hex(lBufCount))
+        
+        # lEventsToRead = int(lBufCount) / kEventSize
+        # echo (lEventsToRead)
 
-    echo (lWordsToRead )
-    if lWordsToRead == 0:
-        echo("Nothing to read, goodbye!")
+        lWordsToRead = int(lBufCount) if readall else (int(lBufCount) / kEventSize)*kEventSize
 
-    lBufData = lEndPointNode.getNode('buf.data').readBlock(lWordsToRead)
-    lEndPointNode.getClient().dispatch()
+        echo (lWordsToRead )
+        if lWordsToRead == 0:
+            echo("Nothing to read, goodbye!")
 
-    for i, lWord in enumerate(lBufData):
-        echo ( '{:04d} {}'.format(i, hex(lWord)))
+        lBufData = n.getNode('buf.data').readBlock(lWordsToRead)
+        n.getClient().dispatch()
+
+        for i, lWord in enumerate(lBufData):
+            echo ( '{:04d} {}'.format(i, hex(lWord)))
 # ------------------------------------------------------------------------------
