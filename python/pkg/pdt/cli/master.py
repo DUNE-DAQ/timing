@@ -287,8 +287,8 @@ def partstatus(obj, watch, period):
         lBufCount = lPartNode.getNode('buf.count').read()
         lPartNode.getClient().dispatch()
 
-        lTime = (int(lTimeStamp[1]) << 32) << int(lTimeStamp[0])
-        echo( "Timestamp: {} ({}) - {}".format(style(str(lTime), fg='blue'), hex(lTime), toolbox.formatTStamp(lTimeStamp)))
+        lTime = (int(lTimeStamp[1]) << 32) + int(lTimeStamp[0])
+        echo( "Timestamp: {} -> {}".format(style(hex(lTime), fg='blue'), toolbox.formatTStamp(lTimeStamp)))
         echo( "EventCounter: {}".format(lEventCtr))
         lBufState = style('OK', fg='green') if lStatDump['buf_err'] == 0 else style('Error', fg='red')
         # lStatDump['buf_empty']
