@@ -8,14 +8,21 @@ import click
 import click_didyoumean
 import time
 import collections
+import traceback
+import StringIO
 # import operator
+import sys
+import os
 
 # PDT imports
 import pdt
 import pdt.cli.definitions as defs
 import pdt.cli.toolbox as toolbox
+import pdt.cli.system as system
 import pdt.cli.io as io
 import pdt.cli.master as master
+import pdt.cli.exttrig as exttrig
+import pdt.cli.align as align
 import pdt.cli.endpoint as endpoint
 import pdt.cli.crt as crt
 import pdt.cli.debug as debug
@@ -73,10 +80,32 @@ def list(obj):
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
+    cli.add_command(system.system)
     cli.add_command(io.io)
     cli.add_command(master.master)
     cli.add_command(endpoint.endpoint)
     cli.add_command(crt.crt)
     cli.add_command(debug.debug)
-    cli(obj=PDTContext())
+
+    try:
+        cli(obj=PDTContext())
+    except Exception as e:
+        # traceback.print_exc(limit=1)
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        # import ipdb
+        lFirstFrame = traceback.extract_tb(exc_tb)[-1]
+
+
+        secho("ERROR: '{}' exception caught\n\nMessage '{}'\n\nThrown by '{}' at '{}' line {}".format(exc_type.__name__, e, lFirstFrame[2], lFirstFrame[0], lFirstFrame[1]),fg='red')
+        # secho("{}".format(),fg='red')
+        # print(lFirstFrame)
+        # ipdb.set_trace()
+        # fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        # 'Error: exception of type {} throw'
+        # print(e, exc_type.__name__, fname, exc_tb.tb_lineno)        # lExc = StringIO.StringIO()
+        # traceback.print_exc(file=lExc)
+        # print ("Exception in user code:")
+        # print ('-'*60)
+        # secho(lExc.getvalue(), fg='red')
+        # print ('-'*60)
 # ------------------------------------------------------------------------------

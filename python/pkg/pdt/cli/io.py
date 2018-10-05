@@ -108,7 +108,7 @@ def io(obj, device):
 # ------------------------------------------------------------------------------
 @io.command('reset', short_help="Perform a hard reset on the timing master.")
 @click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
-@click.option('--fanout-mode', 'fanout', type=click.IntRange(0, 3), default=0, help='Configures the board in fanout mode (pc059 only)')
+@click.option('--fanout-mode', 'fanout', type=click.IntRange(0, 1), default=0, help='Configures the board in fanout mode (pc059 only)')
 @click.option('--force-pll-cfg', 'forcepllcfg', type=click.Path(exists=True))
 @click.pass_obj
 @click.pass_context
@@ -124,8 +124,7 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
     \b
     Fanout mode:
     0 = local master
-    1 = hdmi
-    2 = sfp
+    1 = sfp
     '''
 
     echo('Resetting ' + click.style(obj.mDevice.id(), fg='blue'))
@@ -133,6 +132,8 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
     lDevice = obj.mDevice
     lBoardType = obj.mBoardType
     lCarrierType = obj.mCarrierType
+    lDesignType = obj.mDesignType
+
     lIO = lDevice.getNode('io')
 
     if ( lBoardType == kBoardPC059 and fanout ):
@@ -237,7 +238,7 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
         else:
             if lBoardType == kBoardTLU:
                 lClockConfigPath = kClockConfigMap[kTLURev1]
-            elif lBoardType == kBoardPC059 and fanout in [1,2]:
+            elif lDesignType == kDesingFanout and fanout in [0]:
                 secho("Overriding clock config - fanout mode", fg='green')
                 lClockConfigPath = kClockConfigMap[kPC059FanoutHDMI if fanout == 1 else kPC059FanoutSFP]
             else:
@@ -256,18 +257,10 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
         echo("SI3545 configuration id: {}".format(style(lSIChip.readConfigID(), fg='green')))
 
 
-        if lBoardType == kBoardPC059:
-            lIO.getNode('csr.ctrl.master_src').write(fanout)
-            # lIO.getNode('csr.ctrl.cdr_edge').write(1)
-            # lIO.getNode('csr.ctrl.sfp_edge').write(1)
-            # lIO.getNode('csr.ctrl.hdmi_edge').write(0)
-            # lIO.getNode('csr.ctrl.usfp_edge').write(1)
+        if lDesignType == kDesingFanout:
+            lDevice.getNode('switch.csr.ctrl.master_src').write(fanout)
             lIO.getNode('csr.ctrl.mux').write(0)
             lDevice.dispatch()
-        # elif lBoardType == kBoardTLU:
-        #     lIO.getNode('csr.ctrl.hdmi_edge').write(0)
-        #     lIO.getNode('csr.ctrl.hdmi_inv_o').write(0)
-        #     lIO.getNode('csr.ctrl.hdmi_inv_i').write(0)
 
         ctx.invoke(clkstatus)
 
@@ -389,6 +382,10 @@ def status(ctx, obj, verbose):
     echo( "--- " + style("IO status", fg='cyan') + " ---")
     lCsrStat = toolbox.readSubNodes(lIO.getNode('csr.stat'))
     toolbox.printRegTable(lCsrStat, False)
+
+    if lBoardType == kBoardPC059:
+        lActive = [i for i in xrange(8) if ((lCsrStat['sfp_los']>>i) & 0x1) == 0]
+        print('Active SFPS:',lActive)
 # ------------------------------------------------------------------------------
 
 

@@ -211,8 +211,10 @@ def sfp_status(obj):
 
     if lBoardType == kBoardFMC:
         lSFPNodeName = 'io.sfp_i2c'
+        lSFPLabel = 'SFP'
     elif lBoardType == kBoardPC059:
         lSFPNodeName = 'io.usfp_i2c'
+        lSFPLabel = 'USFP'
     else:
         secho('No SFP on {}'.format(kBoardNamelMap[lBoardType]))
         return
@@ -221,7 +223,7 @@ def sfp_status(obj):
     lEEPromSlave = lI2CBusNode.getSlave('eeprom')
     lDiagSlave = lI2CBusNode.getSlave('diag')
 
-    readSFPStatus(lEEPromSlave, lDiagSlave)
+    readSFPStatus(lEEPromSlave, lDiagSlave, lSFPLabel)
 
     if lBoardType == kBoardPC059:
         lDevice.getNode('io.csr.ctrl.rst_i2cmux').write(0x1)
@@ -255,7 +257,7 @@ def sfp_status(obj):
 
 
 # ------------------------------------------------------------------------------
-def readSFPStatus(aEEProm, aDiag):
+def readSFPStatus(aEEProm, aDiag, aLabel):
 
     def asciidecode( v ): 
         return (''.join([chr(c) for c in v])).rstrip()
@@ -286,7 +288,7 @@ def readSFPStatus(aEEProm, aDiag):
     lVenInfoEnc['Month'] = asciidecode(aEEProm.readI2CArray(86,2))
     lVenInfoEnc['Year'] = asciidecode(aEEProm.readI2CArray(84,2))
 
-    secho("SFP Vendor info", fg='cyan')
+    secho("{} Vendor info".format(aLabel), fg='cyan')
     # for k,v in lVenInfoEnc.items():
     #     v = ''.join([chr(c) for c in v])
     #     echo(' - '+k+': '+style(v, fg='cyan'))
@@ -312,7 +314,7 @@ def readSFPStatus(aEEProm, aDiag):
     toolbox.printRegTable(lRegs, aHeader=False, sort=False)
 
     echo()
-    secho("SFP Diagnostic info", fg='cyan')
+    secho("{} Diagnostic info".format(aLabel), fg='cyan')
 
     lReadings = collections.OrderedDict()
 

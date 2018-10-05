@@ -66,18 +66,23 @@ def endpoint(obj, device, ids):
 
 # ------------------------------------------------------------------------------
 @endpoint.command('enable')
-@click.pass_obj
-@click.option('--on/--off', default=True, help='enable/disable the endpoint')
+@click.argument('action', default='on', type=click.Choice(['on', 'off', 'reset']))
 @click.option('--partition', '-p', type=click.IntRange(0,4), help='Partition', default=0)
 @click.option('--address', '-a', type=toolbox.IntRange(0x0,0x100), help='Address', default=None)
-def enable(obj, on, partition, address):
+@click.pass_obj
+@click.pass_context
+def enable(ctx, obj, action, partition, address):
     '''
     Activate timing endpoint wrapper block.
     '''
 
     lDone = []
     for i, ep in obj.mEndpoints.iteritems():
-        if on:
+        if action in ['off', 'reset']:
+            ep.getNode('csr.ctrl.ep_en').write(0x0)
+            ep.getNode('csr.ctrl.buf_en').write(0x0)
+
+        if action in ['on','reset']:
             ep.getNode('csr.ctrl.tgrp').write(partition)
             if address is not None:
                 ep.getNode('csr.ctrl.int_addr').write(0x1)
@@ -87,14 +92,18 @@ def enable(obj, on, partition, address):
 
             ep.getNode('csr.ctrl.ctr_rst').write(0x1)
             ep.getNode('csr.ctrl.ctr_rst').write(0x0)
+            ep.getNode('csr.ctrl.ep_en').write(0x1)
+            ep.getNode('csr.ctrl.buf_en').write(0x1)
             ep.getClient().dispatch()
-        ep.getNode('csr.ctrl.ep_en').write(on)
-        ep.getNode('csr.ctrl.buf_en').write(on)
+
         ep.getClient().dispatch()
         lDone.append(i)
 
+    time.sleep(0.1)
+    ctx.invoke(status)
+
     echo(
-        "> Endpoints {} ".format(','.join( (str(i) for i in lDone) )) + style("activated in partition {}".format(partition) if on else "deactivated", fg='blue'))
+        "> Endpoints {} ".format(','.join( (str(i) for i in lDone) )) + style(action+(" in partition {}".format(partition) if action in ['on', 'reset'] else ""), fg='blue'))
 # ------------------------------------------------------------------------------
 
 
@@ -215,7 +224,7 @@ def status(obj, watch, period):
         lEPCtrs.set_deco(Texttable.VLINES | Texttable.BORDER | Texttable.HEADER)
         lEPCtrs.set_chars(['-', '|', '+', '-'])
         lEPCtrs.set_cols_align(['l']+['c']*len(lEPKeys))
-        lEPCtrs.set_cols_width([10]+[8]*(len(lEPKeys)))
+        lEPCtrs.set_cols_width([12]+[8]*(len(lEPKeys)))
 
         lEPCtrs.header( ['Endpoint']+lEPKeys )
         for c in xrange(lNumCtrs):

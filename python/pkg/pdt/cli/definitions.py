@@ -19,7 +19,7 @@ kCommandIDs = collections.OrderedDict([
     ('FakeTrig3', 0xb),
     ('BeamTrig', 0xc),
     ('NoBeamTrig', 0xd),
-    ('RandTrig', 0xe),
+    ('ExtFakeTrig', 0xe),
 ])
 
 kCommandNames = { v:k for k,v in kCommandIDs.iteritems() }

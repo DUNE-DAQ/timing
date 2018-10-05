@@ -16,7 +16,7 @@ def getinfo():
 	
 	cm = uhal.ConnectionManager('file://${PDT_TESTS}/etc/connections.xml')
 
-	device = cm.getDevice('DUNE_FMC_SLAVE_TUN')
+	device = cm.getDevice('OVLD_TUN')
 
 	readMAC(device)
 

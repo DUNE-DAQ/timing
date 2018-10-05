@@ -270,7 +270,7 @@ def printCounters( aTopNode, aSubNodes, aNumCtrs=0x10, aTitle='Cmd', aLegend=def
             lBlocks.append([None]*aNumCtrs)
 
     # Just a bit of math
-    lCellWidth = 10
+    lCellWidth = 12
     kCellFmt = ' {{:^{}}} '.format(lCellWidth)
     kTitleCellFmt = ' {{:^{}}} '.format((lCellWidth+1)*2+1)
 
