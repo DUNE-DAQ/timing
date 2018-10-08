@@ -43,9 +43,9 @@ class ShellFactory(object):
 
         def ctor(self, device, boardType, carrierType, designType):
            self.mDevice = device
-           self.boardType = boardType
-           self.carrierType = carrierType
-           self.designType = designType
+           self.mBoardType = boardType
+           self.mCarrierType = carrierType
+           self.mDesignType = designType
 
            super(self.__class__, self).__init__()
 

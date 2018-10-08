@@ -3,39 +3,19 @@ from __future__ import print_function
 import click
 import pdt.shells
 import pdt.cli.toolbox as toolbox
+import pdt.common.database as database
 import time
 
 from click import echo, style, secho
-
-kSSPAddresses = {
-    (0,5): range(0x20, 0x24),
-    (0,6): range(0x24, 0x28),
-    (0,1): range(0x28, 0x2c),
-    (0,2): range(0x2c, 0x30),
-    (0,4): range(0x30, 0x34),
-    (0,3): range(0x34, 0x38),
-}
-
-kWibAddresses = {
-    (0,5): range(0x45, 0x4a),
-    (0,6): range(0x4a, 0x4f),
-    (0,1): range(0x4f, 0x54),
-    (0,2): range(0x54, 0x59),
-    (0,4): range(0x59, 0x5e),
-    (0,3): range(0x5e, 0x63),
-}
-
-
-
 
 
 # ------------------------------------------------------------------------------
 @click.group('ovld', invoke_without_command=True)
 @click.pass_obj
 def overlord(obj):
-    obj.overlord = pdt.shells.ShellFactory.make(obj.mConnectionManager.getDevice('SECONDARY_TUN'))
+    obj.overlord = pdt.shells.ShellFactory.make(obj.mConnectionManager.getDevice('OVLD_TUN'))
     obj.fanouts = {
-            0:pdt.shells.ShellFactory.make(obj.mConnectionManager.getDevice('TERTIARY_FO_TUN'))
+            0:pdt.shells.ShellFactory.make(obj.mConnectionManager.getDevice('FO0_TUN'))
         }
 # ------------------------------------------------------------------------------
 
@@ -66,7 +46,7 @@ def synctime(obj):
 @click.pass_obj
 def status(obj):
 
-    # 
+    
 
     pass
 
@@ -76,15 +56,21 @@ def status(obj):
 
 # ------------------------------------------------------------------------------
 @overlord.command('measure-delay', short_help="Control the trigger return endpoint")
-@click.argument('addr', type=toolbox.IntRange(0x0,0x100))
-@click.option('--mux', '-m', type=click.IntRange(0,7), help='Mux select (fanout only)')
+@click.argument('addr', type=toolbox.IntRange(0x1,0x100))
+@click.option('--slot', '-s', type=click.IntRange(0,7), help='Mux select (fanout only)')
 @click.pass_obj
-def measuredelay(obj, addr, mux):
+def measuredelay(obj, addr, slot):
 
     lOvld = obj.overlord
-    lFanout0 = obj.fanout0
-    if mux is not None:
-        lFanout0.selectMux(mux)
+    lFanout0 = obj.fanouts[0]
+
+    fanout=0
+
+    if slot is None:
+        fanout,slot = database.kAddressToSlot[addr]
+        echo("Address {} mapped to fanout {}, slot {}".format(hex(addr), fanout, slot))        
+
+    lFanout0.selectMux(slot)
 
     # Switch off all TX SFPs
     lOvld.enableEndpointSFP(0x0, False)
@@ -95,14 +81,14 @@ def measuredelay(obj, addr, mux):
     time.sleep(0.1)
 
 
-    echo('Locking fanout 0')
+    echo("Locking fanout {}".format(fanout))
     lFanout0.enableEptAndWaitForReady()
-    echo('Locking overlord')
+    echo("Locking overlord")
     lOvld.enableEptAndWaitForReady()
 
-    echo('Measuring RTT')
+    echo("Measuring RTT")
     lTimeTx, lTimeRx = lOvld.sendEchoAndMeasureDelay()
-    print(lTimeTx, lTimeRx, lTimeRx-lTimeTx)
+    echo('Measured RTT delay {} (transmission {}, reception {})'.format(hex(lTimeTx), hex(lTimeRx), lTimeRx-lTimeTx))
 
     lOvld.enableEndpointSFP(addr, 0x0)
 
