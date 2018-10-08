@@ -6,13 +6,13 @@ import traceback
 
 # PDT imports
 import pdt.cli.toolbox as toolbox
-import pdt.cli.definitions as defs
+import pdt.common.definitions as defs
 
 from click import echo, style, secho
-from pdt.cli.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
-from pdt.cli.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
-from pdt.cli.definitions import kDesingMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesingFanout
-from pdt.cli.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
+from pdt.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
+from pdt.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
+from pdt.common.definitions import kDesingMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesingFanout
+from pdt.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
 
 from master import master
 
@@ -25,7 +25,6 @@ def align(obj):
     obj.mACmd = lMaster.getNode('acmd')
     obj.mEcho = lMaster.getNode('echo')
 # ------------------------------------------------------------------------------
-
 
 
 # ------------------------------------------------------------------------------
@@ -48,6 +47,7 @@ def enableEptAndWaitForReady( aGlobal, aTimeout=0.5 ):
         # print ('stat', hex(lEptStat))
         # print ('rdy ', hex(lEptRdy))
         if int(lEptRdy) == 1:
+            secho('Endpoint locked: state={}'.format(hex(lEptStat)), fg='blue')
             break
     if int(lEptRdy) == 0:
         raise RuntimeError('Failed to bring up the RTT endpoint. Current state {}'.format(hex(lEptStat)))
@@ -138,15 +138,21 @@ def applydelay(ctx, obj, addr, delay, mux, force):
     try:
         if not force:
             # Switch off all TX SFPs
-            enableEndpointSFP(lACmd, 0x0, False)
+            # enableEndpointSFP(lACmd, 0x0, False)
             # Turn on the current target
-            enableEndpointSFP(lACmd, addr)
+            # enableEndpointSFP(lACmd, addr)
 
             time.sleep(0.1)
 
             enableEptAndWaitForReady(lGlobal)
 
+            lCsrDump = toolbox.readSubNodes(lGlobal.getNode('csr'))
+            print(toolbox.formatRegTable(lCsrDump, False))
+
             lTimeTx, lTimeRx = sendEchoAndMeasureDelay(lEcho)
+
+            lCsrDump = toolbox.readSubNodes(lGlobal.getNode('csr'))
+            print(toolbox.formatRegTable(lCsrDump, False))
 
             print(lTimeTx, lTimeRx, lTimeRx-lTimeTx)
             #------------
@@ -202,10 +208,10 @@ def measuredelay(ctx, obj, addr, mux):
             raise RuntimeError('Mux is only available on PC059 boards')
 
     # Switch off all TX SFPs
-    enableEndpointSFP(lACmd, 0x0, False)
+    # enableEndpointSFP(lACmd, 0x0, False)
     time.sleep(0.1)
     # Turn on the current target
-    enableEndpointSFP(lACmd, addr)
+    # enableEndpointSFP(lACmd, addr)
 
     time.sleep(0.1)
 
@@ -214,7 +220,7 @@ def measuredelay(ctx, obj, addr, mux):
     lTimeTx, lTimeRx = sendEchoAndMeasureDelay(lEcho)
     print(lTimeTx, lTimeRx, lTimeRx-lTimeTx)
 
-    enableEndpointSFP(lACmd, addr, 0x0)
+    # enableEndpointSFP(lACmd, addr, 0x0)
 
 # ------------------------------------------------------------------------------
 
@@ -222,19 +228,20 @@ def measuredelay(ctx, obj, addr, mux):
 # ------------------------------------------------------------------------------
 @align.command('toggle-tx', short_help="Control the trigger return endpoint")
 @click.argument('addr', type=toolbox.IntRange(0x0,0x100))
-@click.option('--on/--off', default=True, help='enable/disable _ALL_ enpoint tx')
+@click.option('--on/--off', default=True, help='enable/disable tx')
 @click.pass_obj
 def toggletx(obj, addr, on):
 
     lACmd = obj.mACmd
 
-    toolbox.resetSubNodes(lACmd.getNode('csr.ctrl'))
+    enableEndpointSFP(lACmd, addr, on)
+    # toolbox.resetSubNodes(lACmd.getNode('csr.ctrl'))
 
-    lACmd.getNode('csr.ctrl.addr').write(addr)
-    lACmd.getNode('csr.ctrl.tx_en').write(on)
-    lACmd.getNode('csr.ctrl.go').write(0x1)
-    lACmd.getNode('csr.ctrl.go').write(0x0)
-    lACmd.getClient().dispatch()
+    # lACmd.getNode('csr.ctrl.addr').write(addr)
+    # lACmd.getNode('csr.ctrl.tx_en').write(on)
+    # lACmd.getNode('csr.ctrl.go').write(0x1)
+    # lACmd.getNode('csr.ctrl.go').write(0x0)
+    # lACmd.getClient().dispatch()
 
     lDone = lACmd.getNode('csr.stat.done').read()
     lACmd.getClient().dispatch()

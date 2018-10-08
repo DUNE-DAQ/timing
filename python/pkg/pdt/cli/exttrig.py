@@ -6,7 +6,7 @@ import traceback
 
 # PDT imports
 import pdt.cli.toolbox as toolbox
-import pdt.cli.definitions as defs
+import pdt.common.definitions as defs
 
 from click import echo, style, secho
 

@@ -13,7 +13,7 @@ import StringIO
 
 # PDT imports
 import pdt.cli.toolbox as toolbox
-import pdt.cli.definitions as defs
+import pdt.common.definitions as defs
 
 from click import echo, style, secho
 from os.path import join, expandvars, basename
@@ -22,10 +22,10 @@ from pdt.core import SI534xSlave, I2CExpanderSlave
 kMasterFWMajorRequired = 5
 
 
-from pdt.cli.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
-from pdt.cli.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
-from pdt.cli.definitions import kDesingMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesingFanout
-from pdt.cli.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
+from pdt.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
+from pdt.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
+from pdt.common.definitions import kDesingMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesingFanout
+from pdt.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
 # ------------------------------------------------------------------------------
 #    __  ___         __         
 #   /  |/  /__ ____ / /____ ____
@@ -91,56 +91,55 @@ def master(obj, device):
 
 # ------------------------------------------------------------------------------
 
-kFMCRev1 = 1
-kFMCRev2 = 2
-kPC059Rev1 = 3
-kPC059FanoutHDMI = 4
-kPC059FanoutSFP = 5
-kTLURev1 = 6
+# kFMCRev1 = 1
+# kFMCRev2 = 2
+# kPC059Rev1 = 3
+# kPC059FanoutHDMI = 4
+# kPC059FanoutSFP = 5
+# kTLURev1 = 6
 
-kClockConfigMap = {
-    kFMCRev1: "SI5344/PDTS0000.txt",
-    kFMCRev2: "SI5344/PDTS0003.txt",
-    kPC059Rev1: "SI5345/PDTS0005.txt",
-    kPC059FanoutHDMI: "devel/PDTS_PC059_FANOUT.txt",
-    kPC059FanoutSFP: "devel/PDTS_PC059_FANOUT_SFP_IN.txt",
-    # kTLURev1: "devel/PDTS_TLU_MASTER.txt"
-    kTLURev1: "devel/PDTS_TLU_MASTER_ONLYLEMOIN.txt"
-}
+# kClockConfigMap = {
+#     kFMCRev1: "SI5344/PDTS0000.txt",
+#     kFMCRev2: "SI5344/PDTS0003.txt",
+#     kPC059Rev1: "SI5345/PDTS0005.txt",
+#     kPC059FanoutHDMI: "devel/PDTS_PC059_FANOUT.txt",
+#     kPC059FanoutSFP: "devel/PDTS_PC059_FANOUT_SFP_IN.txt",
+#     # kTLURev1: "devel/PDTS_TLU_MASTER.txt"
+#     kTLURev1: "devel/PDTS_TLU_MASTER_ONLYLEMOIN.txt"
+# }
 
-kUIDRevisionMap = {
-    0xd880395e720b: kFMCRev1,
-    0xd880395e501a: kFMCRev1,
-    0xd880395e50b8: kFMCRev1,
-    0xd880395e501b: kFMCRev1,
-    0xd880395e7201: kFMCRev1,
-    0xd880395e4fcc: kFMCRev1,
-    0xd880395e5069: kFMCRev1,
-    0xd880395e7206: kFMCRev1,
-    0xd880395e1c86: kFMCRev2,
-    0xd880395e2630: kFMCRev2,
-    0xd880395e262b: kFMCRev2,
-    0xd880395e2b38: kFMCRev2,
-    0xd880395e1a6a: kFMCRev2,
-    0xd880395e36ae: kFMCRev2,
-    0xd880395e2b2e: kFMCRev2,
-    0xd880395e2b33: kFMCRev2,
-    0xd880395e1c81: kFMCRev2,
-    0x5410ec6476f1: kFMCRev2,
-    0xd88039d980cf: kPC059Rev1,
-    0xd88039d98adf: kPC059Rev1,
-    0xd88039d92491: kPC059Rev1,
-    0xd88039d9248e: kPC059Rev1,
-    0xd88039d98ae9: kPC059Rev1,
-    0xd88039d92498: kPC059Rev1,
-}
+# kUIDRevisionMap = {
+#     0xd880395e720b: kFMCRev1,
+#     0xd880395e501a: kFMCRev1,
+#     0xd880395e50b8: kFMCRev1,
+#     0xd880395e501b: kFMCRev1,
+#     0xd880395e7201: kFMCRev1,
+#     0xd880395e4fcc: kFMCRev1,
+#     0xd880395e5069: kFMCRev1,
+#     0xd880395e7206: kFMCRev1,
+#     0xd880395e1c86: kFMCRev2,
+#     0xd880395e2630: kFMCRev2,
+#     0xd880395e262b: kFMCRev2,
+#     0xd880395e2b38: kFMCRev2,
+#     0xd880395e1a6a: kFMCRev2,
+#     0xd880395e36ae: kFMCRev2,
+#     0xd880395e2b2e: kFMCRev2,
+#     0xd880395e2b33: kFMCRev2,
+#     0xd880395e1c81: kFMCRev2,
+#     0x5410ec6476f1: kFMCRev2,
+#     0xd88039d980cf: kPC059Rev1,
+#     0xd88039d98adf: kPC059Rev1,
+#     0xd88039d92491: kPC059Rev1,
+#     0xd88039d9248e: kPC059Rev1,
+#     0xd88039d98ae9: kPC059Rev1,
+#     0xd88039d92498: kPC059Rev1,
+# }
 
 
 # ------------------------------------------------------------------------------
-@master.command('synctime', short_help="Measure some frequencies.")
+@master.command('synctime', short_help="Sync timestamps with computer local time.")
 @click.pass_obj
 def synctime(obj):
-
 
     lMaster = obj.mMaster
     lTStampReadNode = lMaster.getNode('tstamp.ctr.val')

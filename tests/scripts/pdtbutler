@@ -16,7 +16,7 @@ import os
 
 # PDT imports
 import pdt
-import pdt.cli.definitions as defs
+import pdt.common.definitions as defs
 import pdt.cli.toolbox as toolbox
 import pdt.cli.system as system
 import pdt.cli.io as io
@@ -80,7 +80,7 @@ def list(obj):
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
-    cli.add_command(system.system)
+    cli.add_command(system.overlord)
     cli.add_command(io.io)
     cli.add_command(master.master)
     cli.add_command(endpoint.endpoint)
@@ -90,13 +90,11 @@ if __name__ == '__main__':
     try:
         cli(obj=PDTContext())
     except Exception as e:
-        # traceback.print_exc(limit=1)
         exc_type, exc_obj, exc_tb = sys.exc_info()
-        # import ipdb
         lFirstFrame = traceback.extract_tb(exc_tb)[-1]
 
 
-        secho("ERROR: '{}' exception caught\n\nMessage '{}'\n\nThrown by '{}' at '{}' line {}".format(exc_type.__name__, e, lFirstFrame[2], lFirstFrame[0], lFirstFrame[1]),fg='red')
+        secho("ERROR: '{}' exception caught\n\nMessage '{}'\n\nThrown by '{}' (line '{}' in {})".format(exc_type.__name__, e, lFirstFrame[2], lFirstFrame[1], lFirstFrame[0]),fg='red')
         # secho("{}".format(),fg='red')
         # print(lFirstFrame)
         # ipdb.set_trace()

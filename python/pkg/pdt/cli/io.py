@@ -10,16 +10,16 @@ import math
 import pdt
 
 import pdt.cli.toolbox as toolbox
-import pdt.cli.definitions as defs
+import pdt.common.definitions as defs
 
 from click import echo, style, secho
 from os.path import join, expandvars, basename
 from pdt.core import SI534xSlave, I2CExpanderSlave, DACSlave
 
-from pdt.cli.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
-from pdt.cli.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
-from pdt.cli.definitions import kDesingMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesingFanout
-from pdt.cli.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
+from pdt.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
+from pdt.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
+from pdt.common.definitions import kDesingMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesingFanout
+from pdt.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
 
 
 kFMCRev1 = 1
