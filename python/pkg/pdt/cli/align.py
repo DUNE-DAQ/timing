@@ -17,7 +17,7 @@ from pdt.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignName
 from master import master
 
 # ------------------------------------------------------------------------------
-@master.group('align', short_help='')
+@master.group('align', short_help='Endpoint alignment command group.')
 @click.pass_obj
 def align(obj):
     lMaster = obj.mMaster

@@ -14,7 +14,7 @@ from master import master
 
 # ------------------------------------------------------------------------------
 # -- cyc_len and spill_len are in units of 1 / (50MHz / 2^24) = 0.34s
-@master.group('ext-trig', short_help='Extenal trigger command group')
+@master.group('ext-trig', short_help='Extenal trigger command group.')
 @click.pass_obj
 def externaltrigger(obj):
     pass

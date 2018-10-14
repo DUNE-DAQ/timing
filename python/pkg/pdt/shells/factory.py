@@ -2,6 +2,13 @@ from __future__ import print_function
 
 import pdt.cli.toolbox as toolbox
 
+
+# ------------------------------------------------------------------------------
+class ShellContext(object):
+    pass
+# ------------------------------------------------------------------------------
+
+            
 # ------------------------------------------------------------------------------
 class ShellFactory(object):
     """docstring for Factory"""
@@ -42,10 +49,12 @@ class ShellFactory(object):
             raise RuntimeError('Device '+device.id()+': Unknown design type')
 
         def ctor(self, device, boardType, carrierType, designType):
-           self.mDevice = device
-           self.mBoardType = boardType
-           self.mCarrierType = carrierType
-           self.mDesignType = designType
+
+           self.device = device
+           self.info = ShellContext()
+           self.info.boardType = boardType
+           self.info.carrierType = carrierType
+           self.info.designType = designType
 
            super(self.__class__, self).__init__()
 

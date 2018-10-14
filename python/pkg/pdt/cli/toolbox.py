@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 import re
 
@@ -205,23 +206,44 @@ def formatRegTable(aRegs, aHeader=True, sort=True):
     return lRegTable.draw()
 # ------------------------------------------------------------------------------
 
+# ------------------------------------------------------------------------------
+def printDictTable(aDict, aHdr=True, aSort=True, aFmtr=None):
+    echo  ( formatDictTable(aDict, aHdr, aSort, aFmtr) )
+# ------------------------------------------------------------------------------
+
 
 # ------------------------------------------------------------------------------
-def formatDictTable(aDict, aHdr=True, aSort=True, aFmtr=None):
+def formatDictTable(aDict, aHdr=True, aSort=True, aFmtr=str):
     lDictTable = Texttable(max_width=0)
     lDictTable.set_deco(Texttable.VLINES | Texttable.BORDER | Texttable.HEADER)
     lDictTable.set_chars(['-', '|', '+', '-'])
     if aHdr:
         lDictTable.header( ['name', 'value'] )
 
-    lDict = sorted(aDict) if aSort else aDict
-    for k in lDict:
-        v = lDict[k]
+    for k in (sorted(aDict) if aSort else aDict):
+        v = aDict[k]
         lDictTable.add_row( [str(k), aFmtr(v) if aFmtr else v])
         
     return lDictTable.draw()
 # ------------------------------------------------------------------------------
 
+
+# ------------------------------------------------------------------------------
+def collateTables(t1, t2):
+    l1 = t1.split('\n')
+    l2 = t2.split('\n')
+
+    col1 = max([len(escape_ansi(l)) for l in l1])
+    col2 = max([len(escape_ansi(l)) for l in l2])
+
+    nrows = max(len(l1), len(l2));
+
+    l1 += [''] * (nrows - len(l1))
+    l2 += [''] * (nrows - len(l2))
+    fmt = '\'{:<%d}\' \'{:<%d}\'' % (col1, col2)
+    for c1,c2 in zip(l1, l2):
+        print (c1 + ' '*(col1-len(escape_ansi(c1))), '  ' ,c2 + ' '*(col2-len(escape_ansi(c2))))
+# ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
 kReEscapeAnsi = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -/]*[@-~]')
