@@ -6,7 +6,7 @@ namespace pdt {
 UHAL_REGISTER_DERIVED_NODE(DACNode);
 
 //-----------------------------------------------------------------------------
-DACSlave::DACSlave( const I2CBaseNode* aMaster, uint8_t aAddr ) :
+DACSlave::DACSlave( const I2CMasterNode* aMaster, uint8_t aAddr ) :
     I2CSlave( aMaster, aAddr ) {
 }
 //-----------------------------------------------------------------------------
@@ -40,13 +40,13 @@ DACSlave::setDAC(uint8_t aChan, uint32_t aCode) const {
 
 
 //-----------------------------------------------------------------------------
-DACNode::DACNode( const uhal::Node& aNode ) : I2CBaseNode(aNode), DACSlave(this, this->getSlaveAddress("i2caddr") ) {
+DACNode::DACNode( const uhal::Node& aNode ) : I2CMasterNode(aNode), DACSlave(this, this->getSlaveAddress("i2caddr") ) {
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-DACNode::DACNode( const DACNode& aOther ) : I2CBaseNode(aOther), DACSlave(this, this->getSlaveAddress("i2caddr") ) {
+DACNode::DACNode( const DACNode& aOther ) : I2CMasterNode(aOther), DACSlave(this, this->getSlaveAddress("i2caddr") ) {
 }
 //-----------------------------------------------------------------------------
 

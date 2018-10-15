@@ -12,7 +12,7 @@
 namespace pdt {
 
 //-----------------------------------------------------------------------------
-SIChipSlave::SIChipSlave( const I2CBaseNode* aMaster, uint8_t aAddr ) :
+SIChipSlave::SIChipSlave( const I2CMasterNode* aMaster, uint8_t aAddr ) :
 I2CSlave( aMaster, aAddr ) {
 }
 //-----------------------------------------------------------------------------

@@ -18,7 +18,7 @@ namespace pdt
  */
 class SIChipSlave : public I2CSlave {
 public:
-    SIChipSlave(const I2CBaseNode* aMaster, uint8_t aSlaveAddress);
+    SIChipSlave(const I2CMasterNode* aMaster, uint8_t aSlaveAddress);
     virtual ~SIChipSlave();
 
     /**

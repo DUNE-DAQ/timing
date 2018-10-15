@@ -48,8 +48,12 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 @click.option('-c', '--connections', default='${PDT_TESTS}/etc/connections.xml', help='Path to uhal connection file(s)')
 @click.option('-t', '--timeout', default=None, help='uhal timeout (sec)')
 @click.option('-v', '--verbose', count=True)
-def cli(ctx, connections, timeout, verbose):
+@click.option('-g', '--gdb', is_flag=True)
+def cli(ctx, connections, timeout, verbose, gdb):
     
+    if gdb:
+        toolbox.hookDebugger()
+
     # Set uhal log level
     uhal.setLogLevelTo(uhal.LogLevel.NOTICE)
     pdt.core.setLogThreshold(kLogLevelMap.get(verbose, pdt.core.kDebug1))

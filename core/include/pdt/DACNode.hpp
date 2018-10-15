@@ -2,7 +2,7 @@
 #define __PDT_DACNODE_HPP__
 
 #include "pdt/I2CSlave.hpp"
-#include "pdt/I2CBaseNode.hpp"
+#include "pdt/I2CMasterNode.hpp"
 
 namespace pdt {
 
@@ -17,7 +17,7 @@ PDTExceptionClass(DACValueOutOfRange, "DAC channel out of range");
 class DACSlave : public I2CSlave
 {
 public:
-    DACSlave(const I2CBaseNode* aMaster, uint8_t aSlaveAddress);
+    DACSlave(const I2CMasterNode* aMaster, uint8_t aSlaveAddress);
     virtual ~DACSlave() = default;
   
     void setInteralRef( bool aInternal ) const;
@@ -33,7 +33,7 @@ public:
  * @author     Alessandro Thea
  * @date       April 2018
  */
-class DACNode : public I2CBaseNode, public DACSlave {
+class DACNode : public I2CMasterNode, public DACSlave {
     UHAL_DERIVEDNODE(DACNode);
 public:
     DACNode(const uhal::Node& aNode);

@@ -16,13 +16,13 @@
 #include "pdt/exception.hpp"
 #include "pdt/Logger.hpp"
 #include "pdt/toolbox.hpp"
-#include "pdt/I2CBaseNode.hpp"
+#include "pdt/I2CMasterNode.hpp"
 
 namespace pdt {
 
 
 //-----------------------------------------------------------------------------
-I2CSlave::I2CSlave(const I2CBaseNode* aMaster, uint8_t aSlaveAddress) :
+I2CSlave::I2CSlave(const I2CMasterNode* aMaster, uint8_t aSlaveAddress) :
 mMaster(aMaster), mAddress(aSlaveAddress) {
 }
 //-----------------------------------------------------------------------------

@@ -15,7 +15,7 @@ namespace pdt {
 UHAL_REGISTER_DERIVED_NODE(I2CExpanderNode);
 
 //-----------------------------------------------------------------------------
-I2CExpanderSlave::I2CExpanderSlave( const I2CBaseNode* aMaster, uint8_t aAddr ) :
+I2CExpanderSlave::I2CExpanderSlave( const I2CMasterNode* aMaster, uint8_t aAddr ) :
 I2CSlave( aMaster, aAddr ) {
 }
 //-----------------------------------------------------------------------------
@@ -100,13 +100,13 @@ I2CExpanderSlave::debug() const {
 
 
 //-----------------------------------------------------------------------------
-I2CExpanderNode::I2CExpanderNode( const uhal::Node& aNode ) : I2CBaseNode(aNode), I2CExpanderSlave(this, this->getSlaveAddress("i2caddr") ) {
+I2CExpanderNode::I2CExpanderNode( const uhal::Node& aNode ) : I2CMasterNode(aNode), I2CExpanderSlave(this, this->getSlaveAddress("i2caddr") ) {
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-I2CExpanderNode::I2CExpanderNode( const I2CExpanderNode& aOther ) : I2CBaseNode(aOther), I2CExpanderSlave(this, this->getSlaveAddress("i2caddr") ) {
+I2CExpanderNode::I2CExpanderNode( const I2CExpanderNode& aOther ) : I2CMasterNode(aOther), I2CExpanderSlave(this, this->getSlaveAddress("i2caddr") ) {
 }
 //-----------------------------------------------------------------------------
 

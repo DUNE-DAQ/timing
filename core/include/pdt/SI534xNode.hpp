@@ -4,7 +4,7 @@
 #include <map>
 
 #include "pdt/SIChipSlave.hpp"
-#include "pdt/I2CBaseNode.hpp"
+#include "pdt/I2CMasterNode.hpp"
 
 namespace pdt 
 {
@@ -21,7 +21,7 @@ PDTExceptionClass(SI534xMissingConfigSectionError, "Missing configuration sectio
  */
 class SI534xSlave : public SIChipSlave {
 public:
-    SI534xSlave(const I2CBaseNode* aMaster, uint8_t aSlaveAddress);
+    SI534xSlave(const I2CMasterNode* aMaster, uint8_t aSlaveAddress);
     virtual ~SI534xSlave();
 
     void configure(const std::string& aFilename) const;
@@ -47,7 +47,7 @@ private:
  * @author     Alessandro Thea
  * @date       August 2013
  */
-class SI534xNode : public I2CBaseNode, public SI534xSlave {
+class SI534xNode : public I2CMasterNode, public SI534xSlave {
     UHAL_DERIVEDNODE(SI534xNode);
 public:
     SI534xNode(const uhal::Node& aNode);

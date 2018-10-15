@@ -56,8 +56,6 @@ def setup(obj):
     obj.overlord.synctime()
 # ------------------------------------------------------------------------------
 
-overlord.add_command(setup)
-vst.add_command(setup)
 
 # ------------------------------------------------------------------------------
 @click.command('synctime')
@@ -65,6 +63,25 @@ vst.add_command(setup)
 def synctime(obj):
     click.echo(obj.overlord.device.id())
     obj.overlord.synctime()
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@click.command('testi2c')
+@click.pass_obj
+def testi2c(obj):
+    for b in [obj.overlord]: # + obj.fanouts.values()
+        echo(b.device.id()+" i2c bus scan")
+        for n,adrss in b.scanI2C().iteritems():
+            echo('{}: {}'.format(
+                style(n, fg='cyan'),
+                ', '.join([hex(a) for a in adrss])
+            ))
+        echo()
+        echo(b.device.id()+" i2c ping scan")
+        for n,(s, a, ok) in b.pingI2CSlaves().iteritems():
+            echo("{}.{}: {} - {}".format(style(n, fg='cyan'), s, hex(a), style('OK', fg='green') if ok else style('Not responding', fg='red')))
+
 # ------------------------------------------------------------------------------
 
 
@@ -90,21 +107,6 @@ def status(obj):
     echo( "--- " + style("Fanout[0] IO status", fg='cyan') + " ---")
     toolbox.printRegTable(status['fanout0'], False)
 
-    # echo( "--- " + style("Overlord clock frequency", fg='cyan') + " ---")
-    # toolbox.printDictTable(freq['overlord'], False)
-    # echo( "--- " + style("Fanout[0] clock frequency", fg='cyan') + " ---")
-    # toolbox.printDictTable(freq['fanout0'], False)
-
-
-    # echo( "--- " + style("Overlord PLL status", fg='cyan') + " ---")
-    # echo( "Config: "+style(pllstatus['overlord'][0], fg='blue'))
-    # toolbox.printRegTable(pllstatus['overlord'][1], aHeader=False)
-    # toolbox.printRegTable(pllstatus['overlord'][2], aHeader=False)
-    # echo( "--- " + style("Fanout[0] PLL status", fg='cyan') + " ---")
-    # echo( "Config: "+style(pllstatus['fanout0'][0], fg='blue'))
-    # toolbox.printRegTable(pllstatus['fanout0'][1], aHeader=False)
-    # toolbox.printRegTable(pllstatus['fanout0'][2], aHeader=False)
-
     toolbox.collateTables(
         pllstatus['overlord'][0],
         pllstatus['fanout0'][0],
@@ -117,15 +119,8 @@ def status(obj):
         toolbox.formatRegTable(pllstatus['overlord'][2], aHeader=False),
         toolbox.formatRegTable(pllstatus['fanout0'][2] , aHeader=False),
         )
-            # clk = obj.overlord.freq()
-    # print(clk)
-    # clk = obj.fanouts[0].freq()
-    # print(clk)
-
 # ------------------------------------------------------------------------------
 
-overlord.add_command(status)
-vst.add_command(status)
 
 
 # ------------------------------------------------------------------------------
@@ -136,9 +131,6 @@ def scanfanout(obj):
     for i,f in obj.fanouts.iteritems():
         f.scanports()
     
-
-    pass
-
 # ------------------------------------------------------------------------------
 
 
@@ -181,5 +173,10 @@ def measuredelay(obj, addr, slot):
     lOvld.enableEndpointSFP(addr, 0x0)
 
 # ------------------------------------------------------------------------------
+
+
+for cmd in [setup, synctime, status, scanfanout, measuredelay, testi2c]:
+    overlord.add_command(cmd)
+    vst.add_command(cmd)
 
 

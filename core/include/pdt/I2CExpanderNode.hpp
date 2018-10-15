@@ -4,7 +4,7 @@
 #include <map>
 
 #include "pdt/I2CSlave.hpp"
-#include "pdt/I2CBaseNode.hpp"
+#include "pdt/I2CMasterNode.hpp"
 
 namespace pdt
 {
@@ -19,7 +19,7 @@ PDTExceptionClass(SFPExpanderBankIDError, "Clock configuration error");
  */
 class I2CExpanderSlave : public I2CSlave {
 public:
-    I2CExpanderSlave(const I2CBaseNode* aMaster, uint8_t aSlaveAddress);
+    I2CExpanderSlave(const I2CMasterNode* aMaster, uint8_t aSlaveAddress);
     virtual ~I2CExpanderSlave();
   
     /**
@@ -71,7 +71,7 @@ private:
  * @author     Alessandro Thea
  * @date       April 2018
  */
-class I2CExpanderNode : public I2CBaseNode, public I2CExpanderSlave {
+class I2CExpanderNode : public I2CMasterNode, public I2CExpanderSlave {
     UHAL_DERIVEDNODE(I2CExpanderNode);
 public:
     I2CExpanderNode(const uhal::Node& aNode);

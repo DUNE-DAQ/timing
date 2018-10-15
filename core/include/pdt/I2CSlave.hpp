@@ -16,7 +16,7 @@
  
 namespace pdt {
 
-class I2CBaseNode;
+class I2CMasterNode;
 
 /*!
  * @class I2CSlave
@@ -32,7 +32,7 @@ class I2CBaseNode;
 class I2CSlave : boost::noncopyable {
 protected:
     // Private constructor, accessible to I2CMaster
-    I2CSlave(const I2CBaseNode* aMaster, uint8_t aSlaveAddress);
+    I2CSlave(const I2CMasterNode* aMaster, uint8_t aSlaveAddress);
 public:
 
     virtual ~I2CSlave();
@@ -57,7 +57,7 @@ public:
     bool ping() const;
 
 private:
-    const I2CBaseNode* mMaster;
+    const I2CMasterNode* mMaster;
 
     // slave address
     uint8_t mAddress;

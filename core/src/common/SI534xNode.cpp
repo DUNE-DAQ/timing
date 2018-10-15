@@ -19,7 +19,7 @@ namespace pdt {
 UHAL_REGISTER_DERIVED_NODE(SI534xNode);
 
 //-----------------------------------------------------------------------------
-SI534xSlave::SI534xSlave( const I2CBaseNode* aMaster, uint8_t aAddr ) :
+SI534xSlave::SI534xSlave( const I2CMasterNode* aMaster, uint8_t aAddr ) :
 SIChipSlave( aMaster, aAddr ) {
 }
 //-----------------------------------------------------------------------------
@@ -309,13 +309,13 @@ SI534xSlave::registers( ) const {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-SI534xNode::SI534xNode( const uhal::Node& aNode ) : I2CBaseNode(aNode), SI534xSlave(this, this->getSlaveAddress("i2caddr") ) {
+SI534xNode::SI534xNode( const uhal::Node& aNode ) : I2CMasterNode(aNode), SI534xSlave(this, this->getSlaveAddress("i2caddr") ) {
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-SI534xNode::SI534xNode( const SI534xNode& aOther ) : I2CBaseNode(aOther), SI534xSlave(this, this->getSlaveAddress("i2caddr") ) {
+SI534xNode::SI534xNode( const SI534xNode& aOther ) : I2CMasterNode(aOther), SI534xSlave(this, this->getSlaveAddress("i2caddr") ) {
 }
 //-----------------------------------------------------------------------------
 

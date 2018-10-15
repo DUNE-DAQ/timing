@@ -9,7 +9,7 @@ import pdt.common.definitions as defs
 
 from factory import ShellFactory, ShellContext
 from click import echo, style, secho
-from pdt.core import SI534xSlave, I2CExpanderSlave, DACSlave
+from pdt.core import I2CSlave, SI534xSlave, I2CExpanderSlave, DACSlave
 
 from pdt.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
 from pdt.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
@@ -52,6 +52,29 @@ class BoardShell(object):
         for lVal in lValues:
             lUniqueID = ( lUniqueID << 8 ) | lVal
         return lUniqueID
+    # ------------------------------------------------------------------------------
+
+
+    # ------------------------------------------------------------------------------
+    def scanI2C(self):
+        lIO = self.device.getNode('io')
+        lRes = {}
+        for lI2CName in self.i2cMasters:
+            lRes[lI2CName] = lIO.getNode(lI2CName).scan()
+        return lRes
+    # ------------------------------------------------------------------------------
+
+
+    # ------------------------------------------------------------------------------
+    def pingI2CSlaves(self):
+        lIO = self.device.getNode('io')
+        lRes = {}
+        for lI2CName in self.i2cMasters:
+            lI2CNode = lIO.getNode(lI2CName)
+            for lSlaveName in lI2CNode.getSlaves():
+               lRes[lI2CName] = (lSlaveName, lI2CNode.getSlaveAddress(lSlaveName), lI2CNode.getSlave(lSlaveName).ping())
+
+        return lRes
     # ------------------------------------------------------------------------------
 
 
@@ -194,6 +217,11 @@ class FMCShell(BoardShell):
         kFMCRev2: "SI5344/PDTS0003.txt",
     }
 
+    i2cMasters=[
+        'uid_i2c',
+        'sfp_i2c',
+        'pll_i2c'
+    ]
 
     # ------------------------------------------------------------------------------
     def getAX3Slave(self):
@@ -213,6 +241,7 @@ class FMCShell(BoardShell):
         return lIO.getNode('pll_i2c')
     # ------------------------------------------------------------------------------
 
+
     # ------------------------------------------------------------------------------
     def resetI2CnPll(self):
         lIO = self.device.getNode('io')
@@ -227,13 +256,11 @@ class FMCShell(BoardShell):
         lIO.getClient().dispatch()
     # ------------------------------------------------------------------------------
 
-
     # ------------------------------------------------------------------------------
     def enableI2CSwitch(self):
         if self.info.carrierType == kCarrierEnclustraA35:
             super(FMCShell, self).enableI2CSwitch()
     # ------------------------------------------------------------------------------
-
 
     # ------------------------------------------------------------------------------
     def reset(self, soft, forcepllcfg):

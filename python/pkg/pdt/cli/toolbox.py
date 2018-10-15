@@ -11,6 +11,24 @@ from click_texttable import Texttable
 
 
 # ------------------------------------------------------------------------------
+def hookDebugger(debugger='gdb'):
+    '''debugging helper, hooks debugger to running interpreter process'''
+
+    import os
+    pid = os.spawnvp(os.P_NOWAIT,
+                     debugger, [debugger, '-q', 'python', str(os.getpid())])
+
+    # give debugger some time to attach to the python process
+    import time
+    time.sleep( 1 )
+
+    # verify the process' existence (will raise OSError if failed)
+    os.waitpid( pid, os.WNOHANG )
+    os.kill( pid, 0 )
+    return
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class IntRange(click.types.IntParamType):
     """A parameter that works similar to :data:`click.INT` but restricts
     the value to fit into a range.  The default behavior is to fail if the
