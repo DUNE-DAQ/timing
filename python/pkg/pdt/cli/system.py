@@ -70,17 +70,22 @@ def synctime(obj):
 @click.command('testi2c')
 @click.pass_obj
 def testi2c(obj):
-    for b in [obj.overlord]: # + obj.fanouts.values()
-        echo(b.device.id()+" i2c bus scan")
+    boards = [obj.overlord] + [ obj.fanouts[k] for k in sorted(obj.fanouts)]
+    for b in boards: # + obj.fanouts.values()
+        echo("----"+style(b.device.id(), fg='blue')+"----")
+        echo("I2C bus scan")
         for n,adrss in b.scanI2C().iteritems():
-            echo('{}: {}'.format(
+            echo("  {}: {}".format(
                 style(n, fg='cyan'),
                 ', '.join([hex(a) for a in adrss])
             ))
+
+        echo("I2C slaves ping scan")
+        lPings = b.pingI2CSlaves()
+        for n in sorted(lPings):
+            s, a, ok = lPings[n]
+            echo("  {}.{}: {} - {}".format(style(n, fg='cyan'), s, hex(a), style('OK', fg='green') if ok else style('Not responding', fg='red')))
         echo()
-        echo(b.device.id()+" i2c ping scan")
-        for n,(s, a, ok) in b.pingI2CSlaves().iteritems():
-            echo("{}.{}: {} - {}".format(style(n, fg='cyan'), s, hex(a), style('OK', fg='green') if ok else style('Not responding', fg='red')))
 
 # ------------------------------------------------------------------------------
 
