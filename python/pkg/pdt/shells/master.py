@@ -73,6 +73,18 @@ class MasterShell(object):
 
 
     # ------------------------------------------------------------------------------
+    def initPartitions(self):
+
+        for pid in xrange(self.masterCtx.generics['n_part']):
+
+            lPartNode = self.masterCtx.masterNode.getNode('partition{}'.format(pid))
+        
+            lPartNode.reset(); 
+            lPartNode.configure(0x0, False);
+            lPartNode.enable();
+    # ------------------------------------------------------------------------------
+
+    # ------------------------------------------------------------------------------
     def synctime(self):
 
         lMaster = self.masterCtx.masterNode
@@ -106,7 +118,7 @@ class MasterShell(object):
         print(float(lTime)/defs.kSPSClockInHz - x)
 
         echo ("DeltaT {}".format(toolbox.formatTStamp(lTimeStamp)))
-# ------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------
 
 
 
@@ -122,23 +134,24 @@ class MasterShell(object):
 
         # Wait for the endpoint to be happy
         lTOutStart = time.time()
-        secho ('Return EPT reset, waiting for lock', fg='cyan')
+        # secho ('Return EPT reset, waiting for lock', fg='cyan')
         while time.time() < lTOutStart + aTimeout:
             time.sleep(0.1)
 
-            lEptStat = lGlobal.getNode('csr.stat.ep_stat').read()
             lEptRdy = lGlobal.getNode('csr.stat.ep_rdy').read()
+            lEptStat = lGlobal.getNode('csr.stat.ep_stat').read()
+            lEptFDel = lGlobal.getNode('csr.stat.ep_fdel').read()
+            lEptEdge = lGlobal.getNode('csr.stat.ep_edge').read()
             lGlobal.getClient().dispatch()
 
-            # print ('stat', hex(lEptStat))
-            # print ('rdy ', hex(lEptRdy))
             if int(lEptRdy) == 1:
-                secho('Endpoint locked: state={}'.format(hex(lEptStat)), fg='blue')
+                # secho('Endpoint locked: state={}'.format(hex(lEptStat)), fg='blue')
                 break
         if int(lEptRdy) == 0:
             raise RuntimeError('Failed to bring up the RTT endpoint. Current state {}'.format(hex(lEptStat)))
-        else:
-            secho ('Endpoint locked', fg='cyan')
+        # else:
+            # secho ('Endpoint locked', fg='cyan')
+        return (lEptFDel.value(), lEptEdge.value())
     # ------------------------------------------------------------------------------
 
 
@@ -210,44 +223,5 @@ class MasterShell(object):
 
 ShellFactory.registerBoard(kDesingOverlord, MasterShell)
 
-class FanoutShell(MasterShell):
-
-    def scanports(self):
-
-        lDevice = self.device
-        lGlobal = self.masterCtx.globalNode
-        lBoardType = self.info.boardType
-
-        if lBoardType != kBoardPC059:
-            raise RuntimeError('Mux is only available on PC059 boards')
-
-        lLocked = []
-        for mux in xrange(0,8):
-            secho('Scanning slot {}'.format(mux), fg='cyan')
-
-            lDevice.getNode('io.csr.ctrl.mux').write(mux)
-            lDevice.dispatch()
-            # echo('SFP input mux set to {}'.format(mux))
-
-            try:
-                self.enableEptAndWaitForReady()
-                lState = lGlobal.getNode('csr.stat.ep_stat').read()
-                lFDel = lGlobal.getNode('csr.stat.ep_fdel').read()
-                lEdge = lGlobal.getNode('csr.stat.ep_edge').read()
-                lGlobal.getClient().dispatch()
-
-                secho('Endpoint locked: state={}, fdel={}, edge={}'.format(hex(lState), hex(lFDel), hex(lEdge)), fg='blue')
-                lLocked.append(mux)
-            except RuntimeError as e:
-                secho('Slot {}: no lock - {}'.format(mux,e), fg='yellow')
-
-        echo()
-        if lLocked:
-            secho('Locked slots {}'.format(','.join( ( str(l) for l in lLocked))), fg='green')
-        else:
-            secho('No slots locked', fg='red')
-        return lLocked
-
-ShellFactory.registerBoard(kDesingFanout, FanoutShell)
-
 # ------------------------------------------------------------------------------
+

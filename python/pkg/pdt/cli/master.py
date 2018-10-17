@@ -90,53 +90,6 @@ def master(obj, device):
 
 
 # ------------------------------------------------------------------------------
-
-# kFMCRev1 = 1
-# kFMCRev2 = 2
-# kPC059Rev1 = 3
-# kPC059FanoutHDMI = 4
-# kPC059FanoutSFP = 5
-# kTLURev1 = 6
-
-# kClockConfigMap = {
-#     kFMCRev1: "SI5344/PDTS0000.txt",
-#     kFMCRev2: "SI5344/PDTS0003.txt",
-#     kPC059Rev1: "SI5345/PDTS0005.txt",
-#     kPC059FanoutHDMI: "devel/PDTS_PC059_FANOUT.txt",
-#     kPC059FanoutSFP: "devel/PDTS_PC059_FANOUT_SFP_IN.txt",
-#     # kTLURev1: "devel/PDTS_TLU_MASTER.txt"
-#     kTLURev1: "devel/PDTS_TLU_MASTER_ONLYLEMOIN.txt"
-# }
-
-# kUIDRevisionMap = {
-#     0xd880395e720b: kFMCRev1,
-#     0xd880395e501a: kFMCRev1,
-#     0xd880395e50b8: kFMCRev1,
-#     0xd880395e501b: kFMCRev1,
-#     0xd880395e7201: kFMCRev1,
-#     0xd880395e4fcc: kFMCRev1,
-#     0xd880395e5069: kFMCRev1,
-#     0xd880395e7206: kFMCRev1,
-#     0xd880395e1c86: kFMCRev2,
-#     0xd880395e2630: kFMCRev2,
-#     0xd880395e262b: kFMCRev2,
-#     0xd880395e2b38: kFMCRev2,
-#     0xd880395e1a6a: kFMCRev2,
-#     0xd880395e36ae: kFMCRev2,
-#     0xd880395e2b2e: kFMCRev2,
-#     0xd880395e2b33: kFMCRev2,
-#     0xd880395e1c81: kFMCRev2,
-#     0x5410ec6476f1: kFMCRev2,
-#     0xd88039d980cf: kPC059Rev1,
-#     0xd88039d98adf: kPC059Rev1,
-#     0xd88039d92491: kPC059Rev1,
-#     0xd88039d9248e: kPC059Rev1,
-#     0xd88039d98ae9: kPC059Rev1,
-#     0xd88039d92498: kPC059Rev1,
-# }
-
-
-# ------------------------------------------------------------------------------
 @master.command('synctime', short_help="Sync timestamps with computer local time.")
 @click.pass_obj
 def synctime(obj):
@@ -173,7 +126,6 @@ def synctime(obj):
     print (toolbox.formatTStamp(lTimeStamp))
 
 # ------------------------------------------------------------------------------
-
 
 
 # ------------------------------------------------------------------------------
@@ -588,14 +540,14 @@ def faketrigclear(obj, chan):
     lMaster.getNode('scmd_gen.sel').write(chan)
 
     toolbox.resetSubNodes(lGenChanCtrl)
-    secho( "> Fake trigger generator {} configuration cleared".format(chan), fg='cyan' )
+    secho( "Fake trigger generator {} configuration cleared".format(chan), fg='green' )
 
 # ------------------------------------------------------------------------------
 
 
 # ------------------------------------------------------------------------------
 # -- cyc_len and spill_len are in units of 1 / (50MHz / 2^24) = 0.34s
-@master.command('spillenable')
+@master.command('spill-enable')
 @click.pass_obj
 def spillenable(obj):
     '''
@@ -608,6 +560,8 @@ def spillenable(obj):
     lSpillCtrl.getNode('src').write(0)
     lSpillCtrl.getNode('en').write(1)
     lSpillCtrl.getClient().dispatch()
+    secho( "Spill interface enabled", fg='green' )
+
 # ------------------------------------------------------------------------------
 
 

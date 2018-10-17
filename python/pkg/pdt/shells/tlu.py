@@ -9,10 +9,10 @@ from .factory import ShellFactory
 
 from os.path import join, expandvars, basename
 from click import echo, style, secho
-from pdt.common.definitions import kBoardTLU
+from pdt.common.definitions import kBoardTLU, kBoardSim
 # from pdt.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from pdt.common.definitions import kDesingFanout
-from pdt.core import I2CSlave, SI534xSlave
+from pdt.core import I2CSlave, SI534xSlave, I2CExpanderSlave, DACSlave
 
 
 
@@ -33,14 +33,14 @@ class TLUShell(BoardShell):
         'i2c',
     ]
     # ------------------------------------------------------------------------------
-    def getAX3Slave(selfself):
+    def getAX3Slave(self):
         lIO = self.device.getNode('io')
         return lIO.getNode('i2c').getSlave('AX3_Switch')
     # ------------------------------------------------------------------------------
     #
 
     # ------------------------------------------------------------------------------
-    def getUIDSlave(selfself):
+    def getUIDSlave(self):
         lIO = self.device.getNode('io')
         return lIO.getNode('i2c').getSlave('UID_PROM')
     # ------------------------------------------------------------------------------
@@ -162,22 +162,13 @@ class TLUShell(BoardShell):
             # PLL and I@C reset 
             self.resetI2CnPll()
 
-            # Detect the on-board eprom and read the board UID
-            # lUID = lIO.getNode('i2c')
-
-            # echo('UID I2C Slaves')
-            # for lSlave in lUID.getSlaves():
-            #     echo("  {}: {}".format(lSlave, hex(lUID.getSlaveAddress(lSlave))))
-
             # Enable I2C routing on carrier
             self.enableI2CSwitch()
 
-            # lUniqueID = self.readUID()
-            # echo("Timing Board PROM UID: "+style(hex(lUniqueID), fg="blue"))
+            lUniqueID = self.readUID()
 
-            # Ensure that the board is known to the revision DB
             try:
-                lRevision = kUIDRevisionMap[lUniqueID]
+                lRevision = self.kUIDRevisionMap[lUniqueID]
             except KeyError:
                 raise click.ClickException("No revision associated to UID "+hex(lUniqueID))
 
@@ -193,7 +184,7 @@ class TLUShell(BoardShell):
                 echo("Using PLL Clock configuration file: "+style(basename(lFullClockConfigPath), fg='green') )
             else:
                 try:
-                    lClockConfigPath = kClockConfigMap[lRevision]    
+                    lClockConfigPath = self.kClockConfigMap[lRevision]    
                 except KeyError:
                     raise ClickException("Board revision " << lRevision << " has no associated clock configuration")
 
@@ -214,8 +205,6 @@ class TLUShell(BoardShell):
             self.configureDACs()
 
             self.resetLockMon()
-
-        echo()
 # ------------------------------------------------------------------------------
 
 ShellFactory.registerBoard(kBoardTLU, TLUShell)

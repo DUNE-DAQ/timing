@@ -118,46 +118,46 @@ class FMCShell(BoardShell):
         # Global soft reset
         self.softReset()
 
+        if not soft:
+            time.sleep(0.1)
+                
+            # PLL and I2C reset 
+            self.resetI2CnPll()
 
-        time.sleep(0.1)
-            
-        # PLL and I2C reset 
-        self.resetI2CnPll()
+            # Enable I2C routing
+            self.enableI2CSwitch()
 
-        # Enable I2C routing
-        self.enableI2CSwitch()
+            lUniqueID = self.readUID()
+            # echo("Timing Board PROM UID: "+style(hex(lUniqueID), fg="blue"))
 
-        lUniqueID = self.readUID()
-        # echo("Timing Board PROM UID: "+style(hex(lUniqueID), fg="blue"))
-
-        # Ensure that the board is known to the revision DB
-        try:
-            lRevision = self.kUIDRevisionMap[lUniqueID]
-        except KeyError:
-            raise click.ClickException("No revision associated to UID "+hex(lUniqueID))
-
-        # Access the clock chip
-        lSIChip = self.getSIChipSlave()
-
-        # Ensure that the board revision has a registered clock config
-        if forcepllcfg is not None:
-            lFullClockConfigPath = forcepllcfg
-            echo("Using PLL Clock configuration file: "+style(basename(lFullClockConfigPath), fg='green') )
-
-        else:
+            # Ensure that the board is known to the revision DB
             try:
-                lClockConfigPath = self.kClockConfigMap[lRevision]    
+                lRevision = self.kUIDRevisionMap[lUniqueID]
             except KeyError:
-                raise ClickException("Board revision " << lRevision << " has no associated clock configuration")
+                raise click.ClickException("No revision associated to UID "+hex(lUniqueID))
+
+            # Access the clock chip
+            lSIChip = self.getSIChipSlave()
+
+            # Ensure that the board revision has a registered clock config
+            if forcepllcfg is not None:
+                lFullClockConfigPath = forcepllcfg
+                echo("Using PLL Clock configuration file: "+style(basename(lFullClockConfigPath), fg='green') )
+
+            else:
+                try:
+                    lClockConfigPath = self.kClockConfigMap[lRevision]    
+                except KeyError:
+                    raise ClickException("Board revision " << lRevision << " has no associated clock configuration")
 
 
-            echo("PLL Clock configuration file: "+style(lClockConfigPath, fg='green') )
+                echo("PLL Clock configuration file: "+style(lClockConfigPath, fg='green') )
 
-            # Configure the clock chip
-            lFullClockConfigPath = expandvars(join('${PDT_TESTS}/etc/clock', lClockConfigPath))
+                # Configure the clock chip
+                lFullClockConfigPath = expandvars(join('${PDT_TESTS}/etc/clock', lClockConfigPath))
 
-        lSIChip.configure(lFullClockConfigPath)
-        echo("SI354x configuration id: {}".format(style(lSIChip.readConfigID(), fg='green')))
+            lSIChip.configure(lFullClockConfigPath)
+            echo("SI354x configuration id: {}".format(style(lSIChip.readConfigID(), fg='green')))
 
 # ------------------------------------------------------------------------------
 

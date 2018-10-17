@@ -1,10 +1,12 @@
 from __future__ import print_function
 
 import click
+import time
+import pprint
 import pdt.shells
 import pdt.cli.toolbox as toolbox
 import pdt.common.database as database
-import time
+
 
 from click import echo, style, secho
 
@@ -46,14 +48,16 @@ def vst(obj):
 
 # ------------------------------------------------------------------------------
 @click.command('setup')
+@click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
 @click.pass_obj
-def setup(obj):
-    obj.overlord.reset(soft=False, forcepllcfg=None)
+def setup(obj, soft):
+    obj.overlord.reset(soft=soft, forcepllcfg=None)
     for i,f in obj.fanouts.iteritems():
         # print(i,vars(f))
         echo("Resetting fanout {}: {}".format(i,f.device.id()))
-        obj.fanouts[0].reset(False, 0, forcepllcfg=None)
+        obj.fanouts[0].reset(soft, 0, forcepllcfg=None)
     obj.overlord.synctime()
+    obj.overlord.initPartitions()
 # ------------------------------------------------------------------------------
 
 
@@ -67,9 +71,9 @@ def synctime(obj):
 
 
 # ------------------------------------------------------------------------------
-@click.command('testi2c')
+@click.command('scani2c')
 @click.pass_obj
-def testi2c(obj):
+def scani2c(obj):
     boards = [obj.overlord] + [ obj.fanouts[k] for k in sorted(obj.fanouts)]
     for b in boards: # + obj.fanouts.values()
         echo("----"+style(b.device.id(), fg='blue')+"----")
@@ -141,46 +145,85 @@ def scanfanout(obj):
 
 # ------------------------------------------------------------------------------
 @click.command('measure-delay', short_help="Control the trigger return endpoint")
-@click.argument('addr', type=toolbox.IntRange(0x1,0x100))
-@click.option('--slot', '-s', type=click.IntRange(0,7), help='Mux select (fanout only)')
+@click.option('-i','--uid', 'uids', callback=toolbox.split, help='Endpoint unique id')
+@click.option('-a','--addr', 'addrs', callback=toolbox.split_ints, help='Endpoint timing address')
+@click.option('-g','--grp', type=click.Choice(['wib', 'ssp', 'vst']), help='Endpoint group')
+@click.option('-v', 'verbose', is_flag=True)
 @click.pass_obj
-def measuredelay(obj, addr, slot):
+def measuredelay(obj, uids, addrs, grp, verbose):
+
+
+    def measure(uid, grp, taddr, fanout, slot, verbose):
+        if verbose:
+            echo()
+            secho("Measuring alignment of {} ({}) at {} connected on fanout{} at {}".format(uid, grp, hex(taddr), fanout, slot ), fg='blue')
+
+        lFanout.selectMux(slot)
+
+        # Switch off all TX SFPs
+        lOvld.enableEndpointSFP(0x0, False)
+        time.sleep(0.1)
+        # Turn on the current target
+        lOvld.enableEndpointSFP(taddr)
+        if verbose: echo('- Endpoint {} commanded to switch on tx'.format(hex(taddr)))
+        time.sleep(0.1)
+
+        try:
+            if verbose: echo("- Locking fanout {}".format(fanout))
+            lFOEptStats = lFanout.enableEptAndWaitForReady()
+            if verbose: secho("fanout {} ept stats: fine delay={}, edge={}".format(fanout, *lFOEptStats), fg='cyan')
+            if verbose: echo("- Locking overlord")
+            lOvldEptStats = lOvld.enableEptAndWaitForReady()
+            if verbose: secho("overlord ept stats: fine delay={}, edge={}".format(*lOvldEptStats), fg='cyan')
+
+            if verbose: echo("- Measuring RTT")
+            lTimeTx, lTimeRx = lOvld.sendEchoAndMeasureDelay()
+            if verbose: secho("Measured RTT: {} clk cycles (50 MHz)".format(lTimeRx-lTimeTx), fg='green')
+            if verbose: echo(" transmission {}, reception {})".format(hex(lTimeTx), hex(lTimeRx)))
+            lMeasurements[uid] = (lTimeRx-lTimeTx,) + lOvldEptStats + lFOEptStats
+        except:
+            if verbose: secho('Failed to measure {} RTT'.format(uid))
+        finally:
+            lOvld.enableEndpointSFP(taddr, 0x0)
+
+
+    lEndpoints = []
+    for uid in uids:
+        lEptInfo = database.findByUId(uid)
+        if lEptInfo is None:
+            secho('ERROR: Unknown endpoint uid {}'.format(uid), fg='red')
+        lEndpoints.append(lEptInfo)
+
+    for addr in addrs:
+        lEptInfo = database.findByTAddr(addr)
+        if lEptInfo is None:
+            secho('ERROR: Unknown endpoint address {}'.format(addr), fg='red')
+        lEndpoints.append(lEptInfo)
+    
+    if grp:
+        lEndpoints += database.findByGrp(grp)
 
     lOvld = obj.overlord
-    lFanout0 = obj.fanouts[0]
+    lFanout = obj.fanouts[0]
 
-    fanout=0
+    lMeasurements = {}
+    secho("Measuring Round Trip Time on {} endpoints".format(len(lEndpoints)))
 
-    if slot is None:
-        fanout,slot = database.kAddressToSlot[addr]
-        echo("Address {} mapped to fanout {}, slot {}".format(hex(addr), fanout, slot))        
+    lEndpoints = sorted(set(lEndpoints), key=lambda x: x[0])
+    if verbose:
+        for lEptInfo in lEndpoints:
+            measure(*lEptInfo, verbose=verbose)
+    else:
+        with click.progressbar(lEndpoints, show_pos=True, item_show_func=lambda x: x[0] if x is not None else '') as bar:
+            for lEptInfo in bar:
+                measure(*lEptInfo, verbose=verbose)
 
-    lFanout0.selectMux(slot)
-
-    # Switch off all TX SFPs
-    lOvld.enableEndpointSFP(0x0, False)
-    time.sleep(0.1)
-    # Turn on the current target
-    lOvld.enableEndpointSFP( addr)
-    echo('Endpoint {} commanded to enable'.format(hex(addr)))
-    time.sleep(0.1)
-
-
-    echo("Locking fanout {}".format(fanout))
-    lFanout0.enableEptAndWaitForReady()
-    echo("Locking overlord")
-    lOvld.enableEptAndWaitForReady()
-
-    echo("Measuring RTT")
-    lTimeTx, lTimeRx = lOvld.sendEchoAndMeasureDelay()
-    echo('Measured RTT delay {} (transmission {}, reception {})'.format(lTimeRx-lTimeTx, hex(lTimeTx), hex(lTimeRx)))
-
-    lOvld.enableEndpointSFP(addr, 0x0)
-
+    echo()
+    pprint.pprint(lMeasurements)
 # ------------------------------------------------------------------------------
 
 
-for cmd in [setup, synctime, status, scanfanout, measuredelay, testi2c]:
+for cmd in [setup, synctime, status, scanfanout, measuredelay, scani2c]:
     overlord.add_command(cmd)
     vst.add_command(cmd)
 

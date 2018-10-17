@@ -204,7 +204,7 @@ class PC059Shell(BoardShell):
         
         lDevice.getNode('io.csr.ctrl.mux').write(mux)
         lDevice.dispatch()
-        secho('SFP input mux set to {}'.format(mux), fg='yellow')
+        # secho('SFP input mux set to {}'.format(mux), fg='yellow')
 # ------------------------------------------------------------------------------
 
 ShellFactory.registerBoard(kBoardPC059, PC059Shell)

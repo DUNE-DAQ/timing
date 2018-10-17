@@ -166,7 +166,7 @@ def validate_partition(ctx, param, value):
 # -----------------
 
 
-# -----------------
+# ------------------------------------------------------------------------------
 def validate_chan(ctx, param, value):
     
     lMaxChans = ctx.obj.mGenerics['n_chan']
@@ -176,23 +176,45 @@ def validate_chan(ctx, param, value):
             'Invalid partition {}. Available partitions: {}'.format(value, range(lMaxChans))
         )
     return value
-# -----------------
+# ------------------------------------------------------------------------------
 
-# -----------------
+# ------------------------------------------------------------------------------
+def split(ctx, param, value):
+    if value is None:
+        return []
+
+    return value.split(',')
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+def __str2int__( value ):
+    if value.startswith('0x'):
+        base = 16
+    elif value.startswith('0o'):
+        bae = 8
+    elif value.startswith('0b'):
+        base = 2   
+    else:
+        base = 10
+    return int(value, base)
+
 def split_ints(ctx, param, value):
 
     sep = ','
     dash = '-'
+
+    if value is None:
+        return []
 
     numbers = []
     for item in value.split(sep):
         nums = item.split(dash)
         if len(nums) == 1:
             # single entry
-            numbers.append(int(item))
+            numbers.append(__str2int__(item))
         elif len(nums) == 2:
             # range
-            i, j = int(nums[0]), int(nums[1])
+            i, j = __str2int__(nums[0]), __str2int__(nums[1])
             if i > j:
                 click.ClickException('Invalid interval '+item)
             numbers.extend(xrange(i,j+1))
@@ -200,7 +222,7 @@ def split_ints(ctx, param, value):
            click.ClickException('Malformed option (comma separated list expected): {}'.format(value))
 
     return numbers
-# -----------------
+# ------------------------------------------------------------------------------
 
 
 # ------------------------------------------------------------------------------
@@ -338,4 +360,4 @@ def printCounters( aTopNode, aSubNodes, aNumCtrs=0x10, aTitle='Cmd', aLegend=def
             lLine += [lBlock[lId],hex(lBlock[lId])] if lBlock[lId] is not None else ['fail']*2
         print( '|'.join(['']+[kCellFmt.format(lCell) for lCell in lLine]+['']))
     print ( '-'*lLineLen)
-# -----------------
+# ------------------------------------------------------------------------------

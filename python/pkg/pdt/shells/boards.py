@@ -79,7 +79,7 @@ class BoardShell(object):
 
 
     # ------------------------------------------------------------------------------
-    def freq(self):
+    def measureClockFrequency(self):
         lDevice = self.device
         lBoardType = self.info.boardType
 
@@ -99,9 +99,7 @@ class BoardShell(object):
         lFreqs = {
             'PLL': freqs[0]
         }
-        # print( "Freq PLL:", freqs[0] )
         if lBoardType != kBoardTLU:
-            # print( "Freq CDR:", freqs[1] )
             lFreqs['CDR'] = freqs[1]
 
         return lFreqs
