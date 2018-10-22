@@ -185,7 +185,7 @@ PartitionNode::start( uint32_t aTimeout /*milliseconds*/ ) const {
         if ( lInRun ) break;
 
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        if ( (end - start).count() > aTimeout ) {
+        if ( (end - start) > std::chrono::milliseconds(aTimeout) ) {
             std::ostringstream lMsg;
             lMsg << "Failed to start after " << aTimeout << " milliseconds";
             throw RunRequestTimeoutExpired(lMsg.str());
