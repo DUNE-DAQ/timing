@@ -15,7 +15,7 @@ $(info PythonModules=${PythonModules})
 Packager = Alessandro Thea
 
 PACKAGE_VER_MAJOR = 5
-PACKAGE_VER_MINOR = 0
+PACKAGE_VER_MINOR = 1
 PACKAGE_VER_PATCH = 0
 PACKAGE_RELEASE = 0
 
