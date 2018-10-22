@@ -122,10 +122,13 @@ setup ()
 }
 
 # We use get-directory-name from cetpkgsupport below
-setup -c cetpkgsupport
+if ! ups active | grep -q cetpkgsupport; then
+    setup -c cetpkgsupport
+fi
 # We use build_table from cetbuildtools to make the table file from the product_deps file
-setup cetbuildtools v5_14_03
-
+if ! ups active | grep -q cetbuildtools; then
+    setup cetbuildtools v5_14_03
+fi
 
 # Sort the qualifiers in the same way as build_table does:
 # 'prof'/'debug' at the end, and the rest in alphabetical order
