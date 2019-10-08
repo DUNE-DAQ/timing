@@ -376,7 +376,7 @@ def readback(obj, readall, keep):
         for i in range(0, len(l), n):
             yield l[i:i + n]
 
-    lPartId = obj.mPartitionId
+    # lPartId = obj.mPartitionId
     lPartNode = obj.mPartitionNode
 
     while(True):
@@ -384,7 +384,7 @@ def readback(obj, readall, keep):
         lPartNode.getClient().dispatch()
 
         echo ( "Words available in readout buffer: "+hex(lBufCount))
-        
+
         lWordsToRead = int(lBufCount) if readall else (int(lBufCount) / defs.kEventSize)*defs.kEventSize
 
         # if lWordsToRead == 0:
@@ -405,6 +405,26 @@ def readback(obj, readall, keep):
             # echo ( '{:04d} {}'.format(i, hex(lWord)))
         if not keep:
             break
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@partition.command('rate-ctrl', short_help='Enable/Disable rate control.')
+@click.pass_obj
+@click.option('-e/-d', '--enable/--disable', 'rate_ctrl_en', default=True, help="Toggle rate control register.")
+def rate_ctrl(obj, rate_ctrl_en):
+    lPartId = obj.mPartitionId
+    lPartNode = obj.mPartitionNode
+
+    lPartNode.getNode('csr.ctrl.rate_ctrl_en').write(rate_ctrl_en);
+    lPartNode.getClient().dispatch()
+
+    lVal = lPartNode.getNode('csr.ctrl.rate_ctrl_en').read()
+    lPartNode.getClient().dispatch()
+
+    echo("Trigger throttling in partition {}: {}".format(lPartId, 'Enabled' if bool(lVal) else 'Disabled'))
+
+
 # ------------------------------------------------------------------------------
 
 
