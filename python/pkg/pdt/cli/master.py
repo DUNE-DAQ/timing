@@ -35,7 +35,7 @@ from pdt.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignName
 
 @click.group('mst', invoke_without_command=True)
 @click.pass_obj
-@click.argument('device', callback=toolbox.validate_device)
+@click.argument('device', callback=toolbox.validate_device, autocompletion=toolbox.completeDevices)
 def master(obj, device):
     '''
     Timing master commands.
