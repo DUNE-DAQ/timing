@@ -24,6 +24,7 @@ from pdt.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignName
 
 kFMCRev1 = 1
 kFMCRev2 = 2
+kFMCRev3 = 7
 kPC059Rev1 = 3
 kPC059FanoutHDMI = 4
 kPC059FanoutSFP = 5
@@ -32,6 +33,7 @@ kTLURev1 = 6
 kClockConfigMap = {
     kFMCRev1: "SI5344/PDTS0000.txt",
     kFMCRev2: "SI5344/PDTS0003.txt",
+    kFMCRev3: "SI5394/PDTS0003.txt",
     kPC059Rev1: "SI5345/PDTS0005.txt",
     kPC059FanoutHDMI: "devel/PDTS_PC059_FANOUT.txt",
     kPC059FanoutSFP: "wr/FANOUT_PLL_WIDEBW_SFPIN.txt",
@@ -56,6 +58,8 @@ kUIDRevisionMap = {
     0xd880395e2b2e: kFMCRev2,
     0xd880395e2b33: kFMCRev2,
     0xd880395e1c81: kFMCRev2,
+    0x049162b67ce6: kFMCRev3,
+    0x049162b62947: kFMCRev3,
     0xd88039d980cf: kPC059Rev1,
     0xd88039d98adf: kPC059Rev1,
     0xd88039d92491: kPC059Rev1,
