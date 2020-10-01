@@ -60,6 +60,7 @@ kUIDRevisionMap = {
     0xd880395e1c81: kFMCRev2,
     0x049162b67ce6: kFMCRev3,
     0x049162b62947: kFMCRev3,
+    0x049162b67cdf: kFMCRev3,
     0xd88039d980cf: kPC059Rev1,
     0xd88039d98adf: kPC059Rev1,
     0xd88039d92491: kPC059Rev1,
