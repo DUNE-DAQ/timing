@@ -31,13 +31,7 @@
 		    <node id="design_type" mask="0xff"/>
 		</node>
 		<node id="i2c" address="0x08" module="file://opencores_i2c.xml" class="I2CMasterNode"
-			parameters="Board_EEProm=0x50;ClkGen=0x68;SFPExpander0=0x74;SFPExpander1=0x75;I2CSwitch=0x70;TempMon=0x48;CDR=0x40"
+			parameters="Board_EEProm=0x50;ClkGen=0x68;SFPExpander0=0x74;SFPExpander1=0x75;I2CSwitch=0x70;TempMon=0x48;CDR=0x40;SFP=0xFF;PMon5V=0xCE;PMon3V3=0xD0;PMon2V5=0xD2;PMon1V8=0xD4"
 		/>
-		<node id="sfp_i2c" address="0x10" module="file://opencores_i2c.xml" class="I2CMasterNode"
-			parameters="SFP=0x0"
-		/>
-                <node id="pwr_i2c" address="0x20" module="file://opencores_i2c.xml" class="I2CMasterNode"
-                	parameters="PMon5V=0xCE;PMon3V3=0xD0;PMon2V5=0xD2;PMon1V8=0xD4"
-                />
-		<node id="freq" address="0x40" module="file://freq_ctr.xml"/>
+		<node id="freq" address="0x20" module="file://freq_ctr.xml"/>
 </node>
