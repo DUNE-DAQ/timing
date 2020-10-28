@@ -267,8 +267,9 @@ def read_mask(ctx, param, value):
 @partition.command('configure', short_help='Prepares partition for data taking.')
 @click.option('--trgmask', '-m', type=str, callback=lambda c, p, v: int(v, 16), default='0xf', help='Trigger mask (in hex).')
 @click.option('--spill-gate/--no-spill-gate', 'spillgate', default=True, help='Enable the spill gate')
+@click.option('--rate-ctrl/--no-rate-ctrl', 'ratectrl', default=True, help='Enable rate control')
 @click.pass_obj
-def configure(obj, trgmask, spillgate):
+def configure(obj, trgmask, spillgate, ratectrl):
     '''
     Configures partition for data taking
 
@@ -296,7 +297,7 @@ def configure(obj, trgmask, spillgate):
     echo("  Phys mask {}".format(hex(trgmask)))
 
     lPartNode.reset(); 
-    lPartNode.configure(lTrgMask, spillgate);
+    lPartNode.configure(lTrgMask, spillgate, ratectrl);
     lPartNode.enable();
     secho("Partition {} enabled and configured".format(lPartId), fg='green')
 
