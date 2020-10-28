@@ -87,17 +87,19 @@ def sendEchoAndMeasureDelay( aEcho, aTimeout=0.5 ):
 
 
 # ------------------------------------------------------------------------------
-def pushDelay( aACmd, aAddr, aCDel):
+def pushDelay( aACmd, aAddr, aCDel, aFDel):
     # Keep the TX sfp on
     toolbox.resetSubNodes(aACmd.getNode('csr.ctrl'), dispatch=False)
     aACmd.getNode('csr.ctrl.tx_en').write(0x1)
     aACmd.getNode('csr.ctrl.addr').write(aAddr)
     aACmd.getNode('csr.ctrl.cdel').write(aCDel)
+    aACmd.getNode('csr.ctrl.fdel').write(aFDel)
     aACmd.getNode('csr.ctrl.update').write(0x1)
     aACmd.getNode('csr.ctrl.go').write(0x1)
     aACmd.getNode('csr.ctrl.go').write(0x0)
     aACmd.getClient().dispatch()
     secho('Coarse delay {} applied'.format(aCDel), fg='green')
+    secho('Fine delay {} applied'.format(aFDel), fg='green')
 # ------------------------------------------------------------------------------
 
 
@@ -115,12 +117,13 @@ def enableEndpointSFP(aACmd, aAddr, aEnable=1):
 # ------------------------------------------------------------------------------
 @align.command('apply-delay', short_help="Control the trigger return endpoint")
 @click.argument('addr', type=toolbox.IntRange(0x0,0x100))
-@click.argument('delay', type=toolbox.IntRange(0x0,0x32))
+@click.argument('cdelay', type=toolbox.IntRange(0x0,0x32))
+@click.argument('fdelay', type=toolbox.IntRange(0x0,0xf))
 @click.option('--mux', '-m', type=click.IntRange(0,7), help='Mux select')
 @click.option('--force', '-f', is_flag=True, default=False, help='Skip RTT measurement')
 @click.pass_obj
 @click.pass_context
-def applydelay(ctx, obj, addr, delay, mux, force):
+def applydelay(ctx, obj, addr, cdelay, fdelay, mux, force):
 
     lDevice = obj.mDevice
     lACmd = obj.mACmd
@@ -159,7 +162,7 @@ def applydelay(ctx, obj, addr, delay, mux, force):
 
             lGlobal.getNode('csr.ctrl.ep_en').write(0x0)
 
-        pushDelay(lACmd, addr, delay)
+        pushDelay(lACmd, addr, cdelay, fdelay)
 
         if not force:
             time.sleep(1)
