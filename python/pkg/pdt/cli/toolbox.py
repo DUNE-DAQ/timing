@@ -91,6 +91,15 @@ def sanitizeConnectionPaths(aConnectionPaths):
     return ';'.join(lConnectionList)
 # ------------------------------------------------------------------------------
 
+# ------------------------------------------------------------------------------
+def completeDevices(ctx, args, incomplete):
+    import uhal
+    root_ctx = ctx.find_root()
+    devs = uhal.ConnectionManager(sanitizeConnectionPaths(str(root_ctx.params['connections']))).getDevices()
+    return [k for k in devs if incomplete in k]
+    # return []
+# ------------------------------------------------------------------------------
+
 
 # ------------------------------------------------------------------------------
 def readSubNodes(aNode, dispatch=True):

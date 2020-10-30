@@ -35,7 +35,7 @@ from pdt.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignName
 
 @click.group('mst', invoke_without_command=True)
 @click.pass_obj
-@click.argument('device', callback=toolbox.validate_device)
+@click.argument('device', callback=toolbox.validate_device, autocompletion=toolbox.completeDevices)
 def master(obj, device):
     '''
     Timing master commands.
@@ -267,8 +267,9 @@ def read_mask(ctx, param, value):
 @partition.command('configure', short_help='Prepares partition for data taking.')
 @click.option('--trgmask', '-m', type=str, callback=lambda c, p, v: int(v, 16), default='0xf', help='Trigger mask (in hex).')
 @click.option('--spill-gate/--no-spill-gate', 'spillgate', default=True, help='Enable the spill gate')
+@click.option('--rate-ctrl/--no-rate-ctrl', 'ratectrl', default=True, help='Enable rate control')
 @click.pass_obj
-def configure(obj, trgmask, spillgate):
+def configure(obj, trgmask, spillgate, ratectrl):
     '''
     Configures partition for data taking
 
@@ -296,7 +297,7 @@ def configure(obj, trgmask, spillgate):
     echo("  Phys mask {}".format(hex(trgmask)))
 
     lPartNode.reset(); 
-    lPartNode.configure(lTrgMask, spillgate);
+    lPartNode.configure(lTrgMask, spillgate, ratectrl);
     lPartNode.enable();
     secho("Partition {} enabled and configured".format(lPartId), fg='green')
 
@@ -376,7 +377,7 @@ def readback(obj, readall, keep):
         for i in range(0, len(l), n):
             yield l[i:i + n]
 
-    lPartId = obj.mPartitionId
+    # lPartId = obj.mPartitionId
     lPartNode = obj.mPartitionNode
 
     while(True):
@@ -384,7 +385,7 @@ def readback(obj, readall, keep):
         lPartNode.getClient().dispatch()
 
         echo ( "Words available in readout buffer: "+hex(lBufCount))
-        
+
         lWordsToRead = int(lBufCount) if readall else (int(lBufCount) / defs.kEventSize)*defs.kEventSize
 
         # if lWordsToRead == 0:
@@ -405,6 +406,26 @@ def readback(obj, readall, keep):
             # echo ( '{:04d} {}'.format(i, hex(lWord)))
         if not keep:
             break
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@partition.command('rate-ctrl', short_help='Enable/Disable rate control.')
+@click.pass_obj
+@click.option('-e/-d', '--enable/--disable', 'rate_ctrl_en', default=True, help="Toggle rate control register.")
+def rate_ctrl(obj, rate_ctrl_en):
+    lPartId = obj.mPartitionId
+    lPartNode = obj.mPartitionNode
+
+    lPartNode.getNode('csr.ctrl.rate_ctrl_en').write(rate_ctrl_en);
+    lPartNode.getClient().dispatch()
+
+    lVal = lPartNode.getNode('csr.ctrl.rate_ctrl_en').read()
+    lPartNode.getClient().dispatch()
+
+    echo("Trigger throttling in partition {}: {}".format(lPartId, 'Enabled' if bool(lVal) else 'Disabled'))
+
+
 # ------------------------------------------------------------------------------
 
 

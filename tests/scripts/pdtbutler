@@ -27,7 +27,7 @@ import pdt.cli.endpoint as endpoint
 import pdt.cli.crt as crt
 import pdt.cli.debug as debug
 
-# 
+
 from click import echo, style, secho
 from os.path import join, expandvars
 
@@ -35,9 +35,15 @@ kLogLevelMap = {
         0: pdt.core.kError,
     }
 
+
 class PDTContext: pass
 
-CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+
+DEFAULT_MAP = {'connections': '${PDT_TESTS}/etc/connections.xml'}
+CONTEXT_SETTINGS = {
+    'help_option_names': ['-h', '--help'],
+    'default_map': DEFAULT_MAP,
+    }
 
 # ------------------------------------------------------------------------------
 @click.group(
@@ -45,7 +51,7 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
     context_settings=CONTEXT_SETTINGS,
 )
 @click.pass_context
-@click.option('-c', '--connections', default='${PDT_TESTS}/etc/connections.xml', help='Path to uhal connection file(s)')
+@click.option('-c', '--connections', help='Path to uhal connection file(s)')
 @click.option('-t', '--timeout', default=None, help='uhal timeout (sec)')
 @click.option('-v', '--verbose', count=True)
 @click.option('-g', '--gdb', is_flag=True)
@@ -72,14 +78,12 @@ def list(obj):
     '''
     List known uhal devices.
     '''
-    echo ( 'Available IPBus devices')
+    echo('Available IPBus devices')
     for lId in obj.mConnectionManager.getDevices():
-        echo ( ' - '+lId )
-        
+        echo(' - '+lId)
+    
     pass
 # ------------------------------------------------------------------------------
-
-
 
 
 # ------------------------------------------------------------------------------

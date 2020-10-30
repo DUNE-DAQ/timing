@@ -17,7 +17,7 @@ import time
 #              /_/                     
 @click.group('crt', invoke_without_command=True)
 @click.pass_obj
-@click.argument('device', callback=toolbox.validate_device)
+@click.argument('device', callback=toolbox.validate_device, autocompletion=toolbox.completeDevices)
 def crt(obj, device):
     '''
     Endpoint master commands.

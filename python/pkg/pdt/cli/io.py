@@ -80,7 +80,7 @@ kUIDRevisionMap = {
 
 @click.group('io', invoke_without_command=True)
 @click.pass_obj
-@click.argument('device', callback=toolbox.validate_device)
+@click.argument('device', callback=toolbox.validate_device, autocompletion=toolbox.completeDevices)
 def io(obj, device):
     '''
     Timing master commands.

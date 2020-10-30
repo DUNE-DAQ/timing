@@ -24,7 +24,7 @@ from pdt.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignName
 # ------------------------------------------------------------------------------
 @click.group('debug', invoke_without_command=True)
 @click.pass_obj
-@click.argument('device', callback=toolbox.validate_device)
+@click.argument('device', callback=toolbox.validate_device, autocompletion=toolbox.completeDevices)
 def debug(obj, device):
     '''
     Timing master commands.

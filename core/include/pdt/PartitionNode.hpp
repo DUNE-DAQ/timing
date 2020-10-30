@@ -92,7 +92,7 @@ public:
      */
     // void writeTriggerMask( uint32_t aMask ) const;
 
-    void configure( uint32_t aTrigMask, bool aEnableSpillGate ) const;
+    void configure( uint32_t aTrigMask, bool aEnableSpillGate, bool aRateCtrl=0x1 ) const;
     
     /**
      * @brief      Enables the triggers.
