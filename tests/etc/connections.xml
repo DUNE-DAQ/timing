@@ -5,8 +5,6 @@
   <connection id="SECONDARY"         uri="ipbusudp-2.0://192.168.200.17:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v5a2/ouroboros_fmc/top.xml" />
   <connection id="TERTIARY"          uri="ipbusudp-2.0://192.168.200.32:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v5a2/ouroboros_pc059/top_pc059.xml" />
 
-  <connection id="PRIMARY_EPT"       uri="ipbusudp-2.0://192.168.200.16:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v5b0-3/endpoint_fmc/top.xml" />
-
   <connection id="SECONDARY_EPT"     uri="ipbusudp-2.0://192.168.200.17:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v5a2/endpoint_fmc/top.xml" />
   <connection id="TERTIARY_FO"       uri="ipbusudp-2.0://192.168.200.32:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v5a2/fanout_pc059/top.xml" />
   <connection id="CRT_EPT"           uri="ipbusudp-2.0://192.168.200.16:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v5a2/crt_fmc/top.xml" />
