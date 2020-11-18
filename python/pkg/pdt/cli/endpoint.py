@@ -65,6 +65,28 @@ def endpoint(obj, device, ids):
 
 
 # ------------------------------------------------------------------------------
+@endpoint.command('freq', short_help="Measure some frequencies.")
+@click.pass_obj
+def freq(obj):
+
+    for i, ep in obj.mEndpoints.iteritems():
+
+        secho("Endpoint frequency measurement:", fg='cyan')
+        # Measure the generated clock frequency
+        ep.getNode("freq.ctrl.chan_sel").write(0)
+        ep.getNode("freq.ctrl.en_crap_mode").write(0)
+        ep.getClient().dispatch()
+        time.sleep(2)
+        fq = ep.getNode("freq.freq.count").read()
+        fv = ep.getNode("freq.freq.valid").read()
+        ep.getClient().dispatch()
+        freq = int(fq) * 119.20928 / 1000000 if fv else 'NaN'
+
+        print( "Freq :", freq )
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
 @endpoint.command('enable')
 @click.argument('action', default='on', type=click.Choice(['on', 'off', 'reset']))
 @click.option('--partition', '-p', type=click.IntRange(0,4), help='Partition', default=0)
