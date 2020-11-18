@@ -75,11 +75,11 @@ def freq(obj):
         # Measure the generated clock frequency
         ep.getNode("freq.ctrl.chan_sel").write(0)
         ep.getNode("freq.ctrl.en_crap_mode").write(0)
-        ep.dispatch()
+        ep.getClient().dispatch()
         time.sleep(2)
         fq = ep.getNode("freq.freq.count").read()
         fv = ep.getNode("freq.freq.valid").read()
-        ep.dispatch()
+        ep.getClient().dispatch()
         freq = int(fq) * 119.20928 / 1000000 if fv else 'NaN'
 
         print( "Freq :", freq )
