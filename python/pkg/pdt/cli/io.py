@@ -131,8 +131,8 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
 
     \b
     Fanout mode:
-    0 = local master
-    1 = sfp
+    0 = sfp - fanout mode
+    1 = local master - standalone mode
     '''
 
     echo('Resetting ' + click.style(obj.mDevice.id(), fg='blue'))
@@ -144,7 +144,7 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
 
     lIO = lDevice.getNode('io')
 
-    if ( lBoardType == kBoardPC059 and fanout ):
+    if ( lBoardType == kBoardPC059 and fanout == 0 ):
         secho("Fanout mode enabled", fg='green')
 
     # Global soft reset
