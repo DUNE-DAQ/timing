@@ -71,15 +71,15 @@ def measuredelay(ctx, obj, addr, mux):
     lDevice = obj.mDevice
     lBoardType = obj.mBoardType
     lTopDesign = obj.mTopDesign
-  
+    
     # or a different type of fanout board
     if lBoardType == kBoardPC059:
         if mux is not None:
-            lTopDesign.measureEndpointRTT(addr, True, mux)
+            echo("Endpoint (adr: {}, mux: {}) RTT: {}".format(addr,mux,lTopDesign.measureEndpointRTT(addr, True, mux)))
         else:
             raise RuntimeError('PC059 board: please supply an SFP mux channel')
     else:
-        lTopDesign.measureEndpointRTT(addr, True)
+        echo("Endpoint (adr: {}) RTT: {}".format(addr,lTopDesign.measureEndpointRTT(addr, True)))
 # ------------------------------------------------------------------------------
 
 

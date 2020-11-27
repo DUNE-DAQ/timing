@@ -10,6 +10,7 @@
 
 #include "pdt/TLUIONode.hpp"
 #include "pdt/PC059IONode.hpp"
+#include "pdt/FMCIONode.hpp"
 
 #include "pdt/PDIMasterNode.hpp"
 
@@ -27,11 +28,18 @@ namespace python {
 void
 register_top_designs() {
 
-      // PD-I master design (overlord)
+      // PD-I master design
       class_<pdt::PDIMasterDesign<TLUIONode>, bases<uhal::Node> > ("PDIMasterDesign<TLUIONode>", init<const uhal::Node&>())
       .def("getStatus", &pdt::PDIMasterDesign<TLUIONode>::getStatus)
       .def("applyEndpointDelay", &pdt::PDIMasterDesign<TLUIONode>::applyEndpointDelay)
       .def("measureEndpointRTT", &pdt::PDIMasterDesign<TLUIONode>::measureEndpointRTT)
+      ;
+
+      // PD-I master design on fmc
+      class_<pdt::PDIMasterDesign<FMCIONode>, bases<uhal::Node> > ("PDIMasterDesign<FMCIONode>", init<const uhal::Node&>())
+      .def("getStatus", &pdt::PDIMasterDesign<FMCIONode>::getStatus)
+      .def("applyEndpointDelay", &pdt::PDIMasterDesign<FMCIONode>::applyEndpointDelay)
+      .def("measureEndpointRTT", &pdt::PDIMasterDesign<FMCIONode>::measureEndpointRTT)
       ;
 
       // PD-I fanout design
