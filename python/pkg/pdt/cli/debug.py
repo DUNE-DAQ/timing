@@ -220,8 +220,8 @@ def sfp_status(obj):
         return
 
     lI2CBusNode = lDevice.getNode(lSFPNodeName)
-    lEEPromSlave = lI2CBusNode.getSlave('eeprom')
-    lDiagSlave = lI2CBusNode.getSlave('diag')
+    lEEPromSlave = lI2CBusNode.getSlave('SFP_EEProm')
+    lDiagSlave = lI2CBusNode.getSlave('SFP_Diag')
 
     readSFPStatus(lEEPromSlave, lDiagSlave, lSFPLabel)
 

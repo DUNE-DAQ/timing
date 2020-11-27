@@ -1,4 +1,4 @@
-<node id="endpoint" description="PDTS endpoint wrapper" fwinfo="endpoint">
+<node id="endpoint" description="PDTS endpoint wrapper" fwinfo="endpoint" class="EndpointNode">
 		<node id="version" address="0x0" fwinfo="endpoint;width=0"/>
 		<node id="csr" address="0x2" fwinfo="endpoint;width=1">
 			<node id="ctrl" address="0x0">

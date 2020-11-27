@@ -44,10 +44,16 @@ public:
     }
 
     /// comodity functions
+    uint8_t readI2C(uint32_t aDeviceAddress, uint32_t aRegAddress) const;
     uint8_t readI2C(uint32_t i2cAddress) const;
+
+    void writeI2C(uint32_t aDeviceAddress, uint32_t i2cAddress, uint8_t aData, bool aSendStop = true) const;
     void writeI2C(uint32_t i2cAddress, uint8_t aData, bool aSendStop = true) const;
 
+    std::vector<uint8_t> readI2CArray(uint32_t aDeviceAddress, uint32_t aRegAddress, uint32_t aNumWords) const;
     std::vector<uint8_t> readI2CArray(uint32_t i2cAddress, uint32_t aNumWords) const;
+    
+    void writeI2CArray(uint32_t aDeviceAddress, uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop = true) const;
     void writeI2CArray(uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop = true) const;
 
 
@@ -55,6 +61,8 @@ public:
     void writeI2CPrimitive(const std::vector<uint8_t>& aData, bool aSendStop = true) const;
 
     bool ping() const;
+
+    const std::string getMasterId() const;
 
 private:
     const I2CMasterNode* mMaster;

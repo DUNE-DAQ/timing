@@ -28,7 +28,9 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CMasterNode_writeI2CArray_overloads
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CMasterNode_writeI2CPrimitive_overloads, writeI2CPrimitive, 2, 3);
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CSlave_writeI2C_overloads, writeI2C, 2, 3);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CSlave_writeI2C_aDeviceAddress_overloads, writeI2C, 3, 4);
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CSlave_writeI2CArray_overloads, writeI2CArray, 2, 3);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CSlave_writeI2CArray_aDeviceAddress_overloads, writeI2CArray, 3, 4);
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CSlave_writeI2CPrimitive_overloads, writeI2CPrimitive, 1, 2);
 
 
@@ -53,16 +55,21 @@ register_i2c() {
       .def("getSlaveAddress", &pdt::I2CMasterNode::getSlaveAddress)
       .def("ping", &pdt::I2CMasterNode::ping)
       .def("scan", &pdt::I2CMasterNode::scan)
+      .def("reset", &pdt::I2CMasterNode::reset)
       ;
 
 
   // Wrap pdt::I2CSlave    
   class_<pdt::I2CSlave, boost::noncopyable>("I2CSlave", no_init)
       .def("getI2CAddress", &pdt::I2CSlave::getI2CAddress)
-      .def("readI2C", &pdt::I2CSlave::readI2C)
-      .def("writeI2C", &pdt::I2CSlave::writeI2C, pdt_I2CSlave_writeI2C_overloads())
-      .def("readI2CArray", &pdt::I2CSlave::readI2CArray)
-      .def("writeI2CArray", &pdt::I2CSlave::writeI2CArray, pdt_I2CSlave_writeI2CArray_overloads())
+      .def<uint8_t (pdt::I2CSlave::*)(uint32_t) const>("readI2C", &pdt::I2CSlave::readI2C)
+      .def<uint8_t (pdt::I2CSlave::*)(uint32_t,uint32_t) const>("readI2C", &pdt::I2CSlave::readI2C)
+      .def<void (pdt::I2CSlave::*)(uint32_t,uint8_t,bool) const>("writeI2C", &pdt::I2CSlave::writeI2C, pdt_I2CSlave_writeI2C_overloads())
+      .def<void (pdt::I2CSlave::*)(uint32_t,uint32_t,uint8_t,bool) const>("writeI2C", &pdt::I2CSlave::writeI2C, pdt_I2CSlave_writeI2C_aDeviceAddress_overloads())
+      .def<std::vector<uint8_t> (pdt::I2CSlave::*)(uint32_t,uint32_t) const>("readI2CArray", &pdt::I2CSlave::readI2CArray)
+      .def<std::vector<uint8_t> (pdt::I2CSlave::*)(uint32_t,uint32_t,uint32_t) const>("readI2CArray", &pdt::I2CSlave::readI2CArray)
+      .def<void (pdt::I2CSlave::*)(uint32_t, std::vector<uint8_t>,bool) const>("writeI2CArray", &pdt::I2CSlave::writeI2CArray, pdt_I2CSlave_writeI2CArray_overloads())
+      .def<void (pdt::I2CSlave::*)(uint32_t,uint32_t, std::vector<uint8_t>,bool) const>("writeI2CArray", &pdt::I2CSlave::writeI2CArray, pdt_I2CSlave_writeI2CArray_aDeviceAddress_overloads())
       .def("readI2CPrimitive", &pdt::I2CSlave::readI2CPrimitive)
       .def("writeI2CPrimitive", &pdt::I2CSlave::writeI2CPrimitive, pdt_I2CSlave_writeI2CPrimitive_overloads())
       .def("ping", &pdt::I2CSlave::ping)

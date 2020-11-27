@@ -4,6 +4,7 @@ import collections
 
 import toolbox
 import definitions as defs
+from pdt.common.definitions import kLibrarySupportedBoards
 
 from click import echo, style, secho
 from click_texttable import Texttable
@@ -32,11 +33,15 @@ def crt(obj, device):
         lDevice.setTimeoutPeriod(obj.mTimeout)
 
     echo('Created crt device')
+    lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
+    lDevice.dispatch()
 
+    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards:
+        echo(lDevice.getNode('io').getHardwareInfo())
     # Ensure that target endpoint exists
 
     obj.mDevice = lDevice
-    obj.mEndpoint = lDevice.getNodes('endpoint0')
+    obj.mCRTEndpoint = lDevice.getNode('endpoint0')
 # ------------------------------------------------------------------------------
 
 
@@ -45,20 +50,12 @@ def crt(obj, device):
 @click.pass_obj
 def status(obj):
     '''
-    Activate timing endpoint wrapper block.
+    Print the status of CRT endpoint wrapper block.
     '''
 
     lDevice = obj.mDevice
-    lEpt = lDevice.getNode('endpoint0')
-    lRegs = toolbox.readSubNodes(lEpt)
-    toolbox.printRegTable(lRegs, False)
-
-    lRegs['pulse.ctrl.en']
-    lRegs['pulse.ctrl.cmd']
-
-    lTimeLastPulse = (lRegs['pulse.ts_h']<<32)+lRegs['pulse.ts_l']
-    echo( "Last Pulse Timestamp: {} ({})".format(style(str(lTimeLastPulse), fg='blue'), hex(lTimeLastPulse)) )
-
+    lCRTEpt = obj.mCRTEndpoint
+    echo(lCRTEpt.getStatus())
 # ------------------------------------------------------------------------------
 
 
@@ -73,16 +70,8 @@ def configure(obj, part, pulsecmd):
     '''
 
     lDevice = obj.mDevice
-    lEpt = lDevice.getNode('endpoint0')
-
-    lEpt.getNode('csr.ctrl.tgrp').write(part)
-    lEpt.getNode('pulse.ctrl.en').write(0x1)
-    lEpt.getNode('pulse.ctrl.cmd').write(defs.kCommandIDs[pulsecmd])
-    lEpt.getClient().dispatch()
-
-    lCsrStat = toolbox.readSubNodes(lEpt)
-    toolbox.printRegTable(lCsrStat, False)
-
-    pass
+    lCRTEpt = obj.mCRTEndpoint
+    lCRTEpt.enable(part,defs.kCommandIDs[pulsecmd])
+    secho("CRT endpoint configured; partition: {}; cmd: {}".format(part, pulsecmd), fg='green')
 # ------------------------------------------------------------------------------
     

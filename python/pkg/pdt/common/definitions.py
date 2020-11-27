@@ -72,6 +72,10 @@ kCarrierNamelMap = {
     kCarrierATFC: 'atfc',
 
 }
+
+kLibrarySupportedBoards = {
+    kBoardFMC, kBoardPC059, kBoardTLU, kBoardSim
+}
 # -----------------------------------------------------------------------------
 
 # -----------------

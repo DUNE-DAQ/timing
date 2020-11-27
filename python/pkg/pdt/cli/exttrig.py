@@ -30,16 +30,14 @@ def exttrg_ept(ctx, obj, action):
 
     lExtTrig = obj.mExtTrig
 
-    # Disable comes first
-    if action in ['disable','reset']:
-        lExtTrig.getNode('csr.ctrl.ep_en').write(0x0)
-    # And then enable
-    if action in ['enable','reset']:
-        lExtTrig.getNode('csr.ctrl.ep_en').write(0x1)
+    if action == 'disable':
+        lExtTrig.disable()
+    elif action == 'enable':
+        lExtTrig.enable()
+    elif action == 'reset':
+        lExtTrig.reset()
 
-    lExtTrig.getClient().dispatch()
     secho("Trigger endpoint action '" + action + "' completed", fg='green')
-
     ctx.invoke(exttrg_status)
 # ------------------------------------------------------------------------------
 
@@ -53,8 +51,10 @@ def exttrg_enable(ctx, obj, on):
 
     lExtTrig = obj.mExtTrig
 
-    lExtTrig.getNode('csr.ctrl.ext_trig_en').write(on)
-    lExtTrig.getClient().dispatch()
+    if on:
+        lExtTrig.enableTriggers()
+    else:
+        lExtTrig.disableTriggers()
     secho("External triggers " + ("enabled" if on else "disabled"), fg='green')
     ctx.invoke(exttrg_status)
 # ------------------------------------------------------------------------------
@@ -75,27 +75,10 @@ def exttrg_status(obj, watch, period):
         
         echo()
 
-        secho('External trigger endpoint', fg='blue')
-        echo()
+        echo(lExtTrig.getStatus())
         
-        lCtrlDump = toolbox.readSubNodes(lExtTrig.getNode('csr.ctrl'))
-        lStatDump = toolbox.readSubNodes(lExtTrig.getNode('csr.stat'))
-
-        echo( "Endpoint State: {}".format(style(defs.fmtEpState(lStatDump['ep_stat']), fg='blue')))
-        echo()
-        secho("Control registers", fg='cyan')
-        toolbox.printRegTable(lCtrlDump, False)
-        echo()
-        secho("Status registers", fg='cyan')
-        toolbox.printRegTable(lStatDump, False)
-        echo()
-
-        toolbox.printCounters( lExtTrig, {
-            'ctrs': 'Counters',
-        })
         if watch:
             time.sleep(period)
         else:
             break
 # ------------------------------------------------------------------------------
-

@@ -4,6 +4,7 @@ import collections
 
 import toolbox
 import definitions as defs
+from pdt.common.definitions import kLibrarySupportedBoards
 
 from click import echo, style, secho
 from click_texttable import Texttable
@@ -34,7 +35,7 @@ def endpoint(obj, device, ids):
         lDevice.setTimeoutPeriod(obj.mTimeout)
 
     echo('Created endpoint device ' + style(lDevice.id(), fg='blue'))
-
+    echo(lDevice.getNode('io').getHardwareInfo())
     # Ensure that target endpoint exists
 
     lEPNames = lDevice.getNodes('endpoint('+'|'.join( ( str(i) for i in ids ) )+')')
@@ -44,11 +45,9 @@ def endpoint(obj, device, ids):
     
     lEndpoints = { pid:lDevice.getNode('endpoint{}'.format(pid)) for pid in ids}
 
-    lVersions = { pid:n.getNode('version').read() for pid,n in lEndpoints.iteritems()}
+    lVersions = { pid:n.readVersion() for pid,n in lEndpoints.iteritems()}
 
-    lDevice.dispatch()
-
-    if len(set( (v.value() for v in lVersions.itervalues()) )) > 1:
+    if len(set( (v for v in lVersions.itervalues()) )) > 1:
         secho('WARNING: multiple enpoint versions detected', fg='yellow')
         secho()
 
@@ -56,7 +55,7 @@ def endpoint(obj, device, ids):
     lVTable.set_deco(Texttable.VLINES | Texttable.BORDER)
     lVTable.set_chars(['-', '|', '+', '-'])
     lVTable.header( sorted(lVersions.keys()) )
-    lVTable.add_row( [hex(lVersions[p].value()) for p in sorted(lVersions.keys()) ] )
+    lVTable.add_row( [hex(lVersions[p]) for p in sorted(lVersions.keys()) ] )
     echo  ( lVTable.draw() )
 
     obj.mDevice = lDevice
@@ -73,16 +72,9 @@ def freq(obj):
 
         secho("Endpoint frequency measurement:", fg='cyan')
         # Measure the generated clock frequency
-        ep.getNode("freq.ctrl.chan_sel").write(0)
-        ep.getNode("freq.ctrl.en_crap_mode").write(0)
-        ep.getClient().dispatch()
-        time.sleep(2)
-        fq = ep.getNode("freq.freq.count").read()
-        fv = ep.getNode("freq.freq.valid").read()
-        ep.getClient().dispatch()
-        freq = int(fq) * 119.20928 / 1000000 if fv else 'NaN'
+        freq = ep.readClockFrequency()
 
-        print( "Freq :", freq )
+        echo( "Endpoint {} freq MHz : {}".format(i, freq) )
 # ------------------------------------------------------------------------------
 
 
@@ -90,7 +82,7 @@ def freq(obj):
 @endpoint.command('enable')
 @click.argument('action', default='on', type=click.Choice(['on', 'off', 'reset']))
 @click.option('--partition', '-p', type=click.IntRange(0,4), help='Partition', default=0)
-@click.option('--address', '-a', type=toolbox.IntRange(0x0,0x100), help='Address', default=None)
+@click.option('--address', '-a', type=toolbox.IntRange(0x0,0x100), help='Address', default=0)
 @click.pass_obj
 @click.pass_context
 def enable(ctx, obj, action, partition, address):
@@ -100,25 +92,12 @@ def enable(ctx, obj, action, partition, address):
 
     lDone = []
     for i, ep in obj.mEndpoints.iteritems():
-        if action in ['off', 'reset']:
-            ep.getNode('csr.ctrl.ep_en').write(0x0)
-            ep.getNode('csr.ctrl.buf_en').write(0x0)
-
-        if action in ['on','reset']:
-            ep.getNode('csr.ctrl.tgrp').write(partition)
-            if address is not None:
-                ep.getNode('csr.ctrl.int_addr').write(0x1)
-                ep.getNode('csr.ctrl.addr').write(address)
-            else:
-                ep.getNode('csr.ctrl.int_addr').write(0x0)
-
-            ep.getNode('csr.ctrl.ctr_rst').write(0x1)
-            ep.getNode('csr.ctrl.ctr_rst').write(0x0)
-            ep.getNode('csr.ctrl.ep_en').write(0x1)
-            ep.getNode('csr.ctrl.buf_en').write(0x1)
-            ep.getClient().dispatch()
-
-        ep.getClient().dispatch()
+        if action == 'off':
+            ep.disable()
+        elif action == 'on':
+            ep.enable(partition, address)
+        elif action == 'reset':
+            ep.reset(partition, address)
         lDone.append(i)
 
     time.sleep(0.1)
@@ -130,9 +109,6 @@ def enable(ctx, obj, action, partition, address):
 
 
 # ------------------------------------------------------------------------------
-
-
-
 @endpoint.command('status', short_help='Display the status of timing endpoint.')
 @click.pass_obj
 @click.option('--watch', '-w', is_flag=True, default=False, help='Turn on automatic refresh')
@@ -146,13 +122,6 @@ def status(obj, watch, period):
     lDevice = obj.mDevice
     lEndpoints = obj.mEndpoints
     lEndPointNode = lDevice.getNode('endpoint0')
-
-
-
-    lTStampNode = lEndPointNode.getNode('tstamp')
-    lEvCtrNode = lEndPointNode.getNode('evtctr')
-    lBufCountNode = lEndPointNode.getNode('buf.count')
-
 
     while(True):
         if watch:
@@ -174,9 +143,7 @@ def status(obj, watch, period):
         lDevice.dispatch()
 
 
-        lTimeStamp = lTStampNode.readBlock(2)
-        lDevice.dispatch()
-
+        lTimeStamp = lEndPointNode.readTimestamp()
 
         lEPSummary = Texttable(max_width=0)
         lEPSummary.set_deco(Texttable.VLINES | Texttable.BORDER | Texttable.HEADER )
@@ -266,7 +233,7 @@ def status(obj, watch, period):
 # ------------------------------------------------------------------------------
 @endpoint.command('readback', short_help='Read the content of the endpoint master readout buffer.')
 @click.pass_obj
-@click.option('--events/--all', ' /-a', 'readall', default=False, help="Buffer readout mode.\n- events: only completed events are readout.\n- all: the content of the buffer is fully read-out.")
+@click.option('--all/--events', ' /-a', 'readall', default=False, help="Buffer readout mode.\n- events: only completed events are readout.\n- all: the content of the buffer is fully read-out.")
 def readback(obj, readall):
     '''
     Read the content of the endpoint master readout buffer.
@@ -276,23 +243,5 @@ def readback(obj, readall):
     
     for p,n in lEndpoints.iteritems():
 
-        lBufCount = n.getNode('buf.count').read()
-        n.getClient().dispatch()
-
-        echo ( "Words available in readout buffer: "+hex(lBufCount))
-        
-        # lEventsToRead = int(lBufCount) / kEventSize
-        # echo (lEventsToRead)
-
-        lWordsToRead = int(lBufCount) if readall else (int(lBufCount) / defs.kEventSize)*defs.kEventSize
-
-        echo (lWordsToRead )
-        if lWordsToRead == 0:
-            echo("Nothing to read, goodbye!")
-
-        lBufData = n.getNode('buf.data').readBlock(lWordsToRead)
-        n.getClient().dispatch()
-
-        for i, lWord in enumerate(lBufData):
-            echo ( '{:04d} {}'.format(i, hex(lWord)))
+        echo(n.getDataBufferTable(readall))
 # ------------------------------------------------------------------------------

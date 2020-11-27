@@ -20,6 +20,7 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PartitionNode_enableTriggers_overload
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PartitionNode_readEvents_overloads, readEvents, 0, 1);
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PartitionNode_start_overloads, start, 0, 1);
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PartitionNode_stop_overloads, stop, 0, 1);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PartitionNode_getStatus_overloads, getStatus, 0, 1);
 
 namespace pdt {
 namespace python {
@@ -40,6 +41,8 @@ register_partition() {
       .def("reset", &pdt::PartitionNode::reset)
       .def("start", &pdt::PartitionNode::start, pdt_PartitionNode_start_overloads())
       .def("stop", &pdt::PartitionNode::stop, pdt_PartitionNode_stop_overloads())
+      .def("configureRateCtrl", &pdt::PartitionNode::configureRateCtrl)
+      .def("getStatus", &pdt::PartitionNode::getStatus, pdt_PartitionNode_getStatus_overloads())
       ;
 }
 

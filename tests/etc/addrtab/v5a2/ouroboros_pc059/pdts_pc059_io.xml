@@ -1,4 +1,4 @@
-<node id="io" description="FMC IO" fwinfo="endpoint">
+<node id="io" description="FMC IO" fwinfo="endpoint" class="PC059IONode">
 		<node id="csr" address="0x0" description="ctrl/stat register" fwinfo="endpoint;width=1">
 				<node id="ctrl" address="0x0">
 					<node id="soft_rst" mask="0x1"/>
@@ -35,6 +35,6 @@
 		<node id="i2c" address="0x08" module="file://opencores_i2c.xml" class="I2CMasterNode" 
 			parameters="FMC_UID_PROM=0x57;AX3_Switch=0x21;SI5345=0x68;SFPExpander=0x75;SFP_Switch=0x73;SFP_EEProm=0x50;SFP_Diag=0x51"
 		/>
-		<node id="usfp_i2c" address="0x10" module="file://opencores_i2c.xml" class="I2CMasterNode" parameters="eeprom=0x50;diag=0x51"/>
+		<node id="usfp_i2c" address="0x10" module="file://opencores_i2c.xml" class="I2CMasterNode" parameters="SFP_EEProm=0x50;SFP_Diag=0x51"/>
 		<node id="freq" address="0x20" module="file://freq_ctr.xml"/>
 </node>

@@ -12,7 +12,7 @@ const uint32_t PartitionNode::kWordsPerEvent = 6;
 
 
 //-----------------------------------------------------------------------------
-PartitionNode::PartitionNode(const uhal::Node& aNode) : uhal::Node(aNode) {
+PartitionNode::PartitionNode(const uhal::Node& aNode) : TimingNode(aNode) {
 
 }
 //-----------------------------------------------------------------------------
@@ -51,6 +51,15 @@ PartitionNode::configure( uint32_t aTrigMask, bool aEnableSpillGate, bool aRateC
     getNode("csr.ctrl.rate_ctrl_en").write(aRateCtrl);
     getNode("csr.ctrl.trig_mask").write(aTrigMask);
     getNode("csr.ctrl.spill_gate_en").write(aEnableSpillGate);
+    getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void
+PartitionNode::configureRateCtrl( bool aRateCtrl) const {
+    getNode("csr.ctrl.rate_ctrl_en").write(aRateCtrl);
     getClient().dispatch();
 }
 //-----------------------------------------------------------------------------
@@ -238,6 +247,48 @@ PartitionNode::readCommandCounts() const {
 
     return {lAccepted.value(), lRejected.value()};
 
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+std::string
+PartitionNode::getStatus(bool aPrint) const {
+    std::stringstream lStatus;
+
+    auto lControls = readSubNodes(getNode("csr.ctrl"), false);
+    auto lState = readSubNodes(getNode("csr.stat"), false);
+
+    auto lEventCtr = getNode("evtctr").read();
+    auto lBufCount = getNode("buf.count").read();
+
+    auto lAccCounters = getNode("actrs").readBlock(getNode("actrs").getSize());
+    auto lRejCounters = getNode("rctrs").readBlock(getNode("actrs").getSize());
+    
+    getClient().dispatch();
+
+    std::string lPartID = getId();
+    std::string lPartNum = lPartID.substr(lPartID.find("partition") + 9) ;
+    
+    lStatus << "=> Partition " << lPartNum << std::endl;
+    lStatus << std::endl;
+
+    lStatus << formatRegTable(lControls, "Controls") << std::endl;
+    lStatus << formatRegTable(lState, "State") << std::endl;
+
+    lStatus << "Event Counter: " << lEventCtr.value() << std::endl;
+    std::string lBufferStatusString = !lState.find("buf_err")->second.value() ? "OK" : "Error";
+    lStatus << "Buffer status: " << lBufferStatusString << std::endl;
+    lStatus << "Buffer occupancy: " << lBufCount.value() << std::endl;
+
+    lStatus << std::endl;
+
+    std::vector<uhal::ValVector<uint32_t>> lCountersContainer = {lAccCounters, lRejCounters};
+
+    lStatus << formatCountersTable(lCountersContainer, {"Accept counters", "Reject counters"});
+
+    if (aPrint) std::cout << lStatus.str();
+    return lStatus.str();
 }
 //-----------------------------------------------------------------------------
 

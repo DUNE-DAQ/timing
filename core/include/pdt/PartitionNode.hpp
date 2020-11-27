@@ -9,6 +9,7 @@
 
 // PDT Headers
 #include "pdt/exception.hpp"
+#include "pdt/TimingNode.hpp"
 
 namespace pdt {
 
@@ -24,7 +25,7 @@ struct PartitionCounts {
 /**
  * @brief      Class for partition node.
  */
-class PartitionNode : public uhal::Node {
+class PartitionNode : public TimingNode {
     UHAL_DERIVEDNODE(PartitionNode);
 public:
     PartitionNode(const uhal::Node& aNode);
@@ -95,6 +96,13 @@ public:
     void configure( uint32_t aTrigMask, bool aEnableSpillGate, bool aRateCtrl=0x1 ) const;
     
     /**
+     * @brief      Writes the trigger mask.
+     *
+     * @param[in]  aMask  A mask
+     */
+    void configureRateCtrl( bool aRateCtrl=0x1 ) const;
+
+    /**
      * @brief      Enables the triggers.
      *
      * @param[in]  aEnable  The enable switch
@@ -136,7 +144,10 @@ public:
      */
     PartitionCounts readCommandCounts() const;
 
-
+    /**
+     * @brief     Print the status of the timing node.
+     */
+    std::string getStatus(bool aPrint=false) const override;
 
 };
 

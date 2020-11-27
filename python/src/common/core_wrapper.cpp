@@ -22,6 +22,10 @@ namespace python {
 
 extern void register_i2c();
 extern void register_partition();
+extern void register_endpoint();
+extern void register_io();
+extern void register_master();
+extern void register_top_designs();
 
 } // namespace python
 } // namespace pdt
@@ -67,6 +71,10 @@ BOOST_PYTHON_MODULE(_pdt) {
 
 		pdt::python::register_i2c();
 		pdt::python::register_partition();
+		pdt::python::register_endpoint();
+		pdt::python::register_io();
+		pdt::python::register_master();
+		pdt::python::register_top_designs();
 
 	}
 }
