@@ -65,7 +65,42 @@ PDTExceptionClass(EntryNotFoundError, "Entry not found");
 
 PDTExceptionClass(I2CSlaveNotFound, "Exception class to handle missing I2C slaves");
 PDTExceptionClass(I2CException, "Exception class to handle I2C Exceptions");
-        
+
+PDTExceptionClass(UnknownBoardType, "Unknown board type");
+PDTExceptionClass(UnknownCarrierType, "Unknown carrier type");
+PDTExceptionClass(UnknownDesignType, "Unknown design type");
+PDTExceptionClass(UnknownBoardUID, "Unknown board UID");
+
+PDTExceptionClass(MissingBoardTypeMapEntry, "Mising board type map entry");
+PDTExceptionClass(MissingBoardRevisionMapEntry, "Mising board revision map entry");
+PDTExceptionClass(MissingCarrierTypeMapEntry, "Mising carrier type map entry");
+PDTExceptionClass(MissingDesignTypeMapEntry, "Mising design type map entry");
+
+PDTExceptionClass(ClockConfigNotFound, "Clock config file not found");
+
+PDTExceptionClass(InvalidSFPId, "SFP id out of range for SFP buses list");
+
+PDTExceptionClass(InvalidDACId, "DAC id out of range for DAC devices list");
+
+PDTExceptionClass(EchoTimeout, "Echo timeout");
+
+PDTExceptionClass(FormatCountersTableNodesTitlesMismatch, "Mismatch between number counters nodes and titles");
+
+PDTExceptionClass(SFPDDMI2CAddressSwapUnsupported, "SFP DDM I2C address swap unsupported");
+
+PDTExceptionClass(SFPDDMUnsupported, "SFP does not support DDM");
+
+PDTExceptionClass(SoftTxLaserControlUnsupported, "SFP does not support soft tx laser control");
+
+PDTExceptionClass(SFPUnreachable, "Failed to reach SFP");
+
+PDTExceptionClass(UnsupportedFunction, "Requested function unsupported");
+
+PDTExceptionClass(BadRequestedFakeTriggerRate, "Requested trigger rate out of range");
+
+PDTExceptionClass(UpstreamEndpointFailedToLock, "Upstream endpoint failed to lock");
+
+
 }
 
 

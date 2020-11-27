@@ -8,3 +8,6 @@ tests/bin/
 tests/lib/
 tests/obj/
 ups/
+*.pyc
+daemon/bin/
+daemon/obj/

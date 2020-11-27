@@ -1,4 +1,4 @@
-<node id="io" description="TLU IO" fwinfo="endpoint">
+<node id="io" description="TLU IO" fwinfo="endpoint" class="TLUIONode">
 		<node id="csr" address="0x0" description="ctrl/stat register" fwinfo="endpoint;width=1">
 				<node id="ctrl" address="0x0">
 					<node id="soft_rst" mask="0x1"/>

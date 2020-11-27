@@ -26,6 +26,7 @@ from pdt.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicr
 from pdt.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from pdt.common.definitions import kDesingMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesingFanout
 from pdt.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
+from pdt.common.definitions import kLibrarySupportedBoards
 # ------------------------------------------------------------------------------
 #    __  ___         __         
 #   /  |/  /__ ____ / /____ ____
@@ -61,11 +62,10 @@ def master(obj, device):
     lMajor = (lVersion >> 16) & 0xff
     lMinor = (lVersion >> 8) & 0xff
     lPatch = (lVersion >> 0) & 0xff
-    echo("ID: design '{}' on board '{}' on carrier '{}'".format(
-        style(kDesignNameMap[lBoardInfo['design_type'].value()], fg='blue'),
-        style(kBoardNamelMap[lBoardInfo['board_type'].value()], fg='blue'),
-        style(kCarrierNamelMap[lBoardInfo['carrier_type'].value()], fg='blue')
-    ))
+    
+    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards:
+        echo(lDevice.getNode('io').getHardwareInfo())
+
     echo("Master FW rev: {}, partitions: {}, channels: {}".format(
         style(hex(lVersion), fg='cyan'),
         style(str(lGenerics['n_part']), fg='cyan'),
@@ -77,7 +77,9 @@ def master(obj, device):
         raise click.Abort()
 
     obj.mDevice = lDevice
+    obj.mTopDesign = lDevice.getNode('')
     obj.mMaster = lMaster
+    obj.mMasterTop = lDevice.getNode('master_top')
     obj.mExtTrig = lDevice.getNode('master_top.trig')
     
     obj.mGenerics = { k:v.value() for k,v in lGenerics.iteritems()}
@@ -90,41 +92,22 @@ def master(obj, device):
 
 
 # ------------------------------------------------------------------------------
+@master.command('status', short_help="Print master status")
+@click.pass_obj
+def synctime(obj):
+
+    lMasterTop = obj.mMasterTop
+    echo(lMasterTop.getStatus())
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
 @master.command('synctime', short_help="Sync timestamps with computer local time.")
 @click.pass_obj
 def synctime(obj):
 
-    lMaster = obj.mMaster
-    lTStampReadNode = lMaster.getNode('tstamp.ctr.val')
-    lTStampWriteNode = lMaster.getNode('tstamp.ctr.set')
-
-    lTimeStamp = lTStampReadNode.readBlock(2)
-    lTStampReadNode.getClient().dispatch()
-
-    lTime = int(lTimeStamp[0]) + (int(lTimeStamp[1]) << 32)
-    secho('Old Timestamp {}'.format(hex(lTime)), fg='cyan')
-
-    # Take the local time and split it up
-    lNow = int(time.time()*defs.kSPSClockInHz)
-    lNowH = (lNow >> 32) & ((1<<32)-1)
-    lNowL = (lNow >> 0) & ((1<<32)-1)
-
-    # push it on the board
-    lTStampWriteNode.writeBlock([lNowL, lNowH])
-    lTStampWriteNode.getClient().dispatch()
-
-    # Read it back
-    lTimeStamp = lTStampReadNode.readBlock(2)
-    lTStampReadNode.getClient().dispatch()
-    x = time.time()
-    lTime = (int(lTimeStamp[1]) << 32) + int(lTimeStamp[0])
-
-    secho('New Timestamp {}'.format(hex(lTime)), fg='cyan')
-
-    print(float(lTime)/defs.kSPSClockInHz - x)
-
-    print (toolbox.formatTStamp(lTimeStamp))
-
+    lMasterTop = obj.mMasterTop
+    lMasterTop.syncTimestamp()
 # ------------------------------------------------------------------------------
 
 
@@ -159,98 +142,23 @@ def partstatus(obj, watch, period):
 
     # lDevice = obj.mDevice
     lMaster = obj.mMaster
-    lPartId = obj.mPartitionId
+    lMasterTop = obj.mMasterTop
     lPartNode = obj.mPartitionNode
-    lNumChan = obj.mGenerics['n_chan']
 
     lTStampNode = lMaster.getNode('tstamp.ctr.val')
 
     while(True):
         if watch:
             click.clear()
-        
         echo()
         echo( "-- " + style("Master state", fg='green') + "---")
         echo()
-
-        lScmdGenNode = lMaster.getNode('scmd_gen')
-        lScmdGenNode.getNode('sel').write(lPartId)
-        lScmdGenNode.getClient().dispatch()
-
-        # echo()
-        # secho( "=> Cmd generator control", fg='cyan')
-
-        # lScmdGenChanCtrlDump = toolbox.readSubNodes(lScmdGenNode.getNode('chan_ctrl'))
-        # toolbox.printRegTable(lScmdGenChanCtrlDump, False)
-
-        # echo()
-        secho( "=> Cmd generator counters", fg='cyan')
-        toolbox.printCounters( lScmdGenNode, {
-            'actrs': 'Accept counters',
-            'rctrs': 'Reject counters',
-            }, lNumChan, 'Chan', {})
-
-        # secho( "=> Spill generator control", fg='green')
-        # lDump = toolbox.readSubNodes(lDevice.getNode('master.spill.csr.ctrl'))
-        # for n in sorted(lDump):
-        #     echo( "  {} {}".format(n, hex(lDump[n])))
-        # echo()
-        # secho( "=> Spill generator stats", fg='green')
-        # lDump = toolbox.readSubNodes(lDevice.getNode('master.spill.csr.stat'))
-        # for n in sorted(lDump):
-        #     echo( "  {} {}".format(n, hex(lDump[n])))
-        echo()
-
-        secho( "=> Partition {}".format(lPartId), fg='green')
-
-        lCtrlDump = toolbox.readSubNodes(lPartNode.getNode('csr.ctrl'))
-        lStatDump = toolbox.readSubNodes(lPartNode.getNode('csr.stat'))
-
-        # echo()
-        # secho("Control registers", fg='cyan')
-        # toolbox.printRegTable(lCtrlDump, False)
-        # echo()
-        # secho("Status registers", fg='cyan')
-        # toolbox.printRegTable(lStatDump, False)
-        # echo()
-
-        #-------------- Temp
-        ctrls = toolbox.formatRegTable(lCtrlDump, False).split('\n')
-        ctrls.insert(0, style("Control ", fg="cyan"))
-        stats = toolbox.formatRegTable(lStatDump, False).split('\n')
-        stats.insert(0, style("Status registers", fg='cyan'))
-
-        col1 = max([len(toolbox.escape_ansi(l)) for l in ctrls])
-        col2 = max([len(toolbox.escape_ansi(l)) for l in stats])
-
-        nrows = max(len(ctrls), len(stats));
-
-        ctrls += [''] * (nrows - len(ctrls))
-        stats += [''] * (nrows - len(stats))
-        fmt = '\'{:<%d}\' \'{:<%d}\'' % (col1, col2)
-        for c,s in zip(ctrls, stats):
-            print (c + ' '*(col1-len(toolbox.escape_ansi(c))), '' ,s + ' '*(col2-len(toolbox.escape_ansi(s))))
-        #-------------- Temp
-        echo()  
-
-        lTimeStamp = lTStampNode.readBlock(2)
-        lEventCtr = lPartNode.getNode('evtctr').read()
-        lBufCount = lPartNode.getNode('buf.count').read()
-        lPartNode.getClient().dispatch()
-
-        lTime = (int(lTimeStamp[1]) << 32) + int(lTimeStamp[0])
-        echo( "Timestamp: {} -> {}".format(style(hex(lTime), fg='blue'), toolbox.formatTStamp(lTimeStamp)))
-        echo( "EventCounter: {}".format(lEventCtr))
-        lBufState = style('OK', fg='green') if lStatDump['buf_err'] == 0 else style('Error', fg='red')
-        # lStatDump['buf_empty']
-        echo( "Buffer status: " + lBufState)
-        echo( "Buffer occupancy: {}".format(lBufCount))
+        
+        echo(lMasterTop.getStatus())
 
         echo()
-        toolbox.printCounters( lPartNode, {
-            'actrs': 'Accept counters',
-            'rctrs': 'Reject counters',
-            })
+
+        echo(lPartNode.getStatus())
 
         if watch:
             time.sleep(period)
@@ -258,10 +166,6 @@ def partstatus(obj, watch, period):
             break
 # ------------------------------------------------------------------------------
 
-# -----------------
-def read_mask(ctx, param, value):
-    return int(value, 16)
-# -----------------
 
 # ------------------------------------------------------------------------------
 @partition.command('configure', short_help='Prepares partition for data taking.')
@@ -302,7 +206,6 @@ def configure(obj, trgmask, spillgate, ratectrl):
     secho("Partition {} enabled and configured".format(lPartId), fg='green')
 
 # ------------------------------------------------------------------------------
-
 
 
 # ------------------------------------------------------------------------------
@@ -353,8 +256,8 @@ def stop(obj):
     # Select the desired partition
     obj.mPartitionNode.stop()
     secho("Partition {} stopped".format(obj.mPartitionId), fg='green')
-
 # ------------------------------------------------------------------------------
+
 
 # ------------------------------------------------------------------------------
     # d(0) <= X"aa000600"; -- DAQ word 0
@@ -381,8 +284,7 @@ def readback(obj, readall, keep):
     lPartNode = obj.mPartitionNode
 
     while(True):
-        lBufCount = lPartNode.getNode('buf.count').read()
-        lPartNode.getClient().dispatch()
+        lBufCount = lPartNode.readBufferWordCount()
 
         echo ( "Words available in readout buffer: "+hex(lBufCount))
 
@@ -417,15 +319,8 @@ def rate_ctrl(obj, rate_ctrl_en):
     lPartId = obj.mPartitionId
     lPartNode = obj.mPartitionNode
 
-    lPartNode.getNode('csr.ctrl.rate_ctrl_en').write(rate_ctrl_en);
-    lPartNode.getClient().dispatch()
-
-    lVal = lPartNode.getNode('csr.ctrl.rate_ctrl_en').read()
-    lPartNode.getClient().dispatch()
-
-    echo("Trigger throttling in partition {}: {}".format(lPartId, 'Enabled' if bool(lVal) else 'Disabled'))
-
-
+    lPartNode.configureRateCtrl(rate_ctrl_en)
+    echo("Trigger throttling in partition {}: {}".format(lPartId, 'Enabled' if bool(rate_ctrl_en) else 'Disabled'))
 # ------------------------------------------------------------------------------
 
 
@@ -438,33 +333,14 @@ def rate_ctrl(obj, rate_ctrl_en):
 def sendcmd(obj, cmd, chan, n):
     '''
     Inject a single command.
+    '''
 
-    CMD (str): Name of the command to inject '''
-    # + ','.join(defs.kCommandIDs.keys())
-
-    # lDevice = obj.mDevice
-    lMaster = obj.mMaster
-    lMaster.getNode('scmd_gen.sel').write(chan)
-    lGenChanCtrl = lMaster.getNode('scmd_gen.chan_ctrl')
-
-    toolbox.resetSubNodes(lGenChanCtrl)
-
-    for i in xrange(n):
-        lGenChanCtrl.getNode('type').write(defs.kCommandIDs[cmd])
-        lGenChanCtrl.getNode('force').write(0x1)
-        lTStamp = lMaster.getNode("tstamp.ctr.val").readBlock(2)
-        lMaster.getClient().dispatch()
-
-        lGenChanCtrl.getNode('force').write(0x0)
-        lMaster.getClient().dispatch()
-        lTimeStamp = int(lTStamp[0]) + (int(lTStamp[1]) << 32)
-        echo("Command sent {}({}) from generator {} @time {} {}".format(style(cmd, fg='blue'), defs.kCommandIDs[cmd], chan, hex(lTimeStamp), lTimeStamp))
+    lMasterTop = obj.mMasterTop
+    lMasterTop.sendFLCmd(defs.kCommandIDs[cmd],chan,n)
 # ------------------------------------------------------------------------------
 
 
 # ------------------------------------------------------------------------------
-
-# -----------------
 def validate_freq(ctx, param, value):
 
     lFqMin = 0.5
@@ -482,8 +358,10 @@ def validate_freq(ctx, param, value):
     lDeltas = [ abs(value-div2freq(div)) for div in xrange(0x10) ]
     lMinDeltaIdx = min(xrange(len(lDeltas)), key=lDeltas.__getitem__)
     return value, lMinDeltaIdx, div2freq(lMinDeltaIdx)
-# -----------------
+# ------------------------------------------------------------------------------
 
+
+# ------------------------------------------------------------------------------
 @master.command('faketrig-conf')
 @click.pass_obj
 @click.argument('chan', type=int, callback=toolbox.validate_chan)
@@ -500,50 +378,13 @@ def faketriggen(obj, chan, rate, poisson):
     DIVIDER (int): Frequency divider.
     '''
 
-    lClockRate = 50e6
     # The division from 50MHz to the desired rate is done in three steps:
     # a) A pre-division by 256
     # b) Division by a power of two set by n = 2 ^ rate_div_d (ranging from 2^0 -> 2^15)
     # c) 1-in-n prescaling set by n = rate_div_p
-    lDiv = int(math.ceil(math.log(lClockRate / (rate * 256 * 256), 2)))
-    if lDiv < 0:
-        lDiv = 0
-    elif lDiv > 15:
-        lDiv = 15
-    lPS = int(lClockRate / (rate * 256 * (1 << lDiv)) + 0.5)
-    if lPS == 0 or lPS > 256:
-        raise click.Exception("Req rate is out of range")
-    else:
-        a = lClockRate / float(256 * lPS * (1 << lDiv))
-        secho( "Requested rate, actual rate: {} {}".format(rate, a), fg='cyan' )
-        secho( "prescale, divisor: {} {}".format(lPS, lDiv), fg='cyan')
 
-
-    lMaster = obj.mMaster
-    lGenChanCtrl = lMaster.getNode('scmd_gen.chan_ctrl')
-
-    kFakeTrigID = 'FakeTrig{}'.format(chan)
-
-    lMaster.getNode('scmd_gen.sel').write(chan)
-
-    lGenChanCtrl.getNode('type').write(defs.kCommandIDs[kFakeTrigID])
-    lGenChanCtrl.getNode('rate_div_d').write(lDiv)
-    lGenChanCtrl.getNode('rate_div_p').write(lPS)
-    lGenChanCtrl.getNode('patt').write(poisson)
-    lGenChanCtrl.getClient().dispatch()
-    echo( "> Trigger rate for {} ({}) set to {}".format( 
-        kFakeTrigID,
-        hex(defs.kCommandIDs[kFakeTrigID]),
-        style(
-            "{:.3e} Hz".format( a ),
-            fg='yellow'
-            )
-        )
-    )
-    echo( "> Trigger mode: " + style({False: 'periodic', True: 'poisson'}[poisson], fg='cyan') )
-
-    lGenChanCtrl.getNode("en").write(1) # Start the command stream
-    lGenChanCtrl.getClient().dispatch()
+    lMasterTop = obj.mMasterTop
+    lMasterTop.enableFakeTrigger(chan,rate,poisson)
 # ------------------------------------------------------------------------------
 
 
@@ -555,14 +396,9 @@ def faketrigclear(obj, chan):
     '''
     Clear the internal trigger generator.
     '''
-    lMaster = obj.mMaster
-
-    lGenChanCtrl = lMaster.getNode('scmd_gen.chan_ctrl')
-    lMaster.getNode('scmd_gen.sel').write(chan)
-
-    toolbox.resetSubNodes(lGenChanCtrl)
-    secho( "Fake trigger generator {} configuration cleared".format(chan), fg='green' )
-
+    lMasterTop = obj.mMasterTop
+    lMasterTop.disableFakeTrigger(chan)
+    secho( "Fake triggers disabled; chan: {}".format(chan), fg='green')
 # ------------------------------------------------------------------------------
 
 
@@ -575,14 +411,9 @@ def spillenable(obj):
     \b
     Enables the internal spill generator.
     '''
-    lMaster = obj.mMaster
-
-    lSpillCtrl = lMaster.getNode('spill.csr.ctrl')
-    lSpillCtrl.getNode('src').write(0)
-    lSpillCtrl.getNode('en').write(1)
-    lSpillCtrl.getClient().dispatch()
-    secho( "Spill interface enabled", fg='green' )
-
+    lMasterTop = obj.mMasterTop
+    lMasterTop.enableSpillInterface()
+    secho( "Spill interface enabled", fg='green')
 # ------------------------------------------------------------------------------
 
 
@@ -602,13 +433,8 @@ def fakespillgen(obj):
     \b
     FREQ
     '''
-    lMaster = obj.mMaster
+    lMasterTop = obj.mMasterTop
+    lMasterTop.enableFakeSpills()
+    secho( "Fake spills enabled", fg='green')
 
-    lSpillCtrl = lMaster.getNode('spill.csr.ctrl')
-    lSpillCtrl.getNode('fake_cyc_len').write(16)
-    lSpillCtrl.getNode('fake_spill_len').write(8)
-    lSpillCtrl.getNode('src').write(1)
-    lSpillCtrl.getNode('en').write(1)
-    lSpillCtrl.getClient().dispatch()
 # ------------------------------------------------------------------------------
-

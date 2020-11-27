@@ -33,6 +33,8 @@ from os.path import join, expandvars
 
 kLogLevelMap = {
         0: pdt.core.kError,
+        1: pdt.core.kWarning,
+        2: pdt.core.kNotice,
     }
 
 
@@ -53,7 +55,7 @@ CONTEXT_SETTINGS = {
 @click.pass_context
 @click.option('-c', '--connections', help='Path to uhal connection file(s)')
 @click.option('-t', '--timeout', default=None, help='uhal timeout (sec)')
-@click.option('-v', '--verbose', count=True)
+@click.option('-v', '--verbose', count=True, default=2)
 @click.option('-g', '--gdb', is_flag=True)
 def cli(ctx, connections, timeout, verbose, gdb):
     

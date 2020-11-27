@@ -1,4 +1,4 @@
-<node id="tstamp" description="Timestamp generator" fwinfo="endpoint">
+<node id="tstamp" description="Timestamp generator" fwinfo="endpoint" class="TimestampGeneratorNode">
 		<node id="csr" address="0x0" fwinfo="endpoint;width=1">
 		    <node id="ctrl" address="0x0">
 		        <node id="src" mask="0x1"/>
