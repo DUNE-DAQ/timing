@@ -28,8 +28,7 @@ The core library can be made into a UPS product (UPS's jargon for a
 package) by the name of `protodune_pdt_core` in order to be able to
 share functions with the artdaq board reader (or whoever else wants to
 use them). To do this, build against the UPS versions of the
-dependencies as described above, and run `make ups` in the core/
-directory (or `make -C core ups` from the top directory).
+dependencies as described above, and run `make ups` in top directory.
 
 If you're building against a new version of uhal, you should first
 edit the `RequiredUhalVersion` variable in `core/Makefile`.
