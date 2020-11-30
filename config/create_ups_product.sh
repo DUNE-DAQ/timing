@@ -208,7 +208,7 @@ TABLE="${PRODNAME}.table"
 # Not sure what the best thing to do if the product is already built
 # in this configuration. This will hopefully at least cause 'make ups'
 # to not fail
-if ups exist ${PRODNAME} ${VERSION} -q ${QUALS}; then
+if ups exist -z ${MYPRODDIR} ${PRODNAME} ${VERSION} -q ${QUALS}; then
     echo
     echo Product already exists with this version. I will undeclare it and re-declare
     echo You may want to manually remove ${VERSIONDIR}'/*' or even
@@ -228,7 +228,7 @@ if [ "$?" != "0" ]; then
 fi
 
 echo Now ups list says the available builds are:
-ups list -aK+ ${PRODNAME}
+ups list -z ${MYPRODDIR} -aK+ ${PRODNAME}
 
 setup ${PRODNAME} ${VERSION} -q ${QUALS}
 
