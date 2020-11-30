@@ -127,7 +127,7 @@ if ! ups active | grep -q cetpkgsupport; then
 fi
 # We use build_table from cetbuildtools to make the table file from the product_deps file
 if ! ups active | grep -q cetbuildtools; then
-    setup cetbuildtools v5_14_03
+    setup cetbuildtools v7_02_01
 fi
 
 # Sort the qualifiers in the same way as build_table does:
@@ -165,6 +165,21 @@ if ! echo $PRODUCTS | grep -q ${MYPRODDIR}; then
     export PRODUCTS=$PRODUCTS:${MYPRODDIR}
 fi
 
+# For whatever reason, UPS needs this .upsfiles/dbconfig file to be
+# present at the top-level of a $PRODUCTS directory in order to allow
+# relocatable products to be installed there. So create it
+if [ ! -e "${MYPRODDIR}/.upsfiles/dbconfig" ]; then
+    mkdir -p "${MYPRODDIR}/.upsfiles" || exit 1
+    cat > "${MYPRODDIR}/.upsfiles/dbconfig"  <<EOF 
+FILE     = DBCONFIG
+AUTHORIZED_NODES = *
+VERSION_SUBDIR = 1
+PROD_DIR_PREFIX = \${UPS_THIS_DB}
+UPD_USERCODE_DIR = \${UPS_THIS_DB}/.updfiles
+
+EOF
+fi
+
 # Make the directories that UPS wants, and do the minimum necessary to
 # be able to setup the product (ie, copy across the table file). Then
 # actually setup the product so that we can copy the files into the
@@ -188,7 +203,7 @@ sed -e "s,__PRODUCT__,${PRODNAME},g" \
 # Make the table file from the product_deps file
 build_table ${VERSIONDIR}/ups ${VERSIONDIR}/ups || exit 1
 
-TABLE="${VERSIONDIR}/ups/${PRODNAME}.table"
+TABLE="${PRODNAME}.table"
 
 # Not sure what the best thing to do if the product is already built
 # in this configuration. This will hopefully at least cause 'make ups'
