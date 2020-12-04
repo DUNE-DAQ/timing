@@ -68,24 +68,14 @@ echo("Design '{}' on board '{}' on carrier '{}'".format(
     style(kCarrierNamelMap[lBoardInfo['carrier_type'].value()], fg='blue')
 ))
 
-#>>>>>>>>>>
-## IO node
+
+# IO node
 #lIO = lDevice.getNode('io')
 #
 ## Global soft reset
 #lIO.getNode('csr.ctrl.soft_rst').write(0x1)
 #lIO.getNode('csr.ctrl.soft_rst').write(0x0)
 #lDevice.dispatch()
-#
-## Get the main I2C bus master
-#lI2CBusNode = lDevice.getNode("io.i2c")
-#    
-## Do an I2C bus address scan
-#i2cdevices = lI2CBusNode.scan()
-#
-## Print the list of addresses which responded
-#print ('[{}]'.format(', '.join(hex(x) for x in i2cdevices)))
-#>>>>>>>>>>
 
 #######################################
 # Now try the functions
@@ -108,7 +98,7 @@ def GPSClkSetup(hw):
   # Enable, active low
   hw.getNode('io.csr.ctrl.gps_clk_en').write(0x0)
 
-  # Set filter to full bandwidth mode A = B = 0x0
+  # Set filter to full bandwidth mode
   hw.getNode('io.csr.ctrl.gps_clk_fltr_a').write(0x0)
   hw.getNode('io.csr.ctrl.gps_clk_fltr_b').write(0x0)
   hw.dispatch()
@@ -119,8 +109,9 @@ def GPSClkSetup(hw):
 
 def SwRst(hw):
 
-  # Global firmware soft reset
+  # Global soft reset
   hw.getNode('io.csr.ctrl.soft_rst').write(0x1)
+ # time.sleep(0.1)
   hw.getNode('io.csr.ctrl.soft_rst').write(0x0)
   lDevice.dispatch()
 
@@ -130,7 +121,6 @@ def HwRst(hw):
   # Reset I2C switch and expander, active low
   hw.getNode('io.csr.ctrl.i2c_sw_rst').write(0x0)
   hw.getNode('io.csr.ctrl.i2c_exten_rst').write(0x0)
-  hw.getNode('io.csr.ctrl.clk_gen_rst').write(0x0)
   hw.dispatch()
 
   time.sleep(0.1)
@@ -138,7 +128,6 @@ def HwRst(hw):
   # End reset 
   hw.getNode('io.csr.ctrl.i2c_sw_rst').write(0x1)
   hw.getNode('io.csr.ctrl.i2c_exten_rst').write(0x1)
-  hw.getNode('io.csr.ctrl.clk_gen_rst').write(0x1)
   hw.dispatch()
 
 #############################################################
@@ -168,7 +157,6 @@ def I2CExtender(hw):
     return
 
   print("I2C Expander")
-  lI2CBusNode = hw.getNode("io.i2c")
   lSFPExp0 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('SFPExpander0').getI2CAddress())
   lSFPExp1 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('SFPExpander1').getI2CAddress())
   
@@ -216,13 +204,7 @@ def TempMonitor(hw):
 
   # Add config and trip point regs
 
-  print("Temperature ", temp[1]*0.5, " or ", temp[0]*0.5, " [C]")
-  
-  # Temp    D15 | D14 | D13 | D12 | D11 | D10 | D9 | D8 | D7 | D6 | D5 | D4 | D3 | D2 | D1 | D0
-  # format  MSB | b7  |  b6 |  b5 |  b4 |  b3 | b2 | b1 | LSB| X  | X  | X  | X  | X  | X | X 
-  t1 = (temp[1] << 8) + (temp[0] & 0x80) # temp = [MSB,LSB]
-  t2 = (temp[0] << 8) + (temp[1] & 0x80) # temp = [LSB,MSB]
-  print("T1, T2", t1*0.5,"'", t2*0.5)
+  print("Temperature ", temp)
   
 #############################################################
 # Power Monitors
@@ -241,7 +223,6 @@ def PwrMonitor(hw):
       return
 
   PwrI2C = I2CCore(hw, 10, 5, "io.i2c", None)
-  lI2CBusNode = hw.getNode("io.i2c")
 
   # Check all monitors are online
   for m in pmons:
@@ -280,104 +261,60 @@ def CDR(hw):
 # I2C Switch
 
 def I2CSwitch(hw, ch, off=False):
-
-  channel = (1 << ch) & 0x7F
+  
+  channel = 1 << ch
+  channel &= 0x7F
 
   if (off): channel = 0x0
-  
+
   SwI2C = I2CCore(hw, 10, 5, "io.i2c", None)
   # Select I2C channel 0 - 6
   SwI2C.write(0x70, [channel], True)
-  print("Selected I2C channel:", ch)
+  print( "Selected I2C channel:", ch, "with mask", hex(1 << ch) )
   time.sleep(0.1)
-  print( "Read switch register", hex( SwI2C.read(0x70,1)[0] ) )
+  print("Read switch register", hex( SwI2C.read(0x70,1)[0] ) )
 
 #############################################################
-# Scan I2C Busses
-
-def ScanSingle(hw, ch):
-
-  lI2CBusNode = hw.getNode("io.i2c")
-
-  I2CSwitch(lDevice, ch)
-
-  i2cdevices = lI2CBusNode.scan()
-  # Print the list of addresses which responded
-  print ('[{}]'.format(', '.join(hex(x) for x in i2cdevices)))
+# Scan all I2C Busses
 
 def ScanAll(hw):
 
-  for ch in range(0, 7):
-    ScanSingle(hw, ch)
-
-
-#############################################################
-# Configure PLL
-
-def ConfigPLL(hw):
-  
-  # Make sure correct I2C channel, ch 0
-  I2CSwitch(hw, 0)
- 
-  # create instance of pll class
   lI2CBusNode = hw.getNode("io.i2c")
-  lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('ClkGen').getI2CAddress())
-  
-  # read pll version
-  lSIVersion = lSIChip.readDeviceVersion()
-  echo("PLL version : "+style(hex(lSIVersion), fg='blue'))
-  
-  # upload a pll config file
-  lClockConfigPath = "SI5395Cfg/GIB_Debug_01.txt"
-  #lClockConfigPath = "SI5395Cfg/GIBDBG02.txt"
-  
-  lSIChip.configure(lClockConfigPath)
-  echo("PLL configuration id: {}".format(style(lSIChip.readConfigID(), fg='green')))
 
+  # Scan all I2C switch channels
+  for ch in range(0, 7):
+    I2CSwitch(lDevice, ch)
+    time.sleep(0.1)
+    i2cdevices = lI2CBusNode.scan()
 
-#############################################################
-# Read Freq Counters
-
-def ReadCtrs(hw):
-
-  ctrs = [['GPS Clock', 1], ['Rec Clock 0', 1], ['Rec Clock 1', 1], ['Irig-b', 64], ['PPS', 64], ['SYNC', 64]]
-  
-  for ctr in ctrs:
-  
-    hw.getNode('io.freq.ctrl.chan_sel').write( ctrs.index(ctr) )
-    hw.getNode('io.freq.ctrl.en_crap_mode').write(0x0)
-    hw.dispatch()
-  
-    time.sleep(2)
-  
-     
-    fq = hw.getNode('io.freq.freq.count').read()
-    fv = hw.getNode('io.freq.freq.valid').read()
-    hw.dispatch()
-  
-    print( "Freq:", ctr[0], int(fv), int(fq) * 119.20928 / (ctr[1] * 1e6), "[MHz]" )
+    # Print the list of addresses which responded
+    print('Scanning channel', ch)
+    print ('[{}]'.format(', '.join(hex(x) for x in i2cdevices)))
 
 #############################################################
 # Now try the functions
+
 SwRst(lDevice)
-HwRst(lDevice)
 WakeI2C(lDevice)
+HwRst(lDevice)
 GPSClkSetup(lDevice)
-#CDR(lDevice)
-TempMonitor(lDevice)
-#I2CExtender(lDevice)
 ScanAll(lDevice)
 
-I2CSwitch(lDevice, 5)
-time.sleep(3)
-lI2CBusNode = lDevice.getNode("io.i2c")
-# Select I2C channel 0 - 6
-#print(" test", lI2CBusNode.ping(0x74))
-print(" test", lI2CBusNode.ping(0x40))
+#I2CSwitch(lDevice, 6)
+#lI2CBusNode = lDevice.getNode("io.i2c")
+#print( "I2C component at 0x40", lI2CBusNode.ping(0x40) )
+#I2C = I2CCore(lDevice, 10, 5, "io.i2c", None)
+#for i in range(1,7):
+#I2CSwitch(lDevice, 5)
+ # time.sleep(0.1)
+  #I2C.write(0x40, [0x0], True)
+#print("Read CDR register", I2C.read(0x40,1) )
+  #print( "I2C component at 0x40", lI2CBusNode.ping(0x40) )
+  #print( "I2C component at 0x60", lI2CBusNode.ping(0x60) )
 
-#ScanSingle(lDevice, 6)
-
-ConfigPLL(lDevice)
-
-
-ReadCtrs(lDevice)
+#vin_msb = I2C.read(0x69, 1)
+#I2C.write(0x69, [0x15], True)
+#vin_lsb = I2C.read(0x69, 1)
+##print(vin)
+#print(vin_msb," ", vin_lsb )
+##print("Read 0x40 register", I2C.read(0x40,1) )
