@@ -16,8 +16,8 @@ from click import echo, style, secho
 from os.path import join, expandvars, basename
 from pdt.core import SI534xSlave, I2CExpanderSlave, DACSlave
 
-from pdt.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
-from pdt.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
+from pdt.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB
+from pdt.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed, kCarrierAFC
 from pdt.common.definitions import kDesingMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesingFanout
 from pdt.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
 from pdt.common.definitions import kLibrarySupportedBoards
@@ -30,7 +30,6 @@ kPC059Rev1 = 3
 kPC059FanoutHDMI = 4
 kPC059FanoutSFP = 5
 kTLURev1 = 6
-kFMCRev3 = 7
 
 kClockConfigMap = {
     kFMCRev1: "SI5344/PDTS0000.txt",
@@ -170,6 +169,9 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
     else:
         secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
         # board not supported by library, do reset here
+
+        if lBoardType == kBoardFIB:
+            echo("fib reset")
 # ------------------------------------------------------------------------------
 
 
@@ -329,4 +331,25 @@ def switchsfptx(ctx, obj, sfp_id, on):
     else:
         secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
         # do sfp switch here
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@io.command('read-sfp-flags', short_help="Read sfp status flags over I2C (FIB only)")
+@click.pass_obj
+@click.pass_context
+@click.option('--sfp-id', 'sfp_id', required=False, default=0, type=click.IntRange(0, 7), help='SFP id to query.')
+def readsfpflags(ctx, obj, sfp_id):
+
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+    lCarrierType = obj.mCarrierType
+    lDesignType = obj.mDesignType
+
+    if lBoardType == kBoardFIB:
+        # read lol and los signals
+        echo ("reading sfp flags for sfp: {}".format(sfp_id))
+        pass
+    else:
+        secho("I2C SFP flag reading for FIB only")
+
 # ------------------------------------------------------------------------------
