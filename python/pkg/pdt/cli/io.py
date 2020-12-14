@@ -117,10 +117,11 @@ def io(obj, device):
 @io.command('reset', short_help="Perform a hard reset on the timing master.")
 @click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
 @click.option('--fanout-mode', 'fanout', type=click.IntRange(0, 1), default=0, help='Configures the board in fanout mode (pc059 only)')
+@click.option('--sfp-mux-sel', 'sfpmuxsel', type=toolbox.IntRange(0x0,0x7), default=0, help='Configures the sfp cdr mux on the fib')
 @click.option('--force-pll-cfg', 'forcepllcfg', type=click.Path(exists=True))
 @click.pass_obj
 @click.pass_context
-def reset(ctx, obj, soft, fanout, forcepllcfg):
+def reset(ctx, obj, soft, fanout, forcepllcfg, sfpmuxsel):
     '''
     Perform a hard reset on the timing master, including
 
@@ -165,13 +166,81 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
             lIO.reset(lPLLConfigFilePath)            
     
         ctx.invoke(clkstatus)
-
-    else:
-        secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
-        # board not supported by library, do reset here
-
-        if lBoardType == kBoardFIB:
+    
+    
+       
+    elif lBoardType == kBoardFIB:
             echo("fib reset")
+
+            
+            #reset expanders, reset of pll is done later
+            lIO.getNode('csr.ctrl.rstb_i2c').write(0x1)
+            lDevice.dispatch()
+            lIO.getNode('csr.ctrl.rstb_i2c').write(0x0)
+            lDevice.dispatch()
+
+            lUID = lIO.getNode('i2c')
+
+            echo('UID I2C Slaves')
+            for lSlave in lUID.getSlaves():
+                echo("  {}: {}".format(lSlave, hex(lUID.getSlaveAddress(lSlave))))
+
+            try:
+                # Wake up the switch
+                lUID.getSlave('AX3_Switch').writeI2C(0x01, 0x7f)
+                print('AX3_Switch working')
+            except RuntimeError:
+                passlPROMSlave = 'AFC_FMC_UID_PROM'
+            x = lUID.getSlave('AX3_Switch').readI2C(0x01)
+            echo("I2C enable lines: {}".format(x))
+
+            #updae prom address for real fib on enclustra, at the momment it looks at old fmc address
+
+            lPROMSlave = 'AFC_FMC_UID_PROM'
+
+            lValues = lUID.getSlave(lPROMSlave).readI2CArray(0xfa, 6)
+            lUniqueID = 0x0
+            for lVal in lValues:
+                lUniqueID = ( lUniqueID << 8 ) | lVal
+            echo("Timing Board PROM UID: "+style(hex(lUniqueID), fg="blue"))
+            
+            # Access the clock chip
+            lI2CBusNode = lDevice.getNode("io.i2c")
+            lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
+
+            #configuration of FIB expanders 
+
+                       
+            lI2CBusNode = lDevice.getNode("io.i2c")
+           
+            lExpander1 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander1').getI2CAddress())
+            lExpander2 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander2').getI2CAddress())
+            
+            #confugre sfp los receiver bank
+            lExpander2.setInversion(1, 0x00)
+            lExpander2.setIO(1, 0xff)
+            
+            #configure clk and cdr signals
+            lExpander2.setInversion(0, 0x00)  #bank 1, no inversion 
+            lExpander2.setIO(0, 0x1e)         #bank 0, 0001 1110
+            
+
+            # sfp tx enable
+            lExpander1.setInversion(0, 0x00)
+            lExpander1.setIO(0, 0x00)
+            lExpander1.setOutputs(0, 0x00)
+
+            #confugre sfp fault receiver bank
+            lExpander1.setInversion(1, 0x00)
+            lExpander1.setIO(1, 0xff)
+
+            lIO.getNode('csr.ctrl.inmux').write(sfpmuxsel)
+            lIO.getClient().dispatch()
+            secho("Active sfp mux " + hex(sfpmuxsel), fg='cyan')
+            
+    else:
+            secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
+            # board not supported by library, do reset here
 # ------------------------------------------------------------------------------
 
 
@@ -337,19 +406,60 @@ def switchsfptx(ctx, obj, sfp_id, on):
 @io.command('read-sfp-flags', short_help="Read sfp status flags over I2C (FIB only)")
 @click.pass_obj
 @click.pass_context
-@click.option('--sfp-id', 'sfp_id', required=False, default=0, type=click.IntRange(0, 7), help='SFP id to query.')
-def readsfpflags(ctx, obj, sfp_id):
+#@click.option('--sfp-id', 'sfp_id', required=False, default=0, type=click.IntRange(0, 7), help='SFP id to query.')
+def readsfpflags(ctx, obj):
 
     lDevice = obj.mDevice
     lBoardType = obj.mBoardType
     lCarrierType = obj.mCarrierType
     lDesignType = obj.mDesignType
+    
+    lIO = lDevice.getNode('io')
+    lUID = lIO.getNode('i2c')
 
     if lBoardType == kBoardFIB:
-        # read lol and los signals
-        echo ("reading sfp flags for sfp: {}".format(sfp_id))
-        pass
+
+        #Reading Fault and LOL status from expanders
+        x1=lUID.getSlave('Expander1').readI2C(0x01)
+        #echo("I2C Expander1 port FAULT status: {}".format(hex(x1)))
+    
+        x2=lUID.getSlave('Expander2').readI2C(0x01)
+        #echo("I2C Expander2 port LOS status: {}".format(hex(x2)))
+
+        print("////////////status from sfp in FIB/////////////" )
+
+        for i1 in range(8):
+            if x1 & (1 << (i1)):
+                print("Fault status from spf: " + str(i1))
+            else:
+                print("Status OK from spf:    " + str(i1))
+        
+        print("//////Lost of signal from sfp in FIB///////////" )
+
+        for i1 in range(8):
+            if x2 & (1 << (i1)):
+                print("Lost of signal from spf:   " + str(i1))
+            else:
+                
+                print("Receiving signal from spf: " + str(i1))
+
+    
+        print("///////////scanning all sfp i2c lines///////////" )
+
+        #ping to each sfp i2c cables
+        for i in range(8):
+            nodeName = 'i2c_sfp'+str(i)
+            lSFP = lIO.getNode(nodeName)
+            #print(lSFP.ping(0x51))
+            i2cdevices= lSFP.scan()
+            print("Scaning i2c sfpp: {}".format(i)) 
+            print('[{}]'.format(', '.join(hex(x) for x in i2cdevices)))
+
+        
+      
     else:
         secho("I2C SFP flag reading for FIB only")
+
+    
 
 # ------------------------------------------------------------------------------
