@@ -12,6 +12,7 @@
 // PDT Headers
 #include "pdt/TopDesign.hpp"
 #include "pdt/FMCIONode.hpp"
+#include "pdt/FIBIONode.hpp"
 #include "pdt/exception.hpp"
 
 namespace pdt {

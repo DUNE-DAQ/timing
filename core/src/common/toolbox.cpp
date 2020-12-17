@@ -268,7 +268,7 @@ double convertBitsToFloat(uint64_t aBits, bool aIsDoublePrecision){
 BoardType
 convertValueToBoardType(uint32_t aBoardType) {
     // not pleasnt, but works for now
-    if ( aBoardType < kBoardFMC || aBoardType > kBoardTLU) {
+    if ( aBoardType < kBoardFMC || aBoardType > kBoardFIB) {
         std::ostringstream lMsg;
         lMsg << "Unknown board type: " << aBoardType;
         throw UnknownBoardType(lMsg.str());
@@ -283,7 +283,7 @@ convertValueToBoardType(uint32_t aBoardType) {
 CarrierType
 convertValueToCarrierType(uint32_t aCarrierType) {
     // not pleasnt, but works for now
-    if ( aCarrierType < kCarrierEnclustraA35 || aCarrierType > kCarrierATFC) {
+    if ( aCarrierType < kCarrierEnclustraA35 || aCarrierType > kCarrierAFC) {
         std::ostringstream lMsg;
         lMsg << "Unknown carrier type: " << aCarrierType;
         throw UnknownCarrierType(lMsg.str());

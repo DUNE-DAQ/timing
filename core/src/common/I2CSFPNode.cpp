@@ -366,7 +366,7 @@ I2CSFPSlave::readI2CAddressSwapBit() const {
 
 //-----------------------------------------------------------------------------
 void
-I2CSFPSlave::switchSoftTxControlBit(bool aOn) const {
+I2CSFPSlave::switchSoftTxControl(bool aOn) const {
     if (!readDDMSupportBit()) {
         std::ostringstream lMsg;
         lMsg << "SFP on I2C bus: " << getMasterId() << " does not support DDM";

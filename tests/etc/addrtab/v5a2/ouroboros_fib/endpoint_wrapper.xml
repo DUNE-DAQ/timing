@@ -1,4 +1,4 @@
-<node id="endpoint" description="PDTS endpoint wrapper" fwinfo="endpoint">
+<node id="endpoint" description="PDTS endpoint wrapper" fwinfo="endpoint" class="EndpointNode">
 		<node id="version" address="0x0" fwinfo="endpoint;width=0"/>
 		<node id="csr" address="0x2" fwinfo="endpoint;width=1">
 			<node id="ctrl" address="0x0">
@@ -18,7 +18,8 @@
 				<node id="ep_stat" mask="0xf0"/>
 				<node id="in_spill" mask="0x100"/>
 				<node id="in_run" mask="0x200"/>
-				<node id="sfp_tx_dis" mask="0x400"/>
+				<node id="cdelay" mask="0xfc00"/>
+				<node id="fdelay" mask="0xf0000"/>
 			</node>
 		</node>
 		<node id="tstamp" address="0x4" mode="block" size="0x2" fwinfo="endpoint;width=1"/>

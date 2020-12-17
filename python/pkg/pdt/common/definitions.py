@@ -76,7 +76,7 @@ kCarrierNamelMap = {
 }
 
 kLibrarySupportedBoards = {
-    kBoardFMC, kBoardPC059, kBoardTLU, kBoardSim
+    kBoardFMC, kBoardPC059, kBoardTLU, kBoardSim, kBoardFIB
 }
 # -----------------------------------------------------------------------------
 

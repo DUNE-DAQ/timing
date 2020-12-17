@@ -80,7 +80,7 @@ public:
     /**
      * @brief      Control tx laser of on-board SFP softly (I2C command)
      */
-    virtual void switchSFPSoftTxControlBit(uint32_t aSFPId, bool aOn) const override;
+    virtual void switchSFPSoftTxControl(uint32_t aSFPId, bool aOn) const override;
 
 };
 

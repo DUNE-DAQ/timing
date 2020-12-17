@@ -56,7 +56,7 @@ void TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::printSystemStatus()
 template<class MST_TOP, class EPT_TOP, class FAN_TOP>
 void TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::resetSystem() const {
 	for (uint32_t i = 0; i < this->getNumberOfMasters(); ++i) this->getMaster(i).reset();
-	for (uint32_t i = 0; i < getNumberOfFanouts(); ++i) getFanout(i).reset();
+	for (uint32_t i = 0; i < getNumberOfFanouts(); ++i) getFanout(i).reset(0);
 	for (uint32_t i = 0; i < this->getNumberOfEndpoints(); ++i) this->getEndpoint(i).reset();
 }
 //-----------------------------------------------------------------------------

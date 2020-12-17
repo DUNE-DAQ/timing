@@ -1,4 +1,4 @@
-<node id="scmd_gen" description="internal trigger generator" fwinfo="endpoint">
+<node id="scmd_gen" description="internal trigger generator" fwinfo="endpoint" class="FLCmdGeneratorNode">
 	<node id="ctrl" address="0x0" fwinfo="endpoint;width=0">
 		<node id="clr" mask="0x1"/>
 	</node>

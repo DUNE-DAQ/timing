@@ -13,6 +13,7 @@
 #include "pdt/PC059IONode.hpp"
 #include "pdt/TLUIONode.hpp"
 #include "pdt/SIMIONode.hpp"
+#include "pdt/FIBIONode.hpp"
 
 // Namespace resolution
 using namespace boost::python;
@@ -51,6 +52,15 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_SIMIONode_getPLLStatus_overloads, get
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_SIMIONode_getHardwareInfo_overloads, getHardwareInfo, 0, 1);
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_SIMIONode_getSFPStatus_overloads, getSFPStatus, 1, 2);
 
+// FIB IO
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_FIBIONode_reset_overloads, reset, 0, 1);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_FIBIONode_reset_with_mode_overloads, reset, 1, 2);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_FIBIONode_getStatus_overloads, getStatus, 0, 1);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_FIBIONode_getClockFrequenciesTable_overloads, getClockFrequenciesTable, 0, 1);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_FIBIONode_getPLLStatus_overloads, getPLLStatus, 0, 1);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_FIBIONode_getHardwareInfo_overloads, getHardwareInfo, 0, 1);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_FIBIONode_getSFPStatus_overloads, getSFPStatus, 1, 2);
+
 namespace pdt {
 namespace python {
 
@@ -67,7 +77,7 @@ register_io() {
       .def("getPLLStatus", &pdt::FMCIONode::getPLLStatus, pdt_FMCIONode_getPLLStatus_overloads())
       .def("getHardwareInfo", &pdt::FMCIONode::getHardwareInfo, pdt_FMCIONode_getHardwareInfo_overloads())
       .def("getSFPStatus", &pdt::FMCIONode::getSFPStatus, pdt_FMCIONode_getSFPStatus_overloads())
-      .def("switchSFPSoftTxControlBit", &pdt::FMCIONode::switchSFPSoftTxControlBit)
+      .def("switchSFPSoftTxControl", &pdt::FMCIONode::switchSFPSoftTxControl)
       ;
 
       class_<pdt::PC059IONode, bases<uhal::Node, pdt::IONode> > ("PC059IONode", init<const uhal::Node&>())
@@ -76,10 +86,10 @@ register_io() {
       .def("softReset", &pdt::PC059IONode::softReset)
       .def("getClockFrequenciesTable", &pdt::PC059IONode::getClockFrequenciesTable, pdt_PC059IONode_getClockFrequenciesTable_overloads())
       .def("getStatus", &pdt::PC059IONode::getStatus, pdt_PC059IONode_getStatus_overloads())
-      .def("getPLLStatus", &pdt::PC059IONode::getPLLStatus, pdt_TLUIONode_getPLLStatus_overloads())
+      .def("getPLLStatus", &pdt::PC059IONode::getPLLStatus, pdt_PC059IONode_getPLLStatus_overloads())
       .def("getHardwareInfo", &pdt::PC059IONode::getHardwareInfo, pdt_PC059IONode_getHardwareInfo_overloads())
       .def("getSFPStatus", &pdt::PC059IONode::getSFPStatus, pdt_PC059IONode_getSFPStatus_overloads())
-      .def("switchSFPSoftTxControlBit", &pdt::PC059IONode::switchSFPSoftTxControlBit)
+      .def("switchSFPSoftTxControl", &pdt::PC059IONode::switchSFPSoftTxControl)
       .def("switchSFPMUXChannel", &pdt::PC059IONode::switchSFPMUXChannel)
       .def("readActiveSFPMUXChannel", &pdt::PC059IONode::readActiveSFPMUXChannel)
       ;
@@ -92,7 +102,7 @@ register_io() {
       .def("getPLLStatus", &pdt::TLUIONode::getPLLStatus, pdt_TLUIONode_getPLLStatus_overloads())
       .def("getHardwareInfo", &pdt::TLUIONode::getHardwareInfo, pdt_TLUIONode_getHardwareInfo_overloads())
       .def("getSFPStatus", &pdt::TLUIONode::getSFPStatus, pdt_TLUIONode_getSFPStatus_overloads())
-      .def("switchSFPSoftTxControlBit", &pdt::TLUIONode::switchSFPSoftTxControlBit)
+      .def("switchSFPSoftTxControl", &pdt::TLUIONode::switchSFPSoftTxControl)
       .def("configureDAC", &pdt::TLUIONode::configureDAC, pdt_TLUIONode_configureDAC_overloads())
       ;
 
@@ -105,9 +115,27 @@ register_io() {
       .def("getPLLStatus", &pdt::SIMIONode::getPLLStatus, pdt_SIMIONode_getPLLStatus_overloads())
       .def("getHardwareInfo", &pdt::SIMIONode::getHardwareInfo, pdt_SIMIONode_getHardwareInfo_overloads())
       .def("getSFPStatus", &pdt::SIMIONode::getSFPStatus, pdt_SIMIONode_getSFPStatus_overloads())
-      .def("switchSFPSoftTxControlBit", &pdt::SIMIONode::switchSFPSoftTxControlBit)
+      .def("switchSFPSoftTxControl", &pdt::SIMIONode::switchSFPSoftTxControl)
       ;
 
+
+      class_<pdt::FIBIONode, bases<uhal::Node, pdt::IONode> > ("FIBIONode", init<const uhal::Node&>())
+      .def<void (pdt::FIBIONode::*)(const std::string&) const>("reset", &pdt::FIBIONode::reset, pdt_FIBIONode_reset_overloads())
+      .def<void (pdt::FIBIONode::*)(int32_t,const std::string&) const>("reset", &pdt::FIBIONode::reset, pdt_FIBIONode_reset_with_mode_overloads())
+      .def("softReset", &pdt::FIBIONode::softReset)
+      .def("getClockFrequenciesTable", &pdt::FIBIONode::getClockFrequenciesTable, pdt_FIBIONode_getClockFrequenciesTable_overloads())
+      .def("getStatus", &pdt::FIBIONode::getStatus, pdt_FIBIONode_getStatus_overloads())
+      .def("getPLLStatus", &pdt::FIBIONode::getPLLStatus, pdt_FIBIONode_getPLLStatus_overloads())
+      .def("getHardwareInfo", &pdt::FIBIONode::getHardwareInfo, pdt_FIBIONode_getHardwareInfo_overloads())
+      .def("getSFPStatus", &pdt::FIBIONode::getSFPStatus, pdt_FIBIONode_getSFPStatus_overloads())
+      .def("switchSFPSoftTxControl", &pdt::FIBIONode::switchSFPSoftTxControl)
+      .def("switchSFPMUXChannel", &pdt::FIBIONode::switchSFPMUXChannel)
+      .def("readActiveSFPMUXChannel", &pdt::FIBIONode::readActiveSFPMUXChannel)
+      .def("resetPLL", &pdt::FIBIONode::resetPLL)
+      .def("readSFPLOSFlags", &pdt::FIBIONode::readSFPLOSFlags)
+      .def("readSFPFaultFlags", &pdt::FIBIONode::readSFPFaultFlags)
+      .def("switchSFPTx", &pdt::FIBIONode::switchSFPTx)
+      ;
 }
 
 } // namespace python
