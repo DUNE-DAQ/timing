@@ -455,39 +455,3 @@ def sfpflags(ctx, obj, sfp_id):
     else:
         secho("I2C SFP flag reading for FIB only")
 # ------------------------------------------------------------------------------
-
-# ------------------------------------------------------------------------------
-@io.command('debug')
-@click.pass_obj
-@click.pass_context
-def debug(ctx, obj):
-    lDevice = obj.mDevice
-    lBoardType = obj.mBoardType
-    lCarrierType = obj.mCarrierType
-    lDesignType = obj.mDesignType
-
-    lIO = lDevice.getNode('io')
-
-    # Global soft reset
-    #lIO.getNode('csr.ctrl.soft_rst').write(0x1)
-    #lIO.getNode('csr.ctrl.soft_rst').write(0x0)
-    #lDevice.dispatch()
-    
-    # Control I2C reset line (inverted in fw)
-    #lIO.getNode('csr.ctrl.rstb_i2c').write(0x0)
-    #lDevice.dispatch()
-
-    # Get the main I2C bus master
-    lI2CBusNode = lDevice.getNode("io.i2c")
-    
-    # Do an I2C bus address scan
-    i2cdevices = lI2CBusNode.scan()
-    # Print the list of addresses which responded
-    print ('[{}]'.format(', '.join(hex(x) for x in i2cdevices)))
-
-    # Attempt an I2C transaction with a particular address
-    # True if transaction successful, False if not
-    #print(lI2CBusNode.ping(0x74))
-    #print(lI2CBusNode.ping(0x50))
-# ------------------------------------------------------------------------------
-
