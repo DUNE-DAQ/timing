@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 <node id="io" description="FMC IO" fwinfo="endpoint" class="FIBIONode">
+=======
+<node id="io" description="FIB IO" fwinfo="endpoint" class="FIBIONode">
+>>>>>>> b9d678957d545054d32b93b25990a1d0bd8f7825
 		<node id="csr" address="0x0" description="ctrl/stat register" fwinfo="endpoint;width=1">
 				<node id="ctrl" address="0x0">
 					<node id="soft_rst" mask="0x1"/>
@@ -17,7 +21,11 @@
 		    <node id="carrier_type" mask="0xff00"/>
 		    <node id="design_type" mask="0xff"/>
 		</node>
+<<<<<<< HEAD
 		<node id="i2c" address="0x08" module="file://opencores_i2c.xml" class="I2CMasterNode" parameters="FMC_UID_PROM=0x50;SI5345=0x68;Expander1=0x74;Expander2=0x75;AX3_Switch=0x21;debug=0x70"/>
+=======
+		<node id="i2c" address="0x08" module="file://opencores_i2c.xml" class="I2CMasterNode" parameters="FMC_UID_PROM=0x50;SI5345=0x68;Expander1=0x74;Expander2=0x75;AX3_Switch=0x21"/>
+>>>>>>> b9d678957d545054d32b93b25990a1d0bd8f7825
 		<node id="i2c_sfp0" address="0x10" module="file://opencores_i2c.xml" class="I2CMasterNode" parameters="SFP_EEProm=0x50;SFP_Diag=0x51"/>
 		<node id="i2c_sfp1" address="0x18" module="file://opencores_i2c.xml" class="I2CMasterNode" parameters="SFP_EEProm=0x50;SFP_Diag=0x51"/>
 		<node id="i2c_sfp2" address="0x20" module="file://opencores_i2c.xml" class="I2CMasterNode" parameters="SFP_EEProm=0x50;SFP_Diag=0x51"/>

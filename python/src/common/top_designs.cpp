@@ -11,6 +11,7 @@
 #include "pdt/TLUIONode.hpp"
 #include "pdt/PC059IONode.hpp"
 #include "pdt/FMCIONode.hpp"
+#include "pdt/FIBIONode.hpp"
 
 #include "pdt/PDIMasterNode.hpp"
 
@@ -28,7 +29,7 @@ namespace python {
 void
 register_top_designs() {
 
-      // PD-I master design
+      // PD-I master design on TLU
       class_<pdt::PDIMasterDesign<TLUIONode>, bases<uhal::Node> > ("PDIMasterDesign<TLUIONode>", init<const uhal::Node&>())
       .def("getStatus", &pdt::PDIMasterDesign<TLUIONode>::getStatus)
       .def("applyEndpointDelay", &pdt::PDIMasterDesign<TLUIONode>::applyEndpointDelay)
@@ -42,12 +43,20 @@ register_top_designs() {
       .def("measureEndpointRTT", &pdt::PDIMasterDesign<FMCIONode>::measureEndpointRTT)
       ;
 
-      // PD-I fanout design
+      // PD-I fanout design on PC059
       class_<pdt::FanoutDesign<PC059IONode,PDIMasterNode>, bases<uhal::Node> > ("FanoutDesign<PC059IONode,PDIMasterNode>", init<const uhal::Node&>())
       .def("switchSFPMUXChannel", &pdt::FanoutDesign<PC059IONode,PDIMasterNode>::switchSFPMUXChannel)
       .def("applyEndpointDelay", &pdt::FanoutDesign<PC059IONode,PDIMasterNode>::applyEndpointDelay)
       .def("measureEndpointRTT", &pdt::FanoutDesign<PC059IONode,PDIMasterNode>::measureEndpointRTT)
       .def("scanSFPMUX", &pdt::FanoutDesign<PC059IONode,PDIMasterNode>::scanSFPMUX)
+      ;
+
+      // PD-I fanout design on FIB
+      class_<pdt::FanoutDesign<FIBIONode,PDIMasterNode>, bases<uhal::Node> > ("FanoutDesign<FIBIONode,PDIMasterNode>", init<const uhal::Node&>())
+      .def("switchSFPMUXChannel", &pdt::FanoutDesign<FIBIONode,PDIMasterNode>::switchSFPMUXChannel)
+      .def("applyEndpointDelay", &pdt::FanoutDesign<FIBIONode,PDIMasterNode>::applyEndpointDelay)
+      .def("measureEndpointRTT", &pdt::FanoutDesign<FIBIONode,PDIMasterNode>::measureEndpointRTT)
+      .def("scanSFPMUX", &pdt::FanoutDesign<FIBIONode,PDIMasterNode>::scanSFPMUX)
       ;
 
       // PD-I ouroboros design on pc059
@@ -57,6 +66,15 @@ register_top_designs() {
       .def("measureEndpointRTT", &pdt::MasterMuxDesign<PC059IONode,PDIMasterNode>::measureEndpointRTT)
       .def("scanSFPMUX", &pdt::MasterMuxDesign<PC059IONode,PDIMasterNode>::scanSFPMUX)
       ;
+
+      // PD-I ouroboros design on FIB
+      class_<pdt::MasterMuxDesign<FIBIONode,PDIMasterNode>, bases<uhal::Node> > ("MasterMuxDesign<FIBIONode,PDIMasterNode>", init<const uhal::Node&>())
+      .def("switchSFPMUXChannel", &pdt::MasterMuxDesign<FIBIONode,PDIMasterNode>::switchSFPMUXChannel)
+      .def("applyEndpointDelay", &pdt::MasterMuxDesign<FIBIONode,PDIMasterNode>::applyEndpointDelay)
+      .def("measureEndpointRTT", &pdt::MasterMuxDesign<FIBIONode,PDIMasterNode>::measureEndpointRTT)
+      .def("scanSFPMUX", &pdt::MasterMuxDesign<FIBIONode,PDIMasterNode>::scanSFPMUX)
+      ;
+
 }
 
 } // namespace python
