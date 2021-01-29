@@ -125,6 +125,8 @@ const std::map<std::string, std::string> kClockConfigMap = {
     {"kPC059Rev1_enclustra-a35_fanout_mode1", "devel/PDTS_PC059_FANOUT.txt"},    // stand-alone mode
 
     {"kFIBRev1_enclustra-a35_fanout_mode1", "devel/PDTS_PC059_FANOUT.txt"},    // stand-alone mode
+    {"kFIBRev1_afc_fanout_mode1", "SI5395/PDTS0004.txt"},    // stand-alone mode
+    
 
 };
 
