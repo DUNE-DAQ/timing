@@ -36,6 +36,7 @@ kClockConfigMap = {
     kFMCRev2: "SI5344/PDTS0003.txt",
     kFMCRev3: "SI5394/PDTS0003.txt",
     kPC059Rev1: "SI5345/PDTS0005.txt",
+    
     kPC059FanoutHDMI: "devel/PDTS_PC059_FANOUT.txt",
     kPC059FanoutSFP: "wr/FANOUT_PLL_WIDEBW_SFPIN.txt",
     kTLURev1: "wr/TLU_EXTCLK_10MHZ_NOZDM.txt"
@@ -158,94 +159,22 @@ def reset(ctx, obj, soft, fanout, forcepllcfg, sfpmuxsel):
             
             if fanout == 0:
                 secho("Fanout mode enabled", fg='green')
-            
+
+            else:
+                secho("local master - standalone mode", fg='green')
+                
             lIO.reset(fanout, lPLLConfigFilePath)
             lDevice.getNode('switch.csr.ctrl.master_src').write(fanout)
+            lIO.getNode('csr.ctrl.inmux').write(sfpmuxsel)
             lDevice.dispatch()
+            secho("Active sfp mux " + hex(sfpmuxsel), fg='cyan')
         else:
-            lIO.reset(lPLLConfigFilePath)            
+            
+           lIO.reset(lPLLConfigFilePath)            
     
         ctx.invoke(clkstatus)
     
-    
-       
-    elif lBoardType == kBoardFIB:
-            echo("fib reset")
-
-            lIO.reset()
-
-            return
-            
-            #reset expanders, reset of pll is done later
-            lIO.getNode('csr.ctrl.rstb_i2c').write(0x1)
-            lDevice.dispatch()
-            lIO.getNode('csr.ctrl.rstb_i2c').write(0x0)
-            lDevice.dispatch()
-
-            lUID = lIO.getNode('i2c')
-
-            echo('UID I2C Slaves')
-            for lSlave in lUID.getSlaves():
-                echo("  {}: {}".format(lSlave, hex(lUID.getSlaveAddress(lSlave))))
-
-            try:
-                # Wake up the switch
-                lUID.getSlave('AX3_Switch').writeI2C(0x01, 0x7f)
-                print('AX3_Switch working')
-            except RuntimeError:
-                passlPROMSlave = 'AFC_FMC_UID_PROM'
-            x = lUID.getSlave('AX3_Switch').readI2C(0x01)
-            echo("I2C enable lines: {}".format(x))
-
-            #updae prom address for real fib on enclustra, at the momment it looks at old fmc address
-
-            lPROMSlave = 'AFC_FMC_UID_PROM'
-
-            lValues = lUID.getSlave(lPROMSlave).readI2CArray(0xfa, 6)
-            lUniqueID = 0x0
-            for lVal in lValues:
-                lUniqueID = ( lUniqueID << 8 ) | lVal
-            echo("Timing Board PROM UID: "+style(hex(lUniqueID), fg="blue"))
-
-            #configuration of FIB expanders 
-
-                       
-            lI2CBusNode = lDevice.getNode("io.i2c")
-           
-            lExpander1 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander1').getI2CAddress())
-            lExpander2 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander2').getI2CAddress())
-            
-            #confugre sfp los receiver bank
-            lExpander2.setInversion(1, 0x00)
-            lExpander2.setIO(1, 0xff)
-            
-            #configure clk and cdr signals
-            lExpander2.setInversion(0, 0x00)  #bank 1, no inversion 
-            lExpander2.setIO(0, 0xfe)         #bank 0, 0001 1110
-            lExpander2.setOutputs(0, 0x01);
-
-
-            # sfp tx enable
-            lExpander1.setInversion(0, 0x00)
-            lExpander1.setIO(0, 0x00)
-            lExpander1.setOutputs(0, 0x00)
-
-            #confugre sfp fault receiver bank
-            lExpander1.setInversion(1, 0x00)
-            lExpander1.setIO(1, 0xff)
-
-
-            # Access the clock chip
-            #lI2CBusNode = lDevice.getNode("io.i2c")
-            #lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
-
-            echo("pll reset")
-            lExpander2.setOutputs(0, 0x00);
-            lExpander2.setOutputs(0, 0x01);
-
-            lIO.getNode('csr.ctrl.inmux').write(sfpmuxsel)
-            lIO.getClient().dispatch()
-            secho("Active sfp mux " + hex(sfpmuxsel), fg='cyan')
+   
             
     else:
             secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
@@ -299,10 +228,15 @@ def status(ctx, obj, verbose):
 def clkstatus(ctx, obj, verbose):
 
     lDevice = obj.mDevice
+    lDesignType = obj.mDesignType
     lIO = lDevice.getNode('io')
     lBoardType = obj.mBoardType
     
     ctx.invoke(status)
+    if lDesignType == kDesingFanout:
+        mux_fib = lIO.getNode('csr.ctrl.inmux').read()
+        lDevice.dispatch()
+        secho("Active sfp mux {} ".format(mux_fib))
 
     echo()
     ctx.invoke(freq)
