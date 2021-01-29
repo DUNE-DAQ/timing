@@ -73,7 +73,7 @@ def measuredelay(ctx, obj, addr, mux):
     lTopDesign = obj.mTopDesign
     
     # or a different type of fanout board
-    if lBoardType == kBoardPC059:
+    if lBoardType in [kBoardPC059, kBoardFIB]:
         if mux is not None:
             echo("Endpoint (adr: {}, mux: {}) RTT: {}".format(addr,mux,lTopDesign.measureEndpointRTT(addr, True, mux)))
         else:
@@ -104,7 +104,7 @@ def scanmux(obj):
     lTopDesign = obj.mTopDesign
     lBoardType = obj.mBoardType
 
-    if lBoardType == kBoardPC059:
+    if lBoardType in [kBoardPC059, kBoardFIB]:
         lTopDesign.scanSFPMUX()
     else:
         raise RuntimeError('Mux scan is only available on PC059 boards')
