@@ -40,11 +40,7 @@
 
   <connection id="FAN_FIB_AFC"       uri="ipbusudp-2.0://192.168.121.100:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v5a2/fanout_fib/top.xml" />
   <connection id="FAN_FIB_ENC"       uri="ipbusudp-2.0://192.168.200.24:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v5a2/fanout_fib/top.xml" />
-<<<<<<< HEAD
 
-=======
-  
->>>>>>> b9d678957d545054d32b93b25990a1d0bd8f7825
   <connection id="OURO_FIB_AFC"      uri="ipbusudp-2.0://192.168.121.100:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v5a2/ouroboros_fib/top.xml" />
   
   <connection id="SIM"                   uri="ipbusudp-2.0://192.168.201.16:50001" address_table="file://${PDT_TESTS}/etc/addrtab/v5a2/ouroboros_sim/top_sim.xml" />
