@@ -9,12 +9,11 @@
 
 
 #include <boost/lexical_cast.hpp>
-#include <boost/unordered/unordered_map.hpp>
 #include <boost/range/adaptor/map.hpp>
 #include <boost/range/algorithm/copy.hpp>
 
-#include "pdt/exception.hpp"
-#include "pdt/Logger.hpp"
+#include "pdt/TimingIssues.hpp"
+#include "ers/ers.h"
 #include "pdt/toolbox.hpp"
 #include "pdt/I2CSlave.hpp"
 
@@ -69,8 +68,8 @@ void I2CMasterNode::constructor() {
     
     // Build the list of slaves
     // Loop over node parameters. Each parameter becomes a slave node.
-    const boost::unordered_map<std::string, std::string>& lPars = this->getParameters();
-    boost::unordered_map<std::string, std::string>::const_iterator lIt;
+    const std::unordered_map<std::string, std::string>& lPars = this->getParameters();
+    std::unordered_map<std::string, std::string>::const_iterator lIt;
     for ( lIt = lPars.begin(); lIt != lPars.end(); ++lIt ) {
         uint32_t lSlaveAddr = (boost::lexical_cast< pdt::stoul<uint32_t> > (lIt->second) & 0x7f);
         mSlavesAddresses.insert(std::make_pair( lIt->first, lSlaveAddr  ) );
@@ -83,7 +82,7 @@ void I2CMasterNode::constructor() {
 
 //-----------------------------------------------------------------------------
 I2CMasterNode::~I2CMasterNode() {
-    boost::unordered_map<std::string, I2CSlave*>::iterator lIt;
+    std::unordered_map<std::string, I2CSlave*>::iterator lIt;
     for ( lIt = mSlaves.begin(); lIt != mSlaves.end(); ++lIt ) {
         // Delete slaves
         delete lIt->second;
@@ -106,11 +105,9 @@ I2CMasterNode::getSlaves() const {
 //-----------------------------------------------------------------------------
 uint8_t
 I2CMasterNode::getSlaveAddress(const std::string& name) const {
-    boost::unordered_map<std::string, uint8_t>::const_iterator lIt = mSlavesAddresses.find(name);
+    std::unordered_map<std::string, uint8_t>::const_iterator lIt = mSlavesAddresses.find(name);
     if ( lIt == mSlavesAddresses.end() ) {
-        pdt::I2CSlaveNotFound lExc( std::string("Slave \"") + name + "\" not found" );
-        PDT_LOG(kError) << lExc.what();
-        throw lExc;
+        throw I2CDeviceNotFound(ERS_HERE, getId(), getId(), name);
     }
     return lIt->second;
 }
@@ -120,11 +117,9 @@ I2CMasterNode::getSlaveAddress(const std::string& name) const {
 //-----------------------------------------------------------------------------
 const I2CSlave&
 I2CMasterNode::getSlave(const std::string& name) const {
-    boost::unordered_map<std::string, I2CSlave*>::const_iterator lIt = mSlaves.find(name);
+    std::unordered_map<std::string, I2CSlave*>::const_iterator lIt = mSlaves.find(name);
     if ( lIt == mSlaves.end() ) {
-        pdt::I2CSlaveNotFound lExc(std::string("Slave ")+name+" not found.");
-        PDT_LOG(kError) << lExc.what();
-        throw lExc;
+        throw I2CDeviceNotFound(ERS_HERE, getId(), getId(), name);
     }
     return *(lIt->second);
 }
@@ -375,7 +370,7 @@ I2CMasterNode::sendI2CCommandAndReadData( uint8_t aCmd ) const  {
     assert( !(aCmd & kWriteToSlaveCmd) );
 
     uint8_t lFullCmd = aCmd | kReadFromSlaveCmd;
-    PDT_LOG(kDebug1) << ">> sending read cmd  = " << std::showbase << std::hex << (uint32_t)lFullCmd;
+    ERS_DEBUG(1, ">> sending read cmd  = " << formatRegValue((uint32_t)lFullCmd));
 
 
     // Force the read bit high and set them cmd bits
@@ -389,7 +384,7 @@ I2CMasterNode::sendI2CCommandAndReadData( uint8_t aCmd ) const  {
     uhal::ValWord<uint32_t> lResult = getNode(kRxNode).read();
     getClient().dispatch();
 
-    PDT_LOG(kDebug1) << "<< receive data      = " << std::showbase << std::hex << (uint32_t)lResult;
+    ERS_DEBUG(1, "<< receive data      = " << formatRegValue((uint32_t)lResult));
 
     return (lResult & 0xff);
 }
@@ -404,7 +399,9 @@ I2CMasterNode::sendI2CCommandAndWriteData( uint8_t aCmd, uint8_t aData ) const  
     assert( !(aCmd & kReadFromSlaveCmd) );
     
     uint8_t lFullCmd = aCmd | kWriteToSlaveCmd;
-    PDT_LOG(kDebug1) << ">> sending write cmd = " << std::showbase << std::hex << (uint32_t)lFullCmd << " data = " << std::showbase << std::hex << (uint32_t)aData;
+    std::stringstream debug_stream;
+    debug_stream << ">> sending write cmd = " << std::showbase << std::hex << (uint32_t)lFullCmd << " data = " << std::showbase << std::hex << (uint32_t)aData;
+    ERS_DEBUG(1, debug_stream.str());
 
     // write the payload
     getNode(kTxNode).write( aData );
@@ -450,8 +447,7 @@ void I2CMasterNode::waitUntilFinished(bool aRequireAcknowledgement, bool aRequir
 
         if (arbitrationLost) {
             // This is an instant error at any time
-            pdt::I2CException lExc("I2C error: bus arbitration lost. Is another application running?");
-            throw lExc;
+            throw I2CBusArbitrationLost(ERS_HERE, getId(), getId());
         }
 
         if (!transferInProgress) {
@@ -469,18 +465,15 @@ void I2CMasterNode::waitUntilFinished(bool aRequireAcknowledgement, bool aRequir
     // the bus operated as expected:
 
     if (lAttempt > lMaxRetry) {
-        pdt::I2CException lExc("I2C error: Transaction timeout - the 'Transfer in Progress' bit remained high for too long");
-        throw lExc;
+        throw I2CTransactionTimeout(ERS_HERE, getId(), getId());
     }
 
     if (aRequireAcknowledgement && !lReceivedAcknowledge) {
-        pdt::I2CException lExc("I2C error: No acknowledge received");
-        throw lExc;
+        throw I2CNoAcknowledgeReceived(ERS_HERE, getId(), getId());
     }
 
     if (aRequireBusIdleAtEnd && lBusy) {
-        pdt::I2CException lExc("I2C error: Transfer finished but bus still busy");
-        throw lExc;
+        throw I2CTransferFinishedBusStillBusy(ERS_HERE, getId(), getId());
     }
 }
 

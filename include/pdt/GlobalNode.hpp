@@ -1,5 +1,5 @@
-#ifndef __PDT_GLOBALNODE_HPP__
-#define __PDT_GLOBALNODE_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_GLOBALNODE_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_GLOBALNODE_HPP_
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -30,7 +30,7 @@ public:
     /**
      * @brief     Enable the upstream endpoint.
      */
-    bool enableUpstreamEndpoint(uint32_t aTimeout=500);
+    void enableUpstreamEndpoint(uint32_t aTimeout=500);
 
     /**
      * @brief     Get status string, optionally print.
@@ -40,4 +40,4 @@ public:
 
 } // namespace pdt
 
-#endif // __PDT_GLOBALNODE_HPP__
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_GLOBALNODE_HPP_

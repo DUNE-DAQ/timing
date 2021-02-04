@@ -2,7 +2,7 @@
 
 // PDT headers
 #include "pdt/toolbox.hpp"
-#include "pdt/Logger.hpp"
+#include "ers/ers.h"
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/algorithm/string/predicate.hpp> 
@@ -75,11 +75,11 @@ SI534xSlave::seekHeader( std::ifstream& aFile ) const {
         if ( lLine == "Address,Data" ) break;
 
         if ( aFile.eof() ) {
-            throw SI534xConfigError("Incomplete file: End of file detected while seeking the header.");
+            throw SI534xConfigError(ERS_HERE, "SI534xSlave", "Incomplete file: End of file detected while seeking the header.");
         }
     }
     
-    PDT_LOG(pdt::kDebug) << "Found desing ID " << lDesignID;
+    ERS_DEBUG(0, "Found desing ID " << lDesignID);
 
     return lDesignID;
 }
@@ -129,7 +129,7 @@ SI534xSlave::readConfigSection( std::ifstream& aFile, std::string aTag ) const {
             if ( aTag.empty() )
                 return lConfig;
             else
-                throw SI534xConfigError("Incomplete file: End of file detected before the end of "+aTag+" section.");
+                throw SI534xConfigError(ERS_HERE, "SI534xSlave", "Incomplete file: End of file detected before the end of "+aTag+" section.");
         }
 
         // Stop if the line is empty
@@ -137,9 +137,7 @@ SI534xSlave::readConfigSection( std::ifstream& aFile, std::string aTag ) const {
 
         // If no sec
         if ( !lSectionFound and !aTag.empty()) {
-            std::ostringstream lMsg;
-            lMsg << "Missing configuration section '" << aTag << "'";
-            throw SI534xMissingConfigSectionError(lMsg.str());
+            throw SI534xMissingConfigSectionError(ERS_HERE, "SI534xSlave", aTag);
         }
 
         uint32_t lAddress, lData;
@@ -148,7 +146,9 @@ SI534xSlave::readConfigSection( std::ifstream& aFile, std::string aTag ) const {
         std::istringstream lLineStream(lLine);
         lLineStream >> std::hex >> lAddress >> lDummy >> std::hex >> lData;
 
-        PDT_LOG(pdt::kDebug2) << std::showbase << std::hex << "Address: " <<  lAddress << lDummy << " Data: " << lData;
+        std::stringstream debug_stream;
+        debug_stream << std::showbase << std::hex << "Address: " <<  lAddress << lDummy << " Data: " << lData;
+        ERS_DEBUG(2, debug_stream.str());
 
         lConfig.push_back(RegisterSetting_t(lAddress, lData));
     }
@@ -185,16 +185,16 @@ SI534xSlave::configure( const std::string& aPath ) const {
         lPreamble = this->readConfigSection(lFile, "preamble");
         lRegisters = this->readConfigSection(lFile, "registers");
         lPostAmble = this->readConfigSection(lFile, "postamble");
-    } catch ( SI534xMissingConfigSectionError ) {
+    } catch ( SI534xMissingConfigSectionError& ) {
         lFile.seekg(lHdrEnd);
         lPreamble.clear();
         lRegisters = this->readConfigSection(lFile, "");
         lPostAmble.clear();
     }
 
-    PDT_LOG(kDebug) << "Preamble size = " << lPreamble.size();
-    PDT_LOG(kDebug) << "Registers size = " << lRegisters.size();
-    PDT_LOG(kDebug) << "PostAmble size = " << lPostAmble.size();
+    ERS_DEBUG(0, "Preamble size = " << lPreamble.size());
+    ERS_DEBUG(0, "Registers size = " << lRegisters.size());
+    ERS_DEBUG(0, "PostAmble size = " << lPostAmble.size());
 
     lFile.close();
 
@@ -216,7 +216,7 @@ SI534xSlave::configure( const std::string& aPath ) const {
     if ( lConfDesignID != lChipDesignID ) {
         std::ostringstream lMsg;
         lMsg << "Post-configuration check failed: Loaded design ID " << lChipDesignID << " does not match the configurationd design id " << lConfDesignID << std::endl;
-        throw SI534xConfigError(lMsg.str());
+        throw SI534xConfigError(ERS_HERE, "SI534xSlave", lMsg.str());
     }
 
 }
@@ -231,21 +231,22 @@ SI534xSlave::uploadConfig( const std::vector<SI534xSlave::RegisterSetting_t>& aC
     size_t lNotifyEvery = ( lNotifyPercent < aConfig.size() ? aConfig.size()/lNotifyPercent : 1);
 
     for ( const auto& lSetting : aConfig ) {
-        PDT_LOG(kDebug) << std::showbase << std::hex 
+        std::stringstream debug_stream;
+        debug_stream   << std::showbase << std::hex 
                        << "Writing to "  << (uint32_t)lSetting.get<0>() 
                        << " data " << (uint32_t)lSetting.get<1>();
+        ERS_DEBUG(0, debug_stream.str());
 
         uint32_t lMaxAttempts(2), lAttempt(0);
         while( lAttempt < lMaxAttempts ) {        
-            PDT_LOG(kDebug) << "Attempt " << lAttempt;
+            ERS_DEBUG(0, "Attempt " << lAttempt);
             if ( lAttempt > 0) {
-                PDT_LOG(kWarning) << "Retry " << lAttempt << " for reg " << std::showbase << std::hex <<  (uint32_t)lSetting.get<0>() ;
+                ers::warning(SI534xRegWriteRetry(ERS_HERE, "SI534xSlave", formatRegValue((uint32_t)lSetting.get<0>()) ));
             }
             try {
               this->writeClockRegister(lSetting.get<0>(), lSetting.get<1>());
             } catch( const std::exception& e) {
-                PDT_LOG(kError) << "-> Bugger Write failed " << std::showbase << std::hex << lSetting.get<0>();
-                PDT_LOG(kError) << "   reason: " << e.what();
+                ers::error(SI534xRegWriteFailed(ERS_HERE, "SI534xSlave", formatRegValue((uint32_t)lSetting.get<0>()), formatRegValue((uint32_t)lSetting.get<1>()), e));
                 ++lAttempt;
                 continue;
             }
@@ -254,7 +255,7 @@ SI534xSlave::uploadConfig( const std::vector<SI534xSlave::RegisterSetting_t>& aC
 
         ++k;
         if ( (k % lNotifyEvery) == 0 ) {
-            PDT_LOG(kDebug) << (k/lNotifyEvery) * lNotifyPercent << "%";
+            ERS_DEBUG(0, (k/lNotifyEvery) * lNotifyPercent << "%");
         }
     }
 

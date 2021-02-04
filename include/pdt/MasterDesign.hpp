@@ -1,5 +1,5 @@
-#ifndef __PDT_MASTERDESIGN_HPP__
-#define __PDT_MASTERDESIGN_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_MASTERDESIGN_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_MASTERDESIGN_HPP_
 
 // C++ Headers
 #include <chrono>
@@ -61,4 +61,4 @@ public:
 
 #include "pdt/MasterDesign.hxx"
 
-#endif // __PDT_MASTERDESIGN_HPP__
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_MASTERDESIGN_HPP_

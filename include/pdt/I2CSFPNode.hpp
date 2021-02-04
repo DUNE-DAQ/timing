@@ -1,12 +1,15 @@
-#ifndef __PDT_I2CSFPNODE_HPP__
-#define __PDT_I2CSFPNODE_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CSFPNODE_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CSFPNODE_HPP_
 
 #include <map>
 
 #include "pdt/I2CSlave.hpp"
 #include "pdt/I2CMasterNode.hpp"
 #include "pdt/toolbox.hpp"
-#include "pdt/exception.hpp"
+#include "TimingIssues.hpp"
+
+#include "ers/ers.h"
+
 namespace pdt
 {
 /**
@@ -24,6 +27,18 @@ public:
     I2CSFPSlave(const I2CMasterNode* aMaster, uint8_t aSlaveAddress);
     virtual ~I2CSFPSlave();
     
+    /**
+     * @brief      Check if SFP responds
+     *
+     */
+    void sfpReachable() const;
+
+    /**
+     * @brief      Check if DDM is supported
+     *
+     */
+    void ddmAvailable() const;
+
     /**
      * @brief      Read the raw SFP temperature
      *
@@ -169,4 +184,4 @@ public:
 
 } // namespace pdt
 
-#endif /* __PDT_SFPEXPANDERNODE_HPP__ */
+#endif /* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SFPEXPANDERNODE_HPP_ */

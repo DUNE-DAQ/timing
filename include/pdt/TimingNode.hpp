@@ -1,17 +1,18 @@
-#ifndef __PDT_TIMINGNODE_HPP__
-#define __PDT_TIMINGNODE_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGNODE_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGNODE_HPP_
 
-// C++ Headers
-#include <chrono>
+// PDT Headers
+#include "TimingIssues.hpp"
+#include "pdt/definitions.hpp"
+#include "pdt/toolbox.hpp"
+#include "ers/Issue.h"
+#include "ers/ers.h"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
-// PDT Headers
-#include "pdt/Logger.hpp"
-#include "pdt/exception.hpp"
-#include "pdt/definitions.hpp"
-#include "pdt/toolbox.hpp"
+// C++ Headers
+#include <chrono>
 
 namespace pdt {
 /**
@@ -43,4 +44,4 @@ public:
 
 } // namespace pdt
 
-#endif // __PDT_TIMINGNODE_HPP__
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGNODE_HPP_

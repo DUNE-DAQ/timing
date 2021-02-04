@@ -16,21 +16,36 @@ I2CSFPSlave::~I2CSFPSlave( ) {
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+void 
+I2CSFPSlave::sfpReachable() const {
+    if (!this->ping()) {
+        throw SFPUnreachable(ERS_HERE, "I2CSFPSlave", getMasterId());
+    }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void 
+I2CSFPSlave::ddmAvailable() const {
+    if (!readDDMSupportBit()) {
+        throw SFPDDMUnsupported(ERS_HERE, "I2CSFPSlave", getMasterId());
+    } else {
+        if (readI2CAddressSwapBit()) {
+            throw SFPDDMI2CAddressSwapUnsupported(ERS_HERE, "I2CSFPSlave", getMasterId());
+        }
+    }
+}
+//-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 std::pair<double, double> 
 I2CSFPSlave::readCalibrationParameterPair(uint32_t aCalibID) const {
-    if (!readDDMSupportBit()) {
-        std::ostringstream lMsg;
-        lMsg << "SFP on I2C bus: " << getMasterId() << " does not support DDM";
-        throw SFPDDMUnsupported(lMsg.str());
-    } else {
-        if (readI2CAddressSwapBit()) {
-            std::ostringstream lMsg;
-            lMsg << "SFP DDM I2C address swap not supported. SFP on I2C bus: " << getMasterId();
-            throw SFPDDMI2CAddressSwapUnsupported(lMsg.str());
-        }
-    }
+    
+    ddmAvailable();
+
     auto lParameterArray = this->readI2CArray(0x51, mCalibrationParameterStartAddresses.at(aCalibID), 0x4);
 
     // slope
@@ -49,17 +64,7 @@ I2CSFPSlave::readCalibrationParameterPair(uint32_t aCalibID) const {
 //-----------------------------------------------------------------------------
 double 
 I2CSFPSlave::readTemperatureRaw() const {
-    if (!readDDMSupportBit()) {
-        std::ostringstream lMsg;
-        lMsg << "SFP on I2C bus: " << getMasterId() << " does not support DDM";
-        throw SFPDDMUnsupported(lMsg.str());
-    } else {
-        if (readI2CAddressSwapBit()) {
-            std::ostringstream lMsg;
-            lMsg << "SFP DDM I2C address swap not supported. SFP on I2C bus: " << getMasterId();
-            throw SFPDDMI2CAddressSwapUnsupported(lMsg.str());
-        }
-    }
+    ddmAvailable();
     auto lTempArray = this->readI2CArray(0x51, 0x60, 0x2);
     
     // bit 7 corresponds to temperature sign, 0 for pos, 1 for neg
@@ -82,17 +87,7 @@ I2CSFPSlave::readTemperature() const {
 //-----------------------------------------------------------------------------
 double 
 I2CSFPSlave::readVoltageRaw() const {
-    if (!readDDMSupportBit()) {
-        std::ostringstream lMsg;
-        lMsg << "SFP on I2C bus: " << getMasterId() << " does not support DDM";
-        throw SFPDDMUnsupported(lMsg.str());
-    } else {
-        if (readI2CAddressSwapBit()) {
-            std::ostringstream lMsg;
-            lMsg << "SFP DDM I2C address swap not supported. SFP on I2C bus: " << getMasterId();
-            throw SFPDDMI2CAddressSwapUnsupported(lMsg.str());
-        }
-    }
+    ddmAvailable();
     auto lVoltageArray = this->readI2CArray(0x51, 0x62, 0x2);
     return (lVoltageArray.at(0) << 8) | lVoltageArray.at(1);
 }
@@ -112,17 +107,7 @@ I2CSFPSlave::readVoltage() const {
 //-----------------------------------------------------------------------------
 double 
 I2CSFPSlave::readRxPowerRaw() const {
-    if (!readDDMSupportBit()) {
-        std::ostringstream lMsg;
-        lMsg << "SFP on I2C bus: " << getMasterId() << " does not support DDM";
-        throw SFPDDMUnsupported(lMsg.str());
-    } else {
-        if (readI2CAddressSwapBit()) {
-            std::ostringstream lMsg;
-            lMsg << "SFP DDM I2C address swap not supported. SFP on I2C bus: " << getMasterId();
-            throw SFPDDMI2CAddressSwapUnsupported(lMsg.str());
-        }
-    }
+    ddmAvailable();
     auto lRxPowerArray = this->readI2CArray(0x51, 0x68, 0x2);
     return (lRxPowerArray.at(0) << 8) | lRxPowerArray.at(1);
 }
@@ -160,17 +145,7 @@ I2CSFPSlave::readRxPower() const {
 //-----------------------------------------------------------------------------
 double 
 I2CSFPSlave::readTxPowerRaw() const {
-    if (!readDDMSupportBit()) {
-        std::ostringstream lMsg;
-        lMsg << "SFP on I2C bus: " << getMasterId() << " does not support DDM";
-        throw SFPDDMUnsupported(lMsg.str());
-    } else {
-        if (readI2CAddressSwapBit()) {
-            std::ostringstream lMsg;
-            lMsg << "SFP DDM I2C address swap not supported. SFP on I2C bus: " << getMasterId();
-            throw SFPDDMI2CAddressSwapUnsupported(lMsg.str());
-        }
-    }
+    ddmAvailable();
     auto lTxPowerArray = this->readI2CArray(0x51, 0x66, 0x2);
     return (lTxPowerArray.at(0) << 8) | lTxPowerArray.at(1);
 }
@@ -190,17 +165,7 @@ I2CSFPSlave::readTxPower() const {
 //-----------------------------------------------------------------------------
 double 
 I2CSFPSlave::readCurrentRaw() const {
-    if (!readDDMSupportBit()) {
-        std::ostringstream lMsg;
-        lMsg << "SFP on I2C bus: " << getMasterId() << " does not support DDM";
-        throw SFPDDMUnsupported(lMsg.str());
-    } else {
-        if (readI2CAddressSwapBit()) {
-            std::ostringstream lMsg;
-            lMsg << "SFP DDM I2C address swap not supported. SFP on I2C bus: " << getMasterId();
-            throw SFPDDMI2CAddressSwapUnsupported(lMsg.str());
-        }
-    }
+    ddmAvailable();
     auto lCurrentArray = this->readI2CArray(0x51, 0x64, 0x2);
     return (lCurrentArray.at(0) << 8) | lCurrentArray.at(1);
 }
@@ -220,11 +185,7 @@ I2CSFPSlave::readCurrent() const {
 //-----------------------------------------------------------------------------
 std::string 
 I2CSFPSlave::readVendorName() const {
-    if (!this->ping()) {
-        std::ostringstream lMsg;
-        lMsg << "Failed to reach SFP on I2C bus: " << getMasterId();
-        throw SFPUnreachable(lMsg.str());
-    }
+    sfpReachable();
 
     std::stringstream lVendorName;
     auto lVendorNameCharacters = this->readI2CArray(0x14, 0x10);
@@ -239,11 +200,7 @@ I2CSFPSlave::readVendorName() const {
 //-----------------------------------------------------------------------------
 std::string 
 I2CSFPSlave::readVendorPartNumber() const {
-    if (!this->ping()) {
-        std::ostringstream lMsg;
-        lMsg << "Failed to reach SFP on I2C bus: " << getMasterId();
-        throw SFPUnreachable(lMsg.str());
-    }
+    sfpReachable();
 
     std::stringstream lVendorPN;
     auto lVendorPNCharacters = this->readI2CArray(0x28, 0x10);
@@ -258,11 +215,7 @@ I2CSFPSlave::readVendorPartNumber() const {
 //-----------------------------------------------------------------------------
 std::string 
 I2CSFPSlave::readSerialNumber() const {
-    if (!this->ping()) {
-        std::ostringstream lMsg;
-        lMsg << "Failed to reach SFP on I2C bus: " << getMasterId();
-        throw SFPUnreachable(lMsg.str());
-    }
+    sfpReachable();
 
     std::stringstream lSerialNumber;
     auto lSerialNumberCharacters = this->readI2CArray(0x44, 0x10);
@@ -277,11 +230,7 @@ I2CSFPSlave::readSerialNumber() const {
 //-----------------------------------------------------------------------------
 bool
 I2CSFPSlave::readDDMSupportBit() const {
-    if (!this->ping()) {
-        std::ostringstream lMsg;
-        lMsg << "Failed to reach SFP on I2C bus: " << getMasterId();
-        throw SFPUnreachable(lMsg.str());
-    }
+    sfpReachable();
 
     // Bit 6 of reg 5C tells us whether the SFP supports digital diagnostic monitoring (DDM)
     auto lDDMInfoByte = this->readI2C(0x5C);
@@ -293,11 +242,7 @@ I2CSFPSlave::readDDMSupportBit() const {
 //-----------------------------------------------------------------------------
 bool
 I2CSFPSlave::readSoftTxControlSupportBit() const {
-    if (!this->ping()) {
-        std::ostringstream lMsg;
-        lMsg << "Failed to reach SFP on I2C bus: " << getMasterId();
-        throw SFPUnreachable(lMsg.str());
-    }
+    sfpReachable();
 
     // Bit 6 of reg 5d tells us whether the soft tx control is implemented in this sfp
     auto lEnhancedOptionsByte = this->readI2C(0x5d);
@@ -309,17 +254,7 @@ I2CSFPSlave::readSoftTxControlSupportBit() const {
 //-----------------------------------------------------------------------------
 bool
 I2CSFPSlave::readSoftTxControlState() const {
-    if (!readDDMSupportBit()) {
-        std::ostringstream lMsg;
-        lMsg << "SFP on I2C bus: " << getMasterId() << " does not support DDM";
-        throw SFPDDMUnsupported(lMsg.str());
-    } else {
-        if (readI2CAddressSwapBit()) {
-            std::ostringstream lMsg;
-            lMsg << "SFP DDM I2C address swap not supported. SFP on I2C bus: " << getMasterId();
-            throw SFPDDMI2CAddressSwapUnsupported(lMsg.str());
-        }
-    }
+    ddmAvailable();
     auto lOptStatusCtrlByte = this->readI2C(0x51, 0x6e);
     // Bit 6 tells us the state of the soft tx_disble register
     return lOptStatusCtrlByte & 0x40;
@@ -330,17 +265,7 @@ I2CSFPSlave::readSoftTxControlState() const {
 //-----------------------------------------------------------------------------
 bool
 I2CSFPSlave::readTxDisablePinState() const {
-    if (!readDDMSupportBit()) {
-        std::ostringstream lMsg;
-        lMsg << "SFP on I2C bus: " << getMasterId() << " does not support DDM";
-        throw SFPDDMUnsupported(lMsg.str());
-    } else {
-        if (readI2CAddressSwapBit()) {
-            std::ostringstream lMsg;
-            lMsg << "SFP DDM I2C address swap not supported. SFP on I2C bus: " << getMasterId();
-            throw SFPDDMI2CAddressSwapUnsupported(lMsg.str());
-        }
-    }
+    ddmAvailable();
     auto lOptStatusCtrlByte = this->readI2C(0x51, 0x6e);
     // Bit 7 tells us the state of tx_disble pin
     return lOptStatusCtrlByte & 0x80;
@@ -351,11 +276,7 @@ I2CSFPSlave::readTxDisablePinState() const {
 //-----------------------------------------------------------------------------
 bool
 I2CSFPSlave::readI2CAddressSwapBit() const {
-    if (!this->ping()) {
-        std::ostringstream lMsg;
-        lMsg << "Failed to reach SFP on I2c bus: " << getMasterId();
-        throw SFPUnreachable(lMsg.str());
-    }
+    sfpReachable();
 
     auto lDDMInfoByte = this->readI2C(0x5C);
     // Bit 2 of byte 5C tells us whether special I2C address change operations are needed to access the DDM area
@@ -367,23 +288,12 @@ I2CSFPSlave::readI2CAddressSwapBit() const {
 //-----------------------------------------------------------------------------
 void
 I2CSFPSlave::switchSoftTxControlBit(bool aOn) const {
-    if (!readDDMSupportBit()) {
-        std::ostringstream lMsg;
-        lMsg << "SFP on I2C bus: " << getMasterId() << " does not support DDM";
-        throw SFPDDMUnsupported(lMsg.str());
-    } else {
-        if (readI2CAddressSwapBit()) {
-            std::ostringstream lMsg;
-            lMsg << "SFP DDM I2C address swap not supported. SFP on I2C bus: " << getMasterId();
-            throw SFPDDMI2CAddressSwapUnsupported(lMsg.str());
-        } else {
-            if (!readSoftTxControlSupportBit()) {
-                std::ostringstream lMsg;
-                lMsg << "SFP on I2C bus: " << getMasterId() << " does not support soft tx laser control";
-                throw SoftTxLaserControlUnsupported(lMsg.str());
-            }
-        }
+    ddmAvailable();
+
+    if (!readSoftTxControlSupportBit()) {
+        throw SoftTxLaserControlUnsupported(ERS_HERE, "I2CSFPSlave", getMasterId());
     }
+    
     // Get optional status/control bits
     auto lOptStatusCtrlByte = this->readI2C(0x51, 0x6e);
 
@@ -402,12 +312,7 @@ I2CSFPSlave::switchSoftTxControlBit(bool aOn) const {
 //-----------------------------------------------------------------------------
 std::string
 I2CSFPSlave::getStatus(bool aPrint) const {
-    if (!this->ping()) {
-        std::ostringstream lMsg;
-        PDT_LOG(kError) << "Failed to reach SFP on I2c bus: " << getMasterId();
-        lMsg << "Failed to reach SFP on I2c bus: " << getMasterId();
-        throw SFPUnreachable(lMsg.str());
-    }
+    sfpReachable();
     
     std::stringstream lStatus;
     std::vector<std::pair<std::string, std::string>> lSFPInfo;
@@ -423,13 +328,13 @@ I2CSFPSlave::getStatus(bool aPrint) const {
     
     // Does the SFP support DDM
     if (!readDDMSupportBit()) {
-        PDT_LOG(kWarning) << "DDM not available for SFP on I2C bus: " << getMasterId();
+        ERS_LOG("DDM not available for SFP on I2C bus: " << getMasterId());
         lStatus << formatRegTable(lSFPInfo, "SFP status", {"", ""});
         if (aPrint) std::cout << lStatus.str();
         return lStatus.str();
     } else {
         if (readI2CAddressSwapBit()) {
-            PDT_LOG(kWarning) <<  "SFP DDM I2C address swap not supported. SFP on I2C bus: " << getMasterId();
+            ERS_LOG("SFP DDM I2C address swap not supported. SFP on I2C bus: " << getMasterId());
             lStatus << formatRegTable(lSFPInfo, "SFP status", {"", ""});
             if (aPrint) std::cout << lStatus.str();
             return lStatus.str();

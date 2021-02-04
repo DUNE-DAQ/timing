@@ -5,15 +5,15 @@
  * @date 
  */
 
-#ifndef __PDT_TIMINGSYSTEMMANAGER_HPP__
-#define	__PDT_TIMINGSYSTEMMANAGER_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGSYSTEMMANAGER_HPP_
+#define	TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGSYSTEMMANAGER_HPP_
 
 #include <vector>
  
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
-#include "pdt/exception.hpp"
+#include "TimingIssues.hpp"
 #include "pdt/TimingSystemManagerBase.hpp"
 
  
@@ -119,5 +119,5 @@ public:
 
 #include "pdt/TimingSystemManager.hxx"
 
-#endif	/* __PDT_TIMINGSYSTEMMANAGER_HPP__ */
+#endif	/* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGSYSTEMMANAGER_HPP_ */
 

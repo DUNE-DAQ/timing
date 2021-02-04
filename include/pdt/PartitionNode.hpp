@@ -1,5 +1,5 @@
-#ifndef __PDT_PARTITIONNODE_HPP__
-#define __PDT_PARTITIONNODE_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_PARTITIONNODE_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_PARTITIONNODE_HPP_
 
 // C++ Headers
 #include <chrono>
@@ -8,14 +8,23 @@
 #include "uhal/DerivedNode.hpp"
 
 // PDT Headers
-#include "pdt/exception.hpp"
+#include "TimingIssues.hpp"
 #include "pdt/TimingNode.hpp"
 
+ERS_DECLARE_ISSUE(pdt,                                                                          
+                  EventReadError,                                                                               
+                  " Failed to read events from partition buffer. Requested: " << std::to_string(red_number_events) 
+                                                      << " Available: " << std::to_string(available_number_events), 
+                  ((uint)red_number_events)((uint)available_number_events)                                                                                                      
+)
+
+ERS_DECLARE_ISSUE(pdt,                                            
+                  RunRequestTimeoutExpired,
+                  " Failed to start after " << timeout << " milliseconds",
+                  ((uint)timeout)
+)
+
 namespace pdt {
-
-
-PDTExceptionClass(EventReadError, "Error while reading events from the partition")
-PDTExceptionClass(RunRequestTimeoutExpired, "Timeout when waiting for a run request")
 
 struct PartitionCounts {
     std::vector<uint32_t> accepted;
@@ -154,4 +163,4 @@ public:
 
 } // namespace pdt
 
-#endif // __PDT_PARTITIONNODE_HPP__
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_PARTITIONNODE_HPP_

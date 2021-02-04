@@ -5,15 +5,18 @@
  * @date 
  */
 
-#ifndef __PDT_I2CSLAVE_HPP__
-#define	__PDT_I2CSLAVE_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CSLAVE_HPP_
+#define	TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CSLAVE_HPP_
 
-#include <vector>
- 
+#include "ers/ers.h"
+
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
-#include "pdt/exception.hpp"
- 
+#include "TimingIssues.hpp"
+
+#include <boost/core/noncopyable.hpp>
+#include <vector>
+
 namespace pdt {
 
 class I2CMasterNode;
@@ -62,7 +65,7 @@ public:
 
     bool ping() const;
 
-    const std::string getMasterId() const;
+    std::string getMasterId() const;
 
 private:
     const I2CMasterNode* mMaster;
@@ -75,5 +78,5 @@ private:
 
 } // namespace pdt
 
-#endif	/* __PDT_I2CSLAVE_HPP__ */
+#endif	/* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CSLAVE_HPP_ */
 

@@ -24,12 +24,12 @@ DACSlave::setInteralRef( bool aInternal ) const {
 void
 DACSlave::setDAC(uint8_t aChan, uint32_t aCode) const {
 
-    if (aChan<0 or aChan>7) {
-        throw DACChannelOutOfRange();
+    if (aChan>7) {
+        throw DACChannelOutOfRange(ERS_HERE, "DACSlave", std::to_string(aChan));
     }
 
     if ( aCode > 0xffff ) {
-        throw DACValueOutOfRange();
+        throw DACValueOutOfRange(ERS_HERE, "DACSlave", std::to_string(aCode));
     }
 
     uint32_t lAddr = 0x18 + (aChan & 0x7);

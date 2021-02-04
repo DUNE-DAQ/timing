@@ -16,12 +16,12 @@
 using namespace boost::python;
 
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_EndpointNode_enable_overloads, enable, 0, 2);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_EndpointNode_reset_overloads, reset, 0, 2);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_EndpointNode_readDataBuffer_overloads, readDataBuffer, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_EndpointNode_getDataBufferTable_overloads, getDataBufferTable, 0, 2);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_EndpointNode_enable_overloads, enable, 0, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_EndpointNode_reset_overloads, reset, 0, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_EndpointNode_readDataBuffer_overloads, readDataBuffer, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_EndpointNode_getDataBufferTable_overloads, getDataBufferTable, 0, 2)
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_CRTNode_getStatus_overloads, getStatus, 0, 1);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_CRTNode_getStatus_overloads, getStatus, 0, 1)
 
 namespace pdt {
 namespace python {

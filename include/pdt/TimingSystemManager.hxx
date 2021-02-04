@@ -131,7 +131,8 @@ uint64_t TimingSystemManager<MST_TOP,EPT_TOP>::measureEndpointRTT(const ActiveEn
 	uint32_t lEptFanout = aEptConfig.fanout;
 	
 	if (lEptFanout < 0) {
-		PDT_LOG(kWarning) << "Endpoint config contains an fanout ept mux value. This is a system without fanouts";
+		// TODO warning?
+		ERS_LOG( "Endpoint config contains an fanout ept mux value. This is a system without fanouts");
 	}
 
 	return getMaster(0).getMasterNode().measureEndpointRTT(lEptAdr);
@@ -174,8 +175,8 @@ void TimingSystemManager<MST_TOP,EPT_TOP>::applyEndpointDelays(uint32_t aMeasure
 
 		if (aMeasureRTT) {
 			uint32_t lRttAfter = measureEndpointRTT(it->second);
-			PDT_LOG(kNotice) << lEptIdD << " delay adjustment; cdel: " << lCDelay << ", fdel: " << lFDelay;
-			PDT_LOG(kNotice) << "before RTT: " << std::dec << lRttBefore << ", after RTT: " << lRttAfter;
+			ERS_INFO(lEptIdD << " delay adjustment; cdel: " << lCDelay << ", fdel: " << lFDelay);
+			ERS_INFO("before RTT: " << std::dec << lRttBefore << ", after RTT: " << lRttAfter);
 		}
 	}
 }

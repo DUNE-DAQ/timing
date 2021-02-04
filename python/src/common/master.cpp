@@ -15,14 +15,14 @@
 using namespace boost::python;
 
 // PDIMasterNode
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PDIMasterNode_applyEndpointDelay_overloads, applyEndpointDelay, 4, 5);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PDIMasterNode_measureEndpointRTT_overloads, measureEndpointRTT, 1, 2);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PDIMasterNode_sendFLCmd_overloads, sendFLCmd, 2, 3);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PDIMasterNode_enableFakeTrigger_overloads, enableFakeTrigger, 2, 3);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PDIMasterNode_enableFakeSpills_overloads, enableFakeSpills, 0, 2);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PDIMasterNode_getStatus_overloads, getStatus, 0, 1);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PDIMasterNode_applyEndpointDelay_overloads, applyEndpointDelay, 4, 5)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PDIMasterNode_measureEndpointRTT_overloads, measureEndpointRTT, 1, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PDIMasterNode_sendFLCmd_overloads, sendFLCmd, 2, 3)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PDIMasterNode_enableFakeTrigger_overloads, enableFakeTrigger, 2, 3)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PDIMasterNode_enableFakeSpills_overloads, enableFakeSpills, 0, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PDIMasterNode_getStatus_overloads, getStatus, 0, 1)
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_TriggerReceiverNode_getStatus_overloads, getStatus, 0, 1);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_TriggerReceiverNode_getStatus_overloads, getStatus, 0, 1)
 
 
 namespace pdt {

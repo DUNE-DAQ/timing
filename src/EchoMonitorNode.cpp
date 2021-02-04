@@ -52,15 +52,13 @@ EchoMonitorNode::sendEchoAndMeasureDelay(int64_t aTimeout) const {
 		lDone = getNode("csr.stat.rx_done").read();
         getClient().dispatch();
 		
-		PDT_LOG(kNotice) << "rx done: " << std::hex << lDone.value();
+		ERS_DEBUG(0, "rx done: " << std::hex << lDone.value());
 
 		if (lDone.value()) break; 
 	}
 
 	if (!lDone.value()) {
-        std::ostringstream lMsg;
-        lMsg << "Timeout whilst waiting for echo";
-        throw EchoTimeout(lMsg.str());
+        throw EchoTimeout(ERS_HERE, getId(), aTimeout);
 	}
 
 	auto lTimeRxL = getNode("csr.rx_l").read();
@@ -73,8 +71,8 @@ EchoMonitorNode::sendEchoAndMeasureDelay(int64_t aTimeout) const {
     uint64_t lTimeRx = ((uint64_t)lTimeRxH.value() << 32) + lTimeRxL.value();
     uint64_t lTimeTx = ((uint64_t)lTimeTxH.value() << 32) + lTimeTxL.value();
 
-    PDT_LOG(kDebug) << "tx ts: " << formatRegValue(lTimeTx) << std::endl;
-    PDT_LOG(kDebug) << "rx ts: " << formatRegValue(lTimeRx) << std::endl;
+    ERS_DEBUG(0, "tx ts: " << formatRegValue(lTimeTx));
+    ERS_DEBUG(0, "rx ts: " << formatRegValue(lTimeRx));
 
     return lTimeRx - lTimeTx;
 }

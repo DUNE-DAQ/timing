@@ -1,5 +1,5 @@
-#ifndef __PDT_TLUIONODE_HPP__
-#define __PDT_TLUIONODE_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TLUIONODE_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TLUIONODE_HPP_
 
 // C++ Headers
 #include <chrono>
@@ -9,7 +9,7 @@
 
 // PDT Headers
 #include "pdt/IONode.hpp"
-#include "pdt/exception.hpp"
+#include "TimingIssues.hpp"
 
 namespace pdt {
 
@@ -43,7 +43,7 @@ public:
     /**
      * @brief      Print status of on-board SFP 
      */
-    std::string getSFPStatus(uint32_t, bool) const override;
+    std::string getSFPStatus(uint32_t aSFPId, bool aPrint=false) const override;
 
     /**
      * @brief      Control tx laser of on-board SFP softly (I2C command)
@@ -54,4 +54,4 @@ public:
 
 } // namespace pdt
 
-#endif // __PDT_TLUIONODE_HPP__
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TLUIONODE_HPP_

@@ -11,7 +11,6 @@
 #include <boost/python/copy_const_reference.hpp>
 
 #include "pdt/python/converters.hpp"
-#include "pdt/Logger.hpp"
 
 
 using namespace boost::python;
@@ -52,20 +51,20 @@ BOOST_PYTHON_MODULE(_pdt) {
 		// Change to sub-module scope ...
 		scope orbScope = orbModule;
 
-		enum_<pdt::LogLevel> ("LogLevel")
-		.value("kDebug4", pdt::kDebug4)
-		.value("kDebug3", pdt::kDebug3)
-		.value("kDebug2", pdt::kDebug2)
-		.value("kDebug1", pdt::kDebug1)
-		.value("kDebug", pdt::kDebug)
-		.value("kInfo", pdt::kInfo)
-		.value("kNotice", pdt::kNotice)
-		.value("kWarning", pdt::kWarning)
-		.value("kError", pdt::kError)
-		.export_values()
-		;
+		//enum_<pdt::LogLevel> ("LogLevel")
+		//.value("kDebug4", pdt::kDebug4)
+		//.value("kDebug3", pdt::kDebug3)
+		//.value("kDebug2", pdt::kDebug2)
+		//.value("kDebug1", pdt::kDebug1)
+		//.value("kDebug", pdt::kDebug)
+		//.value("kInfo", pdt::kInfo)
+		//.value("kNotice", pdt::kNotice)
+		//.value("kWarning", pdt::kWarning)
+		//.value("kError", pdt::kError)
+		//.export_values()
+		//;
 
-		def("setLogThreshold", &pdt::Log::setLogThreshold);
+		//def("setLogThreshold", &pdt::Log::setLogThreshold);
 
 
 

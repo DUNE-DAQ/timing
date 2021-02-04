@@ -61,34 +61,26 @@ SIMIONode::getHardwareInfo(bool aPrint) const {
 	// TODO check map at exception
 	try {
 		lHardwareInfo.push_back(std::make_pair("Board type", kBoardTypeMap.at(lBoardType)));
-	} catch(...) {
-		std::ostringstream lMsg;
-        lMsg << "Board type not in board type map: " << lBoardType;
-        throw MissingBoardTypeMapEntry(lMsg.str());
+	} catch(const std::out_of_range& e) {
+        throw MissingBoardTypeMapEntry(ERS_HERE, getId(), formatRegValue(lBoardType), e);
 	}
 
 	try {
 		lHardwareInfo.push_back(std::make_pair("Board revision", kBoardRevisionMap.at(lBoardRevision)));
-	} catch(...) {
-		std::ostringstream lMsg;
-        lMsg << "Board revision not in board revision map: " << lBoardRevision;
-        throw MissingBoardRevisionMapEntry(lMsg.str());
+	} catch(const std::out_of_range& e) {
+        throw MissingBoardRevisionMapEntry(ERS_HERE, getId(), formatRegValue(lBoardRevision), e);
 	}
 
 	try {
 		lHardwareInfo.push_back(std::make_pair("Carrier type", kCarrierTypeMap.at(lCarrierType)));
-	} catch(...) {
-		std::ostringstream lMsg;
-        lMsg << "Carrier type not in carrier type map: " << lCarrierType;
-        throw MissingCarrierTypeMapEntry(lMsg.str());
+	} catch(const std::out_of_range& e) {
+        throw MissingCarrierTypeMapEntry(ERS_HERE, getId(), formatRegValue(lCarrierType), e);
 	}
 
 	try {
 		lHardwareInfo.push_back(std::make_pair("Design type", kDesignTypeMap.at(lDesignType)));
-	} catch(...) {
-		std::ostringstream lMsg;
-        lMsg << "Design type not in design type map: " << lDesignType;
-        throw MissingDesignTypeMapEntry(lMsg.str());
+	} catch(const std::out_of_range& e) {
+        throw MissingDesignTypeMapEntry(ERS_HERE, getId(), formatRegValue(lDesignType), e);
 	}
 	lInfo << formatRegTable(lHardwareInfo, "Hardware info", {"", ""});
 
@@ -102,7 +94,7 @@ void
 SIMIONode::reset(const std::string& /*aClockConfigFile*/) const {
 
 	writeSoftResetRegister();	
-	PDT_LOG(kInfo) << "Reset done";
+	ERS_INFO("Reset done");
 }
 //-----------------------------------------------------------------------------
 
@@ -110,7 +102,7 @@ SIMIONode::reset(const std::string& /*aClockConfigFile*/) const {
 //-----------------------------------------------------------------------------
 void
 SIMIONode::configurePLL(const std::string& /*aClockConfigFile*/) const {
-	PDT_LOG(kWarning) << "Simulation does not support PLL config";
+	ERS_INFO("Simulation does not support PLL config");
 }
 //-----------------------------------------------------------------------------
 
@@ -118,7 +110,7 @@ SIMIONode::configurePLL(const std::string& /*aClockConfigFile*/) const {
 //-----------------------------------------------------------------------------
 std::vector<double>
 SIMIONode::readClockFrequencies() const {
-	PDT_LOG(kWarning) << "Simulation does not support reading of freq";
+	ERS_INFO("Simulation does not support reading of freq");
 	return {};
 }
 //-----------------------------------------------------------------------------
@@ -127,8 +119,8 @@ SIMIONode::readClockFrequencies() const {
 //-----------------------------------------------------------------------------
 std::string
 SIMIONode::getClockFrequenciesTable(bool /*aPrint*/) const {
-	PDT_LOG(kWarning) << "Simulation does not support freq table";
-	return "";
+	ERS_INFO("Simulation does not support freq table");
+	return "Simulation does not support freq table";
 }
 //-----------------------------------------------------------------------------
 
@@ -136,8 +128,8 @@ SIMIONode::getClockFrequenciesTable(bool /*aPrint*/) const {
 //-----------------------------------------------------------------------------
 std::string
 SIMIONode::getPLLStatus(bool /*aPrint*/) const {
-	PDT_LOG(kWarning) << "Simulation does not support PLL status";
-	return "";
+	ERS_INFO("Simulation does not support PLL status");
+	return "Simulation does not support PLL status";
 }
 //-----------------------------------------------------------------------------
 
@@ -145,15 +137,15 @@ SIMIONode::getPLLStatus(bool /*aPrint*/) const {
 //-----------------------------------------------------------------------------
 std::string
 SIMIONode::getSFPStatus(uint32_t /*aSFPId*/, bool /*aPrint*/) const {
-	PDT_LOG(kWarning) << "Simulation does not support SFP I2C";
-	return "";
+	ERS_INFO("Simulation does not support SFP I2C");
+	return "Simulation does not support SFP I2C";
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void
 SIMIONode::switchSFPSoftTxControlBit(uint32_t /*aSFPId*/, bool /*aOn*/) const {
-	PDT_LOG(kWarning) << "Simulation does not support SFP I2C";
+	ERS_INFO("Simulation does not support SFP I2C");
 }
 //-----------------------------------------------------------------------------
 } // namespace pdt

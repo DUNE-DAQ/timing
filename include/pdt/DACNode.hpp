@@ -1,15 +1,23 @@
-#ifndef __PDT_DACNODE_HPP__
-#define __PDT_DACNODE_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_DACNODE_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_DACNODE_HPP_
 
 #include "pdt/I2CSlave.hpp"
 #include "pdt/I2CMasterNode.hpp"
 
+#include "ers/ers.h"
+
+ERS_DECLARE_ISSUE(pdt,                                      ///< Namespace
+                  DACChannelOutOfRange,                     ///< Issue class name
+                  " DAC channel out of range: " << channel, ///< Message
+                  ((std::string)channel)                    ///< Message parameters
+)
+ERS_DECLARE_ISSUE(pdt,                                  ///< Namespace
+                  DACValueOutOfRange,                   ///< Issue class name
+                  " DAC value out of range: " << value, ///< Message
+                  ((std::string)value)                  ///< Message parameters
+)
+
 namespace pdt {
-
-
-PDTExceptionClass(DACChannelOutOfRange, "DAC channel out of range")
-PDTExceptionClass(DACValueOutOfRange, "DAC channel out of range")
-
 
 /**
  * @brief      Class for dac node.
@@ -45,4 +53,4 @@ public:
 
 } // namespace pdt
 
-#endif /* __PDT_DACNODE_HPP__ */
+#endif /* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_DACNODE_HPP_ */

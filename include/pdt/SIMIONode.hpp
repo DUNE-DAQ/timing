@@ -1,5 +1,5 @@
-#ifndef __PDT_SIMIONODE_HPP__
-#define __PDT_SIMIONODE_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SIMIONODE_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SIMIONODE_HPP_
 
 // C++ Headers
 #include <chrono>
@@ -9,7 +9,7 @@
 
 // PDT Headers
 #include "pdt/IONode.hpp"
-#include "pdt/exception.hpp"
+#include "TimingIssues.hpp"
 
 namespace pdt {
 
@@ -86,4 +86,4 @@ public:
 
 } // namespace pdt
 
-#endif // __PDT_SIMIONode_HPP__
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SIMIONode_HPP_

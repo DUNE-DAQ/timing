@@ -1,5 +1,5 @@
-#ifndef __PDT_FREQUENCYCOUNTERNODE_HPP__
-#define __PDT_FREQUENCYCOUNTERNODE_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_FREQUENCYCOUNTERNODE_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_FREQUENCYCOUNTERNODE_HPP_
 
 // C++ Headers
 #include <chrono>
@@ -10,7 +10,7 @@
 
 // PDT Headers
 #include "pdt/TimingNode.hpp"
-#include "pdt/exception.hpp"
+#include "TimingIssues.hpp"
 
 namespace pdt {
 
@@ -40,4 +40,4 @@ public:
 
 } // namespace pdt
 
-#endif // __PDT_FREQUENCYCOUNTERNODE_HPP__
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_FREQUENCYCOUNTERNODE_HPP_

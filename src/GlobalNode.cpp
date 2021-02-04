@@ -71,14 +71,14 @@ std::string GlobalNode::getStatus(bool aPrint) const {
 
 
 //-----------------------------------------------------------------------------
-bool
+void
 GlobalNode::enableUpstreamEndpoint(uint32_t aTimeout) {
 	getNode("csr.ctrl.ep_en").write(0x0);
 	getClient().dispatch();
 	getNode("csr.ctrl.ep_en").write(0x1);
 	getClient().dispatch();
 
-	PDT_LOG(kNotice) << "Upstream endpoint reset, waiting for lock";
+	ERS_INFO("Upstream endpoint reset, waiting for lock");
 
 	auto start = std::chrono::high_resolution_clock::now();
 
@@ -100,17 +100,15 @@ GlobalNode::enableUpstreamEndpoint(uint32_t aTimeout) {
         getClient().dispatch();
 
         if (lEptRdy.value()) {
-        	PDT_LOG(kNotice) << "Endpoint locked: state= " << formatRegValue(lEptStat.value());
-            return true;
+        	ERS_INFO("Endpoint locked: state= " << formatRegValue(lEptStat));
+            return;
         }
 	}
 	
 	if (!lEptRdy.value()) {
-		PDT_LOG(kError) << "Failed to bring up the RTT endpoint. Current state: 0x" << std::hex << lEptStat.value();
-		return false;
+		throw UpstreamEndpointFailedToLock(ERS_HERE, getId(), formatRegValue(lEptStat));
     } else {
-        PDT_LOG(kNotice) << "Endpoint locked";
-        return true;
+        ERS_INFO("Endpoint locked: state= " << formatRegValue(lEptStat));
     }
 }
 //-----------------------------------------------------------------------------

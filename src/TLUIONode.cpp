@@ -56,7 +56,7 @@ TLUIONode::reset(const std::string& aClockConfigFile) const {
 
 	// Find the right pll config file
 	std:: string lClockConfigFile = getFullClockConfigFilePath(aClockConfigFile);
-	PDT_LOG(kNotice) << "PLL configuration file : " << lClockConfigFile;
+	ERS_INFO("PLL configuration file : " << lClockConfigFile);
 	
 	// Upload config file to PLL
 	configurePLL(lClockConfigFile);
@@ -95,13 +95,13 @@ TLUIONode::reset(const std::string& aClockConfigFile) const {
 	configureDAC(0, lBISignalThreshold);
 	configureDAC(1, lBISignalThreshold);
 
-	PDT_LOG(kNotice) << "DAC1 and DAC2 set to " << std::hex << lBISignalThreshold;
+	ERS_INFO("DAC1 and DAC2 set to " << std::hex << lBISignalThreshold);
 
 	getNode("csr.ctrl.rst_lock_mon").write(0x1);
 	getNode("csr.ctrl.rst_lock_mon").write(0x0);
 	getClient().dispatch();
 
-	PDT_LOG(kNotice) << "Reset done";
+	ERS_INFO("Reset done");
 }
 //-----------------------------------------------------------------------------
 
@@ -113,9 +113,7 @@ TLUIONode::configureDAC(uint32_t aDACId, uint32_t aDACValue, bool aInternalRef) 
 	try {
 		lDACDevice = mDACDevices.at(aDACId);
 	} catch(const std::out_of_range& e) {
-		std::ostringstream lMsg;
-        lMsg << "Invalid DAC ID: " << aDACId;
-        throw InvalidDACId(lMsg.str());
+        throw InvalidDACId(ERS_HERE, getId(), formatRegValue(aDACId));
 	}
 	auto lDAC = getI2CDevice<DACSlave>(mUIDI2CBus, lDACDevice);
 	lDAC->setInteralRef(aInternalRef);
@@ -127,7 +125,7 @@ TLUIONode::configureDAC(uint32_t aDACId, uint32_t aDACValue, bool aInternalRef) 
 //-----------------------------------------------------------------------------
 std::string
 TLUIONode::getSFPStatus(uint32_t /*aSFPId*/, bool /*aPrint*/) const {
-	PDT_LOG(kWarning) << "TLU does not support SFP I2C";
+	ERS_LOG("TLU does not support SFP I2C");
 	return "";
 }
 //-----------------------------------------------------------------------------
@@ -135,7 +133,7 @@ TLUIONode::getSFPStatus(uint32_t /*aSFPId*/, bool /*aPrint*/) const {
 //-----------------------------------------------------------------------------
 void
 TLUIONode::switchSFPSoftTxControlBit(uint32_t /*aSFPId*/, bool /*aOn*/) const {
-	PDT_LOG(kWarning) << "TLU does not support SFP I2C";
+	ERS_LOG("TLU does not support SFP I2C");
 }
 //-----------------------------------------------------------------------------
 } // namespace pdt

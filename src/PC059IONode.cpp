@@ -59,7 +59,7 @@ PC059IONode::reset(int32_t aFanoutMode, const std::string& aClockConfigFile) con
 
 	// Find the right pll config file
 	std:: string lClockConfigFile = getFullClockConfigFilePath(aClockConfigFile, aFanoutMode);
-	PDT_LOG(kNotice) << "PLL configuration file : " << lClockConfigFile;
+	ERS_INFO("PLL configuration file : " << lClockConfigFile);
 
 	// Upload config file to PLL
 	configurePLL(lClockConfigFile);
@@ -79,13 +79,13 @@ PC059IONode::reset(int32_t aFanoutMode, const std::string& aClockConfigFile) con
 	
 	// Bank 0 - enable all SFPGs (enable low)
 	lSFPExp->setOutputs(0, 0x00);
-    PDT_LOG(kNotice) << "SFPs 0-7 enabled";
+    ERS_INFO("SFPs 0-7 enabled");
 
 	getNode("csr.ctrl.rst_lock_mon").write(0x1);
 	getNode("csr.ctrl.rst_lock_mon").write(0x0);
 	getClient().dispatch();
 
-	PDT_LOG(kNotice) << "Reset done";
+	ERS_INFO("Reset done");
 }
 //-----------------------------------------------------------------------------
 
@@ -104,7 +104,7 @@ PC059IONode::switchSFPMUXChannel(uint32_t aSFPID) const {
 	getNode("csr.ctrl.mux").write(aSFPID);
 	getClient().dispatch();
 	
-	PDT_LOG(kNotice) << "SFP input mux set to " << readActiveSFPMUXChannel();
+	ERS_INFO("SFP input mux set to " << formatRegValue(readActiveSFPMUXChannel()));
 }
 //-----------------------------------------------------------------------------
 
@@ -132,7 +132,7 @@ PC059IONode::switchSFPI2CMUXChannel(uint32_t aSFPId) const {
 	
 	uint8_t lChannelSelectByte = 1UL << aSFPId;
 	getNode<I2CMasterNode>(mPLLI2CBus).getSlave("SFP_Switch").writeI2CPrimitive({lChannelSelectByte});
-	PDT_LOG(kInfo) << "PC059 SFP I2C mux set to 0x" << std::hex << aSFPId;
+	ERS_INFO("PC059 SFP I2C mux set to " << formatRegValue(aSFPId));
 }
 //-----------------------------------------------------------------------------
 
@@ -151,9 +151,7 @@ PC059IONode::getSFPStatus(uint32_t aSFPId, bool aPrint) const {
 		lStatus << "Fanout SFP " << aSFPId-1 << ":" << std::endl;
 		lSFPBusId = 1;
 	} else {
-		std::ostringstream lMsg;
-        lMsg << "Invalid SFP ID: " << aSFPId << ". PC059 valid range: 0-8";
-        throw InvalidSFPId(lMsg.str());
+        throw InvalidSFPId(ERS_HERE, getId(), formatRegValue(aSFPId));
 	}
 	auto sfp = getI2CDevice<I2CSFPSlave>(mSFPI2CBuses.at(lSFPBusId), "SFP_EEProm");
 	
@@ -176,9 +174,7 @@ PC059IONode::switchSFPSoftTxControlBit(uint32_t aSFPId, bool aOn) const {
 		switchSFPI2CMUXChannel(aSFPId-1);
 		lSFPBusId = 1;
 	} else {
-		std::ostringstream lMsg;
-        lMsg << "Invalid SFP ID: " << aSFPId << ". PC059 valid range: 0-8";
-        throw InvalidSFPId(lMsg.str());
+        throw InvalidSFPId(ERS_HERE, getId(), formatRegValue(aSFPId));
 	}
 	auto sfp = getI2CDevice<I2CSFPSlave>(mSFPI2CBuses.at(lSFPBusId), "SFP_EEProm");
 	sfp->switchSoftTxControlBit(aOn);

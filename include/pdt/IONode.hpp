@@ -1,15 +1,11 @@
-#ifndef __PDT_IONODE_HPP__
-#define __PDT_IONODE_HPP__
-
-// C++ Headers
-#include <chrono>
-
-// uHal Headers
-#include "uhal/DerivedNode.hpp"
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_IONODE_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_IONODE_HPP_
 
 // PDT Headers
 #include "pdt/TimingNode.hpp"
-#include "pdt/exception.hpp"
+
+#include "TimingIssues.hpp"
+
 #include "pdt/I2CMasterNode.hpp"
 #include "pdt/I2CSlave.hpp"
 #include "pdt/SI534xNode.hpp"
@@ -17,6 +13,12 @@
 #include "pdt/DACNode.hpp"
 #include "pdt/FrequencyCounterNode.hpp"
 #include "pdt/I2CSFPNode.hpp"
+
+// uHal Headers
+#include "uhal/DerivedNode.hpp"
+
+// C++ Headers
+#include <chrono>
 
 namespace pdt {
 
@@ -148,4 +150,4 @@ public:
 
 #include "pdt/IONode.hxx"
 
-#endif // __PDT_IONODE_HPP__
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_IONODE_HPP_

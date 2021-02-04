@@ -1,5 +1,5 @@
-#ifndef __PDT_FANOUTDESIGN_HPP__
-#define __PDT_FANOUTDESIGN_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_FANOUTDESIGN_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_FANOUTDESIGN_HPP_
 
 // C++ Headers
 #include <chrono>
@@ -14,7 +14,7 @@
 #include "pdt/PC059IONode.hpp"
 #include "pdt/PDIMasterNode.hpp"
 
-#include "pdt/exception.hpp"
+#include "TimingIssues.hpp"
 
 namespace pdt {
 
@@ -69,4 +69,4 @@ public:
 
 #include "pdt/FanoutDesign.hxx"
 
-#endif // __PDT_FANOUTDESIGN_HPP__
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_FANOUTDESIGN_HPP_

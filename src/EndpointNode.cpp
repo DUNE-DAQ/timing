@@ -128,18 +128,18 @@ EndpointNode::readDataBuffer(bool aReadall) const {
 	auto lBufCount = getNode("buf.count").read();
 	getClient().dispatch();
 
-	PDT_LOG(kNotice) << "Words available in readout buffer:      " << formatRegValue(lBufCount.value());
+	ERS_INFO("Words available in readout buffer:      " << formatRegValue(lBufCount));
 
 	uint32_t lEventsToRead = lBufCount.value() / kEventSize;
 	
-	PDT_LOG(kNotice) << "Events available in readout buffer:     " << formatRegValue(lEventsToRead);
+	ERS_INFO("Events available in readout buffer:     " << formatRegValue(lEventsToRead));
 
 	uint32_t lWordsToRead = aReadall ? lBufCount.value() : lEventsToRead * kEventSize;
 
-	PDT_LOG(kNotice) << "Words to be read out in readout buffer: " << formatRegValue(lWordsToRead);
+	ERS_INFO("Words to be read out in readout buffer: " << formatRegValue(lWordsToRead));
 	
 	if (!lWordsToRead) {
-		PDT_LOG(kWarning) << "No words to be read out.";
+		ERS_LOG("No words to be read out.");
 	}
 	
 	auto lBufData = getNode("buf.data").readBlock(lWordsToRead);

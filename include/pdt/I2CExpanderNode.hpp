@@ -1,14 +1,19 @@
-#ifndef __PDT_SFPEXPANDERNODE_HPP__
-#define __PDT_SFPEXPANDERNODE_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SFPEXPANDERNODE_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SFPEXPANDERNODE_HPP_
 
 #include <map>
 
 #include "pdt/I2CSlave.hpp"
 #include "pdt/I2CMasterNode.hpp"
 
+ERS_DECLARE_ISSUE(pdt,
+                  SFPExpanderBankIDError,
+                  " Invalid bank id: " << bank_id,
+                  ((std::string)bank_id)
+)
+
 namespace pdt
 {
-PDTExceptionClass(SFPExpanderBankIDError, "Clock configuration error")
 
 /**
  * @class      I2CExpanderSlave
@@ -83,4 +88,4 @@ public:
 
 } // namespace pdt
 
-#endif /* __PDT_SFPEXPANDERNODE_HPP__ */
+#endif /* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SFPEXPANDERNODE_HPP_ */

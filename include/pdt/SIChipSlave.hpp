@@ -1,9 +1,11 @@
-#ifndef __PDT_SICHIPSLAVE_HPP__
-#define __PDT_SICHIPSLAVE_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SICHIPSLAVE_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SICHIPSLAVE_HPP_
 
 #include <map>
 
 #include "pdt/I2CSlave.hpp"
+
+#include "ers/ers.h"
 
 namespace pdt 
 {
@@ -64,4 +66,4 @@ public:
 
 } // namespace pdt
 
-#endif /* __PDT_SICHIPSLAVE_HPP__ */
+#endif /* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SICHIPSLAVE_HPP_ */

@@ -75,12 +75,10 @@ void MasterMuxDesign<IO,MST>::reset(const std::string& aClockConfigFile) const {
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-bool MasterMuxDesign<IO,MST>::switchSFPMUXChannel(uint32_t aSFPID, bool aWaitForRttEptLock) const {
+void MasterMuxDesign<IO,MST>::switchSFPMUXChannel(uint32_t aSFPID, bool aWaitForRttEptLock) const {
 	this->getIONode().switchSFPMUXChannel(aSFPID);
 	if (aWaitForRttEptLock) {
-		return this->getMasterNode().enableUpstreamEndpoint();
-	} else {
-		return true;
+		this->getMasterNode().enableUpstreamEndpoint();
 	}
 }
 //-----------------------------------------------------------------------------
@@ -144,18 +142,24 @@ std::vector<uint32_t> MasterMuxDesign<IO,MST>::scanSFPMUX() const {
     // TODO will this be right for every fanout board, need to check the IO board
     uint32_t lNumberOfMuxChannels = 8;
     for (uint32_t i=0; i < lNumberOfMuxChannels; ++i) {
-    	PDT_LOG(kInfo) << "Scanning slot " << i << std::endl;
+    	ERS_INFO("Scanning slot " << i);
 
-    	bool lLocked = this->switchSFPMUXChannel(i, true);
-  		PDT_LOG(kInfo) << "Slot " << i << " locked: " << lLocked;
-  		if (lLocked) lLockedChannels.push_back(i);		
+    	try {
+    		this->switchSFPMUXChannel(i, true);	
+    	} catch(...) {
+    		ERS_INFO("Slot " << i << " not locked");
+    	}
+    	// TODO catch right except
+    	
+  		ERS_INFO("Slot " << i << " locked");
+  		lLockedChannels.push_back(i);		
     }
     
 
     if (lLockedChannels.size()) {
-    	PDT_LOG(kNotice) << "Slots locked: " << vecFmt(lLockedChannels);
+    	ERS_LOG("Slots locked: " << vecFmt(lLockedChannels));
     } else {
-        PDT_LOG(kNotice) << "No slots locked";
+        ERS_LOG("No slots locked");
     }
     return lLockedChannels;
 }

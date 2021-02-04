@@ -1,5 +1,5 @@
-#ifndef __PDT_TOPDESIGN_HPP__
-#define __PDT_TOPDESIGN_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOPDESIGN_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOPDESIGN_HPP_
 
 // C++ Headers
 #include <chrono>
@@ -12,7 +12,7 @@
 // PDT Headers
 #include "pdt/TimingNode.hpp"
 #include "pdt/EndpointNode.hpp"
-#include "pdt/exception.hpp"
+#include "TimingIssues.hpp"
 
 namespace pdt {
 
@@ -66,4 +66,4 @@ public:
 
 #include "pdt/TopDesign.hxx"
 
-#endif // __PDT_TOPDESIGN_HPP__
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOPDESIGN_HPP_

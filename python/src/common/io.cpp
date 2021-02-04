@@ -18,38 +18,38 @@
 using namespace boost::python;
 
 // FMC IO 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_FMCIONode_reset_overloads, reset, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_FMCIONode_getStatus_overloads, getStatus, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_FMCIONode_getClockFrequenciesTable_overloads, getClockFrequenciesTable, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_FMCIONode_getPLLStatus_overloads, getPLLStatus, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_FMCIONode_getHardwareInfo_overloads, getHardwareInfo, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_FMCIONode_getSFPStatus_overloads, getSFPStatus, 1, 2);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_FMCIONode_reset_overloads, reset, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_FMCIONode_getStatus_overloads, getStatus, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_FMCIONode_getClockFrequenciesTable_overloads, getClockFrequenciesTable, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_FMCIONode_getPLLStatus_overloads, getPLLStatus, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_FMCIONode_getHardwareInfo_overloads, getHardwareInfo, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_FMCIONode_getSFPStatus_overloads, getSFPStatus, 1, 2)
 
 // PC059 IO
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PC059IONode_reset_overloads, reset, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PC059IONode_reset_with_mode_overloads, reset, 1, 2);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PC059IONode_getStatus_overloads, getStatus, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PC059IONode_getClockFrequenciesTable_overloads, getClockFrequenciesTable, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PC059IONode_getPLLStatus_overloads, getPLLStatus, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PC059IONode_getHardwareInfo_overloads, getHardwareInfo, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PC059IONode_getSFPStatus_overloads, getSFPStatus, 1, 2);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PC059IONode_reset_overloads, reset, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PC059IONode_reset_with_mode_overloads, reset, 1, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PC059IONode_getStatus_overloads, getStatus, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PC059IONode_getClockFrequenciesTable_overloads, getClockFrequenciesTable, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PC059IONode_getPLLStatus_overloads, getPLLStatus, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PC059IONode_getHardwareInfo_overloads, getHardwareInfo, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_PC059IONode_getSFPStatus_overloads, getSFPStatus, 1, 2)
 
 // TLU IO
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_TLUIONode_reset_overloads, reset, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_TLUIONode_configureDAC_overloads, configureDAC, 2, 3);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_TLUIONode_getStatus_overloads, getStatus, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_TLUIONode_getClockFrequenciesTable_overloads, getClockFrequenciesTable, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_TLUIONode_getPLLStatus_overloads, getPLLStatus, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_TLUIONode_getHardwareInfo_overloads, getHardwareInfo, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_TLUIONode_getSFPStatus_overloads, getSFPStatus, 1, 2);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_TLUIONode_reset_overloads, reset, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_TLUIONode_configureDAC_overloads, configureDAC, 2, 3)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_TLUIONode_getStatus_overloads, getStatus, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_TLUIONode_getClockFrequenciesTable_overloads, getClockFrequenciesTable, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_TLUIONode_getPLLStatus_overloads, getPLLStatus, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_TLUIONode_getHardwareInfo_overloads, getHardwareInfo, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_TLUIONode_getSFPStatus_overloads, getSFPStatus, 1, 2)
 
 // SIM IO
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_SIMIONode_reset_overloads, reset, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_SIMIONode_getStatus_overloads, getStatus, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_SIMIONode_getClockFrequenciesTable_overloads, getClockFrequenciesTable, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_SIMIONode_getPLLStatus_overloads, getPLLStatus, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_SIMIONode_getHardwareInfo_overloads, getHardwareInfo, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_SIMIONode_getSFPStatus_overloads, getSFPStatus, 1, 2);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_SIMIONode_reset_overloads, reset, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_SIMIONode_getStatus_overloads, getStatus, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_SIMIONode_getClockFrequenciesTable_overloads, getClockFrequenciesTable, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_SIMIONode_getPLLStatus_overloads, getPLLStatus, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_SIMIONode_getHardwareInfo_overloads, getHardwareInfo, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_SIMIONode_getSFPStatus_overloads, getSFPStatus, 1, 2)
 
 namespace pdt {
 namespace python {

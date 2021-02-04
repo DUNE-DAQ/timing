@@ -56,7 +56,7 @@ FMCIONode::reset(const std::string& aClockConfigFile) const {
 
 	// Find the right pll config file
 	std:: string lClockConfigFile = getFullClockConfigFilePath(aClockConfigFile);
-	PDT_LOG(kNotice) << "PLL configuration file : " << lClockConfigFile;
+	ERS_INFO("PLL configuration file : " << lClockConfigFile);
 
 	// Upload config file to PLL
 	configurePLL(lClockConfigFile);
@@ -68,7 +68,7 @@ FMCIONode::reset(const std::string& aClockConfigFile) const {
 	getNode("csr.ctrl.rst_lock_mon").write(0x0);
 	getClient().dispatch();
 	
-	PDT_LOG(kInfo) << "Reset done";
+	ERS_INFO("Reset done");
 }
 //-----------------------------------------------------------------------------
 

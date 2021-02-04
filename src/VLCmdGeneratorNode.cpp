@@ -58,9 +58,9 @@ VLCmdGeneratorNode::applyEndpointDelay(uint32_t aAddr, uint32_t aCDel, uint32_t 
     getNode("csr.ctrl.go").write(0x0);
     getClient().dispatch();
 
-    PDT_LOG(kNotice) << "Coarse delay " << formatRegValue(aCDel) << " applied";
-    PDT_LOG(kNotice) << "Fine delay   " << formatRegValue(aFDel) << " applied";
-    PDT_LOG(kNotice) << "Phase delay  " << formatRegValue(aPDel) << " applied";
+    ERS_LOG("Coarse delay " << formatRegValue(aCDel) << " applied");
+    ERS_LOG("Fine delay   " << formatRegValue(aFDel) << " applied");
+    ERS_LOG("Phase delay  " << formatRegValue(aPDel) << " applied");
 }
 //-----------------------------------------------------------------------------
 

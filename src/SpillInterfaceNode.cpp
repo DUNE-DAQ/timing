@@ -37,7 +37,7 @@ SpillInterfaceNode::enable() const {
     getNode("csr.ctrl.src").write(0);
     getNode("csr.ctrl.en").write(1);
     getClient().dispatch();
-    PDT_LOG(kInfo) << "Spill interface enabled";
+    ERS_INFO("Spill interface enabled");
 }
 //-----------------------------------------------------------------------------
 
@@ -47,7 +47,7 @@ void
 SpillInterfaceNode::disable() const {
     getNode("csr.ctrl.en").write(0);
     getClient().dispatch();
-    PDT_LOG(kInfo) << "Spill interface disabled";
+    ERS_INFO("Spill interface disabled");
 }
 //-----------------------------------------------------------------------------
 
@@ -68,7 +68,7 @@ SpillInterfaceNode::enableFakeSpills(uint32_t aCycLen, uint32_t aSpillLen) const
     getNode("csr.ctrl.src").write(1);
     getNode("csr.ctrl.en").write(1);
     getClient().dispatch();
-    PDT_LOG(kInfo) << "Fake spills enabled";
+    ERS_INFO("Fake spills enabled");
 }
 //-----------------------------------------------------------------------------
 

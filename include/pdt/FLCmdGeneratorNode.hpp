@@ -1,5 +1,5 @@
-#ifndef __PDT_FLCMDGENERATORNODE_HPP__
-#define __PDT_FLCMDGENERATORNODE_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_FLCMDGENERATORNODE_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_FLCMDGENERATORNODE_HPP_
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -37,9 +37,7 @@ struct FakeTriggerConfig {
         
         uint32_t lPS = (uint32_t) ((kSPSClockInHz / (aRate * 256 * (1 << mDiv))) + 0.5);
         if (lPS  == 0 || lPS > 256) {
-            std::ostringstream lMsg;
-            lMsg << "Request fake trigger rate out of range: " << aRate << "; ps: " << lPS;
-            throw BadRequestedFakeTriggerRate(lMsg.str());
+            throw BadRequestedFakeTriggerRate(ERS_HERE, "FakeTriggerConfig", aRate, lPS);
         } else {
             mPS = lPS;
         }
@@ -47,8 +45,8 @@ struct FakeTriggerConfig {
     }
 
     void print() const {
-        PDT_LOG(kNotice) << "Requested rate, actual rate: " << mReqRate << ", " << mActRate;
-        PDT_LOG(kNotice) << "prescale, divisor: " << mPS << ", " << mDiv;
+        ERS_INFO("Requested rate, actual rate: " << mReqRate << ", " << mActRate);
+        ERS_INFO("prescale, divisor: " << mPS << ", " << mDiv);
     }
 };
 
@@ -89,4 +87,4 @@ public:
 
 } // namespace pdt
 
-#endif // __PDT_FLCMDGENERATORNODE_HPP__
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_FLCMDGENERATORNODE_HPP_

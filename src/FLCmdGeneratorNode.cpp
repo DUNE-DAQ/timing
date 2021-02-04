@@ -45,7 +45,7 @@ FLCmdGeneratorNode::sendFLCmd(uint32_t aCmd, uint32_t aChan, const TimestampGene
     
     getNode("chan_ctrl.force").write(0x0);
     getClient().dispatch();
-    PDT_LOG(kNotice) << "Command sent " << kCommandMap.at(aCmd) << "(" << aCmd << ") from generator " << aChan << " @time 0x" << tstamp2int(lTStamp) << " " << formatTimestamp(lTStamp);
+    ERS_LOG("Command sent " << kCommandMap.at(aCmd) << "(" << formatRegValue(aCmd) << ") from generator " << formatRegValue(aChan) << " @time 0x" << tstamp2int(lTStamp) << " " << formatTimestamp(lTStamp));
 }
 //-----------------------------------------------------------------------------
 
@@ -73,7 +73,7 @@ FLCmdGeneratorNode::disableFakeTrigger(uint32_t aChan) const {
     //Clear the internal trigger generator.
     getNode("sel").write(aChan);
     resetSubNodes(getNode("chan_ctrl"));
-    PDT_LOG(kInfo) << "Fake trigger generator " << aChan << " configuration cleared";
+    ERS_LOG("Fake trigger generator " << formatRegValue(aChan) << " configuration cleared");
 }
 //------------------------------------------------------------------------------
 

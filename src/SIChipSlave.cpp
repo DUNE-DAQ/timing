@@ -2,7 +2,7 @@
 
 // PDT headers
 #include "pdt/toolbox.hpp"
-#include "pdt/Logger.hpp"
+#include "ers/ers.h"
 
 #include <boost/tuple/tuple.hpp>
 
@@ -28,7 +28,7 @@ SIChipSlave::~SIChipSlave( ) {
 uint8_t
 SIChipSlave::readPage( ) const {
 
-    PDT_LOG(kDebug) << "<- Reading page ";
+    ERS_DEBUG(0, "<- Reading page ");
 
     // Read from the page address (0x1?)
     return readI2C(0x1);
@@ -42,10 +42,8 @@ SIChipSlave::switchPage( uint8_t aPage ) const {
 
     // Prepare a data block with address and new page
     // std::vector<uint8_t> lData = {0x1, aPage};
-    PDT_LOG(kDebug) << "-> Switching to page " 
-        << std::showbase
-        << std:: hex
-        << (uint32_t) aPage;
+    ERS_DEBUG(0, "-> Switching to page " 
+        << formatRegValue((uint32_t)aPage));
     writeI2C(0x1, aPage);
 }
 //-----------------------------------------------------------------------------
@@ -71,10 +69,12 @@ SIChipSlave::readClockRegister( uint16_t aAddr ) const {
 
     uint8_t lRegAddr = (aAddr & 0xff);
     uint8_t lPageAddr = (aAddr >> 8) & 0xff;
-    PDT_LOG(kDebug) << std::showbase << std::hex 
+    std::stringstream debug_stream;
+    debug_stream << std::showbase << std::hex 
         << "Read Address " << (uint32_t)aAddr 
         << " reg: " << (uint32_t)lRegAddr 
         << " page: " << (uint32_t)lPageAddr;
+    ERS_DEBUG(0, debug_stream.str());
     // Change page only when required.
     // (The SI5344 don't like to have the page register id to be written all the time.)
     uint8_t lCurrentPage = readPage();
@@ -95,10 +95,12 @@ SIChipSlave::writeClockRegister( uint16_t aAddr, uint8_t aData ) const {
     uint8_t lRegAddr = (aAddr & 0xff);
     uint8_t lPageAddr = (aAddr >> 8) & 0xff;
 
-    PDT_LOG(kDebug) << std::showbase << std::hex 
+    std::stringstream debug_stream;
+    debug_stream << std::showbase << std::hex 
         << "Write Address " << (uint32_t)aAddr 
         << " reg: " << (uint32_t)lRegAddr 
         << " page: " << (uint32_t)lPageAddr;
+    ERS_DEBUG(0, debug_stream.str());
     // Change page only when required.
     // (The SI5344 don't like to have the page register id to be written all the time.)
     uint8_t lCurrentPage = readPage();

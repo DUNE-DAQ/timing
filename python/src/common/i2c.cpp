@@ -23,15 +23,15 @@
 // Namespace resolution
 using namespace boost::python;
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CMasterNode_writeI2C_overloads, writeI2C, 3, 4);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CMasterNode_writeI2CArray_overloads, writeI2CArray, 3, 4);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CMasterNode_writeI2CPrimitive_overloads, writeI2CPrimitive, 2, 3);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CMasterNode_writeI2C_overloads, writeI2C, 3, 4)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CMasterNode_writeI2CArray_overloads, writeI2CArray, 3, 4)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CMasterNode_writeI2CPrimitive_overloads, writeI2CPrimitive, 2, 3)
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CSlave_writeI2C_overloads, writeI2C, 2, 3);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CSlave_writeI2C_aDeviceAddress_overloads, writeI2C, 3, 4);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CSlave_writeI2CArray_overloads, writeI2CArray, 2, 3);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CSlave_writeI2CArray_aDeviceAddress_overloads, writeI2CArray, 3, 4);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CSlave_writeI2CPrimitive_overloads, writeI2CPrimitive, 1, 2);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CSlave_writeI2C_overloads, writeI2C, 2, 3)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CSlave_writeI2C_aDeviceAddress_overloads, writeI2C, 3, 4)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CSlave_writeI2CArray_overloads, writeI2CArray, 2, 3)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CSlave_writeI2CArray_aDeviceAddress_overloads, writeI2CArray, 3, 4)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(pdt_I2CSlave_writeI2CPrimitive_overloads, writeI2CPrimitive, 1, 2)
 
 
 namespace pdt {

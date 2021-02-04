@@ -1,5 +1,5 @@
-#ifndef __PDT_MASTERMUXDESIGN_HPP__
-#define __PDT_MASTERMUXDESIGN_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_MASTERMUXDESIGN_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_MASTERMUXDESIGN_HPP_
 
 // C++ Headers
 #include <chrono>
@@ -14,7 +14,7 @@
 #include "pdt/PC059IONode.hpp"
 #include "pdt/PDIMasterNode.hpp"
 
-#include "pdt/exception.hpp"
+#include "TimingIssues.hpp"
 
 namespace pdt {
 
@@ -50,7 +50,7 @@ public:
     /**
      * @brief     Switch the SFP mux channel
      */
-    virtual bool switchSFPMUXChannel(uint32_t aSFPID, bool aWaitForRttEptLock) const;
+    virtual void switchSFPMUXChannel(uint32_t aSFPID, bool aWaitForRttEptLock) const;
 
     /**
      * @brief     Read the active SFP mux channel
@@ -79,4 +79,4 @@ public:
 
 #include "pdt/MasterMuxDesign.hxx"
 
-#endif // __PDT_MASTERMUXDESIGN_HPP__
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_MASTERMUXDESIGN_HPP_

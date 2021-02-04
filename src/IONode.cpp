@@ -77,10 +77,8 @@ IONode::getBoardRevision() const {
 	auto lUID = readBoardUID();
 	try {
 		return kBoardUIDRevisionMap.at(lUID);
-	} catch(...) {
-		std::ostringstream lMsg;
-        lMsg << "Unknown UID-board revision mapping: " << formatRegValue(lUID);
-        throw UnknownBoardUID(lMsg.str());
+	} catch(const std::out_of_range& e) {
+        throw UnknownBoardUID(ERS_HERE, getId(), formatRegValue(lUID), e);
 	}
 }
 //-----------------------------------------------------------------------------
@@ -100,36 +98,28 @@ IONode::getHardwareInfo(bool aPrint) const {
 	// TODO check map at exception
 	try {
 		lHardwareInfo.push_back(std::make_pair("Board type", kBoardTypeMap.at(lBoardType)));
-	} catch(...) {
-		std::ostringstream lMsg;
-        lMsg << "Board type not in board type map: " << lBoardType;
-        throw MissingBoardTypeMapEntry(lMsg.str());
+	} catch(const std::out_of_range& e) {
+        throw MissingBoardTypeMapEntry(ERS_HERE, getId(), formatRegValue(lBoardType), e);
 	}
 
 	try {
 		lHardwareInfo.push_back(std::make_pair("Board revision", kBoardRevisionMap.at(lBoardRevision)));
-	} catch(...) {
-		std::ostringstream lMsg;
-        lMsg << "Board revision not in board revision map: " << lBoardRevision;
-        throw MissingBoardRevisionMapEntry(lMsg.str());
+	} catch(const std::out_of_range& e) {
+        throw MissingBoardRevisionMapEntry(ERS_HERE, getId(), formatRegValue(lBoardRevision), e);
 	}
 
 	lHardwareInfo.push_back(std::make_pair("Board UID", formatRegValue(readBoardUID())));
 
 	try {
 		lHardwareInfo.push_back(std::make_pair("Carrier type", kCarrierTypeMap.at(lCarrierType)));
-	} catch(...) {
-		std::ostringstream lMsg;
-        lMsg << "Carrier type not in carrier type map: " << lCarrierType;
-        throw MissingCarrierTypeMapEntry(lMsg.str());
+	} catch(const std::out_of_range& e) {
+    	throw MissingCarrierTypeMapEntry(ERS_HERE, getId(), formatRegValue(lCarrierType), e);
 	}
 
 	try {
 		lHardwareInfo.push_back(std::make_pair("Design type", kDesignTypeMap.at(lDesignType)));
-	} catch(...) {
-		std::ostringstream lMsg;
-        lMsg << "Design type not in design type map: " << lDesignType;
-        throw MissingDesignTypeMapEntry(lMsg.str());
+	} catch(const std::out_of_range& e) {
+        throw MissingDesignTypeMapEntry(ERS_HERE, getId(), formatRegValue(lDesignType), e);
 	}
 	lInfo << formatRegTable(lHardwareInfo, "Hardware info", {"", ""});
 
@@ -158,26 +148,20 @@ IONode::getFullClockConfigFilePath(const std::string& aClockConfigFile, int32_t 
 
 		try {
 			lClockConfigKey = kBoardRevisionMap.at(lBoardRevision) + "_";
-		} catch(...) {
-			std::ostringstream lMsg;
-        	lMsg << "Board revision not in board revision map: " << lBoardRevision;
-        	throw MissingBoardRevisionMapEntry(lMsg.str());
+		} catch(const std::out_of_range& e) {
+        	throw MissingBoardRevisionMapEntry(ERS_HERE, getId(), formatRegValue(lBoardRevision), e);
 		}
 
 		try {
 			lClockConfigKey = lClockConfigKey + kCarrierTypeMap.at(lCarrierType) + "_";
-		} catch(...) {
-			std::ostringstream lMsg;
-        	lMsg << "Carrier type not in carrier type map: " << lCarrierType;
-        	throw MissingCarrierTypeMapEntry(lMsg.str());
+		} catch(const std::out_of_range& e) {
+        	throw MissingCarrierTypeMapEntry(ERS_HERE, getId(), formatRegValue(lCarrierType), e);
 		}
 
 		try {
 			lClockConfigKey = lClockConfigKey + kDesignTypeMap.at(lDesignType);
-		} catch(...) {
-			std::ostringstream lMsg;
-        	lMsg << "Design type not in design type map: " << lDesignType;
-        	throw MissingDesignTypeMapEntry(lMsg.str());
+		} catch(const std::out_of_range& e) {
+        	throw MissingDesignTypeMapEntry(ERS_HERE, getId(), formatRegValue(lDesignType), e);
 		}
 
 		// modifier in case a different clock file is needed based on firmware configuration
@@ -185,10 +169,8 @@ IONode::getFullClockConfigFilePath(const std::string& aClockConfigFile, int32_t 
 
 		try {
 			lConfigFile = kClockConfigMap.at(lClockConfigKey);
-		} catch (...) {
-			std::ostringstream lMsg;
-        	lMsg << "Clock config file not found for key: " << lClockConfigKey;
-        	throw ClockConfigNotFound(lMsg.str());
+		} catch (const std::out_of_range& e) {
+        	throw ClockConfigNotFound(ERS_HERE, getId(), lClockConfigKey, e);
 		}
       	
       	return std::string(std::getenv("PDT_TESTS")) + "/etc/clock/" + lConfigFile;
@@ -212,11 +194,11 @@ IONode::configurePLL(const std::string& aClockConfigFile) const {
 	auto pll = getPLL();
 
 	uint32_t lSIVersion = pll->readDeviceVersion();
-	PDT_LOG(kNotice) << "Configuring PLL        : SI" << std::hex << lSIVersion;
+	ERS_INFO("Configuring PLL        : SI" << formatRegValue(lSIVersion));
 
 	pll->configure(aClockConfigFile);
 	
-	PDT_LOG(kNotice) << "PLL configuration id   : " << pll->readConfigID();
+	ERS_INFO("PLL configuration id   : " << pll->readConfigID());
 }
 //-----------------------------------------------------------------------------
 
@@ -309,7 +291,7 @@ IONode::writeSoftResetRegister() const {
 void
 IONode::softReset() const {
 	writeSoftResetRegister();
-	PDT_LOG(kNotice) << "Soft reset done" << std::endl;
+	ERS_INFO("Soft reset done");
 }
 //-----------------------------------------------------------------------------
 
@@ -322,9 +304,7 @@ IONode::getSFPStatus(uint32_t aSFPId, bool aPrint) const {
 	try {
 		lSFPI2CBus = mSFPI2CBuses.at(aSFPId);
 	} catch(const std::out_of_range& e) {
-		std::ostringstream lMsg;
-        lMsg << "Invalid SFP ID: " << aSFPId;
-        throw InvalidSFPId(lMsg.str());
+        throw InvalidSFPId(ERS_HERE, getId(), formatRegValue(aSFPId), e);
 	}
 	auto sfp = getI2CDevice<I2CSFPSlave>(lSFPI2CBus, "SFP_EEProm");
 	lStatus << sfp->getStatus();
@@ -341,9 +321,7 @@ IONode::switchSFPSoftTxControlBit(uint32_t aSFPId, bool aOn) const {
 	try {
 		lSFPI2CBus = mSFPI2CBuses.at(aSFPId);
 	} catch(const std::out_of_range& e) {
-		std::ostringstream lMsg;
-        lMsg << "Invalid SFP ID: " << aSFPId;
-        throw InvalidSFPId(lMsg.str());
+        throw InvalidSFPId(ERS_HERE, getId(), formatRegValue(aSFPId), e);
 	}
 	auto sfp = getI2CDevice<I2CSFPSlave>(lSFPI2CBus, "SFP_EEProm");
 	sfp->switchSoftTxControlBit(aOn);

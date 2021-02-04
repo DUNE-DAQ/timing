@@ -1,5 +1,5 @@
-#ifndef __PDT_TOOLBOX_HXX__
-#define __PDT_TOOLBOX_HXX__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOOLBOX_HXX__
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOOLBOX_HXX__
 
 #include <boost/lexical_cast.hpp>
 
@@ -120,7 +120,7 @@ formatRegValue(T regValue, uint32_t base) {
   } else if (base == 10) {
     lValueStream << std::dec;
   } else {
-    PDT_LOG(kWarning) << "Unsupported number base: " << base << std::endl;
+    ERS_LOG("Unsupported number base: " << base);
     lValueStream << std::dec;
   }
   lValueStream << regValue;
@@ -181,9 +181,7 @@ std::string formatCountersTable(std::vector<T> aCounterNodes, std::vector<std::s
       lCounterNodeTitles.push_back("Counters");
     }
   } else if (aCounterNodes.size() != aCounterNodeTitles.size()) {
-    std::ostringstream lMsg;
-    lMsg << "Format counters table, counter nodes vs. title number mismatch";
-    throw FormatCountersTableNodesTitlesMismatch(lMsg.str());
+    throw FormatCountersTableNodesTitlesMismatch(ERS_HERE, "formatCountersTable");
   } else {
     lCounterNodeTitles = aCounterNodeTitles;
   }
@@ -324,6 +322,74 @@ std::string formatCountersTable(std::vector<T> aCounterNodes, std::vector<std::s
 }
 //-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
+template <typename T>
+std::string vecFmt(const std::vector<T>& aVec)
+{
+  std::ostringstream oss;
+  oss << "[";
+
+  for(typename std::vector<T>::const_iterator it=aVec.begin(); it != aVec.end(); it++)
+    oss << *it << ",";
+  oss.seekp(oss.tellp()-1l);
+  oss << "]";
+
+  return oss.str();
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template <typename T>
+std::string shortVecFmt(const std::vector<T>& aVec)
+{
+  if (aVec.size() == 0)
+    return "[]";
+  else if (aVec.size() == 1)
+    return "[" + boost::lexical_cast<std::string>(aVec.at(0)) + "]";
+
+  std::ostringstream oss;
+  oss << "[";
+
+  // Initial search range
+  T first = aVec.at(0);
+  T last   = first;
+  for(typename std::vector<T>::const_iterator it=aVec.begin()+1; it != aVec.end(); it++)
+  {
+    // if *it is contiguous to last, carry on searching
+    if((*it) == (last + 1))
+    {
+      last = *it;
+      continue;
+    }
+
+    if (first == last)
+      // if first and last are the same, this is an isolated number
+      oss << first << ",";
+    else
+      // otherwise it's a range
+      oss << first << "-" << last << ",";
+
+    // *it is the first value of the new range
+    first = *it;
+    last = *it;
+  }
+
+  // Process the last range
+  if (first == last)
+    oss << first << ",";
+  else
+    oss << first << "-" << last << ",";
+
+  // Is this actually necessary?
+  // Replace final "," with a "]"
+  oss.seekp(oss.tellp()-1l);
+  oss << "]";
+
+  return oss.str();
+}
+//-----------------------------------------------------------------------------
 } // namespace pdt
 
 

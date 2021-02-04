@@ -13,8 +13,8 @@
 #include <boost/range/adaptor/map.hpp>
 #include <boost/range/algorithm/copy.hpp>
 
-#include "pdt/exception.hpp"
-#include "pdt/Logger.hpp"
+#include "pdt/TimingIssues.hpp"
+#include "ers/ers.h"
 #include "pdt/toolbox.hpp"
 #include "pdt/I2CMasterNode.hpp"
 
@@ -125,7 +125,7 @@ I2CSlave::ping() const {
 
 
 //-----------------------------------------------------------------------------
-const std::string
+std::string
 I2CSlave::getMasterId() const {
     return mMaster->getId();
 }

@@ -1,5 +1,5 @@
-#ifndef __PDT_TOOLBOX_HPP__
-#define __PDT_TOOLBOX_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOOLBOX_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOOLBOX_HPP_
 
 // C++ Headers
 #include <string>
@@ -20,8 +20,10 @@
 // uHAL Headers
 #include <uhal/Node.hpp>
 
+#include "ers/ers.h"
+
 #include "definitions.hpp"
-#include "pdt/exception.hpp"
+#include "TimingIssues.hpp"
 
 namespace pdt {
 
@@ -162,10 +164,17 @@ BoardType convertValueToBoardType(uint32_t aBoardType);
 CarrierType convertValueToCarrierType(uint32_t aCarrierType);
 DesignType convertValueToDesignType(uint32_t aDesignType);
 
+template<typename T>
+std::string vecFmt(const std::vector<T>& aVec);
+
+template<typename T>
+std::string shortVecFmt(const std::vector<T>& aVec);
+
+
 } // namespace pdt
 
 
 #include "pdt/toolbox.hxx"
 
-#endif /* __PDT_TOOLBOX_HPP__ */
+#endif /* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOOLBOX_HPP_ */
 

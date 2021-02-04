@@ -5,15 +5,13 @@
  * Created on November 16, 2014, 7:50 PM
  */
 
-#ifndef __PDT_DEFINITIONS_HPP__
-#define	__PDT_DEFINITIONS_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_DEFINITIONS_HPP_
+#define	TIMING_BOARD_SOFTWARE_INCLUDE_PDT_DEFINITIONS_HPP_
 
 #include <map>
 #include <stdint.h>
 #include <string>
 #include <vector>
-
-#include "pdt/Logger.hpp"
 
 namespace pdt {
 
@@ -196,5 +194,5 @@ struct EndpointRTTResult {
 
 } // namespace pdt
 
-#endif	/* __PDT_DEFINITIONS_HPP__ */
+#endif	// TIMING_BOARD_SOFTWARE_INCLUDE_PDT_DEFINITIONS_HPP_
 

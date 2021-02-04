@@ -94,7 +94,7 @@ uint32_t FanoutDesign<IO,MST>::measureEndpointRTT(uint32_t aAddr, bool aControlS
 	if (!lFanoutMode.value()) {
 		std::ostringstream lMsg;
         lMsg << " Fanout unit " << uhal::Node::getId() << " is in fanout mode. Measure endpoint RTT should be called from master device.";
-        throw UnsupportedFunction(lMsg.str());
+        throw UnsupportedFunction(ERS_HERE, uhal::Node::getId(), lMsg.str());
 	}
 	return MasterMuxDesign<IO,MST>::measureEndpointRTT(aAddr,aControlSFP,aSFPMUX);
 }
@@ -110,7 +110,7 @@ void FanoutDesign<IO,MST>::applyEndpointDelay(uint32_t aAddr, uint32_t aCDel, ui
 	if (!lFanoutMode.value()) {
 		std::ostringstream lMsg;
         lMsg << "Fanout unit " << uhal::Node::getId() << " is in fanout mode. Apply endpoint delay should be called from master device." ;
-        throw UnsupportedFunction(lMsg.str());
+        throw UnsupportedFunction(ERS_HERE, uhal::Node::getId(), lMsg.str());
 	}
 	MasterMuxDesign<IO,MST>::applyEndpointDelay(aAddr,aCDel,aFDel,aPDel,aMeasureRTT,aControlSFP,aSFPMUX);
 }

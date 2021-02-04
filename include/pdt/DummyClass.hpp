@@ -1,5 +1,5 @@
-#ifndef __PDT_CORE_DUMMYCLASS_HPP__
-#define __PDT_CORE_DUMMYCLASS_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_CORE_DUMMYCLASS_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_CORE_DUMMYCLASS_HPP_
 
 namespace pdt {
 class DummyClass {
@@ -11,4 +11,4 @@ class DummyClass {
 
 } // namespace pdt
 
-#endif /* __PDT_CORE_DUMMYCLASS_HPP__ */
+#endif /* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_CORE_DUMMYCLASS_HPP_ */

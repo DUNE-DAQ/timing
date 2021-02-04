@@ -41,10 +41,10 @@ PDIMasterNode::switchEndpointSFP(uint32_t aAddr, bool aOn) const {
 
 
 //-----------------------------------------------------------------------------
-bool
+void
 PDIMasterNode::enableUpstreamEndpoint() const {
     auto lGlobal = getNode<GlobalNode>("master.global");
-    return lGlobal.enableUpstreamEndpoint();
+    lGlobal.enableUpstreamEndpoint();
 }
 //-----------------------------------------------------------------------------
 
@@ -67,12 +67,8 @@ PDIMasterNode::measureEndpointRTT(uint32_t aAddr, bool aControlSFP) const {
         millisleep(100);
     }
 
-    if (!lGlobal.enableUpstreamEndpoint()) {
-        std::ostringstream lMsg;
-        lMsg << "RTT endpoint failed to lock. Downstream ept address: " << formatRegValue(aAddr);
-        throw UpstreamEndpointFailedToLock(lMsg.str());
-    }
-    
+    lGlobal.enableUpstreamEndpoint();
+        
     uint32_t lEndpointRTT = lEcho.sendEchoAndMeasureDelay();
     
     if (aControlSFP) vlCmdNode.switchEndpointSFP(aAddr, false);
@@ -102,14 +98,10 @@ PDIMasterNode::applyEndpointDelay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel
             millisleep(100);
         }
 
-        if (!lGlobal.enableUpstreamEndpoint()) {
-            std::ostringstream lMsg;
-            lMsg << "RTT endpoint failed to lock. Downstream ept address: " << formatRegValue(aAddr);
-            throw UpstreamEndpointFailedToLock(lMsg.str());
-        }
-
+        lGlobal.enableUpstreamEndpoint();
+        
         uint64_t lEndpointRTT = lEcho.sendEchoAndMeasureDelay();
-        PDT_LOG(kNotice) << "Pre delay adjustment RTT:  " << std::dec << lEndpointRTT; 
+        ERS_LOG("Pre delay adjustment RTT:  " << formatRegValue(lEndpointRTT)); 
     }
     
     vlCmdNode.applyEndpointDelay(aAddr, aCDel, aFDel, aPDel);
@@ -117,14 +109,10 @@ PDIMasterNode::applyEndpointDelay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel
     millisleep(100);
 
     if (aMeasureRTT) {
-        if (!lGlobal.enableUpstreamEndpoint()) {
-            std::ostringstream lMsg;
-            lMsg << "RTT endpoint failed to lock. Downstream ept address: " << formatRegValue(aAddr);
-            throw UpstreamEndpointFailedToLock(lMsg.str());
-        }
+        lGlobal.enableUpstreamEndpoint();
 
         uint64_t lEndpointRTT = lEcho.sendEchoAndMeasureDelay();
-        PDT_LOG(kNotice) << "Post delay adjustment RTT: " << std::dec << lEndpointRTT << std::endl;
+        ERS_LOG("Post delay adjustment RTT: " << formatRegValue(lEndpointRTT));
 
         if (aControlSFP) vlCmdNode.switchEndpointSFP(aAddr, false);
     }
@@ -160,7 +148,10 @@ PDIMasterNode::enableFakeTrigger(uint32_t aChan, double aRate, bool aPoisson) co
     FakeTriggerConfig lFTConfig(aRate);
 
     lFTConfig.print();
-    PDT_LOG(kNotice) << "> Trigger rate for FakeTrig" << aChan << " (0x" << std::hex << 0x8+aChan << ") set to " << std::setprecision(3) << std::scientific << lFTConfig.mActRate << " Hz";
+    std::stringstream trig_stream;
+    trig_stream << "> Trigger rate for FakeTrig" << aChan << " (" << std::showbase << std::hex << 0x8+aChan << ") set to " << std::setprecision(3) << std::scientific << lFTConfig.mActRate << " Hz";
+    ERS_INFO(trig_stream.str());
+
     std::stringstream lTriggerModeStream;
     lTriggerModeStream << "> Trigger mode: ";
 
@@ -169,7 +160,7 @@ PDIMasterNode::enableFakeTrigger(uint32_t aChan, double aRate, bool aPoisson) co
     } else {
         lTriggerModeStream << "periodic";
     }
-    PDT_LOG(kNotice) << lTriggerModeStream.str();
+    ERS_INFO(lTriggerModeStream.str());
     getNode<FLCmdGeneratorNode>("master.scmd_gen").enableFakeTrigger(aChan, lFTConfig.mDiv, lFTConfig.mPS, aPoisson);
 }
 //-----------------------------------------------------------------------------
@@ -245,14 +236,14 @@ void
 PDIMasterNode::syncTimestamp() const {
 
     const uint64_t lOldTimestamp = readTimestamp();
-    PDT_LOG(kNotice) << "Old timestamp: 0x" << std::hex << lOldTimestamp << ", " << formatTimestamp(lOldTimestamp);
+    ERS_LOG("Old timestamp: " << formatRegValue(lOldTimestamp) << ", " << formatTimestamp(lOldTimestamp));
     
     const uint64_t lNow = getSecondsSinceEpoch() * kSPSClockInHz;
     setTimestamp(lNow);
 
     const uint64_t lNewTimestamp = readTimestamp();
-    PDT_LOG(kNotice) << "New timestamp: 0x" << std::hex << lNewTimestamp << ", " << formatTimestamp(lNewTimestamp);
-    }
+    ERS_LOG("New timestamp: " << formatRegValue(lNewTimestamp) << ", " << formatTimestamp(lNewTimestamp));
+}
 //-----------------------------------------------------------------------------
 
 } // namespace pdt

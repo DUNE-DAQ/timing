@@ -5,13 +5,16 @@
  * @date 
  */
 
-#ifndef __PDT_I2CMASTERNODE_HPP__
-#define	__PDT_I2CMASTERNODE_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CMASTERNODE_HPP_
+#define	TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CMASTERNODE_HPP_
+
+#include "pdt/TimingNode.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
-#include "pdt/exception.hpp"
- 
+#include "TimingIssues.hpp"
+#include "ers/ers.h"
+
 namespace pdt {
 
 // PDTExceptionClass(I2CSlaveNotFound, "Exception class to handle missing I2C slaves");
@@ -71,7 +74,7 @@ protected:
     void sendI2CCommandAndWriteData( uint8_t aCmd, uint8_t aData ) const;
 
     //! Slaves 
-    boost::unordered_map<std::string,uint8_t> mSlavesAddresses;
+    std::unordered_map<std::string,uint8_t> mSlavesAddresses;
 
 private:
     ///
@@ -107,12 +110,12 @@ private:
     uint16_t mClockPrescale;
 
     //! I2C slaves attached to this node
-    boost::unordered_map<std::string,I2CSlave*> mSlaves;
+    std::unordered_map<std::string,I2CSlave*> mSlaves;
 
     friend class I2CSlave;
 };
 
 } // namespace pdt
 
-#endif	/* __PDT_I2CMASTERNODE_HPP__ */
+#endif	/* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CMASTERNODE_HPP_ */
 

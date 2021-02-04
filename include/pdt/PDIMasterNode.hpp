@@ -1,5 +1,5 @@
-#ifndef __PDT_PDIMASTERNODE_HPP__
-#define __PDT_PDIMASTERNODE_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_PDIMASTERNODE_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_PDIMASTERNODE_HPP_
 
 // C++ Headers
 #include <chrono>
@@ -37,7 +37,7 @@ public:
     /**
      * @brief     Enable RTT endpoint
      */
-    bool enableUpstreamEndpoint() const override;
+    void enableUpstreamEndpoint() const override;
 
     /**
      * @brief      Measure the endpoint round trip time.
@@ -112,4 +112,4 @@ public:
 
 } // namespace pdt
 
-#endif // __PDT_PDIMASTERNODE_HPP__
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_PDIMASTERNODE_HPP_

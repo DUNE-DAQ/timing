@@ -1,8 +1,8 @@
 #include "pdt/I2CExpanderNode.hpp"
 
 // PDT headers
-// #include "pdt/toolbox.hpp"
-// #include "pdt/Logger.hpp"
+#include "pdt/toolbox.hpp"
+#include "ers/ers.h"
 
 // #include <boost/tuple/tuple.hpp>
 
@@ -32,10 +32,7 @@ void
 I2CExpanderSlave::ensureValidBankId( uint8_t aBankId ) const {
     if ( aBankId == 0 or aBankId == 1) return;
 
-    std::ostringstream lExc;
-    lExc << "Invalid bank id " << aBankId;
-    throw SFPExpanderBankIDError(lExc.str());
-
+    throw SFPExpanderBankIDError(ERS_HERE, "I2CExpanderSlave", std::to_string(aBankId));
 }
 //-----------------------------------------------------------------------------
 

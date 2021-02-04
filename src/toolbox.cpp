@@ -19,7 +19,7 @@
 #include "uhal/ValMem.hpp"
 
 // PDT Headers
-#include "pdt/exception.hpp"
+#include "pdt/TimingIssues.hpp"
 
 using namespace std;
 
@@ -138,11 +138,9 @@ throwIfNotFile(const std::string& aPath) {
     // Check that the path exists and that it's not a directory
     fs::path cfgFile(aPath);
     if (!fs::exists(cfgFile)) {
-        pdt::FileNotFound lExc(aPath + " does not exist!");
-        throw lExc;
+        throw FileNotFound(ERS_HERE, "toolbox", aPath);
     } else if (fs::is_directory(cfgFile)) {
-        pdt::CorruptedFile lExc(aPath + " is a directory!");
-        throw lExc;
+        throw FileIsDirectory(ERS_HERE, "toolbox", aPath);
     }
 
     //    return true;
@@ -175,7 +173,8 @@ formatRegValue<uhal::ValWord<uint32_t>>(uhal::ValWord<uint32_t> regValue, uint32
     } else if (base == 10) {
         lValueStream << std::dec;
     } else {
-        PDT_LOG(kWarning) << "formatRegValue: unsupported number base: " << base << std::endl;
+        // TODO warning?
+        ERS_LOG("formatRegValue: unsupported number base: " << base);
         lValueStream << std::dec;
     }
     lValueStream << regValue.value();
@@ -268,10 +267,8 @@ double convertBitsToFloat(uint64_t aBits, bool aIsDoublePrecision){
 BoardType
 convertValueToBoardType(uint32_t aBoardType) {
     // not pleasnt, but works for now
-    if ( aBoardType < kBoardFMC || aBoardType > kBoardTLU) {
-        std::ostringstream lMsg;
-        lMsg << "Unknown board type: " << aBoardType;
-        throw UnknownBoardType(lMsg.str());
+    if (aBoardType > kBoardTLU) {
+        throw UnknownBoardType(ERS_HERE, "toolbox", formatRegValue(aBoardType));
     } else {
         return static_cast<BoardType> (aBoardType);
     }
@@ -283,10 +280,8 @@ convertValueToBoardType(uint32_t aBoardType) {
 CarrierType
 convertValueToCarrierType(uint32_t aCarrierType) {
     // not pleasnt, but works for now
-    if ( aCarrierType < kCarrierEnclustraA35 || aCarrierType > kCarrierATFC) {
-        std::ostringstream lMsg;
-        lMsg << "Unknown carrier type: " << aCarrierType;
-        throw UnknownCarrierType(lMsg.str());
+    if (aCarrierType > kCarrierATFC) {
+        throw UnknownCarrierType(ERS_HERE, "toolbox", formatRegValue(aCarrierType));
     } else {
         return static_cast<CarrierType> (aCarrierType);
     }
@@ -298,15 +293,16 @@ convertValueToCarrierType(uint32_t aCarrierType) {
 DesignType
 convertValueToDesignType(uint32_t aDesignType) {
     // not pleasnt, but works for now
-    if ( aDesignType < kDesingMaster || aDesignType > kDesingEndpoBICRT) {
-        std::ostringstream lMsg;
-        lMsg << "Unknown design type: " << aDesignType;
-        throw UnknownDesignType(lMsg.str());
+    if (aDesignType > kDesingEndpoBICRT) {
+        throw UnknownDesignType(ERS_HERE, "toolbox", formatRegValue(aDesignType));
     } else {
         return static_cast<DesignType> (aDesignType);
     }
 }
 //-----------------------------------------------------------------------------
+
+template std::string pdt::vecFmt<uint32_t>(const std::vector<uint32_t>& aVec);
+template std::string pdt::shortVecFmt<uint32_t>(const std::vector<uint32_t>& aVec);
 
 } // namespace pdt
 

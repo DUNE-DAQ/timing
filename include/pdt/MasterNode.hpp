@@ -1,5 +1,5 @@
-#ifndef __PDT_MASTERNODE_HPP__
-#define __PDT_MASTERNODE_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_MASTERNODE_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_MASTERNODE_HPP_
 
 // C++ Headers
 #include <chrono>
@@ -9,7 +9,7 @@
 
 // PDT Headers
 #include "pdt/TimingNode.hpp"
-#include "pdt/exception.hpp"
+#include "TimingIssues.hpp"
 #include "pdt/TimestampGeneratorNode.hpp"
 #include "pdt/VLCmdGeneratorNode.hpp"
 #include "pdt/GlobalNode.hpp"
@@ -47,7 +47,7 @@ public:
     /**
      * @brief     Enable RTT endpoint
      */
-    virtual bool enableUpstreamEndpoint() const = 0;
+    virtual void enableUpstreamEndpoint() const = 0;
 
     /**
      * @brief      Measure the endpoint round trip time.
@@ -82,4 +82,4 @@ public:
 
 } // namespace pdt
 
-#endif // __PDT_MASTERNODE_HPP__
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_MASTERNODE_HPP_

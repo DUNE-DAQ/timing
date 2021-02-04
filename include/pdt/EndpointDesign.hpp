@@ -1,5 +1,5 @@
-#ifndef __PDT_ENDPOINTDESIGN_HPP__
-#define __PDT_ENDPOINTDESIGN_HPP__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_ENDPOINTDESIGN_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_ENDPOINTDESIGN_HPP_
 
 // C++ Headers
 #include <chrono>
@@ -12,7 +12,7 @@
 // PDT Headers
 #include "pdt/TopDesign.hpp"
 #include "pdt/FMCIONode.hpp"
-#include "pdt/exception.hpp"
+#include "TimingIssues.hpp"
 
 namespace pdt {
 
@@ -47,4 +47,4 @@ public:
 
 #include "pdt/EndpointDesign.hxx"
 
-#endif // __PDT_ENDPOINTDESIGN_HPP__
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_ENDPOINTDESIGN_HPP_
