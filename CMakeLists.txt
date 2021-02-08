@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 project(timing-board-software VERSION 7.0.0)
 
 find_package(daq-cmake REQUIRED)
+find_package(pybind11 REQUIRED)
 
 daq_setup_environment()
 
@@ -10,7 +11,7 @@ daq_setup_environment()
 
 find_package(ers REQUIRED)     
 find_package(TRACE REQUIRED)
-find_package(Boost 1.70.0 REQUIRED)
+find_package(Boost 1.73.0 REQUIRED)
 
 ##############################################################################
 set(LIST_OF_UHAL_LIBS $ENV{UHAL_LIB}/libcactus_uhal_log.so $ENV{UHAL_LIB}/libcactus_uhal_uhal.so) # list of UHAL libs.
