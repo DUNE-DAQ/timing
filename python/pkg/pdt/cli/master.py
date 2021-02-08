@@ -296,7 +296,7 @@ def configure(obj, trgmask, spillgate):
     echo("  Phys mask {}".format(hex(trgmask)))
 
     lPartNode.reset(); 
-    lPartNode.configure(lTrgMask, spillgate);
+    lPartNode.configure(lTrgMask, spillgate, True);
     lPartNode.enable();
     secho("Partition {} enabled and configured".format(lPartId), fg='green')
 
