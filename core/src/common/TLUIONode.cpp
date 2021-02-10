@@ -134,7 +134,7 @@ TLUIONode::getSFPStatus(uint32_t aSFPId, bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 void
-TLUIONode::switchSFPSoftTxControlBit(uint32_t aSFPId, bool aOn) const {
+TLUIONode::switchSFPSoftTxControl(uint32_t aSFPId, bool aOn) const {
 	PDT_LOG(kWarning) << "TLU does not support SFP I2C";
 }
 //-----------------------------------------------------------------------------

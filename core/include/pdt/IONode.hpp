@@ -131,7 +131,7 @@ public:
     /**
      * @brief      control tx laser of on-board SFP softly (I2C command)
      */
-    virtual void switchSFPSoftTxControlBit(uint32_t aSFPId, bool aOn) const;
+    virtual void switchSFPSoftTxControl(uint32_t aSFPId, bool aOn) const;
 
     /**
      * @brief      Reset timing node.

@@ -16,8 +16,8 @@ from click import echo, style, secho
 from os.path import join, expandvars, basename
 from pdt.core import SI534xSlave, I2CExpanderSlave, DACSlave
 
-from pdt.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
-from pdt.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
+from pdt.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB
+from pdt.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed, kCarrierAFC
 from pdt.common.definitions import kDesingMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesingFanout
 from pdt.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
 from pdt.common.definitions import kLibrarySupportedBoards
@@ -30,13 +30,13 @@ kPC059Rev1 = 3
 kPC059FanoutHDMI = 4
 kPC059FanoutSFP = 5
 kTLURev1 = 6
-kFMCRev3 = 7
 
 kClockConfigMap = {
     kFMCRev1: "SI5344/PDTS0000.txt",
     kFMCRev2: "SI5344/PDTS0003.txt",
     kFMCRev3: "SI5394/PDTS0003.txt",
     kPC059Rev1: "SI5345/PDTS0005.txt",
+    
     kPC059FanoutHDMI: "devel/PDTS_PC059_FANOUT.txt",
     kPC059FanoutSFP: "wr/FANOUT_PLL_WIDEBW_SFPIN.txt",
     kTLURev1: "wr/TLU_EXTCLK_10MHZ_NOZDM.txt"
@@ -118,10 +118,11 @@ def io(obj, device):
 @io.command('reset', short_help="Perform a hard reset on the timing master.")
 @click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
 @click.option('--fanout-mode', 'fanout', type=click.IntRange(0, 1), default=0, help='Configures the board in fanout mode (pc059 only)')
+@click.option('--sfp-mux-sel', 'sfpmuxsel', type=toolbox.IntRange(0x0,0x7), default=0, help='Configures the sfp cdr mux on the fib')
 @click.option('--force-pll-cfg', 'forcepllcfg', type=click.Path(exists=True))
 @click.pass_obj
 @click.pass_context
-def reset(ctx, obj, soft, fanout, forcepllcfg):
+def reset(ctx, obj, soft, fanout, forcepllcfg, sfpmuxsel):
     '''
     Perform a hard reset on the timing master, including
 
@@ -158,18 +159,26 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
             
             if fanout == 0:
                 secho("Fanout mode enabled", fg='green')
-            
+
+            else:
+                secho("local master - standalone mode", fg='green')
+                
             lIO.reset(fanout, lPLLConfigFilePath)
             lDevice.getNode('switch.csr.ctrl.master_src').write(fanout)
+            lIO.getNode('csr.ctrl.inmux').write(sfpmuxsel)
             lDevice.dispatch()
+            secho("Active sfp mux " + hex(sfpmuxsel), fg='cyan')
         else:
-            lIO.reset(lPLLConfigFilePath)            
+            
+           lIO.reset(lPLLConfigFilePath)            
     
         ctx.invoke(clkstatus)
-
+    
+   
+            
     else:
-        secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
-        # board not supported by library, do reset here
+            secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
+            # board not supported by library, do reset here
 # ------------------------------------------------------------------------------
 
 
@@ -219,10 +228,15 @@ def status(ctx, obj, verbose):
 def clkstatus(ctx, obj, verbose):
 
     lDevice = obj.mDevice
+    lDesignType = obj.mDesignType
     lIO = lDevice.getNode('io')
     lBoardType = obj.mBoardType
     
     ctx.invoke(status)
+    if lDesignType == kDesingFanout:
+        mux_fib = lIO.getNode('csr.ctrl.inmux').read()
+        lDevice.dispatch()
+        secho("Active sfp mux {} ".format(mux_fib))
 
     echo()
     ctx.invoke(freq)
@@ -281,11 +295,13 @@ def sfpstatus(ctx, obj, sfp_id):
         else:
             if lBoardType == kBoardFMC or lBoardType == kBoardTLU:
                 echo(lIO.getSFPStatus(0))
-            elif ( lBoardType == kBoardPC059 ):
-                for i in range(9):
+            elif lBoardType in [ kBoardPC059, kBoardFIB]:
+                # PC059 sfp id 0 is upstream sfp
+                lSFPIDRange = 9 if lBoardType == kBoardPC059 else 8
+                for i in range(lSFPIDRange):
                     try:
                         echo(lIO.getSFPStatus(i))
-                        echo()
+                        #echo()
                     except:
                         pass
 
@@ -301,7 +317,8 @@ def sfpstatus(ctx, obj, sfp_id):
 @click.pass_context
 @click.option('--sfp-id', 'sfp_id', required=False, type=click.IntRange(0, 8), help='SFP id to query.')
 @click.option('--on/--off', default=False, help='enable/disable tx; default: FALSE')
-def switchsfptx(ctx, obj, sfp_id, on):
+@click.option('--hard', '-h', is_flag=True, default=False, help='Control SFP tx disable pin (FIB only).')
+def switchsfptx(ctx, obj, sfp_id, on, hard):
     '''
     Toggle SFP tx disable reg (if supported)
     '''
@@ -315,18 +332,60 @@ def switchsfptx(ctx, obj, sfp_id, on):
 
     if lBoardType in kLibrarySupportedBoards:
         echo(lDevice.getNode('io').getHardwareInfo())
+
         if sfp_id is not None:
-            lIO.switchSFPSoftTxControlBit(sfp_id, on)
+            if not hard:
+                lIO.switchSFPSoftTxControl(sfp_id, on)
+            else:
+                if lBoardType == kBoardFIB:
+                    lIO.switchSFPTx(sfp_id, on)
+                else:
+                    secho("SFP tx disable pin control only supported for FIB", fg='yellow')
             echo(lIO.getSFPStatus(sfp_id))
         else:
-            if lBoardType == kBoardFMC or lBoardType == kBoardTLU:
-                lIO.switchSFPSoftTxControlBit(0, on)
+            # only one SFP on these boards, no need for sfp id to be supplied
+            if lBoardType in [kBoardFMC, kBoardTLU]:
+                if not hard:
+                    lIO.switchSFPSoftTxControl(0, on)
+                else:
+                    secho("SFP tx disable pin control only supported for FIB", fg='yellow')
                 echo(lIO.getSFPStatus(0))
-            elif ( lBoardType == kBoardPC059 ):
-                for i in range(9):
-                    lIO.switchSFPSoftTxControlBit(i, on)
-                    echo(lIO.getSFPStatus(i))
+            else:
+                secho("Multiple SFPs on board {}. Please supply id of SFP to control".format(kBoardNamelMap[lBoardType]), fg='yellow')        
     else:
         secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
         # do sfp switch here
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@io.command('sfp-flags', short_help="Read sfp status flags over I2C (FIB only)")
+@click.pass_obj
+@click.pass_context
+@click.option('--sfp-id', 'sfp_id', required=False, type=click.IntRange(0, 7), help='SFP id to query.')
+def sfpflags(ctx, obj, sfp_id):
+
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+    lCarrierType = obj.mCarrierType
+    lDesignType = obj.mDesignType
+    
+    lIO = lDevice.getNode('io')
+    lUID = lIO.getNode('i2c')
+
+    if lBoardType == kBoardFIB:
+
+        lSFPLOSFlags = lIO.readSFPLOSFlags()
+        lSFPFaultFlags = lIO.readSFPFaultFlags()
+
+        secho("SFP LOS flags: {}".format('{0:08b}'.format(lSFPLOSFlags)))
+        secho("SFP Fault flags: {}".format('{0:08b}'.format(lSFPFaultFlags)))
+
+        if sfp_id is not None:
+            lSFPLOSFlag = lSFPLOSFlags & (1 << sfp_id)
+            secho("SFP {} LOS flag: {}".format(sfp_id,hex(lSFPLOSFlag)))
+
+            lSFPFaultFlag = lSFPFaultFlags & (1 << sfp_id)
+            secho("SFP {} Fault flag: {}".format(sfp_id,hex(lSFPFaultFlag)))
+    else:
+        secho("I2C SFP flag reading for FIB only")
 # ------------------------------------------------------------------------------

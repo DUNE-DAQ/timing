@@ -41,7 +41,7 @@ public:
     /**
      * @brief     Switch the SFP mux channel
      */
-    void switchSFPMUXChannel(uint32_t aSFPID) const override;
+    void switchSFPMUXChannel(uint32_t aSFPId) const override;
 
     /**
      * @brief     Read the active SFP mux channel
@@ -61,7 +61,7 @@ public:
     /**
      * @brief      control tx laser of on-board SFP softly (I2C command)
      */
-    void switchSFPSoftTxControlBit(uint32_t aSFPId, bool aOn) const override;
+    void switchSFPSoftTxControl(uint32_t aSFPId, bool aOn) const override;
 
 };
 

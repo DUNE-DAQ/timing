@@ -167,7 +167,7 @@ PC059IONode::getSFPStatus(uint32_t aSFPId, bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 void
-PC059IONode::switchSFPSoftTxControlBit(uint32_t aSFPId, bool aOn) const {
+PC059IONode::switchSFPSoftTxControl(uint32_t aSFPId, bool aOn) const {
 	// on this board the upstream sfp has its own i2c bus, and the 8 downstream sfps are muxed onto the main i2c bus
 	uint32_t lSFPBusId;
 	if (aSFPId == 0) {
@@ -181,7 +181,7 @@ PC059IONode::switchSFPSoftTxControlBit(uint32_t aSFPId, bool aOn) const {
         throw InvalidSFPId(lMsg.str());
 	}
 	auto sfp = getI2CDevice<I2CSFPSlave>(mSFPI2CBuses.at(lSFPBusId), "SFP_EEProm");
-	sfp->switchSoftTxControlBit(aOn);
+	sfp->switchSoftTxControl(aOn);
 }
 //-----------------------------------------------------------------------------
 } // namespace pdt

@@ -57,6 +57,15 @@ public:
 
     std::vector<uint32_t> debug() const;
 
+    /**
+     * @brief      Reads inputs values
+     *
+     * @param[in]  aBankId  A bank identifier
+     *
+     * @return     { description_of_the_return_value }
+     */
+    uint8_t readOutputsConfig( uint8_t aBankId ) const;
+
 private:
 
     void ensureValidBankId( uint8_t aBankId ) const;

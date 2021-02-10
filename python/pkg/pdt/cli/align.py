@@ -9,7 +9,7 @@ import pdt.cli.toolbox as toolbox
 import pdt.common.definitions as defs
 
 from click import echo, style, secho
-from pdt.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
+from pdt.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB
 from pdt.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from pdt.common.definitions import kDesingMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesingFanout
 from pdt.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
@@ -45,13 +45,13 @@ def applydelay(ctx, obj, addr, cdelay, fdelay, mux, force):
     lBoardType = obj.mBoardType
     lTopDesign = obj.mTopDesign
 
-    # or a different type of fanout board
-    if lBoardType == kBoardPC059:
+    # Are we working with a board with a return path mux (i.e. a fanout board)?
+    if lBoardType in [kBoardPC059, kBoardFIB]:
         if mux is None:
             if force == True:
                 lTopDesign.applyEndpointDelay(addr, cdelay, fdelay, 0, not force, True, 0)
             else:
-                raise RuntimeError('PC059 board: please supply an SFP mux channel')
+                raise RuntimeError('Fanout board: please supply an SFP mux channel')
         else:
             lTopDesign.applyEndpointDelay(addr, cdelay, fdelay, 0, not force, True, mux)
             
@@ -73,11 +73,11 @@ def measuredelay(ctx, obj, addr, mux):
     lTopDesign = obj.mTopDesign
     
     # or a different type of fanout board
-    if lBoardType == kBoardPC059:
+    if lBoardType in [kBoardPC059, kBoardFIB]:
         if mux is not None:
             echo("Endpoint (adr: {}, mux: {}) RTT: {}".format(addr,mux,lTopDesign.measureEndpointRTT(addr, True, mux)))
         else:
-            raise RuntimeError('PC059 board: please supply an SFP mux channel')
+            raise RuntimeError('Fanout board: please supply an SFP mux channel')
     else:
         echo("Endpoint (adr: {}) RTT: {}".format(addr,lTopDesign.measureEndpointRTT(addr, True)))
 # ------------------------------------------------------------------------------
@@ -104,10 +104,10 @@ def scanmux(obj):
     lTopDesign = obj.mTopDesign
     lBoardType = obj.mBoardType
 
-    if lBoardType == kBoardPC059:
+    if lBoardType in [kBoardPC059, kBoardFIB]:
         lTopDesign.scanSFPMUX()
     else:
-        raise RuntimeError('Mux scan is only available on PC059 boards')
+        raise RuntimeError('Mux scan is only available on fanout boards')
 # ------------------------------------------------------------------------------
 
 

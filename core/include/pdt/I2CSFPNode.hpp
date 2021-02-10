@@ -139,10 +139,10 @@ public:
     bool readI2CAddressSwapBit() const;
 
     /**
-     * @brief     Switch on or off the SFP tx laser via the soft control bit
+     * @brief     Switch on or off the SFP tx laser via the soft control bit. aOn=1: laster transmitting, soft tx disable bit = 0; aOn=0: laster NOT transmitting, soft tx disable bit = 1. 
      *
      */
-    void switchSoftTxControlBit(bool aOn) const;
+    void switchSoftTxControl(bool aOn) const;
 
     /**
      * @brief      Get SFP status

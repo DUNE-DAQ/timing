@@ -30,7 +30,7 @@ public:
     /**
      * @brief     Switch the SFP mux channel
      */
-    virtual void switchSFPMUXChannel(uint32_t aSFPID) const = 0;
+    virtual void switchSFPMUXChannel(uint32_t aSFPId) const = 0;
 
     /**
      * @brief     Read the active SFP mux channel

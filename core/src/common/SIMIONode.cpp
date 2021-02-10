@@ -152,7 +152,7 @@ SIMIONode::getSFPStatus(uint32_t aSFPId, bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 void
-SIMIONode::switchSFPSoftTxControlBit(uint32_t aSFPId, bool aOn) const {
+SIMIONode::switchSFPSoftTxControl(uint32_t aSFPId, bool aOn) const {
 	PDT_LOG(kWarning) << "Simulation does not support SFP I2C";
 }
 //-----------------------------------------------------------------------------

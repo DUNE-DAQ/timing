@@ -22,17 +22,18 @@ typedef std::map<std::string, uint32_t> Snapshot;
 const uint32_t kSPSClockInHz = 50e6;
 const uint32_t kEventSize = 6;
 
-enum BoardType {kBoardFMC, kBoardSim, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardUnknown};
-enum CarrierType {kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed, kCarrierATFC, kCarrierUnknown};
+enum BoardType {kBoardFMC, kBoardSim, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB, kBoardUnknown};
+enum CarrierType {kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed, kCarrierATFC, kCarrierAFC, kCarrierUnknown};
 enum DesignType {kDesingMaster, kDesignOuroborosSim, kDesignOuroboros, kUnused, kDesignEndpoint, kDesingFanout, kDesingOverlord, kDesingEndpoBICRT, kDesignUnknown};
-enum BoardRevision {kFMCRev1, kFMCRev2, kFMCRev3, kPC059Rev1, kTLURev1, kSIMRev1};
+enum BoardRevision {kFMCRev1, kFMCRev2, kFMCRev3, kPC059Rev1, kTLURev1, kSIMRev1, kFIBRev1};
 
 const std::map<BoardType, std::string> kBoardTypeMap = {
     {kBoardFMC, "fmc"},
     {kBoardSim, "sim"},
     {kBoardPC059, "pc059"},
     {kBoardMicrozed, "microzed"},
-    {kBoardTLU, "tlu"}
+    {kBoardTLU, "tlu"},
+    {kBoardFIB, "fib"}
 };
 
 
@@ -40,7 +41,8 @@ const std::map<CarrierType, std::string> kCarrierTypeMap = {
     {kCarrierEnclustraA35, "enclustra-a35"},
     {kCarrierKC705, "kc705"},
     {kCarrierMicrozed, "microzed"},
-    {kCarrierATFC, "atfc"}
+    {kCarrierATFC, "atfc"},
+    {kCarrierAFC, "afc"}
 
 };
 
@@ -60,7 +62,8 @@ const std::map<BoardRevision, std::string> kBoardRevisionMap = {
     {kFMCRev3, "kFMCRev3"},
     {kPC059Rev1, "kPC059Rev1"},
     {kTLURev1, "kTLURev1"},
-    {kSIMRev1, "kSIMRev1"}
+    {kSIMRev1, "kSIMRev1"},
+    {kFIBRev1, "kFIBRev1"}
 };
 
 const std::map<uint64_t, BoardRevision> kBoardUIDRevisionMap = {
@@ -93,14 +96,18 @@ const std::map<uint64_t, BoardRevision> kBoardUIDRevisionMap = {
     {0xd88039d9248e, kPC059Rev1},
     {0xd88039d98ae9, kPC059Rev1},
     {0xd88039d92498, kPC059Rev1},
-    {0x5410ecbba408, kTLURev1}
+    {0x5410ecbba408, kTLURev1},
+    {0x801f12f5ce48, kFIBRev1},
+    {0x801f12f5e9ae, kFIBRev1}
+
 };
 
 const std::map<std::string, std::string> kClockConfigMap = {
     {"kFMCRev1_enclustra-a35_endpoint", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
     {"kFMCRev2_enclustra-a35_endpoint", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
     {"kFMCRev3_enclustra-a35_endpoint", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
-    
+    {"kFIBRev1_enclustra-a35_endpoint", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
+
     {"kFMCRev1_enclustra-a35_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt"},
     {"kFMCRev2_enclustra-a35_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt"},
     {"kFMCRev3_enclustra-a35_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt"},
@@ -108,13 +115,18 @@ const std::map<std::string, std::string> kClockConfigMap = {
     {"kFMCRev1_enclustra-a35_ouroboros", "SI5344/PDTS0000.txt"},
     {"kFMCRev2_enclustra-a35_ouroboros", "SI5344/PDTS0003.txt"},
     {"kFMCRev3_enclustra-a35_ouroboros", "SI5344/PDTS0003.txt"},
-    
+    {"kPC059Rev1_enclustra-a35_ouroboros", "SI5345/PDTS0005.txt"},
+
+    {"kFIBRev1_enclustra-a35_ouroboros", "SI5345/PDTS0005.txt"},
+
     {"kTLURev1_enclustra-a35_overlord", "wr/TLU_EXTCLK_10MHZ_NOZDM.txt"},
     
     {"kPC059Rev1_enclustra-a35_fanout_mode0", "wr/FANOUT_PLL_WIDEBW_SFPIN.txt"}, // fanout mode
     {"kPC059Rev1_enclustra-a35_fanout_mode1", "devel/PDTS_PC059_FANOUT.txt"},    // stand-alone mode
 
-    {"kPC059Rev1_enclustra-a35_ouroboros", "SI5345/PDTS0005.txt"}
+    {"kFIBRev1_enclustra-a35_fanout_mode1", "devel/PDTS_PC059_FANOUT.txt"},    // stand-alone mode
+    {"kFIBRev1_afc_fanout_mode1", "SI5395/PDTS0004.txt"},    // stand-alone mode
+    
 
 };
 

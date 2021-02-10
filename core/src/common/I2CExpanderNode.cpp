@@ -100,6 +100,17 @@ I2CExpanderSlave::debug() const {
 
 
 //-----------------------------------------------------------------------------
+uint8_t
+I2CExpanderSlave::readOutputsConfig( uint8_t aBankId ) const {
+
+    this->ensureValidBankId(aBankId);
+    return this->readI2C(0x2+aBankId);
+    
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
 I2CExpanderNode::I2CExpanderNode( const uhal::Node& aNode ) : I2CMasterNode(aNode), I2CExpanderSlave(this, this->getSlaveAddress("i2caddr") ) {
 }
 //-----------------------------------------------------------------------------

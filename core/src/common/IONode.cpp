@@ -336,7 +336,7 @@ IONode::getSFPStatus(uint32_t aSFPId, bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 void
-IONode::switchSFPSoftTxControlBit(uint32_t aSFPId, bool aOn) const {
+IONode::switchSFPSoftTxControl(uint32_t aSFPId, bool aOn) const {
 	std::string lSFPI2CBus;
 	try {
 		lSFPI2CBus = mSFPI2CBuses.at(aSFPId);
@@ -346,7 +346,7 @@ IONode::switchSFPSoftTxControlBit(uint32_t aSFPId, bool aOn) const {
         throw InvalidSFPId(lMsg.str());
 	}
 	auto sfp = getI2CDevice<I2CSFPSlave>(lSFPI2CBus, "SFP_EEProm");
-	sfp->switchSoftTxControlBit(aOn);
+	sfp->switchSoftTxControl(aOn);
 }
 //-----------------------------------------------------------------------------
 
