@@ -164,9 +164,10 @@ def reset(ctx, obj, soft, fanout, forcepllcfg, sfpmuxsel):
                 secho("local master - standalone mode", fg='green')
                 
             lIO.reset(fanout, lPLLConfigFilePath)
+            
             lDevice.getNode('switch.csr.ctrl.master_src').write(fanout)
-            lIO.getNode('csr.ctrl.inmux').write(sfpmuxsel)
-            lDevice.dispatch()
+            
+            lIO.switchSFPMUXChannel(sfpmuxsel)
             secho("Active sfp mux " + hex(sfpmuxsel), fg='cyan')
         else:
             
@@ -233,9 +234,8 @@ def clkstatus(ctx, obj, verbose):
     lBoardType = obj.mBoardType
     
     ctx.invoke(status)
-    if lDesignType == kDesingFanout:
-        mux_fib = lIO.getNode('csr.ctrl.inmux').read()
-        lDevice.dispatch()
+    if lBoardType in [kBoardPC059, kBoardFIB]:
+        mux_fib = lIO.readActiveSFPMUXChannel()
         secho("Active sfp mux {} ".format(mux_fib))
 
     echo()
