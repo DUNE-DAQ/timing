@@ -1,5 +1,6 @@
 #include "pdt/MasterNode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 //-----------------------------------------------------------------------------
@@ -48,4 +49,6 @@ MasterNode::applyEndpointDelay(const ActiveEndpointConfig& aEptConfig, bool aMea
 	applyEndpointDelay(lEptAdr, lCDelay, lFDelay, lPDelay, aMeasureRTT);
 }
 //-----------------------------------------------------------------------------
+
 } // namespace pdt
+} // namespace dunedaq

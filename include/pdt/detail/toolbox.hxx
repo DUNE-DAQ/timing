@@ -1,9 +1,9 @@
-#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOOLBOX_HXX__
-#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOOLBOX_HXX__
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOOLBOX_HXX_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOOLBOX_HXX_
 
 #include <boost/lexical_cast.hpp>
 
-namespace pdt {
+namespace dunedaq::pdt {
 
 
 //-----------------------------------------------------------------------------
@@ -390,7 +390,7 @@ std::string shortVecFmt(const std::vector<T>& aVec)
   return oss.str();
 }
 //-----------------------------------------------------------------------------
-} // namespace pdt
+} // namespace dunedaq::pdt
 
 
-#endif /* _mp7_helpers_hpp_ */
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOOLBOX_HXX_

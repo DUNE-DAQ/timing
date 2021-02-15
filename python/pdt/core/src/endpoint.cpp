@@ -6,6 +6,7 @@
 
 namespace py = pybind11;
 
+namespace dunedaq {
 namespace pdt {
 namespace python {
 
@@ -28,10 +29,11 @@ register_endpoint(py::module& m) {
       .def(py::init<const uhal::Node&>())
       .def("disable", &pdt::CRTNode::disable)
       .def("enable", &pdt::CRTNode::enable)
-      .def("getStatus", &pdt::CRTNode::getStatus, py::arg("aPrint") = false)
-      .def("readLastPulseTimestamp", &pdt::CRTNode::readLastPulseTimestamp)
+      .def("get_status", &pdt::CRTNode::get_status, py::arg("aPrint") = false)
+      .def("read_last_pulse_timestamp", &pdt::CRTNode::read_last_pulse_timestamp)
       ;
 }
 
 } // namespace python
 } // namespace pdt
+} // namespace dunedaq

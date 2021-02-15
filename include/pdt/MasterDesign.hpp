@@ -1,17 +1,29 @@
+/**
+ * @file MasterDesign.hpp
+ *
+ * MasterDesign is a base class providing an interface
+ * to for top level master firmware designs.
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
+
 #ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_MASTERDESIGN_HPP_
 #define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_MASTERDESIGN_HPP_
+
+// PDT Headers
+#include "pdt/TopDesign.hpp"
+
+// uHal Headers
+#include "uhal/DerivedNode.hpp"
 
 // C++ Headers
 #include <chrono>
 #include <string>
 #include <sstream>
 
-// uHal Headers
-#include "uhal/DerivedNode.hpp"
-
-// PDT Headers
-#include "pdt/TopDesign.hpp"
-
+namespace dunedaq {
 namespace pdt {
 
 /**
@@ -58,7 +70,8 @@ public:
 };
 
 } // namespace pdt
+} // namespace dunedaq
 
-#include "pdt/MasterDesign.hxx"
+#include "pdt/detail/MasterDesign.hxx"
 
 #endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_MASTERDESIGN_HPP_

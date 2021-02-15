@@ -1,7 +1,7 @@
 #include <string>
 #include <sstream>
 
-namespace pdt
+namespace dunedaq::pdt
 {
 
 // In leiu of UHAL_REGISTER_DERIVED_NODE
@@ -29,13 +29,13 @@ EndpointDesign<IO>::~EndpointDesign() {
 
 //-----------------------------------------------------------------------------
 template<class IO>
-std::string EndpointDesign<IO>::getStatus(bool aPrint) const {
+std::string EndpointDesign<IO>::get_status(bool aPrint) const {
 	std::stringstream lStatus;
 	lStatus << this->getIONode().getPLLStatus();
 	uint32_t lNumberOfEndpointNodes = EndpointDesign<IO>::getNumberOfEndpointNodes();
 	for (uint32_t i=0; i < lNumberOfEndpointNodes; ++i) {
 		lStatus << "Endpoint node " << i << " status" << std::endl;
-		lStatus << this->getEndpointNode(i).getStatus();
+		lStatus << this->getEndpointNode(i).get_status();
 	}
 	if (aPrint) std::cout << lStatus.str();
 	return lStatus.str();

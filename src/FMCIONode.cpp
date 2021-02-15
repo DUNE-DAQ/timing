@@ -1,5 +1,6 @@
 #include "pdt/FMCIONode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 UHAL_REGISTER_DERIVED_NODE(FMCIONode)
@@ -19,10 +20,10 @@ FMCIONode::~FMCIONode() {
 
 //-----------------------------------------------------------------------------
 std::string 
-FMCIONode::getStatus(bool aPrint) const {
+FMCIONode::get_status(bool aPrint) const {
 	std::stringstream lStatus;
 
-	auto subnodes = readSubNodes(getNode("csr.stat"));
+	auto subnodes = read_sub_nodes(getNode("csr.stat"));
 	lStatus << formatRegTable(subnodes, "FMC IO state");
 
 	if (aPrint) std::cout << lStatus.str();
@@ -73,3 +74,4 @@ FMCIONode::reset(const std::string& aClockConfigFile) const {
 //-----------------------------------------------------------------------------
 
 } // namespace pdt
+} // namespace dunedaq

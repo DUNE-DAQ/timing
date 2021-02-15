@@ -1,8 +1,12 @@
 /**
- * @file    I2CMasterNode.hpp
- * @author  Alessandro Thea
- * @brief   Brief description
- * @date 
+ * @file I2CMasterNode.hpp
+ *
+ * I2CMasterNode is a class providing an interface
+ * to the I2C master firmware block.
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
  */
 
 #ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CMASTERNODE_HPP_
@@ -15,6 +19,7 @@
 #include "TimingIssues.hpp"
 #include "ers/ers.h"
 
+namespace dunedaq {
 namespace pdt {
 
 // PDTExceptionClass(I2CSlaveNotFound, "Exception class to handle missing I2C slaves");
@@ -116,6 +121,7 @@ private:
 };
 
 } // namespace pdt
+} // namespace dunedaq
 
 #endif	/* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CMASTERNODE_HPP_ */
 

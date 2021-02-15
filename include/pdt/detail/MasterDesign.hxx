@@ -1,7 +1,7 @@
 #include <string>
 #include <sstream>
 
-namespace pdt
+namespace dunedaq::pdt
 {
 
 //-----------------------------------------------------------------------------

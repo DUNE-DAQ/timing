@@ -1,16 +1,28 @@
+/**
+ * @file TimestampGeneratorNode.hpp
+ *
+ * TimestampGeneratorNode is a class providing an interface
+ * to timestamp generator firmware block.
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
+
 #ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMESTAMPGENERATORNODE_HPP_
 #define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMESTAMPGENERATORNODE_HPP_
-
-// C++ Headers
-#include <chrono>
-
-// uHal Headers
-#include "uhal/DerivedNode.hpp"
 
 // PDT Headers
 #include "pdt/TimingNode.hpp"
 #include "TimingIssues.hpp"
 
+// uHal Headers
+#include "uhal/DerivedNode.hpp"
+
+// C++ Headers
+#include <chrono>
+
+namespace dunedaq {
 namespace pdt {
 
 /**
@@ -25,7 +37,7 @@ public:
     /**
      * @brief     Print the status of the timing node.
      */
-    std::string getStatus(bool aPrint=false) const override;
+    std::string get_status(bool aPrint=false) const override;
 
     /**
      * @brief      Read the current timestamp words.
@@ -49,5 +61,6 @@ public:
 
 
 } // namespace pdt
+} // namespace dunedaq
 
 #endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMESTAMPGENERATORNODE_HPP_

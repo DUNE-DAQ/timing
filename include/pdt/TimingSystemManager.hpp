@@ -16,7 +16,7 @@
 #include "TimingIssues.hpp"
 #include "pdt/TimingSystemManagerBase.hpp"
 
- 
+namespace dunedaq {
 namespace pdt {
 /*!
  * @class TimingSystemManager
@@ -116,8 +116,9 @@ public:
 };
 
 } // namespace pdt
+} // namespace dunedaq
 
-#include "pdt/TimingSystemManager.hxx"
+#include "pdt/detail/TimingSystemManager.hxx"
 
 #endif	/* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGSYSTEMMANAGER_HPP_ */
 

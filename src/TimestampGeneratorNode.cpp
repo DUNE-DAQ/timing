@@ -1,5 +1,6 @@
 #include "pdt/TimestampGeneratorNode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 UHAL_REGISTER_DERIVED_NODE(TimestampGeneratorNode)
@@ -18,7 +19,7 @@ TimestampGeneratorNode::~TimestampGeneratorNode() {
 
 //-----------------------------------------------------------------------------
 std::string 
-TimestampGeneratorNode::getStatus(bool aPrint) const {
+TimestampGeneratorNode::get_status(bool aPrint) const {
 	std::stringstream lStatus;
 	lStatus << "Timestamp: 0x" << std::hex << readTimestamp() << std::endl;
 	if (aPrint) std::cout << lStatus.str();
@@ -57,3 +58,4 @@ TimestampGeneratorNode::setTimestamp(uint64_t aTimestamp) const {
 //-----------------------------------------------------------------------------
 
 } // namespace pdt
+} // namespace dunedaq

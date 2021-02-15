@@ -1,5 +1,6 @@
 #include "pdt/FLCmdGeneratorNode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 UHAL_REGISTER_DERIVED_NODE(FLCmdGeneratorNode)
@@ -20,9 +21,9 @@ FLCmdGeneratorNode::~FLCmdGeneratorNode() {
 
 //-----------------------------------------------------------------------------
 std::string
-FLCmdGeneratorNode::getStatus(bool aPrint) const {
+FLCmdGeneratorNode::get_status(bool aPrint) const {
     std::stringstream lStatus;
-    auto subnodes = readSubNodes(getNode("csr.stat"));
+    auto subnodes = read_sub_nodes(getNode("csr.stat"));
     lStatus << formatRegTable(subnodes, "FL Cmd gen state");
     if (aPrint) std::cout << lStatus.str();
     return lStatus.str();
@@ -35,7 +36,7 @@ void
 FLCmdGeneratorNode::sendFLCmd(uint32_t aCmd, uint32_t aChan, const TimestampGeneratorNode& aTSGen) const {
     getNode("sel").write(aChan);
 
-    resetSubNodes(getNode("chan_ctrl"));
+    reset_sub_nodes(getNode("chan_ctrl"));
 
     getNode("chan_ctrl.type").write(aCmd);
     getNode("chan_ctrl.force").write(0x1);
@@ -72,7 +73,7 @@ void
 FLCmdGeneratorNode::disableFakeTrigger(uint32_t aChan) const {
     //Clear the internal trigger generator.
     getNode("sel").write(aChan);
-    resetSubNodes(getNode("chan_ctrl"));
+    reset_sub_nodes(getNode("chan_ctrl"));
     ERS_LOG("Fake trigger generator " << formatRegValue(aChan) << " configuration cleared");
 }
 //------------------------------------------------------------------------------
@@ -94,4 +95,6 @@ FLCmdGeneratorNode::getCmdCountersTable(bool aPrint) const {
     return lCountersTable.str();
 }
 //-----------------------------------------------------------------------------
+
 } // namespace pdt
+} // namespace dunedaq

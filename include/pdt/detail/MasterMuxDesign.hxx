@@ -1,7 +1,7 @@
 #include <string>
 #include <sstream>
 
-namespace pdt
+namespace dunedaq::pdt
 {
 
 
@@ -30,10 +30,10 @@ MasterMuxDesign<IO,MST>::~MasterMuxDesign() {
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-std::string MasterMuxDesign<IO,MST>::getStatus(bool aPrint) const {
+std::string MasterMuxDesign<IO,MST>::get_status(bool aPrint) const {
 	std::stringstream lStatus;
 	lStatus << this->getIONode().getPLLStatus();
-	lStatus << this->getMasterNode().getStatus();
+	lStatus << this->getMasterNode().get_status();
 	// TODO mux specific status
 	if (aPrint) std::cout << lStatus.str();
 	return lStatus.str();

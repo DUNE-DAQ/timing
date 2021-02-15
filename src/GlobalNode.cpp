@@ -1,5 +1,6 @@
 #include "pdt/GlobalNode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 UHAL_REGISTER_DERIVED_NODE(GlobalNode)
@@ -19,14 +20,14 @@ GlobalNode::~GlobalNode() {
 
 
 //-----------------------------------------------------------------------------
-bool GlobalNode::inSpill() const {
+bool GlobalNode::in_spill() const {
     return false;
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-bool GlobalNode::txError() const {
+bool GlobalNode::tx_error() const {
     return false;
 }
 //-----------------------------------------------------------------------------
@@ -60,9 +61,9 @@ void GlobalNode::lockPartition() const {
 
 
 //-----------------------------------------------------------------------------
-std::string GlobalNode::getStatus(bool aPrint) const {
+std::string GlobalNode::get_status(bool aPrint) const {
 	std::stringstream lStatus;
-	auto subnodes = readSubNodes(getNode("csr.stat"));
+	auto subnodes = read_sub_nodes(getNode("csr.stat"));
     lStatus << formatRegTable(subnodes, "Global state");
     if (aPrint) std::cout << lStatus.str();
     return lStatus.str();
@@ -112,4 +113,6 @@ GlobalNode::enableUpstreamEndpoint(uint32_t aTimeout) {
     }
 }
 //-----------------------------------------------------------------------------
+
 } // namespace pdt
+} // namespace dunedaq

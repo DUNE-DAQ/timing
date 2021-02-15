@@ -1,5 +1,6 @@
 #include "pdt/PDIMasterNode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 UHAL_REGISTER_DERIVED_NODE(PDIMasterNode)
@@ -18,7 +19,7 @@ PDIMasterNode::~PDIMasterNode() {
 
 //-----------------------------------------------------------------------------
 std::string
-PDIMasterNode::getStatus(bool aPrint) const {
+PDIMasterNode::get_status(bool aPrint) const {
     std::stringstream lStatus;
     auto lTStamp = getNode<TimestampGeneratorNode>("master.tstamp").readRawTimestamp();
     lStatus << "Timestamp: 0x" << std::hex << tstamp2int(lTStamp) << " -> " << formatTimestamp(lTStamp) << std::endl << std::endl;
@@ -247,3 +248,4 @@ PDIMasterNode::syncTimestamp() const {
 //-----------------------------------------------------------------------------
 
 } // namespace pdt
+} // namespace dunedaq

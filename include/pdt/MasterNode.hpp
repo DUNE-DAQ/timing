@@ -1,11 +1,16 @@
+/**
+ * @file MasterNode.hpp
+ *
+ * MasterNode is a base class providing an interface
+ * for the master type firmware blocks.
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
+
 #ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_MASTERNODE_HPP_
 #define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_MASTERNODE_HPP_
-
-// C++ Headers
-#include <chrono>
-
-// uHal Headers
-#include "uhal/DerivedNode.hpp"
 
 // PDT Headers
 #include "pdt/TimingNode.hpp"
@@ -17,6 +22,13 @@
 #include "pdt/FLCmdGeneratorNode.hpp"
 #include "pdt/PartitionNode.hpp"
 
+// uHal Headers
+#include "uhal/DerivedNode.hpp"
+
+// C++ Headers
+#include <chrono>
+
+namespace dunedaq {
 namespace pdt {
 
 /**
@@ -81,5 +93,6 @@ public:
 
 
 } // namespace pdt
+} // namespace dunedaq
 
 #endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_MASTERNODE_HPP_

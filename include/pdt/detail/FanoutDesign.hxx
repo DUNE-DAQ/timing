@@ -1,7 +1,7 @@
 #include <string>
 #include <sstream>
 
-namespace pdt
+namespace dunedaq::pdt
 {
 
 
@@ -30,10 +30,10 @@ FanoutDesign<IO,MST>::~FanoutDesign() {
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-std::string FanoutDesign<IO,MST>::getStatus(bool aPrint) const {
+std::string FanoutDesign<IO,MST>::get_status(bool aPrint) const {
 	std::stringstream lStatus;
 	lStatus << this->getIONode().getPLLStatus();
-	lStatus << this->getMasterNode().getStatus();
+	lStatus << this->getMasterNode().get_status();
 	// TODO fanout specific status
 	if (aPrint) std::cout << lStatus.str();
 	return lStatus.str();

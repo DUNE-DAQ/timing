@@ -17,6 +17,7 @@
 #include "pdt/toolbox.hpp"
 #include "pdt/I2CSlave.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 UHAL_REGISTER_DERIVED_NODE(I2CMasterNode)
@@ -478,4 +479,4 @@ void I2CMasterNode::waitUntilFinished(bool aRequireAcknowledgement, bool aRequir
 }
 
 } // namespace pdt
-
+} // namespace dunedaq

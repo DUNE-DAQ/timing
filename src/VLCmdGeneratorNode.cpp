@@ -1,5 +1,6 @@
 #include "pdt/VLCmdGeneratorNode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 UHAL_REGISTER_DERIVED_NODE(VLCmdGeneratorNode)
@@ -20,9 +21,9 @@ VLCmdGeneratorNode::~VLCmdGeneratorNode() {
 
 //-----------------------------------------------------------------------------
 std::string
-VLCmdGeneratorNode::getStatus(bool aPrint) const {
+VLCmdGeneratorNode::get_status(bool aPrint) const {
     std::stringstream lStatus;
-    auto subnodes = readSubNodes(getNode("csr.stat"));
+    auto subnodes = read_sub_nodes(getNode("csr.stat"));
     lStatus << formatRegTable(subnodes, "VL Cmd gen state");
 
     if (aPrint) std::cout << lStatus.str();
@@ -34,7 +35,7 @@ VLCmdGeneratorNode::getStatus(bool aPrint) const {
 //-----------------------------------------------------------------------------
 void
 VLCmdGeneratorNode::switchEndpointSFP(uint32_t aAddr, bool aEnable) const {
-    resetSubNodes(getNode("csr.ctrl"));
+    reset_sub_nodes(getNode("csr.ctrl"));
     getNode("csr.ctrl.addr").write(aAddr);
     getNode("csr.ctrl.tx_en").write(aEnable);
     getNode("csr.ctrl.go").write(0x1);
@@ -47,7 +48,7 @@ VLCmdGeneratorNode::switchEndpointSFP(uint32_t aAddr, bool aEnable) const {
 //-----------------------------------------------------------------------------
 void
 VLCmdGeneratorNode::applyEndpointDelay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel) const {
-    resetSubNodes(getNode("csr.ctrl"), false);
+    reset_sub_nodes(getNode("csr.ctrl"), false);
     getNode("csr.ctrl.tx_en").write(0x1);
     getNode("csr.ctrl.addr").write(aAddr);
     getNode("csr.ctrl.cdel").write(aCDel);
@@ -66,3 +67,4 @@ VLCmdGeneratorNode::applyEndpointDelay(uint32_t aAddr, uint32_t aCDel, uint32_t 
 
 
 } // namespace pdt
+} // namespace dunedaq

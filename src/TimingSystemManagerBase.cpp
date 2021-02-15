@@ -1,7 +1,7 @@
 #include "pdt/TimingSystemManagerBase.hpp"
 
-namespace pdt
-{
+namespace dunedaq {
+namespace pdt {
 
 
 //-----------------------------------------------------------------------------
@@ -39,4 +39,6 @@ TimingSystemManagerBase::getNumberOfEndpoints() const {
 	return endpointHardware.size();
 }
 //-----------------------------------------------------------------------------
-}
+
+} // namespace pdt
+} // namespace dunedaq

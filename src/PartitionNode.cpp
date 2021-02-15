@@ -3,6 +3,7 @@
 #include <chrono>
 #include <thread>
 
+namespace dunedaq {
 namespace pdt {
 
 UHAL_REGISTER_DERIVED_NODE(PartitionNode)
@@ -247,11 +248,11 @@ PartitionNode::readCommandCounts() const {
 
 //-----------------------------------------------------------------------------
 std::string
-PartitionNode::getStatus(bool aPrint) const {
+PartitionNode::get_status(bool aPrint) const {
     std::stringstream lStatus;
 
-    auto lControls = readSubNodes(getNode("csr.ctrl"), false);
-    auto lState = readSubNodes(getNode("csr.stat"), false);
+    auto lControls = read_sub_nodes(getNode("csr.ctrl"), false);
+    auto lState = read_sub_nodes(getNode("csr.stat"), false);
 
     auto lEventCtr = getNode("evtctr").read();
     auto lBufCount = getNode("buf.count").read();
@@ -287,3 +288,4 @@ PartitionNode::getStatus(bool aPrint) const {
 //-----------------------------------------------------------------------------
 
 } // namespace pdt
+} // namespace dunedaq

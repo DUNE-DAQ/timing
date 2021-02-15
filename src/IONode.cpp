@@ -1,5 +1,6 @@
 #include "pdt/IONode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 //UHAL_REGISTER_DERIVED_NODE(IONode);
@@ -307,7 +308,7 @@ IONode::getSFPStatus(uint32_t aSFPId, bool aPrint) const {
         throw InvalidSFPId(ERS_HERE, getId(), formatRegValue(aSFPId), e);
 	}
 	auto sfp = getI2CDevice<I2CSFPSlave>(lSFPI2CBus, "SFP_EEProm");
-	lStatus << sfp->getStatus();
+	lStatus << sfp->get_status();
 	if (aPrint) std::cout << lStatus.str();
 	return lStatus.str();
 }
@@ -329,3 +330,4 @@ IONode::switchSFPSoftTxControlBit(uint32_t aSFPId, bool aOn) const {
 //-----------------------------------------------------------------------------
 
 } // namespace pdt
+} // namespace dunedaq

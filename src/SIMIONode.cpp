@@ -1,5 +1,6 @@
 #include "pdt/SIMIONode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 UHAL_REGISTER_DERIVED_NODE(SIMIONode)
@@ -19,10 +20,10 @@ SIMIONode::~SIMIONode() {
 
 //-----------------------------------------------------------------------------
 std::string 
-SIMIONode::getStatus(bool aPrint) const {
+SIMIONode::get_status(bool aPrint) const {
 	std::stringstream lStatus;
 
-	auto subnodes = readSubNodes(getNode("csr.stat"));
+	auto subnodes = read_sub_nodes(getNode("csr.stat"));
 	lStatus << formatRegTable(subnodes, "SIM IO state");
 
 	if (aPrint) std::cout << lStatus.str();
@@ -148,4 +149,6 @@ SIMIONode::switchSFPSoftTxControlBit(uint32_t /*aSFPId*/, bool /*aOn*/) const {
 	ERS_INFO("Simulation does not support SFP I2C");
 }
 //-----------------------------------------------------------------------------
+
 } // namespace pdt
+} // namespace dunedaq

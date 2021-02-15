@@ -1,5 +1,6 @@
 #include "pdt/EndpointNode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 UHAL_REGISTER_DERIVED_NODE(EndpointNode)
@@ -61,7 +62,7 @@ EndpointNode::reset(uint32_t partition, uint32_t address) const {
 
 //-----------------------------------------------------------------------------
 std::string
-EndpointNode::getStatus(bool aPrint) const {
+EndpointNode::get_status(bool aPrint) const {
 	
 	std::stringstream lStatus;
 
@@ -70,8 +71,8 @@ EndpointNode::getStatus(bool aPrint) const {
 	auto lEPTimestamp = getNode("tstamp").readBlock(2);
 	auto lEPEventCounter = getNode("evtctr").read();
 	auto lEPBufferCount = getNode("buf.count").read();
-	auto lEPControl = readSubNodes(getNode("csr.ctrl"), false);
-	auto lEPState = readSubNodes(getNode("csr.stat"), false);
+	auto lEPControl = read_sub_nodes(getNode("csr.ctrl"), false);
+	auto lEPState = read_sub_nodes(getNode("csr.stat"), false);
 	auto lEPCounters = getNode("ctrs").readBlock(kCommandNumber);
 	getClient().dispatch();
 
@@ -190,4 +191,6 @@ EndpointNode::readVersion() const {
 	return lBufCount.value();
 }
 //-----------------------------------------------------------------------------
+
 } // namespace pdt
+} // namespace dunedaq

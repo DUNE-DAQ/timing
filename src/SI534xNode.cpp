@@ -13,6 +13,7 @@
 #include <fstream>
 #include <sstream>
 
+namespace dunedaq {
 namespace pdt {
 
 // uHAL Node registation
@@ -326,6 +327,5 @@ SI534xNode::~SI534xNode() {
 }
 //-----------------------------------------------------------------------------
 
-
-
 } // namespace pdt
+} // namespace dunedaq

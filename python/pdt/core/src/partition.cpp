@@ -6,6 +6,7 @@
 // Namespace resolution
 namespace py = pybind11;
 
+namespace dunedaq {
 namespace pdt {
 namespace python {
 
@@ -27,9 +28,10 @@ register_partition(py::module& m) {
       .def("start", &pdt::PartitionNode::start, py::arg("aTimeout") = 5000)
       .def("stop", &pdt::PartitionNode::stop, py::arg("aTimeout") = 5000)
       .def("configureRateCtrl", &pdt::PartitionNode::configureRateCtrl)
-      .def("getStatus", &pdt::PartitionNode::getStatus, py::arg("aPrint")=false)
+      .def("get_status", &pdt::PartitionNode::get_status, py::arg("aPrint")=false)
       ;
 }
 
 } // namespace python
 } // namespace pdt
+} // namespace dunedaq

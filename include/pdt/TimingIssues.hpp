@@ -12,6 +12,8 @@
 
 #include <string>
 
+namespace dunedaq {
+
 //PDTExceptionClass(MP7HelperException, "Exception class to handle MP7 specific exceptions")
 
 // Generic exceptions
@@ -208,7 +210,6 @@ ERS_DECLARE_ISSUE(pdt,                                                          
                   ((std::string)ept_state)                                               ///< Message parameters
 )
 
+} // namespace dunedaq
 
 #endif // TIMING_BOARD_SOFTWARE_SRC_TIMING_ISSUES_HPP_
-
-

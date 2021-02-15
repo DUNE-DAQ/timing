@@ -1,4 +1,4 @@
-namespace pdt
+namespace dunedaq::pdt
 {
 
 
@@ -47,11 +47,11 @@ const EPT_TOP& TimingSystemManager<MST_TOP,EPT_TOP>::getEndpoint(uint32_t aEptId
 template<class MST_TOP, class EPT_TOP>
 void TimingSystemManager<MST_TOP,EPT_TOP>::printSystemStatus() const {
 	std::cout << "Timing master status" << std::endl;
-	for (uint32_t i = 0; i < getNumberOfMasters(); ++i) getMaster(i).getStatus(true);
+	for (uint32_t i = 0; i < getNumberOfMasters(); ++i) getMaster(i).get_status(true);
 
 	for (uint32_t i = 0; i < this->getNumberOfEndpoints(); ++i) {
 		std::cout << "Timing endpoint " << i << " status" << std::endl;
-		this->getEndpoint(i).getStatus(true);
+		this->getEndpoint(i).get_status(true);
 	}
 }
 //-----------------------------------------------------------------------------

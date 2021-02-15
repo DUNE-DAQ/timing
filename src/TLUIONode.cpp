@@ -1,5 +1,6 @@
 #include "pdt/TLUIONode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 UHAL_REGISTER_DERIVED_NODE(TLUIONode)
@@ -20,8 +21,8 @@ TLUIONode::~TLUIONode() {
 
 //-----------------------------------------------------------------------------
 std::string
-TLUIONode::getStatus(bool aPrint) const {
-	auto subnodes = readSubNodes(getNode("csr.stat"));
+TLUIONode::get_status(bool aPrint) const {
+	auto subnodes = read_sub_nodes(getNode("csr.stat"));
 	std::stringstream lStatus;
 	lStatus << formatRegTable(subnodes, "TLU IO state");
 
@@ -136,4 +137,6 @@ TLUIONode::switchSFPSoftTxControlBit(uint32_t /*aSFPId*/, bool /*aOn*/) const {
 	ERS_LOG("TLU does not support SFP I2C");
 }
 //-----------------------------------------------------------------------------
+
 } // namespace pdt
+} // namespace dunedaq

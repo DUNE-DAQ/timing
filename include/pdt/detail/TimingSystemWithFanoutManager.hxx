@@ -1,4 +1,4 @@
-namespace pdt
+namespace dunedaq::pdt
 {
 
 
@@ -43,11 +43,11 @@ const FAN_TOP& TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::getFanout
 template<class MST_TOP, class EPT_TOP, class FAN_TOP>
 void TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::printSystemStatus() const {
 	std::cout << "Timing master status" << std::endl;
-	for (uint32_t i = 0; i < this->getNumberOfMasters(); ++i) this->getMaster(i).getStatus(true);	
+	for (uint32_t i = 0; i < this->getNumberOfMasters(); ++i) this->getMaster(i).get_status(true);	
 
 
 	std::cout << "Timing fanout status" << std::endl;
-	for (uint32_t i = 0; i < getNumberOfFanouts(); ++i) getFanout(i).getStatus(true);
+	for (uint32_t i = 0; i < getNumberOfFanouts(); ++i) getFanout(i).get_status(true);
 }
 //-----------------------------------------------------------------------------
 

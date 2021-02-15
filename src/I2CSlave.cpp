@@ -18,6 +18,7 @@
 #include "pdt/toolbox.hpp"
 #include "pdt/I2CMasterNode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 
@@ -132,4 +133,4 @@ I2CSlave::getMasterId() const {
 //-----------------------------------------------------------------------------
 
 } // namespace pdt
-
+} // namespace dunedaq

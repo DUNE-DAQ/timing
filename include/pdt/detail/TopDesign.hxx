@@ -1,7 +1,10 @@
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOPDESIGN_HXX_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOPDESIGN_HXX_
+
 #include <string>
 #include <sstream>
 
-namespace pdt
+namespace dunedaq::pdt
 {
 
 
@@ -70,3 +73,5 @@ uint32_t TopDesign<IO>::getNumberOfEndpointNodes() const {
 }
 //-----------------------------------------------------------------------------
 }
+
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOPDESIGN_HXX_

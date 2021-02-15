@@ -1,12 +1,24 @@
+/**
+ * @file SIChipSlave.hpp
+ *
+ * SIChipSlave is a class providing an interface
+ * to SI I2C devices.
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
+
 #ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SICHIPSLAVE_HPP_
 #define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SICHIPSLAVE_HPP_
-
-#include <map>
 
 #include "pdt/I2CSlave.hpp"
 
 #include "ers/ers.h"
 
+#include <map>
+
+namespace dunedaq {
 namespace pdt 
 {
 
@@ -65,5 +77,6 @@ public:
 };
 
 } // namespace pdt
+} // namespace dunedaq
 
 #endif /* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SICHIPSLAVE_HPP_ */

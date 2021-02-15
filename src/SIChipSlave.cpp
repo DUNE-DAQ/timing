@@ -9,6 +9,7 @@
 #include <fstream>
 #include <sstream>
 
+namespace dunedaq {
 namespace pdt {
 
 //-----------------------------------------------------------------------------
@@ -112,5 +113,5 @@ SIChipSlave::writeClockRegister( uint16_t aAddr, uint8_t aData ) const {
 }
 //-----------------------------------------------------------------------------
 
-
 } // namespace pdt
+} // namespace dunedaq

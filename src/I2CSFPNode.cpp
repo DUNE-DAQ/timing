@@ -1,5 +1,6 @@
 #include "pdt/I2CSFPNode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 //-----------------------------------------------------------------------------
@@ -311,7 +312,7 @@ I2CSFPSlave::switchSoftTxControlBit(bool aOn) const {
 
 //-----------------------------------------------------------------------------
 std::string
-I2CSFPSlave::getStatus(bool aPrint) const {
+I2CSFPSlave::get_status(bool aPrint) const {
     sfpReachable();
     
     std::stringstream lStatus;
@@ -397,3 +398,4 @@ I2CSFPNode::~I2CSFPNode() {
 //-----------------------------------------------------------------------------
 
 } // namespace pdt
+} // namespace dunedaq

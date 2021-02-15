@@ -1,5 +1,6 @@
 #include "pdt/FanoutIONode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 //-----------------------------------------------------------------------------
@@ -15,3 +16,4 @@ FanoutIONode::~FanoutIONode() {
 //-----------------------------------------------------------------------------
 
 } // namespace pdt
+} // namespace dunedaq

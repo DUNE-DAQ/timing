@@ -7,15 +7,15 @@
 
 #ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGSYSTEMWITHFANOUTMANAGER_HPP_
 #define	TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGSYSTEMWITHFANOUTMANAGER_HPP_
-
-#include <vector>
  
-// uHal Headers
-#include "uhal/DerivedNode.hpp"
 
 #include "pdt/TimingSystemManager.hpp"
 
+#include "uhal/DerivedNode.hpp"
 
+#include <vector>
+
+namespace dunedaq {
 namespace pdt {
 /*!
  * @class TimingSystemWithFanoutManager
@@ -119,8 +119,9 @@ public:
 };
 
 } // namespace pdt
+} // namespace dunedaq
 
-#include "pdt/TimingSystemWithFanoutManager.hxx"
+#include "pdt/detail/TimingSystemWithFanoutManager.hxx"
 
-#endif	/* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGSYSTEMWITHFANOUTMANAGER_HPP_ */
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGSYSTEMWITHFANOUTMANAGER_HPP_
 

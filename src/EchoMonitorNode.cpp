@@ -1,5 +1,6 @@
 #include "pdt/EchoMonitorNode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 UHAL_REGISTER_DERIVED_NODE(EchoMonitorNode)
@@ -19,9 +20,9 @@ EchoMonitorNode::~EchoMonitorNode() {
 
 //-----------------------------------------------------------------------------
 std::string
-EchoMonitorNode::getStatus(bool aPrint) const {
+EchoMonitorNode::get_status(bool aPrint) const {
 	std::stringstream lStatus;
-	auto subnodes = readSubNodes(getNode("csr.stat"));
+	auto subnodes = read_sub_nodes(getNode("csr.stat"));
     lStatus << formatRegTable(subnodes, "Echo mon state");
     if (aPrint) std::cout << lStatus.str();
     return lStatus.str();
@@ -79,3 +80,4 @@ EchoMonitorNode::sendEchoAndMeasureDelay(int64_t aTimeout) const {
 //-----------------------------------------------------------------------------
 
 } // namespace pdt
+} // namespace dunedaq

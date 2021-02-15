@@ -1,5 +1,6 @@
 #include "pdt/FrequencyCounterNode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 UHAL_REGISTER_DERIVED_NODE(FrequencyCounterNode)
@@ -18,9 +19,9 @@ FrequencyCounterNode::~FrequencyCounterNode() {
 
 //-----------------------------------------------------------------------------
 std::string
-FrequencyCounterNode::getStatus(bool aPrint) const {
+FrequencyCounterNode::get_status(bool aPrint) const {
 	std::stringstream lStatus;
-	auto subnodes = readSubNodes(getNode("csr.ctrl"));
+	auto subnodes = read_sub_nodes(getNode("csr.ctrl"));
     lStatus << formatRegTable(subnodes, "Freq counter state");
     if (aPrint) std::cout << lStatus.str();
     return lStatus.str();
@@ -56,3 +57,4 @@ FrequencyCounterNode::measureFrequencies(uint8_t nClocks) const {
 //-----------------------------------------------------------------------------
 
 } // namespace pdt
+} // namespace dunedaq

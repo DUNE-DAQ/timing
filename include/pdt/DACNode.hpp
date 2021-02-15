@@ -1,3 +1,14 @@
+/**
+ * @file DACNode.hpp
+ *
+ * DACNode and DACSlaves are classes providing an interface
+ * to the physical DAC IC.
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
+
 #ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_DACNODE_HPP_
 #define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_DACNODE_HPP_
 
@@ -5,6 +16,8 @@
 #include "pdt/I2CMasterNode.hpp"
 
 #include "ers/ers.h"
+
+namespace dunedaq {
 
 ERS_DECLARE_ISSUE(pdt,                                      ///< Namespace
                   DACChannelOutOfRange,                     ///< Issue class name
@@ -52,5 +65,6 @@ public:
 
 
 } // namespace pdt
+} // namespace dunedaq
 
 #endif /* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_DACNODE_HPP_ */

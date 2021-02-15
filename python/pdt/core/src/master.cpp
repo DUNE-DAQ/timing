@@ -5,6 +5,7 @@
 
 namespace py = pybind11;
 
+namespace dunedaq {
 namespace pdt {
 namespace python {
 
@@ -22,7 +23,7 @@ register_master(py::module& m) {
       .def("disableFakeTrigger", &pdt::PDIMasterNode::disableFakeTrigger)
       .def("enableSpillInterface", &pdt::PDIMasterNode::enableSpillInterface)
       .def("enableFakeSpills", &pdt::PDIMasterNode::enableFakeSpills, py::arg("aCycLen") = 16, py::arg("aSpillLen") = 8)
-      .def("getStatus", &pdt::PDIMasterNode::getStatus, py::arg("aPrint") = false)
+      .def("get_status", &pdt::PDIMasterNode::get_status, py::arg("aPrint") = false)
       .def("syncTimestamp", &pdt::PDIMasterNode::syncTimestamp)
       ;
 
@@ -33,9 +34,10 @@ register_master(py::module& m) {
       .def("reset", &pdt::TriggerReceiverNode::reset)
       .def("enableTriggers", &pdt::TriggerReceiverNode::enableTriggers)
       .def("disableTriggers", &pdt::TriggerReceiverNode::disableTriggers)
-      .def("getStatus", &pdt::TriggerReceiverNode::getStatus, py::arg("aPrint") = false)
+      .def("get_status", &pdt::TriggerReceiverNode::get_status, py::arg("aPrint") = false)
       ;
 }
 
 } // namespace python
 } // namespace pdt
+} // namespace dunedaq

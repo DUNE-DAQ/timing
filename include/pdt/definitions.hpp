@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 
+namespace dunedaq {
 namespace pdt {
 
 typedef std::map<std::string, uint32_t> Snapshot;
@@ -194,6 +195,6 @@ struct EndpointRTTResult {
 };
 
 } // namespace pdt
+} // namespace dunedaq
 
 #endif	// TIMING_BOARD_SOFTWARE_INCLUDE_PDT_DEFINITIONS_HPP_
-

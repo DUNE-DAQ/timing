@@ -1,13 +1,14 @@
 #ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOOLBOX_HPP_
 #define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOOLBOX_HPP_
 
-// C++ Headers
-#include <string>
-#include <istream>
-#include <iomanip>
-#include <stdint.h>
-#include <stdlib.h>
-#include <chrono>
+#include "definitions.hpp"
+
+#include "TimingIssues.hpp"
+
+#include "ers/ers.h"
+
+// uHAL Headers
+#include <uhal/Node.hpp>
 
 // Boost Headers
 #include <boost/static_assert.hpp>
@@ -17,14 +18,15 @@
 #include <boost/format.hpp>
 #include <boost/format/group.hpp>
 
-// uHAL Headers
-#include <uhal/Node.hpp>
+// C++ Headers
+#include <string>
+#include <istream>
+#include <iomanip>
+#include <stdint.h>
+#include <stdlib.h>
+#include <chrono>
 
-#include "ers/ers.h"
-
-#include "definitions.hpp"
-#include "TimingIssues.hpp"
-
+namespace dunedaq {
 namespace pdt {
 
 // Wrappers to be used by lexical_cast
@@ -172,9 +174,9 @@ std::string shortVecFmt(const std::vector<T>& aVec);
 
 
 } // namespace pdt
+} // namespace dunedaq
 
+#include "pdt/detail/toolbox.hxx"
 
-#include "pdt/toolbox.hxx"
-
-#endif /* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOOLBOX_HPP_ */
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOOLBOX_HPP_
 

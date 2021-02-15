@@ -3,6 +3,7 @@
 
 namespace py = pybind11;
 
+namespace dunedaq {
 namespace pdt {
 namespace python {
 	
@@ -25,5 +26,7 @@ PYBIND11_MODULE(core, m) {
 	pdt::python::register_top_designs(m);
 
 }
-}
-}
+
+} // namespace python
+} // namespace pdt
+} // namespace dunedaq

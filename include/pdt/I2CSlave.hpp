@@ -1,22 +1,28 @@
 /**
- * @file    I2CMasterNode.hpp
- * @author  Alessandro Thea
- * @brief   Brief description
- * @date 
+ * @file I2CSlave.hpp
+ *
+ * I2CSlave is a base class providing an interface
+ * to I2C devices.
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
  */
 
 #ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CSLAVE_HPP_
 #define	TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CSLAVE_HPP_
 
+#include "TimingIssues.hpp"
+
 #include "ers/ers.h"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
-#include "TimingIssues.hpp"
 
 #include <boost/core/noncopyable.hpp>
 #include <vector>
 
+namespace dunedaq {
 namespace pdt {
 
 class I2CMasterNode;
@@ -77,6 +83,7 @@ private:
 };
 
 } // namespace pdt
+} // namespace dunedaq
 
 #endif	/* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CSLAVE_HPP_ */
 

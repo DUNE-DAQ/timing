@@ -1,5 +1,6 @@
 #include "pdt/SpillInterfaceNode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 UHAL_REGISTER_DERIVED_NODE(SpillInterfaceNode)
@@ -20,9 +21,9 @@ SpillInterfaceNode::~SpillInterfaceNode() {
 
 //-----------------------------------------------------------------------------
 std::string
-SpillInterfaceNode::getStatus(bool aPrint) const {
+SpillInterfaceNode::get_status(bool aPrint) const {
     std::stringstream lStatus;
-    auto subnodes = readSubNodes(getNode("csr.stat"));
+    auto subnodes = read_sub_nodes(getNode("csr.stat"));
     lStatus << formatRegTable(subnodes, "Spill interface state");
     
     if (aPrint) std::cout << lStatus.str();
@@ -81,4 +82,6 @@ SpillInterfaceNode::readInSpill() const {
     return lInSpill.value();
 }
 //------------------------------------------------------------------------------
+
 } // namespace pdt
+} // namespace dunedaq

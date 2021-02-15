@@ -1,5 +1,6 @@
 #include "pdt/DACNode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 // uHAL Node registation
@@ -57,3 +58,4 @@ DACNode::~DACNode() {
 //-----------------------------------------------------------------------------
 
 } // namespace pdt
+} // namespace dunedaq

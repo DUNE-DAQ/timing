@@ -1,4 +1,4 @@
-namespace pdt {
+namespace dunedaq::pdt {
 
 //-----------------------------------------------------------------------------
 template < class T> 

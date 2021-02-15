@@ -13,6 +13,7 @@
 
 namespace py = pybind11;
 
+namespace dunedaq {
 namespace pdt {
 namespace python {
 
@@ -21,14 +22,14 @@ register_top_designs(py::module& m) {
 
       // PD-I master design
       py::class_<pdt::PDIMasterDesign<TLUIONode>, uhal::Node> (m, "PDIMasterDesign<TLUIONode>")
-      .def("getStatus", &pdt::PDIMasterDesign<TLUIONode>::getStatus)
+      .def("get_status", &pdt::PDIMasterDesign<TLUIONode>::get_status)
       .def("applyEndpointDelay", &pdt::PDIMasterDesign<TLUIONode>::applyEndpointDelay)
       .def("measureEndpointRTT", &pdt::PDIMasterDesign<TLUIONode>::measureEndpointRTT)
       ;
 
       // PD-I master design on fmc
       py::class_<pdt::PDIMasterDesign<FMCIONode>, uhal::Node> (m, "PDIMasterDesign<FMCIONode>")
-      .def("getStatus", &pdt::PDIMasterDesign<FMCIONode>::getStatus)
+      .def("get_status", &pdt::PDIMasterDesign<FMCIONode>::get_status)
       .def("applyEndpointDelay", &pdt::PDIMasterDesign<FMCIONode>::applyEndpointDelay)
       .def("measureEndpointRTT", &pdt::PDIMasterDesign<FMCIONode>::measureEndpointRTT)
       ;
@@ -52,3 +53,4 @@ register_top_designs(py::module& m) {
 
 } // namespace python
 } // namespace pdt
+} // namespace dunedaq

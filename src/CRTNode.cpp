@@ -1,5 +1,6 @@
 #include "pdt/CRTNode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 UHAL_REGISTER_DERIVED_NODE(CRTNode)
@@ -39,9 +40,9 @@ CRTNode::disable() const {
 
 //-----------------------------------------------------------------------------
 std::string
-CRTNode::getStatus(bool aPrint) const {
+CRTNode::get_status(bool aPrint) const {
 	std::stringstream lStatus;
-	auto lCRTRegs = readSubNodes(getNode(""));
+	auto lCRTRegs = read_sub_nodes(getNode(""));
     lStatus << formatRegTable(lCRTRegs, "CRT state", {"", ""}) << std::endl;
 
     const uint64_t lLastPulseTimestamp = ((uint64_t)lCRTRegs.at("pulse.ts_h").value() << 32) + lCRTRegs.at("pulse.ts_l").value();
@@ -55,7 +56,7 @@ CRTNode::getStatus(bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 uint64_t
-CRTNode::readLastPulseTimestamp() const {
+CRTNode::read_last_pulse_timestamp() const {
 
     auto lTimestampRegLow = getNode("pulse.ts_l").read();
     auto lTimestampRegHigh = getNode("pulse.ts_h").read();
@@ -66,3 +67,4 @@ CRTNode::readLastPulseTimestamp() const {
 //-----------------------------------------------------------------------------
 
 } // namespace pdt
+} // namespace dunedaq

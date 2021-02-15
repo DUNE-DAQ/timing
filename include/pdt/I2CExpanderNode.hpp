@@ -1,11 +1,23 @@
+/**
+ * @file I2CExpanderNode.hpp
+ *
+ * I2CExpanderSlave and I2CExpanderNode are classes providing an interface
+ * to the I2C expander IC.
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
+
 #ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SFPEXPANDERNODE_HPP_
 #define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SFPEXPANDERNODE_HPP_
-
-#include <map>
 
 #include "pdt/I2CSlave.hpp"
 #include "pdt/I2CMasterNode.hpp"
 
+#include <map>
+
+namespace dunedaq {
 ERS_DECLARE_ISSUE(pdt,
                   SFPExpanderBankIDError,
                   " Invalid bank id: " << bank_id,
@@ -87,5 +99,6 @@ public:
 
 
 } // namespace pdt
+} // namespace dunedaq
 
 #endif /* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SFPEXPANDERNODE_HPP_ */

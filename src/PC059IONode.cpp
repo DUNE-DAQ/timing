@@ -1,5 +1,6 @@
 #include "pdt/PC059IONode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 UHAL_REGISTER_DERIVED_NODE(PC059IONode)
@@ -19,9 +20,9 @@ PC059IONode::~PC059IONode() {
 
 //-----------------------------------------------------------------------------
 std::string
-PC059IONode::getStatus(bool aPrint) const {
+PC059IONode::get_status(bool aPrint) const {
 	std::stringstream lStatus;
-	auto subnodes = readSubNodes(getNode("csr.stat"));
+	auto subnodes = read_sub_nodes(getNode("csr.stat"));
 	lStatus << formatRegTable(subnodes, "PC059 IO state");
 	
 	if (aPrint) std::cout << lStatus.str();
@@ -155,7 +156,7 @@ PC059IONode::getSFPStatus(uint32_t aSFPId, bool aPrint) const {
 	}
 	auto sfp = getI2CDevice<I2CSFPSlave>(mSFPI2CBuses.at(lSFPBusId), "SFP_EEProm");
 	
-	lStatus << sfp->getStatus();	
+	lStatus << sfp->get_status();	
 	
 	if (aPrint) std::cout << lStatus.str();
 	return lStatus.str();
@@ -180,4 +181,6 @@ PC059IONode::switchSFPSoftTxControlBit(uint32_t aSFPId, bool aOn) const {
 	sfp->switchSoftTxControlBit(aOn);
 }
 //-----------------------------------------------------------------------------
+
 } // namespace pdt
+} // namespace dunedaq

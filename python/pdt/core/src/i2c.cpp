@@ -12,6 +12,7 @@
 
 namespace py = pybind11;
 
+namespace dunedaq {
 namespace pdt {
 namespace python {
 
@@ -107,3 +108,4 @@ register_i2c(py::module& m) {
 
 } // namespace python
 } // namespace pdt
+} // namespace dunedaq

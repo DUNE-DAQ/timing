@@ -1,7 +1,7 @@
 #include <string>
 #include <sstream>
 
-namespace pdt
+namespace dunedaq::pdt
 {
 
 // In leiu of UHAL_REGISTER_DERIVED_NODE
@@ -29,10 +29,10 @@ PDIMasterDesign<IO>::~PDIMasterDesign() {
 
 //-----------------------------------------------------------------------------
 template<class IO>
-std::string PDIMasterDesign<IO>::getStatus(bool aPrint) const {
+std::string PDIMasterDesign<IO>::get_status(bool aPrint) const {
 	std::stringstream lStatus;
 	lStatus << this->getIONode().getPLLStatus();
-	lStatus << this->getMasterNode().getStatus();
+	lStatus << this->getMasterNode().get_status();
 	if (aPrint) std::cout << lStatus.str();
 	return lStatus.str();
 }

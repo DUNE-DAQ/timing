@@ -3,8 +3,8 @@
 #include "pdt/PDIMasterDesign.hpp"
 #include "pdt/MasterMuxDesign.hpp"
 
-namespace pdt
-{
+namespace dunedaq {
+namespace pdt {
 // In leiu of UHAL_REGISTER_DERIVED_NODE
 uhal::RegistrationHelper< EndpointDesign<FMCIONode> > EndpointDesign_FMCIONode_RegistrationHelper( "EndpointDesign<FMCIONode>" );
 
@@ -18,4 +18,5 @@ uhal::RegistrationHelper< PDIMasterDesign<FMCIONode> > PDIMasterDesign_FMCIONode
 
 uhal::RegistrationHelper< PDIMasterDesign<SIMIONode> > PDIMasterDesign_SIMIONode_RegistrationHelper( "PDIMasterDesign<SIMIONode>" );
 
-}
+} // namespace pdt
+} // namespace dunedaq

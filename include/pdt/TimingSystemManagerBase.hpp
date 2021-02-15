@@ -7,16 +7,17 @@
 
 #ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGSYSTEMMANAGERBASE_HPP_
 #define	TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGSYSTEMMANAGERBASE_HPP_
-
-#include <vector>
  
+#include "TimingIssues.hpp"
+#include "pdt/FMCIONode.hpp"
+
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 #include "uhal/ConnectionManager.hpp"
 
-#include "TimingIssues.hpp"
-#include "pdt/FMCIONode.hpp"
- 
+#include <vector>
+
+namespace dunedaq {
 namespace pdt {
 
 class TimingSystemManagerBase : boost::noncopyable {
@@ -121,6 +122,7 @@ public:
 };
 
 } // namespace pdt
+} // namespace dunedaq
 
 #endif	/* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGSYSTEMMANAGERBASE_HPP_ */
 

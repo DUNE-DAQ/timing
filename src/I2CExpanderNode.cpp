@@ -9,6 +9,7 @@
 // #include <fstream>
 // #include <sstream>
 
+namespace dunedaq {
 namespace pdt {
 
 // uHAL Node registation
@@ -114,3 +115,4 @@ I2CExpanderNode::~I2CExpanderNode() {
 //-----------------------------------------------------------------------------
 
 } // namespace pdt
+} // namespace dunedaq

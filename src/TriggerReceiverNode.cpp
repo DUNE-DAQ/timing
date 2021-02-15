@@ -1,5 +1,6 @@
 #include "pdt/TriggerReceiverNode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 UHAL_REGISTER_DERIVED_NODE(TriggerReceiverNode)
@@ -20,11 +21,11 @@ TriggerReceiverNode::~TriggerReceiverNode() {
 
 //-----------------------------------------------------------------------------
 std::string
-TriggerReceiverNode::getStatus(bool aPrint) const {
+TriggerReceiverNode::get_status(bool aPrint) const {
     std::stringstream lStatus;
 
-    auto lState = readSubNodes(getNode("csr.stat"), false);
-    auto lControls = readSubNodes(getNode("csr.ctrl"), false);
+    auto lState = read_sub_nodes(getNode("csr.stat"), false);
+    auto lControls = read_sub_nodes(getNode("csr.ctrl"), false);
     auto lCounters = getNode("ctrs").readBlock(0x10);
     getClient().dispatch();
 
@@ -84,4 +85,6 @@ TriggerReceiverNode::disableTriggers() const {
     getClient().dispatch();
 }
 //------------------------------------------------------------------------------
+
 } // namespace pdt
+} // namespace dunedaq

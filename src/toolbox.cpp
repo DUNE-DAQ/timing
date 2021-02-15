@@ -23,6 +23,7 @@
 
 using namespace std;
 
+namespace dunedaq {
 namespace pdt {
 
 //-----------------------------------------------------------------------------
@@ -304,9 +305,6 @@ convertValueToDesignType(uint32_t aDesignType) {
 template std::string pdt::vecFmt<uint32_t>(const std::vector<uint32_t>& aVec);
 template std::string pdt::shortVecFmt<uint32_t>(const std::vector<uint32_t>& aVec);
 
-} // namespace pdt
-
-
 //-----------------------------------------------------------------------------
 uint32_t locate(float xx[], unsigned long n, float x) {
     uint32_t j, ju, jm, jl;
@@ -339,3 +337,5 @@ uint32_t locate(float xx[], unsigned long n, float x) {
 }
 //-----------------------------------------------------------------------------
 
+} // namespace pdt
+} // namespace dunedaq

@@ -1,13 +1,25 @@
+/**
+ * @file FLCmdGeneratorNode.hpp
+ *
+ * FLCmdGeneratorNode is a class providing an interface
+ * to the fixed length command generator firmware block.
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
+
 #ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_FLCMDGENERATORNODE_HPP_
 #define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_FLCMDGENERATORNODE_HPP_
-
-// uHal Headers
-#include "uhal/DerivedNode.hpp"
 
 // PDT Headers
 #include "pdt/TimingNode.hpp"
 #include "pdt/TimestampGeneratorNode.hpp"
 
+// uHal Headers
+#include "uhal/DerivedNode.hpp"
+
+namespace dunedaq {
 namespace pdt {
 
 struct FakeTriggerConfig {
@@ -62,7 +74,7 @@ public:
     /**
      * @brief     Get status string, optionally print.
      */
-    std::string getStatus(bool aPrint=false) const override;
+    std::string get_status(bool aPrint=false) const override;
     
     /**
      * @brief     Send a fixed length command
@@ -86,5 +98,6 @@ public:
 };
 
 } // namespace pdt
+} // namespace dunedaq
 
 #endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_FLCMDGENERATORNODE_HPP_

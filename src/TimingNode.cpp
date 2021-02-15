@@ -1,5 +1,6 @@
 #include "pdt/TimingNode.hpp"
 
+namespace dunedaq {
 namespace pdt {
 
 //-----------------------------------------------------------------------------
@@ -16,7 +17,7 @@ TimingNode::~TimingNode() {
 
 //-----------------------------------------------------------------------------
 std::map<std::string,uhal::ValWord<uint32_t>>
-TimingNode::readSubNodes(const uhal::Node& aNode, bool dispatch) const {
+TimingNode::read_sub_nodes(const uhal::Node& aNode, bool dispatch) const {
 	auto lNodeNames = aNode.getNodes();
 	
 	std::map<std::string,uhal::ValWord<uint32_t>> lNodeNameValuePairs;
@@ -30,7 +31,7 @@ TimingNode::readSubNodes(const uhal::Node& aNode, bool dispatch) const {
 
 //-----------------------------------------------------------------------------
 void
-TimingNode::resetSubNodes(const uhal::Node& aNode, uint32_t aValue, bool dispatch) const {
+TimingNode::reset_sub_nodes(const uhal::Node& aNode, uint32_t aValue, bool dispatch) const {
 
 	auto lNodeNames = aNode.getNodes();
 
@@ -39,4 +40,6 @@ TimingNode::resetSubNodes(const uhal::Node& aNode, uint32_t aValue, bool dispatc
     if (dispatch) getClient().dispatch();
 }
 //-----------------------------------------------------------------------------
+
 } // namespace pdt
+} // namespace dunedaq

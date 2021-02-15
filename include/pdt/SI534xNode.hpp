@@ -1,13 +1,25 @@
+/**
+ * @file SI534xNode.hpp
+ *
+ * SI534xSlave and SI534xNode are classes providing an interface
+ * over I2C to SI53xx PLL devices.
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
+
 #ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SI5345NODE_HPP_
 #define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SI5345NODE_HPP_
-
-#include <map>
 
 #include "pdt/SIChipSlave.hpp"
 #include "pdt/I2CMasterNode.hpp"
 
 #include "ers/ers.h"
 
+#include <map>
+
+namespace dunedaq {
 ERS_DECLARE_ISSUE(pdt,                               ///< Namespace
                   SI534xConfigError,                 ///< Issue class name
                   " SI534xConfigError: " << message, ///< Message
@@ -77,5 +89,6 @@ public:
 
     
 } // namespace pdt
+} // namespace dunedaq
 
-#endif /* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SI5345NODE_HPP_ */
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SI5345NODE_HPP_ 
