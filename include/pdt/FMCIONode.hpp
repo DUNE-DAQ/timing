@@ -15,6 +15,7 @@
 // PDT Headers
 #include "pdt/IONode.hpp"
 #include "TimingIssues.hpp"
+#include "timing/timingmon/Structs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -44,6 +45,11 @@ public:
      * @brief      Reset timing node.
      */
     void reset(const std::string& aClockConfigFile="") const override;
+
+    /**
+     * @brief      Fill hardware monitoring structure.
+     */
+    void get_info(timing::timingmon::TimingFMCMonitorData& mon_data) const;
 
 };
 

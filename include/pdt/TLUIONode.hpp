@@ -15,6 +15,7 @@
 // PDT Headers
 #include "pdt/IONode.hpp"
 #include "TimingIssues.hpp"
+#include "timing/timingmon/Structs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -61,6 +62,11 @@ public:
      * @brief      Control tx laser of on-board SFP softly (I2C command)
      */
     virtual void switch_sfp_soft_tx_control_bit(uint32_t, bool) const override;
+
+    /**
+     * @brief      Fill hardware monitoring structure.
+     */
+    void get_info(timing::timingmon::TimingTLUMonitorData& mon_data) const;
 
 };
 

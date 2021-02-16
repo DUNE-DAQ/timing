@@ -73,5 +73,21 @@ FMCIONode::reset(const std::string& aClockConfigFile) const {
 }
 //-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
+void
+FMCIONode::get_info(timing::timingmon::TimingFMCMonitorData& mon_data) const {
+
+	auto subnodes = read_sub_nodes(getNode("csr.stat"));
+
+	mon_data.cdr_lol = subnodes.at("cdr_lol");
+	mon_data.cdr_los = subnodes.at("cdr_los");
+	mon_data.mmcm_ok = subnodes.at("mmcm_ok");
+	mon_data.mmcm_sticky = subnodes.at("mmcm_sticky");
+	mon_data.sfp_flt = subnodes.at("sfp_flt");
+	mon_data.sfp_los = subnodes.at("sfp_los");
+}
+//-----------------------------------------------------------------------------
+
 } // namespace pdt
 } // namespace dunedaq
