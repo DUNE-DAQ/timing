@@ -73,7 +73,7 @@ std::string strprintf(const char* aFmt, ...);
  * @param aPath path to expand
  * @return vector of expanded paths
  */
-std::vector<std::string> shellExpandPaths(const std::string& aPath);
+std::vector<std::string> shell_expand_paths(const std::string& aPath);
 
 /**
  * Performs variable subsitutition on path
@@ -87,7 +87,7 @@ std::string shellExpandPath(const std::string& aPath);
  * is a file
  * @param aPath: Path to file
  */
-void throwIfNotFile(const std::string& aPath);
+void throw_if_not_file(const std::string& aPath);
 
 /**
  * @brief      Converts a vector of strings in a delimiter-separated string.
@@ -107,7 +107,7 @@ std::string join(const C& aStrings, const std::string& aDelimiter = " ");
  * @param aPath path to expand
  * @return vector of expanded paths
  */
-uint8_t decRng(uint8_t word, uint8_t ibit, uint8_t nbits=1);
+uint8_t dec_rng(uint8_t word, uint8_t ibit, uint8_t nbits=1);
 
 /**
  * ""
@@ -120,32 +120,32 @@ uint64_t tstamp2int(uhal::ValVector< uint32_t > rawTimestamp);
  * @return 
  */
 template <class T>
-std::string formatRegValue(T regValue, uint32_t base=16);
+std::string format_reg_value(T regValue, uint32_t base=16);
 
 /**
  * @brief     Format reg-value table
  * @return 
  */
 template<class T>
-std::string formatRegTable(T data, std::string title="", std::vector<std::string> headers={"Register", "Value"});
+std::string format_reg_table(T data, std::string title="", std::vector<std::string> headers={"Register", "Value"});
 
 /**
  * ""
  * @return 
  */
-int64_t getSecondsSinceEpoch();
+int64_t get_seconds_since_epoch();
 
 /**
  * ""
  * @return 
  */
-std::string formatTimestamp(uhal::ValVector< uint32_t > rawTimestamp);
+std::string format_timestamp(uhal::ValVector< uint32_t > rawTimestamp);
 
 /**
  * ""
  * @return 
  */
-std::string formatTimestamp(uint64_t rawTimestamp);
+std::string format_timestamp(uint64_t rawTimestamp);
 
 
 /**
@@ -153,30 +153,30 @@ std::string formatTimestamp(uint64_t rawTimestamp);
  * @return 
  */
 template<class T>
-std::string formatCountersTable(std::vector<T> aCounters, std::vector<std::string> aCounterNodeTitles={}, std::string aTableTitle="", std::vector<std::string> aCounterLabels={}, std::string aCounterLabelsHeader="Cmd");
+std::string format_counters_table(std::vector<T> aCounters, std::vector<std::string> aCounterNodeTitles={}, std::string aTableTitle="", std::vector<std::string> aCounterLabels={}, std::string aCounterLabelsHeader="Cmd");
 
 /**
  * ""
  * @return 
  */
-double convertBitsToFloat(uint64_t aBits, bool aIsDoublePrecision=false);
+double convert_bits_to_float(uint64_t aBits, bool aIsDoublePrecision=false);
 
 
-BoardType convertValueToBoardType(uint32_t aBoardType);
-CarrierType convertValueToCarrierType(uint32_t aCarrierType);
-DesignType convertValueToDesignType(uint32_t aDesignType);
-
-template<typename T>
-std::string vecFmt(const std::vector<T>& aVec);
+BoardType convert_value_to_board_type(uint32_t aBoardType);
+CarrierType convert_value_to_carrier_type(uint32_t aCarrierType);
+DesignType convert_value_to_design_type(uint32_t aDesignType);
 
 template<typename T>
-std::string shortVecFmt(const std::vector<T>& aVec);
+std::string vec_fmt(const std::vector<T>& aVec);
+
+template<typename T>
+std::string short_vec_fmt(const std::vector<T>& aVec);
 
 
 } // namespace pdt
 } // namespace dunedaq
 
-#include "pdt/detail/toolbox.hxx"
+#include "detail/toolbox.hxx"
 
 #endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOOLBOX_HPP_
 

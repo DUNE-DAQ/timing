@@ -59,7 +59,7 @@ public:
      *
      * @return     The current value of the command mask.
      */
-    uint32_t readTriggerMask() const;
+    uint32_t read_trigger_mask() const;
 
 
     /**
@@ -67,28 +67,28 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    uint32_t readBufferWordCount() const;
+    uint32_t read_buffer_word_count() const;
 
     /**
      * @brief      Count the number of events available in the readout buffer
      *
      * @return     { description_of_the_return_value }
      */
-    uint32_t numEventsInBuffer() const;
+    uint32_t num_events_in_buffer() const;
     
     /**
      * @brief      Reads a rob warning overflow.
      *
      * @return     { description_of_the_return_value }
      */
-    bool readROBWarningOverflow() const;
+    bool read_rob_warning_overflow() const;
 
     /**
      * @brief      Reads a rob error.
      *
      * @return     { description_of_the_return_value }
      */
-    bool readROBError() const;
+    bool read_rob_error() const;
     
     /**
      * @brief      Read multiple events from the rob.
@@ -97,7 +97,7 @@ public:
      *
      * @return     Standard vector containing all events extracted from rob
      */
-    std::vector<uint32_t> readEvents( size_t aNumEvents = 0 ) const;
+    std::vector<uint32_t> read_events( size_t aNumEvents = 0 ) const;
 
 
     /**
@@ -121,14 +121,14 @@ public:
      *
      * @param[in]  aMask  A mask
      */
-    void configureRateCtrl( bool aRateCtrl=0x1 ) const;
+    void configure_rate_ctrl( bool aRateCtrl=0x1 ) const;
 
     /**
      * @brief      Enables the triggers.
      *
      * @param[in]  aEnable  The enable switch
      */
-    void enableTriggers( bool aEnable = true ) const;
+    void enable_triggers( bool aEnable = true ) const;
 
     /**
      * @brief      Resets the partition.
@@ -163,7 +163,7 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    PartitionCounts readCommandCounts() const;
+    PartitionCounts read_command_counts() const;
 
     /**
      * @brief     Print the status of the timing node.

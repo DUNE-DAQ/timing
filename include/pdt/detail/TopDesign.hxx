@@ -24,8 +24,8 @@ TopDesign<IO>::~TopDesign() {
 
 //-----------------------------------------------------------------------------
 template< class IO>
-void TopDesign<IO>::softReset() const {
-	getIONode().softReset();
+void TopDesign<IO>::soft_reset() const {
+	get_io_node().soft_reset();
 }
 //-----------------------------------------------------------------------------
 
@@ -33,14 +33,14 @@ void TopDesign<IO>::softReset() const {
 //-----------------------------------------------------------------------------
 template< class IO>
 void TopDesign<IO>::reset(const std::string& aClockConfigFile) const {
-	getIONode().reset(aClockConfigFile);
+	get_io_node().reset(aClockConfigFile);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 template< class IO>
-const IO& TopDesign<IO>::getIONode() const {
+const IO& TopDesign<IO>::get_io_node() const {
 	return uhal::Node::getNode<IO>("io");
 }
 //-----------------------------------------------------------------------------
@@ -48,7 +48,7 @@ const IO& TopDesign<IO>::getIONode() const {
 
 //-----------------------------------------------------------------------------
 template< class IO>
-const EndpointNode& TopDesign<IO>::getEndpointNode(uint32_t ept_id) const {
+const EndpointNode& TopDesign<IO>::get_endpoint_node(uint32_t ept_id) const {
 	const std::string nodeName = "endpoint" + std::to_string(ept_id);
 	return uhal::Node::getNode<EndpointNode>(nodeName);
 }
@@ -57,8 +57,8 @@ const EndpointNode& TopDesign<IO>::getEndpointNode(uint32_t ept_id) const {
 
 //-----------------------------------------------------------------------------
 template< class IO>
-std::string TopDesign<IO>::getHardwareInfo(bool aPrint) const {
-	auto lInfo = getIONode().getHardwareInfo();
+std::string TopDesign<IO>::get_hardware_info(bool aPrint) const {
+	auto lInfo = get_io_node().get_hardware_info();
 	if (aPrint) std::cout << lInfo;
 	return lInfo;
 }
@@ -67,7 +67,7 @@ std::string TopDesign<IO>::getHardwareInfo(bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 template< class IO>
-uint32_t TopDesign<IO>::getNumberOfEndpointNodes() const {
+uint32_t TopDesign<IO>::get_number_of_endpoint_nodes() const {
 	std::string lRegexString = "endpoint[0-9]+";
 	return uhal::Node::getNodes(lRegexString).size();
 }

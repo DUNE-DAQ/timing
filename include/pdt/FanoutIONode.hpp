@@ -42,12 +42,12 @@ public:
     /**
      * @brief     Switch the SFP mux channel
      */
-    virtual void switchSFPMUXChannel(uint32_t aSFPID) const = 0;
+    virtual void switch_sfp_mux_channel(uint32_t aSFPID) const = 0;
 
     /**
      * @brief     Read the active SFP mux channel
      */
-    virtual uint32_t readActiveSFPMUXChannel() const = 0;
+    virtual uint32_t read_active_sfp_mux_channel() const = 0;
 };
 
 } // namespace pdt

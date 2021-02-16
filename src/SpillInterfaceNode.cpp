@@ -24,7 +24,7 @@ std::string
 SpillInterfaceNode::get_status(bool aPrint) const {
     std::stringstream lStatus;
     auto subnodes = read_sub_nodes(getNode("csr.stat"));
-    lStatus << formatRegTable(subnodes, "Spill interface state");
+    lStatus << format_reg_table(subnodes, "Spill interface state");
     
     if (aPrint) std::cout << lStatus.str();
     return lStatus.str();
@@ -55,7 +55,7 @@ SpillInterfaceNode::disable() const {
 
 //-----------------------------------------------------------------------------
 void
-SpillInterfaceNode::enableFakeSpills(uint32_t aCycLen, uint32_t aSpillLen) const {
+SpillInterfaceNode::enable_fake_spills(uint32_t aCycLen, uint32_t aSpillLen) const {
 
 
     // Enables the internal spill generator.
@@ -76,7 +76,7 @@ SpillInterfaceNode::enableFakeSpills(uint32_t aCycLen, uint32_t aSpillLen) const
 
 //-----------------------------------------------------------------------------
 bool
-SpillInterfaceNode::readInSpill() const {
+SpillInterfaceNode::read_in_spill() const {
     auto lInSpill = getNode("csr.stat.in_spill").read();
     getClient().dispatch();
     return lInSpill.value();

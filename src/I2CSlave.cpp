@@ -39,80 +39,80 @@ I2CSlave::~I2CSlave() {
 // comodity functions
 //-----------------------------------------------------------------------------
 uint8_t
-I2CSlave::readI2C(uint32_t aDeviceAddress, uint32_t aRegAddress) const {
-	return mMaster->readI2C(aDeviceAddress, aRegAddress);
+I2CSlave::read_i2c(uint32_t aDeviceAddress, uint32_t aRegAddress) const {
+	return mMaster->read_i2c(aDeviceAddress, aRegAddress);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 uint8_t
-I2CSlave::readI2C(uint32_t i2cAddress) const {
-    return mMaster->readI2C(mAddress, i2cAddress);
+I2CSlave::read_i2c(uint32_t i2cAddress) const {
+    return mMaster->read_i2c(mAddress, i2cAddress);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void
-I2CSlave::writeI2C(uint32_t aDeviceAddress, uint32_t i2cAddress, uint8_t aData, bool aSendStop) const {
-    mMaster->writeI2C(aDeviceAddress, i2cAddress, aData, aSendStop);
+I2CSlave::write_i2c(uint32_t aDeviceAddress, uint32_t i2cAddress, uint8_t aData, bool aSendStop) const {
+    mMaster->write_i2c(aDeviceAddress, i2cAddress, aData, aSendStop);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void
-I2CSlave::writeI2C(uint32_t i2cAddress, uint8_t aData, bool aSendStop) const {
-    mMaster->writeI2C(mAddress, i2cAddress, aData, aSendStop);
+I2CSlave::write_i2c(uint32_t i2cAddress, uint8_t aData, bool aSendStop) const {
+    mMaster->write_i2c(mAddress, i2cAddress, aData, aSendStop);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 std::vector<uint8_t>
-I2CSlave::readI2CArray(uint32_t aDeviceAddress, uint32_t aRegAddress, uint32_t aNumWords) const {
-	return mMaster->readI2CArray(aDeviceAddress, aRegAddress, aNumWords);	
+I2CSlave::read_i2cArray(uint32_t aDeviceAddress, uint32_t aRegAddress, uint32_t aNumWords) const {
+	return mMaster->read_i2cArray(aDeviceAddress, aRegAddress, aNumWords);	
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 std::vector<uint8_t>
-I2CSlave::readI2CArray(uint32_t i2cAddress, uint32_t aNumWords) const {
-    return mMaster->readI2CArray(mAddress, i2cAddress, aNumWords);
+I2CSlave::read_i2cArray(uint32_t i2cAddress, uint32_t aNumWords) const {
+    return mMaster->read_i2cArray(mAddress, i2cAddress, aNumWords);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void
-I2CSlave::writeI2CArray(uint32_t aDeviceAddress,uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop) const {
-    mMaster->writeI2CArray(aDeviceAddress, i2cAddress, aData, aSendStop);
+I2CSlave::write_i2cArray(uint32_t aDeviceAddress,uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop) const {
+    mMaster->write_i2cArray(aDeviceAddress, i2cAddress, aData, aSendStop);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void
-I2CSlave::writeI2CArray(uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop) const {
-    mMaster->writeI2CArray(mAddress, i2cAddress, aData, aSendStop);
+I2CSlave::write_i2cArray(uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop) const {
+    mMaster->write_i2cArray(mAddress, i2cAddress, aData, aSendStop);
 }
 //-----------------------------------------------------------------------------
 
 // comodity functions
 //-----------------------------------------------------------------------------
 std::vector<uint8_t>
-I2CSlave::readI2CPrimitive(uint32_t aNumBytes) const {
-    return mMaster->readI2CPrimitive(mAddress, aNumBytes);
+I2CSlave::read_i2cPrimitive(uint32_t aNumBytes) const {
+    return mMaster->read_i2cPrimitive(mAddress, aNumBytes);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void
-I2CSlave::writeI2CPrimitive(const std::vector<uint8_t>& aData, bool aSendStop) const {
-    mMaster->writeI2CPrimitive(mAddress, aData, aSendStop);
+I2CSlave::write_i2cPrimitive(const std::vector<uint8_t>& aData, bool aSendStop) const {
+    mMaster->write_i2cPrimitive(mAddress, aData, aSendStop);
 }
 //-----------------------------------------------------------------------------
 
@@ -127,7 +127,7 @@ I2CSlave::ping() const {
 
 //-----------------------------------------------------------------------------
 std::string
-I2CSlave::getMasterId() const {
+I2CSlave::get_master_id() const {
     return mMaster->getId();
 }
 //-----------------------------------------------------------------------------

@@ -23,7 +23,7 @@ std::string
 EchoMonitorNode::get_status(bool aPrint) const {
 	std::stringstream lStatus;
 	auto subnodes = read_sub_nodes(getNode("csr.stat"));
-    lStatus << formatRegTable(subnodes, "Echo mon state");
+    lStatus << format_reg_table(subnodes, "Echo mon state");
     if (aPrint) std::cout << lStatus.str();
     return lStatus.str();
 }
@@ -32,7 +32,7 @@ EchoMonitorNode::get_status(bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 uint64_t
-EchoMonitorNode::sendEchoAndMeasureDelay(int64_t aTimeout) const {
+EchoMonitorNode::send_echo_and_measure_delay(int64_t aTimeout) const {
 	
 	getNode("csr.ctrl.go").write(0x1);
     getClient().dispatch();
@@ -72,8 +72,8 @@ EchoMonitorNode::sendEchoAndMeasureDelay(int64_t aTimeout) const {
     uint64_t lTimeRx = ((uint64_t)lTimeRxH.value() << 32) + lTimeRxL.value();
     uint64_t lTimeTx = ((uint64_t)lTimeTxH.value() << 32) + lTimeTxL.value();
 
-    ERS_DEBUG(0, "tx ts: " << formatRegValue(lTimeTx));
-    ERS_DEBUG(0, "rx ts: " << formatRegValue(lTimeRx));
+    ERS_DEBUG(0, "tx ts: " << format_reg_value(lTimeTx));
+    ERS_DEBUG(0, "rx ts: " << format_reg_value(lTimeRx));
 
     return lTimeRx - lTimeTx;
 }

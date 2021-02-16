@@ -41,20 +41,20 @@ uint32_t GlobalNode::readTimeStamp() const {
 
 
 //-----------------------------------------------------------------------------
-uint32_t GlobalNode::readSpillCounter() const {
+uint32_t GlobalNode::read_spill_counter() const {
     return 0;
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GlobalNode::selectPartition() const {
+void GlobalNode::select_partition() const {
 
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GlobalNode::lockPartition() const {
+void GlobalNode::lock_partition() const {
 
 }
 //-----------------------------------------------------------------------------
@@ -64,7 +64,7 @@ void GlobalNode::lockPartition() const {
 std::string GlobalNode::get_status(bool aPrint) const {
 	std::stringstream lStatus;
 	auto subnodes = read_sub_nodes(getNode("csr.stat"));
-    lStatus << formatRegTable(subnodes, "Global state");
+    lStatus << format_reg_table(subnodes, "Global state");
     if (aPrint) std::cout << lStatus.str();
     return lStatus.str();
 }
@@ -73,7 +73,7 @@ std::string GlobalNode::get_status(bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 void
-GlobalNode::enableUpstreamEndpoint(uint32_t aTimeout) {
+GlobalNode::enable_upstream_endpoint(uint32_t aTimeout) {
 	getNode("csr.ctrl.ep_en").write(0x0);
 	getClient().dispatch();
 	getNode("csr.ctrl.ep_en").write(0x1);
@@ -101,15 +101,15 @@ GlobalNode::enableUpstreamEndpoint(uint32_t aTimeout) {
         getClient().dispatch();
 
         if (lEptRdy.value()) {
-        	ERS_INFO("Endpoint locked: state= " << formatRegValue(lEptStat));
+        	ERS_INFO("Endpoint locked: state= " << format_reg_value(lEptStat));
             return;
         }
 	}
 	
 	if (!lEptRdy.value()) {
-		throw UpstreamEndpointFailedToLock(ERS_HERE, getId(), formatRegValue(lEptStat));
+		throw UpstreamEndpointFailedToLock(ERS_HERE, getId(), format_reg_value(lEptStat));
     } else {
-        ERS_INFO("Endpoint locked: state= " << formatRegValue(lEptStat));
+        ERS_INFO("Endpoint locked: state= " << format_reg_value(lEptStat));
     }
 }
 //-----------------------------------------------------------------------------

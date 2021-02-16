@@ -53,27 +53,27 @@ public:
     /**
      * @brief     Switch the SFP mux channel
      */
-    void switchSFPMUXChannel(uint32_t aSFPID) const override;
+    void switch_sfp_mux_channel(uint32_t aSFPID) const override;
 
     /**
      * @brief     Read the active SFP mux channel
      */
-    uint32_t readActiveSFPMUXChannel() const override;
+    uint32_t read_active_sfp_mux_channel() const override;
 
     /**
      * @brief     Switch the SFP I2C mux channel
      */
-    void switchSFPI2CMUXChannel(uint32_t aSFPId) const;
+    void switch_sfp_i2c_mux_channel(uint32_t aSFPId) const;
 
     /**
      * @brief      Print status of on-board SFP.
      */
-    std::string getSFPStatus(uint32_t aSFPId, bool aPrint=false) const override;
+    std::string get_sfp_status(uint32_t aSFPId, bool aPrint=false) const override;
 
     /**
      * @brief      control tx laser of on-board SFP softly (I2C command)
      */
-    void switchSFPSoftTxControlBit(uint32_t aSFPId, bool aOn) const override;
+    void switch_sfp_soft_tx_control_bit(uint32_t aSFPId, bool aOn) const override;
 
 };
 

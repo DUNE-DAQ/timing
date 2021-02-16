@@ -88,7 +88,7 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    uint64_t readMasterTimestamp() const override;
+    uint64_t read_master_timestamp() const override;
 
     /**
      * @brief      Measure the endpoint round trip time.
@@ -112,13 +112,13 @@ public:
     /**
      * @brief      Adjust the endpoint delays.
      */
-    void applyEndpointDelays(uint32_t aMeasureRTT) const override;
+    void apply_endpoint_delays(uint32_t aMeasureRTT) const override;
 };
 
 } // namespace pdt
 } // namespace dunedaq
 
-#include "pdt/detail/TimingSystemManager.hxx"
+#include "detail/TimingSystemManager.hxx"
 
-#endif	/* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGSYSTEMMANAGER_HPP_ */
+#endif	// TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGSYSTEMMANAGER_HPP_
 

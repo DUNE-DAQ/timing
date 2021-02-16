@@ -23,7 +23,7 @@ std::string
 PC059IONode::get_status(bool aPrint) const {
 	std::stringstream lStatus;
 	auto subnodes = read_sub_nodes(getNode("csr.stat"));
-	lStatus << formatRegTable(subnodes, "PC059 IO state");
+	lStatus << format_reg_table(subnodes, "PC059 IO state");
 	
 	if (aPrint) std::cout << lStatus.str();
     return lStatus.str();
@@ -54,32 +54,32 @@ PC059IONode::reset(int32_t aFanoutMode, const std::string& aClockConfigFile) con
 
 	// enclustra i2c switch stuff
 	try {
-		getNode<I2CMasterNode>(mUIDI2CBus).getSlave("AX3_Switch").writeI2C(0x01, 0x7f);
+		getNode<I2CMasterNode>(mUIDI2CBus).get_slave("AX3_Switch").write_i2c(0x01, 0x7f);
 	} catch(...) {
 	}
 
 	// Find the right pll config file
-	std:: string lClockConfigFile = getFullClockConfigFilePath(aClockConfigFile, aFanoutMode);
+	std:: string lClockConfigFile = get_full_clock_config_file_path(aClockConfigFile, aFanoutMode);
 	ERS_INFO("PLL configuration file : " << lClockConfigFile);
 
 	// Upload config file to PLL
-	configurePLL(lClockConfigFile);
+	configure_pll(lClockConfigFile);
 	
 	getNode("csr.ctrl.mux").write(0);
 	getClient().dispatch();
 	
-	auto lSFPExp = getI2CDevice<I2CExpanderSlave>(mUIDI2CBus, "SFPExpander");
+	auto lSFPExp = get_i2c_device<I2CExpanderSlave>(mUIDI2CBus, "SFPExpander");
 	
 	// Set invert registers to default for both banks
-	lSFPExp->setInversion(0, 0x00);
-	lSFPExp->setInversion(1, 0x00);
+	lSFPExp->set_inversion(0, 0x00);
+	lSFPExp->set_inversion(1, 0x00);
 	
 	// Bank 0 input, bank 1 output
-	lSFPExp->setIO(0, 0x00);
-	lSFPExp->setIO(1, 0xff);
+	lSFPExp->set_io(0, 0x00);
+	lSFPExp->set_io(1, 0xff);
 	
 	// Bank 0 - enable all SFPGs (enable low)
-	lSFPExp->setOutputs(0, 0x00);
+	lSFPExp->set_outputs(0, 0x00);
     ERS_INFO("SFPs 0-7 enabled");
 
 	getNode("csr.ctrl.rst_lock_mon").write(0x1);
@@ -101,18 +101,18 @@ PC059IONode::reset(const std::string& aClockConfigFile) const {
 
 //-----------------------------------------------------------------------------
 void
-PC059IONode::switchSFPMUXChannel(uint32_t aSFPID) const {
+PC059IONode::switch_sfp_mux_channel(uint32_t aSFPID) const {
 	getNode("csr.ctrl.mux").write(aSFPID);
 	getClient().dispatch();
 	
-	ERS_INFO("SFP input mux set to " << formatRegValue(readActiveSFPMUXChannel()));
+	ERS_INFO("SFP input mux set to " << format_reg_value(read_active_sfp_mux_channel()));
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 uint32_t
-PC059IONode::readActiveSFPMUXChannel() const {
+PC059IONode::read_active_sfp_mux_channel() const {
 	auto lActiveSFPMUXChannel = getNode("csr.ctrl.mux").read();
 	getClient().dispatch();
 	return lActiveSFPMUXChannel.value();
@@ -122,7 +122,7 @@ PC059IONode::readActiveSFPMUXChannel() const {
 
 //-----------------------------------------------------------------------------
 void
-PC059IONode::switchSFPI2CMUXChannel(uint32_t aSFPId) const {
+PC059IONode::switch_sfp_i2c_mux_channel(uint32_t aSFPId) const {
 
 	getNode("csr.ctrl.rst_i2cmux").write(0x1);
 	getClient().dispatch();
@@ -132,15 +132,15 @@ PC059IONode::switchSFPI2CMUXChannel(uint32_t aSFPId) const {
 	
 	
 	uint8_t lChannelSelectByte = 1UL << aSFPId;
-	getNode<I2CMasterNode>(mPLLI2CBus).getSlave("SFP_Switch").writeI2CPrimitive({lChannelSelectByte});
-	ERS_INFO("PC059 SFP I2C mux set to " << formatRegValue(aSFPId));
+	getNode<I2CMasterNode>(mPLLI2CBus).get_slave("SFP_Switch").write_i2cPrimitive({lChannelSelectByte});
+	ERS_INFO("PC059 SFP I2C mux set to " << format_reg_value(aSFPId));
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 std::string
-PC059IONode::getSFPStatus(uint32_t aSFPId, bool aPrint) const {
+PC059IONode::get_sfp_status(uint32_t aSFPId, bool aPrint) const {
 	// on this board the upstream sfp has its own i2c bus, and the 8 downstream sfps are muxed onto the main i2c bus
 	std::stringstream lStatus;
 	uint32_t lSFPBusId;
@@ -148,13 +148,13 @@ PC059IONode::getSFPStatus(uint32_t aSFPId, bool aPrint) const {
 		lSFPBusId = 0;
 		lStatus << "Upstream SFP:" << std::endl;
 	} else if (aSFPId > 0 && aSFPId < 9) {
-		switchSFPI2CMUXChannel(aSFPId-1);
+		switch_sfp_i2c_mux_channel(aSFPId-1);
 		lStatus << "Fanout SFP " << aSFPId-1 << ":" << std::endl;
 		lSFPBusId = 1;
 	} else {
-        throw InvalidSFPId(ERS_HERE, getId(), formatRegValue(aSFPId));
+        throw InvalidSFPId(ERS_HERE, getId(), format_reg_value(aSFPId));
 	}
-	auto sfp = getI2CDevice<I2CSFPSlave>(mSFPI2CBuses.at(lSFPBusId), "SFP_EEProm");
+	auto sfp = get_i2c_device<I2CSFPSlave>(mSFPI2CBuses.at(lSFPBusId), "SFP_EEProm");
 	
 	lStatus << sfp->get_status();	
 	
@@ -166,19 +166,19 @@ PC059IONode::getSFPStatus(uint32_t aSFPId, bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 void
-PC059IONode::switchSFPSoftTxControlBit(uint32_t aSFPId, bool aOn) const {
+PC059IONode::switch_sfp_soft_tx_control_bit(uint32_t aSFPId, bool aOn) const {
 	// on this board the upstream sfp has its own i2c bus, and the 8 downstream sfps are muxed onto the main i2c bus
 	uint32_t lSFPBusId;
 	if (aSFPId == 0) {
 		lSFPBusId = 0;
 	} else if (aSFPId > 0 && aSFPId < 9) {
-		switchSFPI2CMUXChannel(aSFPId-1);
+		switch_sfp_i2c_mux_channel(aSFPId-1);
 		lSFPBusId = 1;
 	} else {
-        throw InvalidSFPId(ERS_HERE, getId(), formatRegValue(aSFPId));
+        throw InvalidSFPId(ERS_HERE, getId(), format_reg_value(aSFPId));
 	}
-	auto sfp = getI2CDevice<I2CSFPSlave>(mSFPI2CBuses.at(lSFPBusId), "SFP_EEProm");
-	sfp->switchSoftTxControlBit(aOn);
+	auto sfp = get_i2c_device<I2CSFPSlave>(mSFPI2CBuses.at(lSFPBusId), "SFP_EEProm");
+	sfp->switch_soft_tx_control_bit(aOn);
 }
 //-----------------------------------------------------------------------------
 

@@ -40,10 +40,10 @@ I2CExpanderSlave::ensureValidBankId( uint8_t aBankId ) const {
 
 //-----------------------------------------------------------------------------
 void
-I2CExpanderSlave::setInversion( uint8_t aBankId, uint32_t aInversionMask ) const {
+I2CExpanderSlave::set_inversion( uint8_t aBankId, uint32_t aInversionMask ) const {
 
     this->ensureValidBankId(aBankId);
-    this->writeI2C(0x4+aBankId, aInversionMask);
+    this->write_i2c(0x4+aBankId, aInversionMask);
 
 }
 //-----------------------------------------------------------------------------
@@ -51,10 +51,10 @@ I2CExpanderSlave::setInversion( uint8_t aBankId, uint32_t aInversionMask ) const
 
 //-----------------------------------------------------------------------------
 void
-I2CExpanderSlave::setIO( uint8_t aBankId, uint32_t aIOMask ) const {
+I2CExpanderSlave::set_io( uint8_t aBankId, uint32_t aIOMask ) const {
 
     this->ensureValidBankId(aBankId);
-    this->writeI2C(0x6+aBankId, aIOMask);
+    this->write_i2c(0x6+aBankId, aIOMask);
 
 }
 //-----------------------------------------------------------------------------
@@ -62,10 +62,10 @@ I2CExpanderSlave::setIO( uint8_t aBankId, uint32_t aIOMask ) const {
 
 //-----------------------------------------------------------------------------
 void
-I2CExpanderSlave::setOutputs( uint8_t aBankId, uint32_t aValues ) const {
+I2CExpanderSlave::set_outputs( uint8_t aBankId, uint32_t aValues ) const {
 
     this->ensureValidBankId(aBankId);
-    this->writeI2C(0x2+aBankId, aValues);
+    this->write_i2c(0x2+aBankId, aValues);
     
 }
 //-----------------------------------------------------------------------------
@@ -73,10 +73,10 @@ I2CExpanderSlave::setOutputs( uint8_t aBankId, uint32_t aValues ) const {
 
 //-----------------------------------------------------------------------------
 uint32_t
-I2CExpanderSlave::readInputs( uint8_t aBankId ) const {
+I2CExpanderSlave::read_inputs( uint8_t aBankId ) const {
 
     this->ensureValidBankId(aBankId);
-    return this->readI2C(0x0+aBankId);
+    return this->read_i2c(0x0+aBankId);
     
 }
 //-----------------------------------------------------------------------------
@@ -89,7 +89,7 @@ I2CExpanderSlave::debug() const {
     std::vector<uint32_t> lValues(8);
 
     for ( size_t a(0); a<8; ++a) {
-        lValues[a] = this->readI2C(a);
+        lValues[a] = this->read_i2c(a);
     }
     return lValues;
     
@@ -98,13 +98,13 @@ I2CExpanderSlave::debug() const {
 
 
 //-----------------------------------------------------------------------------
-I2CExpanderNode::I2CExpanderNode( const uhal::Node& aNode ) : I2CMasterNode(aNode), I2CExpanderSlave(this, this->getSlaveAddress("i2caddr") ) {
+I2CExpanderNode::I2CExpanderNode( const uhal::Node& aNode ) : I2CMasterNode(aNode), I2CExpanderSlave(this, this->get_slave_address("i2caddr") ) {
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-I2CExpanderNode::I2CExpanderNode( const I2CExpanderNode& aOther ) : I2CMasterNode(aOther), I2CExpanderSlave(this, this->getSlaveAddress("i2caddr") ) {
+I2CExpanderNode::I2CExpanderNode( const I2CExpanderNode& aOther ) : I2CMasterNode(aOther), I2CExpanderSlave(this, this->get_slave_address("i2caddr") ) {
 }
 //-----------------------------------------------------------------------------
 

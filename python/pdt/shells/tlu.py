@@ -35,14 +35,14 @@ class TLUShell(BoardShell):
     # ------------------------------------------------------------------------------
     def getAX3Slave(self):
         lIO = self.device.getNode('io')
-        return lIO.getNode('i2c').getSlave('AX3_Switch')
+        return lIO.getNode('i2c').get_slave('AX3_Switch')
     # ------------------------------------------------------------------------------
     #
 
     # ------------------------------------------------------------------------------
     def getUIDSlave(self):
         lIO = self.device.getNode('io')
-        return lIO.getNode('i2c').getSlave('UID_PROM')
+        return lIO.getNode('i2c').get_slave('UID_PROM')
     # ------------------------------------------------------------------------------
 
     # ------------------------------------------------------------------------------
@@ -75,46 +75,46 @@ class TLUShell(BoardShell):
 
         lI2CBusNode = self.device.getNode("io.i2c")
 
-        lIC6 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander1').getI2CAddress())
-        lIC7 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('Expander2').getI2CAddress())
+        lIC6 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.get_slave('Expander1').get_i2c_address())
+        lIC7 = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.get_slave('Expander2').get_i2c_address())
 
         # Bank 0
-        lIC6.setInversion(0, 0x00)
-        lIC6.setIO(0, 0x00)
-        lIC6.setOutputs(0, 0x00)
+        lIC6.set_inversion(0, 0x00)
+        lIC6.set_io(0, 0x00)
+        lIC6.set_outputs(0, 0x00)
 
         # Bank 1
-        lIC6.setInversion(1, 0x00)
-        lIC6.setIO(1, 0x00)
-        lIC6.setOutputs(1, 0x88)
+        lIC6.set_inversion(1, 0x00)
+        lIC6.set_io(1, 0x00)
+        lIC6.set_outputs(1, 0x88)
 
 
         # Bank 0
-        lIC7.setInversion(0, 0x00)
-        lIC7.setIO(0, 0x00)
-        lIC7.setOutputs(0, 0xf0)
+        lIC7.set_inversion(0, 0x00)
+        lIC7.set_io(0, 0x00)
+        lIC7.set_outputs(0, 0xf0)
 
         # Bank 1
-        lIC7.setInversion(1, 0x00)
-        lIC7.setIO(1, 0x00)
-        lIC7.setOutputs(1, 0xf0)
+        lIC7.set_inversion(1, 0x00)
+        lIC7.set_io(1, 0x00)
+        lIC7.set_outputs(1, 0xf0)
     # ------------------------------------------------------------------------------
 
 
     # ------------------------------------------------------------------------------
-    def configurePLLSwing(self):
+    def configure_pllSwing(self):
         lI2CBusNode = self.device.getNode("io.i2c")
-        lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
+        lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.get_slave('SI5345').get_i2c_address())
 
-        lSIChip.writeI2CArray(0x113, [0x9, 0x33])
+        lSIChip.write_i2cArray(0x113, [0x9, 0x33])
     # ------------------------------------------------------------------------------
 
     # ------------------------------------------------------------------------------
-    def configureDACs(self):
+    def configure_dacs(self):
         lI2CBusNode = self.device.getNode("io.i2c")
 
-        lDAC1 = DACSlave(lI2CBusNode, lI2CBusNode.getSlave('DAC1').getI2CAddress())
-        lDAC2 = DACSlave(lI2CBusNode, lI2CBusNode.getSlave('DAC2').getI2CAddress())
+        lDAC1 = DACSlave(lI2CBusNode, lI2CBusNode.get_slave('DAC1').get_i2c_address())
+        lDAC2 = DACSlave(lI2CBusNode, lI2CBusNode.get_slave('DAC2').get_i2c_address())
 
         # BI signals are NIM
         lBISignalThreshold = 0x589D
@@ -153,7 +153,7 @@ class TLUShell(BoardShell):
         lIO = lDevice.getNode('io')
 
         # Global soft reset
-        self.softReset()
+        self.soft_reset()
 
         if not (soft or lBoardType == kBoardSim):
             
@@ -174,8 +174,8 @@ class TLUShell(BoardShell):
 
             # Access the clock chip
             lI2CBusNode = lDevice.getNode("io.i2c")
-            lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
-            lSIVersion = lSIChip.readDeviceVersion()
+            lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.get_slave('SI5345').get_i2c_address())
+            lSIVersion = lSIChip.read_device_version()
             echo("PLL version : "+style(hex(lSIVersion), fg='blue'))
 
             # Ensure that the board revision has a registered clock config
@@ -194,15 +194,15 @@ class TLUShell(BoardShell):
                 lFullClockConfigPath = expandvars(join('${PDT_TESTS}/etc/clock', lClockConfigPath))
 
             lSIChip.configure(lFullClockConfigPath)
-            echo("SI3545 configuration id: {}".format(style(lSIChip.readConfigID(), fg='green')))
+            echo("SI3545 configuration id: {}".format(style(lSIChip.read_config_id(), fg='green')))
 
             self.configureExpanders()
 
             # Tweak the PLL swing
             lI2CBusNode = lDevice.getNode("io.i2c")
-            self.configurePLLSwing()
+            self.configure_pllSwing()
 
-            self.configureDACs()
+            self.configure_dacs()
 
             self.resetLockMon()
 # ------------------------------------------------------------------------------

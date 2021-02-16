@@ -113,7 +113,7 @@ std::string join(const C& aStrings, const std::string& aDelimiter)
 //-----------------------------------------------------------------------------
 template <class T>
 std::string
-formatRegValue(T regValue, uint32_t base) {
+format_reg_value(T regValue, uint32_t base) {
   std::stringstream lValueStream;
   if (base == 16) {
     lValueStream << "0x" << std::hex;
@@ -131,7 +131,7 @@ formatRegValue(T regValue, uint32_t base) {
 //-----------------------------------------------------------------------------
 template<class T>
 std::string
-formatRegTable(T data, std::string title, std::vector<std::string> headers) {
+format_reg_table(T data, std::string title, std::vector<std::string> headers) {
   
   uint32_t lTableWidth = 7;
   uint32_t lRegColumnWidth = 0;
@@ -140,7 +140,7 @@ formatRegTable(T data, std::string title, std::vector<std::string> headers) {
 
   for (auto it=data.begin(); it!=data.end(); ++it) {
     lRegColumnWidth = lRegColumnWidth > it->first.size() ? lRegColumnWidth : it->first.size();
-    lValColumnWidth = lValColumnWidth > formatRegValue(it->second).size() ? lValColumnWidth : formatRegValue(it->second).size();
+    lValColumnWidth = lValColumnWidth > format_reg_value(it->second).size() ? lValColumnWidth : format_reg_value(it->second).size();
   }
 
   // header vector length check
@@ -159,7 +159,7 @@ formatRegTable(T data, std::string title, std::vector<std::string> headers) {
   lTableStream << boost::format("+-%=s-+-%=s-+\n") % boost::io::group(std::setw(lRegColumnWidth), std::setfill('-'), "")  % boost::io::group(std::setw(lValColumnWidth), std::setfill('-'), "");
 
   for (auto it=data.begin(); it!=data.end(); ++it) {
-    lTableStream << boost::format("| %=s | %=s |\n") % boost::io::group(std::setw(lRegColumnWidth), it->first) % boost::io::group(std::setw(lValColumnWidth), formatRegValue(it->second));
+    lTableStream << boost::format("| %=s | %=s |\n") % boost::io::group(std::setw(lRegColumnWidth), it->first) % boost::io::group(std::setw(lValColumnWidth), format_reg_value(it->second));
   }
   lTableStream << boost::format("+-%=s-+-%=s-+\n") % boost::io::group(std::setw(lRegColumnWidth), std::setfill('-'), "")  % boost::io::group(std::setw(lValColumnWidth), std::setfill('-'), "");
 
@@ -169,7 +169,7 @@ formatRegTable(T data, std::string title, std::vector<std::string> headers) {
 
 //-----------------------------------------------------------------------------
 template<class T>
-std::string formatCountersTable(std::vector<T> aCounterNodes, std::vector<std::string> aCounterNodeTitles, std::string aTableTitle, std::vector<std::string> aCounterLabels, std::string aCounterLabelsHeader) {
+std::string format_counters_table(std::vector<T> aCounterNodes, std::vector<std::string> aCounterNodeTitles, std::string aTableTitle, std::vector<std::string> aCounterLabels, std::string aCounterLabelsHeader) {
 
   uint32_t lCounterNodesNumber = aCounterNodes.size();
   uint32_t lTableWidth = 4+(lCounterNodesNumber*3);
@@ -181,7 +181,7 @@ std::string formatCountersTable(std::vector<T> aCounterNodes, std::vector<std::s
       lCounterNodeTitles.push_back("Counters");
     }
   } else if (aCounterNodes.size() != aCounterNodeTitles.size()) {
-    throw FormatCountersTableNodesTitlesMismatch(ERS_HERE, "formatCountersTable");
+    throw FormatCountersTableNodesTitlesMismatch(ERS_HERE, "format_counters_table");
   } else {
     lCounterNodeTitles = aCounterNodeTitles;
   }
@@ -218,8 +218,8 @@ std::string formatCountersTable(std::vector<T> aCounterNodes, std::vector<std::s
 
     for (auto counterIt=nodeIt->begin(); counterIt != nodeIt->end(); ++counterIt) {
 
-      std::string lCounterValueDec = formatRegValue(*counterIt,10);
-      std::string lCounterValueHex = formatRegValue(*counterIt,16);
+      std::string lCounterValueDec = format_reg_value(*counterIt,10);
+      std::string lCounterValueHex = format_reg_value(*counterIt,16);
 
       lCounterValueDecColumnWidth = lCounterValueDecColumnWidth > lCounterValueDec.size() ? lCounterValueDecColumnWidth : lCounterValueDec.size();
       lCounterValueHexColumnWidth = lCounterValueHexColumnWidth > lCounterValueHex.size() ? lCounterValueHexColumnWidth : lCounterValueHex.size();
@@ -325,7 +325,7 @@ std::string formatCountersTable(std::vector<T> aCounterNodes, std::vector<std::s
 
 //-----------------------------------------------------------------------------
 template <typename T>
-std::string vecFmt(const std::vector<T>& aVec)
+std::string vec_fmt(const std::vector<T>& aVec)
 {
   std::ostringstream oss;
   oss << "[";
@@ -342,7 +342,7 @@ std::string vecFmt(const std::vector<T>& aVec)
 
 //-----------------------------------------------------------------------------
 template <typename T>
-std::string shortVecFmt(const std::vector<T>& aVec)
+std::string short_vec_fmt(const std::vector<T>& aVec)
 {
   if (aVec.size() == 0)
     return "[]";

@@ -121,12 +121,12 @@ def status(obj):
         pllstatus['fanout0'][0],
         )
     toolbox.collateTables(
-        toolbox.formatRegTable(pllstatus['overlord'][1], aHeader=False),
-        toolbox.formatRegTable(pllstatus['fanout0'][1] , aHeader=False),
+        toolbox.format_reg_table(pllstatus['overlord'][1], aHeader=False),
+        toolbox.format_reg_table(pllstatus['fanout0'][1] , aHeader=False),
         )
     toolbox.collateTables(
-        toolbox.formatRegTable(pllstatus['overlord'][2], aHeader=False),
-        toolbox.formatRegTable(pllstatus['fanout0'][2] , aHeader=False),
+        toolbox.format_reg_table(pllstatus['overlord'][2], aHeader=False),
+        toolbox.format_reg_table(pllstatus['fanout0'][2] , aHeader=False),
         )
 # ------------------------------------------------------------------------------
 
@@ -177,7 +177,7 @@ def measuredelay(obj, uids, addrs, grp, verbose):
             if verbose: secho("overlord ept stats: fine delay={}, edge={}".format(*lOvldEptStats), fg='cyan')
 
             if verbose: echo("- Measuring RTT")
-            lTimeTx, lTimeRx = lOvld.sendEchoAndMeasureDelay()
+            lTimeTx, lTimeRx = lOvld.send_echo_and_measure_delay()
             if verbose: secho("Measured RTT: {} clk cycles (50 MHz)".format(lTimeRx-lTimeTx), fg='green')
             if verbose: echo(" transmission {}, reception {})".format(hex(lTimeTx), hex(lTimeRx)))
             lMeasurements[uid] = (lTimeRx-lTimeTx,) + lOvldEptStats + lFOEptStats

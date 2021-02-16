@@ -236,12 +236,12 @@ def split_ints(ctx, param, value):
 
 # ------------------------------------------------------------------------------
 def printRegTable(aRegs, aHeader=True, sort=True):
-    echo  ( formatRegTable(aRegs, aHeader, sort) )
+    echo  ( format_reg_table(aRegs, aHeader, sort) )
 # ------------------------------------------------------------------------------
 
 
 # ------------------------------------------------------------------------------
-def formatRegTable(aRegs, aHeader=True, sort=True):
+def format_reg_table(aRegs, aHeader=True, sort=True):
     lRegTable = Texttable(max_width=0)
     lRegTable.set_deco(Texttable.VLINES | Texttable.BORDER | Texttable.HEADER)
     lRegTable.set_chars(['-', '|', '+', '-'])

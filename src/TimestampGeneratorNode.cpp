@@ -21,7 +21,7 @@ TimestampGeneratorNode::~TimestampGeneratorNode() {
 std::string 
 TimestampGeneratorNode::get_status(bool aPrint) const {
 	std::stringstream lStatus;
-	lStatus << "Timestamp: 0x" << std::hex << readTimestamp() << std::endl;
+	lStatus << "Timestamp: 0x" << std::hex << read_timestamp() << std::endl;
 	if (aPrint) std::cout << lStatus.str();
 	return lStatus.str();
 }
@@ -30,7 +30,7 @@ TimestampGeneratorNode::get_status(bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 uhal::ValVector<uint32_t>
-TimestampGeneratorNode::readRawTimestamp(bool aDispatch) const {
+TimestampGeneratorNode::read_raw_timestamp(bool aDispatch) const {
 	auto lTimestamp = getNode("ctr.val").readBlock(2);
 	if (aDispatch) getClient().dispatch();
     return lTimestamp;
@@ -40,15 +40,15 @@ TimestampGeneratorNode::readRawTimestamp(bool aDispatch) const {
 
 //-----------------------------------------------------------------------------
 uint64_t
-TimestampGeneratorNode::readTimestamp() const {
-    return tstamp2int(readRawTimestamp());
+TimestampGeneratorNode::read_timestamp() const {
+    return tstamp2int(read_raw_timestamp());
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void
-TimestampGeneratorNode::setTimestamp(uint64_t aTimestamp) const {
+TimestampGeneratorNode::set_timestamp(uint64_t aTimestamp) const {
 	// Take the timestamp and split it up
 	uint32_t lNowH = (aTimestamp >> 32) & ((1UL<<32)-1);
     uint32_t lNowL = (aTimestamp >> 0) & ((1UL<<32)-1);

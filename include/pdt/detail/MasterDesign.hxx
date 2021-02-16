@@ -20,7 +20,7 @@ MasterDesign<IO,MST>::~MasterDesign() {
 
 //-----------------------------------------------------------------------------
 template< class IO, class MST>
-const MST& MasterDesign<IO,MST>::getMasterNode() const {
+const MST& MasterDesign<IO,MST>::get_master_node() const {
 	return uhal::Node::getNode<MST>("master_top");
 }
 //-----------------------------------------------------------------------------
@@ -28,8 +28,8 @@ const MST& MasterDesign<IO,MST>::getMasterNode() const {
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-uint64_t MasterDesign<IO,MST>::readMasterTimestamp() const {
-	return getMasterNode().readTimestamp();
+uint64_t MasterDesign<IO,MST>::read_master_timestamp() const {
+	return get_master_node().read_timestamp();
 }
 //-----------------------------------------------------------------------------
 
@@ -37,15 +37,15 @@ uint64_t MasterDesign<IO,MST>::readMasterTimestamp() const {
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
 uint32_t MasterDesign<IO,MST>::measureEndpointRTT(uint32_t aAddr, bool aControlSFP) const  {
-	return getMasterNode().measureEndpointRTT(aAddr, aControlSFP);
+	return get_master_node().measureEndpointRTT(aAddr, aControlSFP);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-void MasterDesign<IO,MST>::applyEndpointDelay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel, bool aMeasureRTT, bool aControlSFP) const {
-	getMasterNode().applyEndpointDelay(aAddr, aCDel, aFDel, aPDel, aMeasureRTT, aControlSFP);
+void MasterDesign<IO,MST>::apply_endpoint_delay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel, bool aMeasureRTT, bool aControlSFP) const {
+	get_master_node().apply_endpoint_delay(aAddr, aCDel, aFDel, aPDel, aMeasureRTT, aControlSFP);
 }
 //-----------------------------------------------------------------------------
 }

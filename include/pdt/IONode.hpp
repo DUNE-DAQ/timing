@@ -60,47 +60,47 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    virtual uint32_t readBoardType() const;
+    virtual uint32_t read_board_type() const;
 
     /**
      * @brief      Read the word identifying the FPFA carrier board.
      *
      * @return     { description_of_the_return_value }
      */
-    virtual uint32_t readCarrierType() const;
+    virtual uint32_t read_carrier_type() const;
 
     /**
      * @brief      Read the word identifying the firmware design in the FPGA.
      *
      * @return     { description_of_the_return_value }
      */
-    virtual uint32_t readDesignType() const;
+    virtual uint32_t read_design_type() const;
 
     /**
      * @brief      Read the word containing the timing board UID.
      *
      * @return     { description_of_the_return_value }
      */
-    virtual uint64_t readBoardUID() const;
+    virtual uint64_t read_board_uid() const;
 
     /**
      * @brief      Read the word identifying the timing board.
      *
      * @return     { description_of_the_return_value }
      */
-    virtual BoardRevision getBoardRevision() const;
+    virtual BoardRevision get_board_revision() const;
 
     /**
      * @brief      Print hardware information
      */
-    virtual std::string getHardwareInfo(bool aPrint=false) const;
+    virtual std::string get_hardware_info(bool aPrint=false) const;
 
     /**
      * @brief      Get the full config path.
      *
      * @return     { description_of_the_return_value }
      */
-    virtual std::string getFullClockConfigFilePath(const std::string& aClockConfigFile, int32_t aMode=-1) const;
+    virtual std::string get_full_clock_config_file_path(const std::string& aClockConfigFile, int32_t aMode=-1) const;
 
     /**
      * @brief      Get the an I2C chip.
@@ -108,49 +108,49 @@ public:
      * @return     { description_of_the_return_value }
      */
     template < class T> 
-    std::unique_ptr<const T> getI2CDevice(const std::string& i2cBusName, const std::string& i2cDeviceName) const;
+    std::unique_ptr<const T> get_i2c_device(const std::string& i2cBusName, const std::string& i2cDeviceName) const;
 
     /**
      * @brief      Get the PLL chip.
      *
      * @return     { description_of_the_return_value }
      */
-    virtual std::unique_ptr<const SI534xSlave> getPLL() const;
+    virtual std::unique_ptr<const SI534xSlave> get_pll() const;
 
     /**
      * @brief      Configure clock chip.
      */
-    virtual void configurePLL(const std::string& aClockConfigFile="") const;
+    virtual void configure_pll(const std::string& aClockConfigFile="") const;
 
     /**
      * @brief      Read frequencies of on-board clocks.
      */
-    virtual std::vector<double> readClockFrequencies() const;
+    virtual std::vector<double> read_clock_frequencies() const;
 
     /**
      * @brief      Print frequencies of on-board clocks.
      */
-    virtual std::string getClockFrequenciesTable(bool aPrint=false) const;
+    virtual std::string get_clock_frequencies_table(bool aPrint=false) const;
 
     /**
      * @brief      Print status of on-board PLL.
      */
-    virtual std::string getPLLStatus(bool aPrint=false) const;
+    virtual std::string get_pll_status(bool aPrint=false) const;
 
     /**
      * @brief      Print status of on-board SFP.
      */
-    virtual std::string getSFPStatus(uint32_t aSFPId, bool aPrint=false) const;
+    virtual std::string get_sfp_status(uint32_t aSFPId, bool aPrint=false) const;
 
     /**
      * @brief      control tx laser of on-board SFP softly (I2C command)
      */
-    virtual void switchSFPSoftTxControlBit(uint32_t aSFPId, bool aOn) const;
+    virtual void switch_sfp_soft_tx_control_bit(uint32_t aSFPId, bool aOn) const;
 
     /**
      * @brief      Reset timing node.
      */
-    virtual void softReset() const;
+    virtual void soft_reset() const;
 
     /**
      * @brief      Reset timing node.

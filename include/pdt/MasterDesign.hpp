@@ -41,7 +41,7 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    virtual const MST& getMasterNode() const;
+    virtual const MST& get_master_node() const;
 
     /**
      * @brief      Configure the timing master design node.
@@ -53,7 +53,7 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    virtual uint64_t readMasterTimestamp() const;
+    virtual uint64_t read_master_timestamp() const;
 
     /**
      * @brief      Measure the endpoint round trip time.
@@ -65,7 +65,7 @@ public:
     /**
      * @brief      Apply delay to endpoint
      */
-    virtual void applyEndpointDelay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel, bool aMeasureRTT=false, bool aControlSFP=true) const;
+    virtual void apply_endpoint_delay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel, bool aMeasureRTT=false, bool aControlSFP=true) const;
 
 };
 

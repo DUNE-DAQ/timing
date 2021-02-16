@@ -34,11 +34,11 @@ SI534xSlave::~SI534xSlave( ) {
 
 //-----------------------------------------------------------------------------
 std::string
-SI534xSlave::readConfigID() const {
+SI534xSlave::read_config_id() const {
     std::string id;
 
     for ( size_t i(0); i<8; ++i) {
-        id += (char)readClockRegister(0x26b+i);
+        id += (char)read_clock_register(0x26b+i);
     }
     return id;
 
@@ -48,7 +48,7 @@ SI534xSlave::readConfigID() const {
 
 //-----------------------------------------------------------------------------
 std::string
-SI534xSlave::seekHeader( std::ifstream& aFile ) const {
+SI534xSlave::seek_header( std::ifstream& aFile ) const {
 
     // std::string lLine;
     std::string lDesignID;
@@ -92,7 +92,7 @@ SI534xSlave::seekHeader( std::ifstream& aFile ) const {
 // Stop on conf end
 
 std::vector<SI534xSlave::RegisterSetting_t>
-SI534xSlave::readConfigSection( std::ifstream& aFile, std::string aTag ) const {
+SI534xSlave::read_config_section( std::ifstream& aFile, std::string aTag ) const {
 
     // Line buffer
     // std::string lLine;
@@ -162,34 +162,34 @@ SI534xSlave::readConfigSection( std::ifstream& aFile, std::string aTag ) const {
 void
 SI534xSlave::configure( const std::string& aPath ) const {
 
-    throwIfNotFile(aPath);
+    throw_if_not_file(aPath);
 
     std::ifstream lFile(aPath);
     std::string lLine;
     std::string lConfDesignID;
 
     // Seek the header line first
-    lConfDesignID = seekHeader(lFile);
+    lConfDesignID = seek_header(lFile);
     std::ifstream::pos_type lHdrEnd = lFile.tellg();
 
-    // auto lPreamble = this->readConfigSection(lFile, "preamble");
+    // auto lPreamble = this->read_config_section(lFile, "preamble");
     // PDT_LOG(kDebug) << "Preamble size = " << lPreamble.size();
-    // auto lRegisters = this->readConfigSection(lFile, "registers");
+    // auto lRegisters = this->read_config_section(lFile, "registers");
     // PDT_LOG(kDebug) << "Registers size = " << lRegisters.size();
-    // auto lPostAmble = this->readConfigSection(lFile, "postamble");
+    // auto lPostAmble = this->read_config_section(lFile, "postamble");
     // PDT_LOG(kDebug) << "PostAmble size = " << lPostAmble.size();
 
 
     std::vector<SI534xSlave::RegisterSetting_t> lPreamble, lRegisters, lPostAmble; 
     
     try {
-        lPreamble = this->readConfigSection(lFile, "preamble");
-        lRegisters = this->readConfigSection(lFile, "registers");
-        lPostAmble = this->readConfigSection(lFile, "postamble");
+        lPreamble = this->read_config_section(lFile, "preamble");
+        lRegisters = this->read_config_section(lFile, "registers");
+        lPostAmble = this->read_config_section(lFile, "postamble");
     } catch ( SI534xMissingConfigSectionError& ) {
         lFile.seekg(lHdrEnd);
         lPreamble.clear();
-        lRegisters = this->readConfigSection(lFile, "");
+        lRegisters = this->read_config_section(lFile, "");
         lPostAmble.clear();
     }
 
@@ -200,19 +200,19 @@ SI534xSlave::configure( const std::string& aPath ) const {
     lFile.close();
 
     try {
-        this->writeClockRegister(0x1E, 0x2);
+        this->write_clock_register(0x1E, 0x2);
     } catch ( pdt::I2CException& lExc ) {
         // Do nothing.
     }
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-    this->uploadConfig(lPreamble);
+    this->upload_config(lPreamble);
     std::this_thread::sleep_for(std::chrono::milliseconds(300));
-    this->uploadConfig(lRegisters);
-    this->uploadConfig(lPostAmble);
+    this->upload_config(lRegisters);
+    this->upload_config(lPostAmble);
 
-    std::string lChipDesignID = this->readConfigID();
+    std::string lChipDesignID = this->read_config_id();
 
     if ( lConfDesignID != lChipDesignID ) {
         std::ostringstream lMsg;
@@ -226,7 +226,7 @@ SI534xSlave::configure( const std::string& aPath ) const {
 
 //-----------------------------------------------------------------------------
 void 
-SI534xSlave::uploadConfig( const std::vector<SI534xSlave::RegisterSetting_t>& aConfig ) const {
+SI534xSlave::upload_config( const std::vector<SI534xSlave::RegisterSetting_t>& aConfig ) const {
 
     size_t k(0), lNotifyPercent(10);
     size_t lNotifyEvery = ( lNotifyPercent < aConfig.size() ? aConfig.size()/lNotifyPercent : 1);
@@ -242,12 +242,12 @@ SI534xSlave::uploadConfig( const std::vector<SI534xSlave::RegisterSetting_t>& aC
         while( lAttempt < lMaxAttempts ) {        
             ERS_DEBUG(0, "Attempt " << lAttempt);
             if ( lAttempt > 0) {
-                ers::warning(SI534xRegWriteRetry(ERS_HERE, "SI534xSlave", formatRegValue((uint32_t)lSetting.get<0>()) ));
+                ers::warning(SI534xRegWriteRetry(ERS_HERE, "SI534xSlave", format_reg_value((uint32_t)lSetting.get<0>()) ));
             }
             try {
-              this->writeClockRegister(lSetting.get<0>(), lSetting.get<1>());
+              this->write_clock_register(lSetting.get<0>(), lSetting.get<1>());
             } catch( const std::exception& e) {
-                ers::error(SI534xRegWriteFailed(ERS_HERE, "SI534xSlave", formatRegValue((uint32_t)lSetting.get<0>()), formatRegValue((uint32_t)lSetting.get<1>()), e));
+                ers::error(SI534xRegWriteFailed(ERS_HERE, "SI534xSlave", format_reg_value((uint32_t)lSetting.get<0>()), format_reg_value((uint32_t)lSetting.get<1>()), e));
                 ++lAttempt;
                 continue;
             }
@@ -303,7 +303,7 @@ SI534xSlave::registers( ) const {
     //         continue;
     //     }
 
-        values[ regAddr ] = readClockRegister(regAddr);
+        values[ regAddr ] = read_clock_register(regAddr);
     }
 
     return values;
@@ -311,13 +311,13 @@ SI534xSlave::registers( ) const {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-SI534xNode::SI534xNode( const uhal::Node& aNode ) : I2CMasterNode(aNode), SI534xSlave(this, this->getSlaveAddress("i2caddr") ) {
+SI534xNode::SI534xNode( const uhal::Node& aNode ) : I2CMasterNode(aNode), SI534xSlave(this, this->get_slave_address("i2caddr") ) {
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-SI534xNode::SI534xNode( const SI534xNode& aOther ) : I2CMasterNode(aOther), SI534xSlave(this, this->getSlaveAddress("i2caddr") ) {
+SI534xNode::SI534xNode( const SI534xNode& aOther ) : I2CMasterNode(aOther), SI534xSlave(this, this->get_slave_address("i2caddr") ) {
 }
 //-----------------------------------------------------------------------------
 

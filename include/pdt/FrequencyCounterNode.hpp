@@ -45,7 +45,7 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    std::vector<double> measureFrequencies(uint8_t nClocks) const;
+    std::vector<double> measure_frequencies(uint8_t nClocks) const;
 
 };
 

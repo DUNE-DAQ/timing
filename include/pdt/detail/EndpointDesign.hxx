@@ -31,11 +31,11 @@ EndpointDesign<IO>::~EndpointDesign() {
 template<class IO>
 std::string EndpointDesign<IO>::get_status(bool aPrint) const {
 	std::stringstream lStatus;
-	lStatus << this->getIONode().getPLLStatus();
-	uint32_t lNumberOfEndpointNodes = EndpointDesign<IO>::getNumberOfEndpointNodes();
+	lStatus << this->get_io_node().get_pll_status();
+	uint32_t lNumberOfEndpointNodes = EndpointDesign<IO>::get_number_of_endpoint_nodes();
 	for (uint32_t i=0; i < lNumberOfEndpointNodes; ++i) {
 		lStatus << "Endpoint node " << i << " status" << std::endl;
-		lStatus << this->getEndpointNode(i).get_status();
+		lStatus << this->get_endpoint_node(i).get_status();
 	}
 	if (aPrint) std::cout << lStatus.str();
 	return lStatus.str();
@@ -46,7 +46,7 @@ std::string EndpointDesign<IO>::get_status(bool aPrint) const {
 //-----------------------------------------------------------------------------
 template< class IO>
 void EndpointDesign<IO>::enable(uint32_t aEptId) const {
-	 this->getEndpointNode(aEptId).enable();
+	 this->get_endpoint_node(aEptId).enable();
 }
 //-----------------------------------------------------------------------------
 

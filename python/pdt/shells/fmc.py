@@ -54,13 +54,13 @@ class FMCShell(BoardShell):
     # ------------------------------------------------------------------------------
     def getAX3Slave(self):
         lIO = self.device.getNode('io')
-        return lIO.getNode('uid_i2c').getSlave('AX3_Switch')
+        return lIO.getNode('uid_i2c').get_slave('AX3_Switch')
     # ------------------------------------------------------------------------------
 
     # ------------------------------------------------------------------------------
     def getUIDSlave(self):
         lIO = self.device.getNode('io')
-        return lIO.getNode('uid_i2c').getSlave('FMC_UID_PROM')
+        return lIO.getNode('uid_i2c').get_slave('FMC_UID_PROM')
     # ------------------------------------------------------------------------------
 
     # ------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ class FMCShell(BoardShell):
         lIO = lDevice.getNode('io')
 
         # Global soft reset
-        self.softReset()
+        self.soft_reset()
 
         if not soft:
             time.sleep(0.1)
@@ -157,7 +157,7 @@ class FMCShell(BoardShell):
                 lFullClockConfigPath = expandvars(join('${PDT_TESTS}/etc/clock', lClockConfigPath))
 
             lSIChip.configure(lFullClockConfigPath)
-            echo("SI354x configuration id: {}".format(style(lSIChip.readConfigID(), fg='green')))
+            echo("SI354x configuration id: {}".format(style(lSIChip.read_config_id(), fg='green')))
 
 # ------------------------------------------------------------------------------
 

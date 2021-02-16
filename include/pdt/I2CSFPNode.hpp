@@ -23,6 +23,7 @@
 
 namespace dunedaq {
 namespace pdt {
+
 /**
  * @class      I2CSFPSlave
  *
@@ -42,133 +43,133 @@ public:
      * @brief      Check if SFP responds
      *
      */
-    void sfpReachable() const;
+    void sfp_reachable() const;
 
     /**
      * @brief      Check if DDM is supported
      *
      */
-    void ddmAvailable() const;
+    void ddm_available() const;
 
     /**
      * @brief      Read the raw SFP temperature
      *
      */
-    std::pair<double, double>  readCalibrationParameterPair(uint32_t aCalibID) const;
+    std::pair<double, double>  read_calibration_parameter_pair(uint32_t aCalibID) const;
 
     /**
      * @brief      Read the raw SFP temperature
      *
      */
-    double readTemperatureRaw() const;
+    double read_temperature_raw() const;
 
     /**
      * @brief      Read the calibrated SFP temperature
      *
      */
-    double readTemperature() const;
+    double read_temperature() const;
 
     /**
      * @brief      Read the raw SFP voltage
      *
      */
-    double readVoltageRaw() const;
+    double read_voltage_raw() const;
 
     /**
      * @brief      Read the calibrated SFP voltage
      *
      */
-    double readVoltage() const;
+    double read_voltage() const;
 
     /**
      * @brief      Read the raw SFP temperature
      *
      */
-    double readRxPowerRaw() const;
+    double read_rx_power_raw() const;
 
     /**
      * @brief      Read the raw SFP temperature
      *
      */
-    double readRxPower() const;
+    double read_rx_ower() const;
 
     /**
      * @brief      Read the raw SFP tx power
      *
      */
-    double readTxPowerRaw() const;
+    double read_tx_power_raw() const;
 
     /**
      * @brief      Read the calibrated SFP tx power
      *
      */
-    double readTxPower() const;
+    double read_tx_power() const;
 
     /**
      * @brief      Read the raw SFP current
      *
      */
-    double readCurrentRaw() const;
+    double read_current_raw() const;
 
     /**
      * @brief      Read the calibrated SFP current
      *
      */
-    double readCurrent() const;
+    double read_current() const;
 
     /**
      * @brief      Read the vendor name
      *
      */
-    std::string readVendorName() const;
+    std::string read_vendor_name() const;
 
     /**
      * @brief      Read the vendor name
      *
      */
-    std::string readVendorPartNumber() const;
+    std::string read_vendor_part_number() const;
 
     /**
      * @brief      Read the SFP serial number
      *
      */
-    std::string readSerialNumber() const;
+    std::string read_serial_number() const;
 
     /**
      * @brief      Find out if SFP supports DDM
      *
      */
-    bool readDDMSupportBit() const;
+    bool read_ddm_support_bit() const;
 
     /**
      * @brief      Find out if SFP supports soft tx laser disable
      *
      */
-    bool readSoftTxControlSupportBit() const;
+    bool read_soft_tx_control_support_bit() const;
 
     /**
      * @brief      Read the value of the soft tx disable control bit
      *
      */
-    bool readSoftTxControlState() const;
+    bool read_soft_tx_control_state() const;
 
     /**
      * @brief      Read the state of the tx disable control pin
      *
      */
-    bool readTxDisablePinState() const;
+    bool read_tx_disable_pin_state() const;
     
     /**
      * @brief      Read whether the SFP has seperate I2C addresses, or if a special I2C address swap is required. True = address swap required
      *
      */
-    bool readI2CAddressSwapBit() const;
+    bool read_i2cAddressSwapBit() const;
 
     /**
      * @brief     Switch on or off the SFP tx laser via the soft control bit
      *
      */
-    void switchSoftTxControlBit(bool aOn) const;
+    void switch_soft_tx_control_bit(bool aOn) const;
 
     /**
      * @brief      Get SFP status
@@ -196,4 +197,4 @@ public:
 } // namespace pdt
 } // namespace dunedaq
 
-#endif /* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SFPEXPANDERNODE_HPP_ */
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SFPEXPANDERNODE_HPP_

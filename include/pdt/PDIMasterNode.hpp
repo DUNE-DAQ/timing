@@ -44,12 +44,12 @@ public:
     /**
      * @brief     Control the tx line of endpoint sfp
      */
-    void switchEndpointSFP(uint32_t aAddr, bool aOn) const override;
+    void switch_endpoint_sfp(uint32_t aAddr, bool aOn) const override;
 
     /**
      * @brief     Enable RTT endpoint
      */
-    void enableUpstreamEndpoint() const override;
+    void enable_upstream_endpoint() const override;
 
     /**
      * @brief      Measure the endpoint round trip time.
@@ -61,64 +61,64 @@ public:
     /**
      * @brief     Apply delay to endpoint
      */
-    void applyEndpointDelay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel, bool aMeasureRTT=false, bool aControlSFP=true) const override;
+    void apply_endpoint_delay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel, bool aMeasureRTT=false, bool aControlSFP=true) const override;
 
-    using MasterNode::applyEndpointDelay;
+    using MasterNode::apply_endpoint_delay;
     
     /**
      * @brief     Send a fixed length command
      */
-    void sendFLCmd(uint32_t aCmd, uint32_t aChan, uint32_t aNumber=1) const override;
+    void send_fl_cmd(uint32_t aCmd, uint32_t aChan, uint32_t aNumber=1) const override;
 
     /**
      * @brief     Configure fake trigger generator
      */
-    void enableFakeTrigger(uint32_t aChan, double aRate, bool aPoisson=false) const;
+    void enable_fake_trigger(uint32_t aChan, double aRate, bool aPoisson=false) const;
 
     /**
      * @brief     Clear fake trigger configuration
      */
-    void disableFakeTrigger(uint32_t aChan) const;
+    void disable_fake_trigger(uint32_t aChan) const;
 
     /**
      * @brief     Enable spill interface
      */
-    void enableSpillInterface() const;
+    void enable_spill_interface() const;
 
     /**
      * @brief     Configure and enable fake spill generator
      */
-    void enableFakeSpills(uint32_t aCycLen=16, uint32_t aSpillLen=8) const;
+    void enable_fake_spills(uint32_t aCycLen=16, uint32_t aSpillLen=8) const;
 
     /**
      * @brief     Read whether we are in spill or not
      */
-    bool readInSpill() const;
+    bool read_in_spill() const;
 
     /**
      * @brief     Reset trigger rx endpoint
      */
-    void resetExternalTriggersEndpoint() const;
+    void reset_external_triggers_endpoint() const;
 
     /**
      * @brief     Enable external triggers
      */
-    void enableExternalTriggers() const;
+    void enable_external_triggers() const;
 
     /**
      * @brief     Disable external triggers
      */
-    void disableExternalTriggers() const;
+    void disable_external_triggers() const;
 
      /**
      * @brief     Retrieve partition node
      */
-    const PartitionNode& getPartitionNode(uint32_t aPartID) const;
+    const PartitionNode& get_partition_node(uint32_t aPartID) const;
 
      /**
      * @brief     Set timestamp to current machine time
      */
-    void syncTimestamp() const;
+    void sync_timestamp() const;
 };
 
 

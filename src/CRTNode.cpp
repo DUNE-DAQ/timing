@@ -43,7 +43,7 @@ std::string
 CRTNode::get_status(bool aPrint) const {
 	std::stringstream lStatus;
 	auto lCRTRegs = read_sub_nodes(getNode(""));
-    lStatus << formatRegTable(lCRTRegs, "CRT state", {"", ""}) << std::endl;
+    lStatus << format_reg_table(lCRTRegs, "CRT state", {"", ""}) << std::endl;
 
     const uint64_t lLastPulseTimestamp = ((uint64_t)lCRTRegs.at("pulse.ts_h").value() << 32) + lCRTRegs.at("pulse.ts_l").value();
     lStatus << "Last Pulse Timestamp: 0x" << std::hex << lLastPulseTimestamp << std::endl;

@@ -29,11 +29,11 @@ TriggerReceiverNode::get_status(bool aPrint) const {
     auto lCounters = getNode("ctrs").readBlock(0x10);
     getClient().dispatch();
 
-    lStatus << formatRegTable(lState, "Trigger rx state");
-    lStatus << formatRegTable(lControls, "Trigger rx controls");
+    lStatus << format_reg_table(lState, "Trigger rx state");
+    lStatus << format_reg_table(lControls, "Trigger rx controls");
 
     std::vector<uhal::ValVector<uint32_t>> lCountersContainer = {lCounters};
-    lStatus << formatCountersTable(lCountersContainer, {"Counters"}, "Trig rx counters");
+    lStatus << format_counters_table(lCountersContainer, {"Counters"}, "Trig rx counters");
 
     if (aPrint) std::cout << lStatus.str();
     return lStatus.str();
@@ -71,7 +71,7 @@ TriggerReceiverNode::reset() const {
 
 //-----------------------------------------------------------------------------
 void
-TriggerReceiverNode::enableTriggers() const {
+TriggerReceiverNode::enable_triggers() const {
     getNode("csr.ctrl.ext_trig_en").write(0x1);
     getClient().dispatch();
 }
@@ -80,7 +80,7 @@ TriggerReceiverNode::enableTriggers() const {
 
 //-----------------------------------------------------------------------------
 void
-TriggerReceiverNode::disableTriggers() const {
+TriggerReceiverNode::disable_triggers() const {
     getNode("csr.ctrl.ext_trig_en").write(0x0);
     getClient().dispatch();
 }

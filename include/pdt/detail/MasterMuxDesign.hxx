@@ -32,8 +32,8 @@ MasterMuxDesign<IO,MST>::~MasterMuxDesign() {
 template<class IO, class MST>
 std::string MasterMuxDesign<IO,MST>::get_status(bool aPrint) const {
 	std::stringstream lStatus;
-	lStatus << this->getIONode().getPLLStatus();
-	lStatus << this->getMasterNode().get_status();
+	lStatus << this->get_io_node().get_pll_status();
+	lStatus << this->get_master_node().get_status();
 	// TODO mux specific status
 	if (aPrint) std::cout << lStatus.str();
 	return lStatus.str();
@@ -52,14 +52,14 @@ void MasterMuxDesign<IO,MST>::configure() const {
 
 	if (!lFanoutMode) {
 		// Set timestamp to current time
-		this->getMasterNode().syncTimestamp();
+		this->get_master_node().sync_timestamp();
 
 		// Enable spill interface
-		this->getMasterNode().enableSpillInterface();
+		this->get_master_node().enable_spill_interface();
 
 		// Trigger interface configuration
-		this->getMasterNode().resetExternalTriggersEndpoint();
-		this->getMasterNode().enableExternalTriggers();
+		this->get_master_node().reset_external_triggers_endpoint();
+		this->get_master_node().enable_external_triggers();
 	}
 }
 //-----------------------------------------------------------------------------
@@ -68,17 +68,17 @@ void MasterMuxDesign<IO,MST>::configure() const {
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
 void MasterMuxDesign<IO,MST>::reset(const std::string& aClockConfigFile) const {
-	this->getIONode().reset(-1, aClockConfigFile);
+	this->get_io_node().reset(-1, aClockConfigFile);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-void MasterMuxDesign<IO,MST>::switchSFPMUXChannel(uint32_t aSFPID, bool aWaitForRttEptLock) const {
-	this->getIONode().switchSFPMUXChannel(aSFPID);
+void MasterMuxDesign<IO,MST>::switch_sfp_mux_channel(uint32_t aSFPID, bool aWaitForRttEptLock) const {
+	this->get_io_node().switch_sfp_mux_channel(aSFPID);
 	if (aWaitForRttEptLock) {
-		this->getMasterNode().enableUpstreamEndpoint();
+		this->get_master_node().enable_upstream_endpoint();
 	}
 }
 //-----------------------------------------------------------------------------
@@ -86,8 +86,8 @@ void MasterMuxDesign<IO,MST>::switchSFPMUXChannel(uint32_t aSFPID, bool aWaitFor
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-uint32_t MasterMuxDesign<IO,MST>::readActiveSFPMUXChannel() const {
-	return this->getIONode().readActiveSFPMUXChannel();
+uint32_t MasterMuxDesign<IO,MST>::read_active_sfp_mux_channel() const {
+	return this->get_io_node().read_active_sfp_mux_channel();
 }
 //-----------------------------------------------------------------------------
 
@@ -97,17 +97,17 @@ template<class IO, class MST>
 uint32_t MasterMuxDesign<IO,MST>::measureEndpointRTT(uint32_t aAddr, bool aControlSFP, uint32_t aSFPMUX) const {
 	
 	if (aControlSFP) {
-		this->getMasterNode().switchEndpointSFP(0x0, false);
-		this->getMasterNode().switchEndpointSFP(aAddr, true);
+		this->get_master_node().switch_endpoint_sfp(0x0, false);
+		this->get_master_node().switch_endpoint_sfp(aAddr, true);
 	}
 	
 	// set fanout rtt mux channel, and wait for fanout rtt ept to be in a good state
-	this->switchSFPMUXChannel(aSFPMUX, true);
+	this->switch_sfp_mux_channel(aSFPMUX, true);
 		
 	// gets master rtt ept in a good state, and sends echo command (due to second argument endpoint sfp is not controlled in this call, already done above)
-	uint32_t lRTT = this->getMasterNode().measureEndpointRTT(aAddr, false);
+	uint32_t lRTT = this->get_master_node().measureEndpointRTT(aAddr, false);
 
-	if (aControlSFP) this->getMasterNode().switchEndpointSFP(aAddr, false);
+	if (aControlSFP) this->get_master_node().switch_endpoint_sfp(aAddr, false);
 	return lRTT;
 }
 //-----------------------------------------------------------------------------
@@ -115,28 +115,28 @@ uint32_t MasterMuxDesign<IO,MST>::measureEndpointRTT(uint32_t aAddr, bool aContr
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-void MasterMuxDesign<IO,MST>::applyEndpointDelay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel, bool aMeasureRTT, bool aControlSFP, uint32_t aSFPMUX) const {
+void MasterMuxDesign<IO,MST>::apply_endpoint_delay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel, bool aMeasureRTT, bool aControlSFP, uint32_t aSFPMUX) const {
 
 	if (aMeasureRTT) {
 		if (aControlSFP) {
-			this->getMasterNode().switchEndpointSFP(0x0, false);
-			this->getMasterNode().switchEndpointSFP(aAddr, true);
+			this->get_master_node().switch_endpoint_sfp(0x0, false);
+			this->get_master_node().switch_endpoint_sfp(aAddr, true);
 		}
 		
 		// set fanout rtt mux channel, and wait for fanout rtt ept to be in a good state, don't bother waiting for a good rtt endpoint, the next method call takes care of that
-		this->switchSFPMUXChannel(aSFPMUX, false);
+		this->switch_sfp_mux_channel(aSFPMUX, false);
 	}
 	
-	this->getMasterNode().applyEndpointDelay(aAddr, aCDel, aFDel, aPDel, aMeasureRTT, false);
+	this->get_master_node().apply_endpoint_delay(aAddr, aCDel, aFDel, aPDel, aMeasureRTT, false);
 
-	if (aMeasureRTT && aControlSFP) this->getMasterNode().switchEndpointSFP(aAddr, false);
+	if (aMeasureRTT && aControlSFP) this->get_master_node().switch_endpoint_sfp(aAddr, false);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-std::vector<uint32_t> MasterMuxDesign<IO,MST>::scanSFPMUX() const {
+std::vector<uint32_t> MasterMuxDesign<IO,MST>::scan_sfp_mux() const {
 	std::vector<uint32_t> lLockedChannels;
     
     // TODO will this be right for every fanout board, need to check the IO board
@@ -145,7 +145,7 @@ std::vector<uint32_t> MasterMuxDesign<IO,MST>::scanSFPMUX() const {
     	ERS_INFO("Scanning slot " << i);
 
     	try {
-    		this->switchSFPMUXChannel(i, true);	
+    		this->switch_sfp_mux_channel(i, true);	
     	} catch(...) {
     		ERS_INFO("Slot " << i << " not locked");
     	}
@@ -157,7 +157,7 @@ std::vector<uint32_t> MasterMuxDesign<IO,MST>::scanSFPMUX() const {
     
 
     if (lLockedChannels.size()) {
-    	ERS_LOG("Slots locked: " << vecFmt(lLockedChannels));
+    	ERS_LOG("Slots locked: " << vec_fmt(lLockedChannels));
     } else {
         ERS_LOG("No slots locked");
     }

@@ -151,7 +151,7 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
     if lBoardType in kLibrarySupportedBoards:
 
         if soft:
-            lIO.softReset()
+            lIO.soft_reset()
             return
         
         if lDesignType == kDesingFanout:
@@ -184,7 +184,7 @@ def freq(obj):
     secho("PLL Clock frequency measurement:", fg='cyan')
     
     if lBoardType in kLibrarySupportedBoards:    
-        echo(lIO.getClockFrequenciesTable())
+        echo(lIO.get_clock_frequencies_table())
     else:
         secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
         # do freq measurement here
@@ -203,8 +203,8 @@ def status(ctx, obj, verbose):
     lIO = lDevice.getNode('io')
 
     if lBoardType in kLibrarySupportedBoards:
-        echo(lIO.getHardwareInfo())    
-        echo(lIO.getStatus())
+        echo(lIO.get_hardware_info())    
+        echo(lIO.get_status())
     else:
         secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
         # do status printing here
@@ -229,7 +229,7 @@ def clkstatus(ctx, obj, verbose):
     echo()
 
     if lBoardType in kLibrarySupportedBoards:    
-        echo(lIO.getPLLStatus())
+        echo(lIO.get_pll_status())
     else:
         secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
         # do freq measurement here
@@ -248,8 +248,8 @@ def dacsetup(ctx, obj, value):
     lIO = lDevice.getNode('io')
 
     if lBoardType == kBoardTLU:
-        lIO.configureDAC(0,value)
-        lIO.configureDAC(1,value)
+        lIO.configure_dac(0,value)
+        lIO.configure_dac(1,value)
         secho("DAC1 and DAC2 set to " + hex(value), fg='cyan')
     else:
         secho("DAC setup only supported for TLU")
@@ -275,16 +275,16 @@ def sfpstatus(ctx, obj, sfp_id):
     
     
     if lBoardType in kLibrarySupportedBoards:
-        echo(lDevice.getNode('io').getHardwareInfo())
+        echo(lDevice.getNode('io').get_hardware_info())
         if sfp_id is not None:
-            echo(lIO.getSFPStatus(sfp_id))
+            echo(lIO.get_sfp_status(sfp_id))
         else:
             if lBoardType == kBoardFMC or lBoardType == kBoardTLU:
-                echo(lIO.getSFPStatus(0))
+                echo(lIO.get_sfp_status(0))
             elif ( lBoardType == kBoardPC059 ):
                 for i in range(9):
                     try:
-                        echo(lIO.getSFPStatus(i))
+                        echo(lIO.get_sfp_status(i))
                         echo()
                     except:
                         pass
@@ -314,18 +314,18 @@ def switchsfptx(ctx, obj, sfp_id, on):
     lIO = lDevice.getNode('io') 
 
     if lBoardType in kLibrarySupportedBoards:
-        echo(lDevice.getNode('io').getHardwareInfo())
+        echo(lDevice.getNode('io').get_hardware_info())
         if sfp_id is not None:
-            lIO.switchSFPSoftTxControlBit(sfp_id, on)
-            echo(lIO.getSFPStatus(sfp_id))
+            lIO.switch_sfp_soft_tx_control_bit(sfp_id, on)
+            echo(lIO.get_sfp_status(sfp_id))
         else:
             if lBoardType == kBoardFMC or lBoardType == kBoardTLU:
-                lIO.switchSFPSoftTxControlBit(0, on)
-                echo(lIO.getSFPStatus(0))
+                lIO.switch_sfp_soft_tx_control_bit(0, on)
+                echo(lIO.get_sfp_status(0))
             elif ( lBoardType == kBoardPC059 ):
                 for i in range(9):
-                    lIO.switchSFPSoftTxControlBit(i, on)
-                    echo(lIO.getSFPStatus(i))
+                    lIO.switch_sfp_soft_tx_control_bit(i, on)
+                    echo(lIO.get_sfp_status(i))
     else:
         secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
         # do sfp switch here

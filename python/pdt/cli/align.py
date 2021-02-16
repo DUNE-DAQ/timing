@@ -49,14 +49,14 @@ def applydelay(ctx, obj, addr, cdelay, fdelay, mux, force):
     if lBoardType == kBoardPC059:
         if mux is None:
             if force == True:
-                lTopDesign.applyEndpointDelay(addr, cdelay, fdelay, 0, not force, True, 0)
+                lTopDesign.apply_endpoint_delay(addr, cdelay, fdelay, 0, not force, True, 0)
             else:
                 raise RuntimeError('PC059 board: please supply an SFP mux channel')
         else:
-            lTopDesign.applyEndpointDelay(addr, cdelay, fdelay, 0, not force, True, mux)
+            lTopDesign.apply_endpoint_delay(addr, cdelay, fdelay, 0, not force, True, mux)
             
     else:
-        lTopDesign.applyEndpointDelay(addr, cdelay, fdelay, 0, not force, True)
+        lTopDesign.apply_endpoint_delay(addr, cdelay, fdelay, 0, not force, True)
 # ------------------------------------------------------------------------------
 
 
@@ -91,7 +91,7 @@ def measuredelay(ctx, obj, addr, mux):
 def toggletx(obj, addr, on):
 
     lMasterTop = obj.mMasterTop
-    lMasterTop.switchEndpointSFP(addr, on)
+    lMasterTop.switch_endpoint_sfp(addr, on)
 # ------------------------------------------------------------------------------
 
 
@@ -105,7 +105,7 @@ def scanmux(obj):
     lBoardType = obj.mBoardType
 
     if lBoardType == kBoardPC059:
-        lTopDesign.scanSFPMUX()
+        lTopDesign.scan_sfp_mux()
     else:
         raise RuntimeError('Mux scan is only available on PC059 boards')
 # ------------------------------------------------------------------------------
@@ -125,9 +125,9 @@ def switchnlock(obj, mux):
     # or a different type of fanout board
     if lBoardType == kBoardPC059:
         if mux is not None:
-            lTopDesign.switchSFPMUXChannel(mux, True)
+            lTopDesign.switch_sfp_mux_channel(mux, True)
         else:
             raise RuntimeError('PC059 board: please supply an SFP mux channel')
     else:
-        lMasterTop.enableUpstreamEndpoint()
+        lMasterTop.enable_upstream_endpoint()
 # ------------------------------------------------------------------------------

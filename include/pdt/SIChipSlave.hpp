@@ -40,21 +40,21 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    uint8_t readPage() const;
+    uint8_t read_page() const;
     
     /**
      * @brief      { function_description }
      *
      * @param[in]  aPage  A page
      */
-    void switchPage(uint8_t aPage) const;
+    void switch_page(uint8_t aPage) const;
 
     /**
      * @brief      Reads a device version.
      *
      * @return     { description_of_the_return_value }
      */
-    uint32_t readDeviceVersion() const;
+    uint32_t read_device_version() const;
 
     /**
      * @brief      Reads a clock register.
@@ -63,7 +63,7 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    uint8_t readClockRegister( uint16_t aAddr ) const;
+    uint8_t read_clock_register( uint16_t aAddr ) const;
 
     /**
      * @brief      Writes a clock register.
@@ -71,7 +71,7 @@ public:
      * @param[in]  aAddr  A address
      * @param[in]  aData  A data
      */
-    void writeClockRegister( uint16_t aAddr, uint8_t aData) const;
+    void write_clock_register( uint16_t aAddr, uint8_t aData) const;
 
 
 };

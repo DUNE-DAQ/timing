@@ -93,7 +93,7 @@ I2CMasterNode::~I2CMasterNode() {
 
 //-----------------------------------------------------------------------------
 std::vector<std::string>
-I2CMasterNode::getSlaves() const {
+I2CMasterNode::get_slaves() const {
     std::vector<std::string> lSlaves;
 
     boost::copy(mSlavesAddresses | boost::adaptors::map_keys, std::back_inserter(lSlaves));
@@ -105,7 +105,7 @@ I2CMasterNode::getSlaves() const {
 
 //-----------------------------------------------------------------------------
 uint8_t
-I2CMasterNode::getSlaveAddress(const std::string& name) const {
+I2CMasterNode::get_slave_address(const std::string& name) const {
     std::unordered_map<std::string, uint8_t>::const_iterator lIt = mSlavesAddresses.find(name);
     if ( lIt == mSlavesAddresses.end() ) {
         throw I2CDeviceNotFound(ERS_HERE, getId(), getId(), name);
@@ -117,7 +117,7 @@ I2CMasterNode::getSlaveAddress(const std::string& name) const {
 
 //-----------------------------------------------------------------------------
 const I2CSlave&
-I2CMasterNode::getSlave(const std::string& name) const {
+I2CMasterNode::get_slave(const std::string& name) const {
     std::unordered_map<std::string, I2CSlave*>::const_iterator lIt = mSlaves.find(name);
     if ( lIt == mSlaves.end() ) {
         throw I2CDeviceNotFound(ERS_HERE, getId(), getId(), name);
@@ -129,45 +129,45 @@ I2CMasterNode::getSlave(const std::string& name) const {
 
 //-----------------------------------------------------------------------------
 uint8_t
-I2CMasterNode::readI2C(uint8_t aSlaveAddress, uint32_t i2cAddress) const {
+I2CMasterNode::read_i2c(uint8_t aSlaveAddress, uint32_t i2cAddress) const {
     // // write one word containing the address
     // std::vector<uint8_t> array(1, i2cAddress & 0x7f);
-    // this->writeBlockI2C(aSlaveAddress, array);
+    // this->write_block_i2c(aSlaveAddress, array);
     // // request the content at the specific address
-    // return this->readBlockI2C(aSlaveAddress, 1) [0];
-    return this->readI2CArray(aSlaveAddress, i2cAddress, 1)[0];
+    // return this->read_block_i2c(aSlaveAddress, 1) [0];
+    return this->read_i2cArray(aSlaveAddress, i2cAddress, 1)[0];
 }
 //-----------------------------------------------------------------------------
  
 
 //-----------------------------------------------------------------------------
 void
-I2CMasterNode::writeI2C(uint8_t aSlaveAddress, uint32_t i2cAddress, uint8_t aData, bool aSendStop) const {
+I2CMasterNode::write_i2c(uint8_t aSlaveAddress, uint32_t i2cAddress, uint8_t aData, bool aSendStop) const {
     // std::vector<uint8_t> block(2);
     // block[0] = (i2cAddress & 0xff);
     // block[1] = (aData & 0xff);
-    // this->writeBlockI2C(aSlaveAddress, block);
+    // this->write_block_i2c(aSlaveAddress, block);
 
-    this->writeI2CArray( aSlaveAddress, i2cAddress, {aData}, aSendStop);
+    this->write_i2cArray( aSlaveAddress, i2cAddress, {aData}, aSendStop);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 std::vector<uint8_t>
-I2CMasterNode::readI2CArray(uint8_t aSlaveAddress, uint32_t i2cAddress, uint32_t aNumWords) const {
+I2CMasterNode::read_i2cArray(uint8_t aSlaveAddress, uint32_t i2cAddress, uint32_t aNumWords) const {
     // write one word containing the address
     std::vector<uint8_t> lArray{(uint8_t)(i2cAddress & 0xff)};
-    this->writeBlockI2C(aSlaveAddress, lArray);
+    this->write_block_i2c(aSlaveAddress, lArray);
     // request the content at the specific address
-    return this->readBlockI2C(aSlaveAddress, aNumWords);
+    return this->read_block_i2c(aSlaveAddress, aNumWords);
 }
 //-----------------------------------------------------------------------------
  
 
 //-----------------------------------------------------------------------------
 void
-I2CMasterNode::writeI2CArray(uint8_t aSlaveAddress, uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop) const {
+I2CMasterNode::write_i2cArray(uint8_t aSlaveAddress, uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop) const {
     // std::cout << "Writing " << aData.size() << " from " << std::showbase <<  std::hex << i2cAddress << " on " << (uint32_t)aSlaveAddress << std::endl; // HACK
     std::vector<uint8_t> block(aData.size() + 1);
     block[0] = (i2cAddress & 0xff);
@@ -175,30 +175,30 @@ I2CMasterNode::writeI2CArray(uint8_t aSlaveAddress, uint32_t i2cAddress, std::ve
     for ( size_t i(0); i < aData.size(); ++i )
         block[i+1] = aData[i];
 
-    this->writeBlockI2C(aSlaveAddress, block, aSendStop);
+    this->write_block_i2c(aSlaveAddress, block, aSendStop);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 std::vector<uint8_t> 
-I2CMasterNode::readI2CPrimitive(uint8_t aSlaveAddress, uint32_t aNumBytes) const {
-    return this->readBlockI2C(aSlaveAddress, aNumBytes); 
+I2CMasterNode::read_i2cPrimitive(uint8_t aSlaveAddress, uint32_t aNumBytes) const {
+    return this->read_block_i2c(aSlaveAddress, aNumBytes); 
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void
-I2CMasterNode::writeI2CPrimitive(uint8_t aSlaveAddress, const std::vector<uint8_t>& aData, bool aSendStop) const {
-    this->writeBlockI2C( aSlaveAddress, aData, aSendStop );
+I2CMasterNode::write_i2cPrimitive(uint8_t aSlaveAddress, const std::vector<uint8_t>& aData, bool aSendStop) const {
+    this->write_block_i2c( aSlaveAddress, aData, aSendStop );
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void
-I2CMasterNode::writeBlockI2C(uint8_t aSlaveAddress, const std::vector<uint8_t>& aArray, bool aSendStop) const {
+I2CMasterNode::write_block_i2c(uint8_t aSlaveAddress, const std::vector<uint8_t>& aArray, bool aSendStop) const {
     // transmit reg definitions
     // bits 7-1: 7-bit slave address during address transfer
     //           or first 7 bits of byte during data transfer
@@ -218,7 +218,7 @@ I2CMasterNode::writeBlockI2C(uint8_t aSlaveAddress, const std::vector<uint8_t>& 
     reset();
 
     // Open the connection and send the slave address, bit 0 set to zero
-    sendI2CCommandAndWriteData(kStartCmd, (aSlaveAddress << 1) & 0xfe);
+    send_i2c_command_and_write_data(kStartCmd, (aSlaveAddress << 1) & 0xfe);
 
     for (unsigned iByte = 0; iByte < aArray.size(); iByte++) {
 
@@ -226,7 +226,7 @@ I2CMasterNode::writeBlockI2C(uint8_t aSlaveAddress, const std::vector<uint8_t>& 
         uint8_t lCmd = ( ((iByte == aArray.size() - 1) && aSendStop) ? kStopCmd : 0x0);
 
         // Push the byte on the bus
-        sendI2CCommandAndWriteData(lCmd, aArray[iByte]);
+        send_i2c_command_and_write_data(lCmd, aArray[iByte]);
     }
 
 }
@@ -235,7 +235,7 @@ I2CMasterNode::writeBlockI2C(uint8_t aSlaveAddress, const std::vector<uint8_t>& 
 
 //-----------------------------------------------------------------------------
 std::vector<uint8_t>
-I2CMasterNode::readBlockI2C(uint8_t aSlaveAddress, uint32_t lNumBytes) const {
+I2CMasterNode::read_block_i2c(uint8_t aSlaveAddress, uint32_t lNumBytes) const {
     // transmit reg definitions
     // bits 7-1: 7-bit slave address during address transfer
     //           or first 7 bits of byte during data transfer
@@ -255,7 +255,7 @@ I2CMasterNode::readBlockI2C(uint8_t aSlaveAddress, uint32_t lNumBytes) const {
     reset();
 
     // Open the connection & send the target i2c address. Bit 0 set to 1 (read)
-    sendI2CCommandAndWriteData(kStartCmd, (aSlaveAddress << 1) | 0x01);
+    send_i2c_command_and_write_data(kStartCmd, (aSlaveAddress << 1) | 0x01);
 
     std::vector<uint8_t> lArray;
     for (unsigned iByte = 0; iByte < lNumBytes; iByte++) {
@@ -263,7 +263,7 @@ I2CMasterNode::readBlockI2C(uint8_t aSlaveAddress, uint32_t lNumBytes) const {
         uint8_t lCmd = (  (iByte == lNumBytes - 1) ? (kStopCmd | kAckCmd) : 0x0); 
 
         // Push the cmd on the bus, retrieve the result and put it in the arrary
-        lArray.push_back( sendI2CCommandAndReadData(lCmd) );
+        lArray.push_back( send_i2c_command_and_read_data(lCmd) );
     }
     return lArray;
 }
@@ -280,8 +280,8 @@ I2CMasterNode::ping(uint8_t aSlaveAddress) const {
     reset();
 
     try {
-        sendI2CCommandAndWriteData(kStartCmd, (aSlaveAddress << 1) | 0x01);
-        sendI2CCommandAndReadData(kStopCmd | kAckCmd);
+        send_i2c_command_and_write_data(kStartCmd, (aSlaveAddress << 1) | 0x01);
+        send_i2c_command_and_read_data(kStopCmd | kAckCmd);
         return true;
     } catch (const pdt::I2CException& lExc) {
         // PDT_LOG(kError) << std::showbase << std::hex << (uint32_t)iAddr << "  " << lExc.what();
@@ -303,8 +303,8 @@ I2CMasterNode::scan() const {
     for( uint8_t iAddr(0); iAddr<0x7f; ++iAddr) {
         // Open the connection & send the target i2c address. Bit 0 set to 1 (read)
         try {
-            sendI2CCommandAndWriteData(kStartCmd, (iAddr << 1) | 0x01);
-            sendI2CCommandAndReadData(kStopCmd | kAckCmd);
+            send_i2c_command_and_write_data(kStartCmd, (iAddr << 1) | 0x01);
+            send_i2c_command_and_read_data(kStopCmd | kAckCmd);
         } catch (const pdt::I2CException& lExc) {
             // PDT_LOG(kError) << std::showbase << std::hex << (uint32_t)iAddr << "  " << lExc.what();
             continue;
@@ -366,12 +366,12 @@ I2CMasterNode::reset() const {
 
 //-----------------------------------------------------------------------------
 uint8_t 
-I2CMasterNode::sendI2CCommandAndReadData( uint8_t aCmd ) const  {
+I2CMasterNode::send_i2c_command_and_read_data( uint8_t aCmd ) const  {
 
     assert( !(aCmd & kWriteToSlaveCmd) );
 
     uint8_t lFullCmd = aCmd | kReadFromSlaveCmd;
-    ERS_DEBUG(1, ">> sending read cmd  = " << formatRegValue((uint32_t)lFullCmd));
+    ERS_DEBUG(1, ">> sending read cmd  = " << format_reg_value((uint32_t)lFullCmd));
 
 
     // Force the read bit high and set them cmd bits
@@ -379,13 +379,13 @@ I2CMasterNode::sendI2CCommandAndReadData( uint8_t aCmd ) const  {
     getClient().dispatch();
 
     // Wait for transaction to finish. Require idle bus at the end if stop bit is high)
-    waitUntilFinished(/*req ack*/ false, aCmd & kStopCmd);
+    wait_until_finished(/*req ack*/ false, aCmd & kStopCmd);
 
     // Pull the data out of the rx register.
     uhal::ValWord<uint32_t> lResult = getNode(kRxNode).read();
     getClient().dispatch();
 
-    ERS_DEBUG(1, "<< receive data      = " << formatRegValue((uint32_t)lResult));
+    ERS_DEBUG(1, "<< receive data      = " << format_reg_value((uint32_t)lResult));
 
     return (lResult & 0xff);
 }
@@ -394,7 +394,7 @@ I2CMasterNode::sendI2CCommandAndReadData( uint8_t aCmd ) const  {
 
 //-----------------------------------------------------------------------------
 void
-I2CMasterNode::sendI2CCommandAndWriteData( uint8_t aCmd, uint8_t aData ) const  {
+I2CMasterNode::send_i2c_command_and_write_data( uint8_t aCmd, uint8_t aData ) const  {
 
     // 
     assert( !(aCmd & kReadFromSlaveCmd) );
@@ -415,14 +415,14 @@ I2CMasterNode::sendI2CCommandAndWriteData( uint8_t aCmd, uint8_t aData ) const  
     getClient().dispatch();
 
     // Wait for transaction to finish. Require idle bus at the end if stop bit is high
-    waitUntilFinished(/*req hack*/ true, /*requ idle*/ aCmd & kStopCmd);
+    wait_until_finished(/*req hack*/ true, /*requ idle*/ aCmd & kStopCmd);
 }
 //-----------------------------------------------------------------------------
 
 
 
 //-----------------------------------------------------------------------------
-void I2CMasterNode::waitUntilFinished(bool aRequireAcknowledgement, bool aRequireBusIdleAtEnd) const {
+void I2CMasterNode::wait_until_finished(bool aRequireAcknowledgement, bool aRequireBusIdleAtEnd) const {
     // Ensures the current bus transaction has finished successfully
     // before allowing further I2C bus transactions
     // This method monitors the status register

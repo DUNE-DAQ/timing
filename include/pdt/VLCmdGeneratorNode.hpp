@@ -38,12 +38,12 @@ public:
     /**
      * @brief     Control the endpoint sfp tx laser.
      */
-    void switchEndpointSFP(uint32_t aAddr, bool aEnable=false) const;
+    void switch_endpoint_sfp(uint32_t aAddr, bool aEnable=false) const;
 
     /**
      * @brief     Adjust endpoint delay.
      */
-    void applyEndpointDelay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel) const;
+    void apply_endpoint_delay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel) const;
 };
 
 } // namespace pdt

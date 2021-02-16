@@ -24,7 +24,7 @@ FMCIONode::get_status(bool aPrint) const {
 	std::stringstream lStatus;
 
 	auto subnodes = read_sub_nodes(getNode("csr.stat"));
-	lStatus << formatRegTable(subnodes, "FMC IO state");
+	lStatus << format_reg_table(subnodes, "FMC IO state");
 
 	if (aPrint) std::cout << lStatus.str();
     return lStatus.str();
@@ -45,22 +45,22 @@ FMCIONode::reset(const std::string& aClockConfigFile) const {
 	getNode("csr.ctrl.pll_rst").write(0x0);
 	getClient().dispatch();
 
-	CarrierType lCarrierType = convertValueToCarrierType(readCarrierType());
+	CarrierType lCarrierType = convert_value_to_carrier_type(read_carrier_type());
 
 	// enclustra i2c switch stuff
 	if (lCarrierType == kCarrierEnclustraA35) {
 		try {
-			getNode<I2CMasterNode>(mUIDI2CBus).getSlave("AX3_Switch").writeI2C(0x01, 0x7f);
+			getNode<I2CMasterNode>(mUIDI2CBus).get_slave("AX3_Switch").write_i2c(0x01, 0x7f);
 		} catch(...) {
 		}
 	}
 
 	// Find the right pll config file
-	std:: string lClockConfigFile = getFullClockConfigFilePath(aClockConfigFile);
+	std:: string lClockConfigFile = get_full_clock_config_file_path(aClockConfigFile);
 	ERS_INFO("PLL configuration file : " << lClockConfigFile);
 
 	// Upload config file to PLL
-	configurePLL(lClockConfigFile);
+	configure_pll(lClockConfigFile);
 	
 	// Disable sfp tx laser	
 	getNode("csr.ctrl.sfp_tx_dis").write(0x0);

@@ -22,7 +22,7 @@ std::string
 FrequencyCounterNode::get_status(bool aPrint) const {
 	std::stringstream lStatus;
 	auto subnodes = read_sub_nodes(getNode("csr.ctrl"));
-    lStatus << formatRegTable(subnodes, "Freq counter state");
+    lStatus << format_reg_table(subnodes, "Freq counter state");
     if (aPrint) std::cout << lStatus.str();
     return lStatus.str();
 }
@@ -31,7 +31,7 @@ FrequencyCounterNode::get_status(bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 std::vector<double>
-FrequencyCounterNode::measureFrequencies(uint8_t nClocks) const {
+FrequencyCounterNode::measure_frequencies(uint8_t nClocks) const {
 	std::vector<double> lFrequencies;
 
 	for (uint8_t i=0; i < nClocks; ++i) {

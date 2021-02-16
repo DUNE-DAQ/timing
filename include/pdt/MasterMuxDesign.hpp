@@ -62,12 +62,12 @@ public:
     /**
      * @brief     Switch the SFP mux channel
      */
-    virtual void switchSFPMUXChannel(uint32_t aSFPID, bool aWaitForRttEptLock) const;
+    virtual void switch_sfp_mux_channel(uint32_t aSFPID, bool aWaitForRttEptLock) const;
 
     /**
      * @brief     Read the active SFP mux channel
      */
-    virtual uint32_t readActiveSFPMUXChannel() const;
+    virtual uint32_t read_active_sfp_mux_channel() const;
 
     /**
      * @brief      Measure the endpoint round trip time.
@@ -79,12 +79,12 @@ public:
     /**
      * @brief      Apply delay to endpoint
      */
-    virtual void applyEndpointDelay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel, bool aMeasureRTT, bool aControlSFP, uint32_t aSFPMUX) const;
+    virtual void apply_endpoint_delay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel, bool aMeasureRTT, bool aControlSFP, uint32_t aSFPMUX) const;
 
     /**
      * @brief      Apply delay to endpoint
      */
-    virtual std::vector<uint32_t> scanSFPMUX() const;
+    virtual std::vector<uint32_t> scan_sfp_mux() const;
 };
 
 } // namespace pdt

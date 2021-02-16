@@ -91,7 +91,7 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    uint64_t readMasterTimestamp() const override;
+    uint64_t read_master_timestamp() const override;
 
     /**
      * @brief      Measure the endpoint round trip time.
@@ -121,7 +121,7 @@ public:
 } // namespace pdt
 } // namespace dunedaq
 
-#include "pdt/detail/TimingSystemWithFanoutManager.hxx"
+#include "detail/TimingSystemWithFanoutManager.hxx"
 
 #endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGSYSTEMWITHFANOUTMANAGER_HPP_
 

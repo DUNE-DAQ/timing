@@ -24,7 +24,7 @@ SIMIONode::get_status(bool aPrint) const {
 	std::stringstream lStatus;
 
 	auto subnodes = read_sub_nodes(getNode("csr.stat"));
-	lStatus << formatRegTable(subnodes, "SIM IO state");
+	lStatus << format_reg_table(subnodes, "SIM IO state");
 
 	if (aPrint) std::cout << lStatus.str();
     return lStatus.str();
@@ -34,7 +34,7 @@ SIMIONode::get_status(bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 uint64_t
-SIMIONode::readBoardUID() const {
+SIMIONode::read_board_uid() const {
 	return 0;
 }
 //-----------------------------------------------------------------------------
@@ -42,7 +42,7 @@ SIMIONode::readBoardUID() const {
 
 //-----------------------------------------------------------------------------
 BoardRevision
-SIMIONode::getBoardRevision() const {
+SIMIONode::get_board_revision() const {
 	return kSIMRev1;
 }
 //-----------------------------------------------------------------------------
@@ -50,12 +50,12 @@ SIMIONode::getBoardRevision() const {
 
 //-----------------------------------------------------------------------------
 std::string
-SIMIONode::getHardwareInfo(bool aPrint) const {
+SIMIONode::get_hardware_info(bool aPrint) const {
 	std::stringstream lInfo;
-	const BoardType lBoardType = convertValueToBoardType(readBoardType());
-	const BoardRevision lBoardRevision = getBoardRevision();
-	const CarrierType lCarrierType = convertValueToCarrierType(readCarrierType());
-	const DesignType lDesignType = convertValueToDesignType(readDesignType());
+	const BoardType lBoardType = convert_value_to_board_type(read_board_type());
+	const BoardRevision lBoardRevision = get_board_revision();
+	const CarrierType lCarrierType = convert_value_to_carrier_type(read_carrier_type());
+	const DesignType lDesignType = convert_value_to_design_type(read_design_type());
 
 	std::vector<std::pair<std::string, std::string>> lHardwareInfo;
 
@@ -63,27 +63,27 @@ SIMIONode::getHardwareInfo(bool aPrint) const {
 	try {
 		lHardwareInfo.push_back(std::make_pair("Board type", kBoardTypeMap.at(lBoardType)));
 	} catch(const std::out_of_range& e) {
-        throw MissingBoardTypeMapEntry(ERS_HERE, getId(), formatRegValue(lBoardType), e);
+        throw MissingBoardTypeMapEntry(ERS_HERE, getId(), format_reg_value(lBoardType), e);
 	}
 
 	try {
 		lHardwareInfo.push_back(std::make_pair("Board revision", kBoardRevisionMap.at(lBoardRevision)));
 	} catch(const std::out_of_range& e) {
-        throw MissingBoardRevisionMapEntry(ERS_HERE, getId(), formatRegValue(lBoardRevision), e);
+        throw MissingBoardRevisionMapEntry(ERS_HERE, getId(), format_reg_value(lBoardRevision), e);
 	}
 
 	try {
 		lHardwareInfo.push_back(std::make_pair("Carrier type", kCarrierTypeMap.at(lCarrierType)));
 	} catch(const std::out_of_range& e) {
-        throw MissingCarrierTypeMapEntry(ERS_HERE, getId(), formatRegValue(lCarrierType), e);
+        throw MissingCarrierTypeMapEntry(ERS_HERE, getId(), format_reg_value(lCarrierType), e);
 	}
 
 	try {
 		lHardwareInfo.push_back(std::make_pair("Design type", kDesignTypeMap.at(lDesignType)));
 	} catch(const std::out_of_range& e) {
-        throw MissingDesignTypeMapEntry(ERS_HERE, getId(), formatRegValue(lDesignType), e);
+        throw MissingDesignTypeMapEntry(ERS_HERE, getId(), format_reg_value(lDesignType), e);
 	}
-	lInfo << formatRegTable(lHardwareInfo, "Hardware info", {"", ""});
+	lInfo << format_reg_table(lHardwareInfo, "Hardware info", {"", ""});
 
 	if (aPrint) std::cout << lInfo.str();
 	return lInfo.str();
@@ -102,7 +102,7 @@ SIMIONode::reset(const std::string& /*aClockConfigFile*/) const {
 
 //-----------------------------------------------------------------------------
 void
-SIMIONode::configurePLL(const std::string& /*aClockConfigFile*/) const {
+SIMIONode::configure_pll(const std::string& /*aClockConfigFile*/) const {
 	ERS_INFO("Simulation does not support PLL config");
 }
 //-----------------------------------------------------------------------------
@@ -110,7 +110,7 @@ SIMIONode::configurePLL(const std::string& /*aClockConfigFile*/) const {
 
 //-----------------------------------------------------------------------------
 std::vector<double>
-SIMIONode::readClockFrequencies() const {
+SIMIONode::read_clock_frequencies() const {
 	ERS_INFO("Simulation does not support reading of freq");
 	return {};
 }
@@ -119,7 +119,7 @@ SIMIONode::readClockFrequencies() const {
 
 //-----------------------------------------------------------------------------
 std::string
-SIMIONode::getClockFrequenciesTable(bool /*aPrint*/) const {
+SIMIONode::get_clock_frequencies_table(bool /*aPrint*/) const {
 	ERS_INFO("Simulation does not support freq table");
 	return "Simulation does not support freq table";
 }
@@ -128,7 +128,7 @@ SIMIONode::getClockFrequenciesTable(bool /*aPrint*/) const {
 
 //-----------------------------------------------------------------------------
 std::string
-SIMIONode::getPLLStatus(bool /*aPrint*/) const {
+SIMIONode::get_pll_status(bool /*aPrint*/) const {
 	ERS_INFO("Simulation does not support PLL status");
 	return "Simulation does not support PLL status";
 }
@@ -137,7 +137,7 @@ SIMIONode::getPLLStatus(bool /*aPrint*/) const {
 
 //-----------------------------------------------------------------------------
 std::string
-SIMIONode::getSFPStatus(uint32_t /*aSFPId*/, bool /*aPrint*/) const {
+SIMIONode::get_sfp_status(uint32_t /*aSFPId*/, bool /*aPrint*/) const {
 	ERS_INFO("Simulation does not support SFP I2C");
 	return "Simulation does not support SFP I2C";
 }
@@ -145,7 +145,7 @@ SIMIONode::getSFPStatus(uint32_t /*aSFPId*/, bool /*aPrint*/) const {
 
 //-----------------------------------------------------------------------------
 void
-SIMIONode::switchSFPSoftTxControlBit(uint32_t /*aSFPId*/, bool /*aOn*/) const {
+SIMIONode::switch_sfp_soft_tx_control_bit(uint32_t /*aSFPId*/, bool /*aOn*/) const {
 	ERS_INFO("Simulation does not support SFP I2C");
 }
 //-----------------------------------------------------------------------------

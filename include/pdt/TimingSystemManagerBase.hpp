@@ -93,7 +93,7 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    virtual uint64_t readMasterTimestamp() const = 0;
+    virtual uint64_t read_master_timestamp() const = 0;
 
     /**
      * @brief      Measure the endpoint round trip time.
@@ -117,12 +117,12 @@ public:
     /**
      * @brief      Adjust the endpoint delays.
      */
-    virtual void applyEndpointDelays(uint32_t aMeasureRTT) const = 0;
+    virtual void apply_endpoint_delays(uint32_t aMeasureRTT) const = 0;
 
 };
 
 } // namespace pdt
 } // namespace dunedaq
 
-#endif	/* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGSYSTEMMANAGERBASE_HPP_ */
+#endif	// TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGSYSTEMMANAGERBASE_HPP_
 

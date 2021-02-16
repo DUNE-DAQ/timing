@@ -46,25 +46,25 @@ public:
     virtual ~I2CMasterNode();
 
     ///
-    virtual uint16_t getI2CClockPrescale() const {
+    virtual uint16_t get_i2c_clock_prescale() const {
         return mClockPrescale;
     }
 
-    virtual std::vector<std::string>  getSlaves() const;
-    virtual uint8_t getSlaveAddress( const std::string& name ) const;
-    virtual const I2CSlave& getSlave( const std::string& name ) const;
+    virtual std::vector<std::string>  get_slaves() const;
+    virtual uint8_t get_slave_address( const std::string& name ) const;
+    virtual const I2CSlave& get_slave( const std::string& name ) const;
 
     void reset() const;
 
     /// commodity functions
-    virtual uint8_t readI2C(uint8_t aSlaveAddress, uint32_t i2cAddress) const;
-    virtual void writeI2C(uint8_t aSlaveAddress, uint32_t i2cAddress, uint8_t aData, bool aSendStop = true) const;
+    virtual uint8_t read_i2c(uint8_t aSlaveAddress, uint32_t i2cAddress) const;
+    virtual void write_i2c(uint8_t aSlaveAddress, uint32_t i2cAddress, uint8_t aData, bool aSendStop = true) const;
 
-    virtual std::vector<uint8_t> readI2CArray(uint8_t aSlaveAddress, uint32_t i2cAddress, uint32_t aNumWords) const;
-    virtual void writeI2CArray(uint8_t aSlaveAddress, uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop = true ) const;
+    virtual std::vector<uint8_t> read_i2cArray(uint8_t aSlaveAddress, uint32_t i2cAddress, uint32_t aNumWords) const;
+    virtual void write_i2cArray(uint8_t aSlaveAddress, uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop = true ) const;
 
-    virtual std::vector<uint8_t> readI2CPrimitive(uint8_t aSlaveAddress, uint32_t aNumBytes) const;
-    virtual void writeI2CPrimitive(uint8_t aSlaveAddress, const std::vector<uint8_t>& aData, bool aSendStop = true) const;
+    virtual std::vector<uint8_t> read_i2cPrimitive(uint8_t aSlaveAddress, uint32_t aNumBytes) const;
+    virtual void write_i2cPrimitive(uint8_t aSlaveAddress, const std::vector<uint8_t>& aData, bool aSendStop = true) const;
 
     bool ping(uint8_t aSlaveAddress) const;
 
@@ -72,11 +72,11 @@ public:
 protected:
 
     // low level i2c functions
-    std::vector<uint8_t> virtual readBlockI2C(uint8_t aSlaveAddress, uint32_t aNumBytes) const;
-    void virtual writeBlockI2C(uint8_t aSlaveAddress, const std::vector<uint8_t>& aData, bool aSendStop = true) const;
+    std::vector<uint8_t> virtual read_block_i2c(uint8_t aSlaveAddress, uint32_t aNumBytes) const;
+    void virtual write_block_i2c(uint8_t aSlaveAddress, const std::vector<uint8_t>& aData, bool aSendStop = true) const;
 
-    uint8_t sendI2CCommandAndReadData( uint8_t aCmd ) const;
-    void sendI2CCommandAndWriteData( uint8_t aCmd, uint8_t aData ) const;
+    uint8_t send_i2c_command_and_read_data( uint8_t aCmd ) const;
+    void send_i2c_command_and_write_data( uint8_t aCmd, uint8_t aData ) const;
 
     //! Slaves 
     std::unordered_map<std::string,uint8_t> mSlavesAddresses;
@@ -86,7 +86,7 @@ private:
     void constructor();
     
     // low level i2c functions
-    void waitUntilFinished(bool requireAcknowledgement = true, bool requireBusIdleAtEnd = false) const;
+    void wait_until_finished(bool requireAcknowledgement = true, bool requireBusIdleAtEnd = false) const;
     
     //! IPBus register names for i2c bus
     static const std::string kPreHiNode;

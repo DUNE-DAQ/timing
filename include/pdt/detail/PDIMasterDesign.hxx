@@ -31,8 +31,8 @@ PDIMasterDesign<IO>::~PDIMasterDesign() {
 template<class IO>
 std::string PDIMasterDesign<IO>::get_status(bool aPrint) const {
 	std::stringstream lStatus;
-	lStatus << this->getIONode().getPLLStatus();
-	lStatus << this->getMasterNode().get_status();
+	lStatus << this->get_io_node().get_pll_status();
+	lStatus << this->get_master_node().get_status();
 	if (aPrint) std::cout << lStatus.str();
 	return lStatus.str();
 }
@@ -47,14 +47,14 @@ void PDIMasterDesign<IO>::configure() const {
 	this->reset();
 
 	// Set timestamp to current time
-	this->getMasterNode().syncTimestamp();
+	this->get_master_node().sync_timestamp();
 
 	// Enable spill interface
-	this->getMasterNode().enableSpillInterface();
+	this->get_master_node().enable_spill_interface();
 
 	// Trigger interface configuration
-	this->getMasterNode().resetExternalTriggersEndpoint();
-	this->getMasterNode().enableExternalTriggers();
+	this->get_master_node().reset_external_triggers_endpoint();
+	this->get_master_node().enable_external_triggers();
 }
 //-----------------------------------------------------------------------------
 

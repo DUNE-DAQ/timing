@@ -17,12 +17,12 @@ register_endpoint(py::module& m) {
       .def("disable", &pdt::EndpointNode::disable)
       .def("enable", &pdt::EndpointNode::enable, py::arg("partition") = 0, py::arg("address") = 0)
       .def("reset", &pdt::EndpointNode::reset, py::arg("partition") = 0, py::arg("address") = 0)
-      .def("readBufferCount", &pdt::EndpointNode::readBufferCount)
-      .def("readDataBuffer", &pdt::EndpointNode::readDataBuffer, py::arg("aReadall") = false)
-      .def("getDataBufferTable", &pdt::EndpointNode::getDataBufferTable, py::arg("aReadall") = false, py::arg("aPrint") = false)
-      .def("readVersion", &pdt::EndpointNode::readVersion)
-      .def("readTimestamp", &pdt::EndpointNode::readTimestamp)
-      .def("readClockFrequency", &pdt::EndpointNode::readClockFrequency)
+      .def("read_buffer_count", &pdt::EndpointNode::read_buffer_count)
+      .def("read_data_buffer", &pdt::EndpointNode::read_data_buffer, py::arg("aReadall") = false)
+      .def("get_data_buffer_table", &pdt::EndpointNode::get_data_buffer_table, py::arg("aReadall") = false, py::arg("aPrint") = false)
+      .def("read_version", &pdt::EndpointNode::read_version)
+      .def("read_timestamp", &pdt::EndpointNode::read_timestamp)
+      .def("read_clock_frequency", &pdt::EndpointNode::read_clock_frequency)
       ;
 
   py::class_<pdt::CRTNode, uhal::Node> (m, "CRTNode")

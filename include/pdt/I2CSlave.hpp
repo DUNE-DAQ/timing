@@ -48,30 +48,30 @@ public:
 
     ///
 
-    uint8_t getI2CAddress() const {
+    uint8_t get_i2c_address() const {
         return mAddress;
     }
 
     /// comodity functions
-    uint8_t readI2C(uint32_t aDeviceAddress, uint32_t aRegAddress) const;
-    uint8_t readI2C(uint32_t i2cAddress) const;
+    uint8_t read_i2c(uint32_t aDeviceAddress, uint32_t aRegAddress) const;
+    uint8_t read_i2c(uint32_t i2cAddress) const;
 
-    void writeI2C(uint32_t aDeviceAddress, uint32_t i2cAddress, uint8_t aData, bool aSendStop = true) const;
-    void writeI2C(uint32_t i2cAddress, uint8_t aData, bool aSendStop = true) const;
+    void write_i2c(uint32_t aDeviceAddress, uint32_t i2cAddress, uint8_t aData, bool aSendStop = true) const;
+    void write_i2c(uint32_t i2cAddress, uint8_t aData, bool aSendStop = true) const;
 
-    std::vector<uint8_t> readI2CArray(uint32_t aDeviceAddress, uint32_t aRegAddress, uint32_t aNumWords) const;
-    std::vector<uint8_t> readI2CArray(uint32_t i2cAddress, uint32_t aNumWords) const;
+    std::vector<uint8_t> read_i2cArray(uint32_t aDeviceAddress, uint32_t aRegAddress, uint32_t aNumWords) const;
+    std::vector<uint8_t> read_i2cArray(uint32_t i2cAddress, uint32_t aNumWords) const;
     
-    void writeI2CArray(uint32_t aDeviceAddress, uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop = true) const;
-    void writeI2CArray(uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop = true) const;
+    void write_i2cArray(uint32_t aDeviceAddress, uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop = true) const;
+    void write_i2cArray(uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop = true) const;
 
 
-    std::vector<uint8_t> readI2CPrimitive(uint32_t aNumBytes) const;
-    void writeI2CPrimitive(const std::vector<uint8_t>& aData, bool aSendStop = true) const;
+    std::vector<uint8_t> read_i2cPrimitive(uint32_t aNumBytes) const;
+    void write_i2cPrimitive(const std::vector<uint8_t>& aData, bool aSendStop = true) const;
 
     bool ping() const;
 
-    std::string getMasterId() const;
+    std::string get_master_id() const;
 
 private:
     const I2CMasterNode* mMaster;
@@ -85,5 +85,5 @@ private:
 } // namespace pdt
 } // namespace dunedaq
 
-#endif	/* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CSLAVE_HPP_ */
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CSLAVE_HPP_
 

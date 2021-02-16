@@ -100,7 +100,7 @@ strprintf(const char* fmt, ...) {
 
 //-----------------------------------------------------------------------------
 std::vector<std::string>
-shellExpandPaths(const std::string& aPath) {
+shell_expand_paths(const std::string& aPath) {
 
     std::vector<std::string> lPaths;
     wordexp_t lSubstitutedPath;
@@ -120,7 +120,7 @@ shellExpandPaths(const std::string& aPath) {
 //-----------------------------------------------------------------------------
 std::string
 shellExpandPath(const std::string& aPath) {
-    std::vector<std::string> lPaths = shellExpandPaths(aPath);
+    std::vector<std::string> lPaths = shell_expand_paths(aPath);
 
     if (lPaths.size() > 1) throw runtime_error("Failed to expand: multiple matches found");
 
@@ -131,7 +131,7 @@ shellExpandPath(const std::string& aPath) {
 
 //-----------------------------------------------------------------------------
 void
-throwIfNotFile(const std::string& aPath) {
+throw_if_not_file(const std::string& aPath) {
 
     // FIXME: Review the implementation. The function never returns 
     namespace fs = boost::filesystem;
@@ -150,7 +150,7 @@ throwIfNotFile(const std::string& aPath) {
 
 //-----------------------------------------------------------------------------
 uint8_t
-decRng(uint8_t word, uint8_t ibit, uint8_t nbits) {
+dec_rng(uint8_t word, uint8_t ibit, uint8_t nbits) {
     return (word >> ibit) & ((1<<nbits)-1);
 }
 //-----------------------------------------------------------------------------
@@ -167,7 +167,7 @@ tstamp2int(uhal::ValVector< uint32_t > rawTimestamp) {
 //-----------------------------------------------------------------------------
 template <>
 std::string
-formatRegValue<uhal::ValWord<uint32_t>>(uhal::ValWord<uint32_t> regValue, uint32_t base) {
+format_reg_value<uhal::ValWord<uint32_t>>(uhal::ValWord<uint32_t> regValue, uint32_t base) {
     std::stringstream lValueStream;
     if (base == 16) {
         lValueStream << "0x" << std::hex;
@@ -175,7 +175,7 @@ formatRegValue<uhal::ValWord<uint32_t>>(uhal::ValWord<uint32_t> regValue, uint32
         lValueStream << std::dec;
     } else {
         // TODO warning?
-        ERS_LOG("formatRegValue: unsupported number base: " << base);
+        ERS_LOG("format_reg_value: unsupported number base: " << base);
         lValueStream << std::dec;
     }
     lValueStream << regValue.value();
@@ -187,7 +187,7 @@ formatRegValue<uhal::ValWord<uint32_t>>(uhal::ValWord<uint32_t> regValue, uint32
 //-----------------------------------------------------------------------------
 template <>
 std::string
-formatRegValue<std::string>(std::string regValue, uint32_t /*base*/) {
+format_reg_value<std::string>(std::string regValue, uint32_t /*base*/) {
     return regValue;
 }
 //-----------------------------------------------------------------------------
@@ -195,7 +195,7 @@ formatRegValue<std::string>(std::string regValue, uint32_t /*base*/) {
 
 //-----------------------------------------------------------------------------
 int64_t
-getSecondsSinceEpoch() {
+get_seconds_since_epoch() {
     // get the current time
     const auto now = std::chrono::system_clock::now();
 
@@ -213,7 +213,7 @@ getSecondsSinceEpoch() {
 
 //-----------------------------------------------------------------------------
 std::string 
-formatTimestamp(uint64_t rawTimestamp) {
+format_timestamp(uint64_t rawTimestamp) {
     std::time_t lSecFromEpoch = rawTimestamp / kSPSClockInHz;
 
     struct tm * lTime = localtime(&lSecFromEpoch);
@@ -227,15 +227,15 @@ formatTimestamp(uint64_t rawTimestamp) {
 
 //-----------------------------------------------------------------------------
 std::string 
-formatTimestamp(uhal::ValVector< uint32_t > rawTimestamp) {
+format_timestamp(uhal::ValVector< uint32_t > rawTimestamp) {
     uint64_t lTimestamp = tstamp2int(rawTimestamp);
-    return formatTimestamp(lTimestamp);
+    return format_timestamp(lTimestamp);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-double convertBitsToFloat(uint64_t aBits, bool aIsDoublePrecision){
+double convert_bits_to_float(uint64_t aBits, bool aIsDoublePrecision){
     uint32_t lMantissaShift = aIsDoublePrecision ? 52 : 23;
     uint64_t lExponentMask = aIsDoublePrecision ? 0x7FF0000000000000 : 0x7f800000;
     uint32_t lBias = aIsDoublePrecision ? 1023 : 127;
@@ -266,10 +266,10 @@ double convertBitsToFloat(uint64_t aBits, bool aIsDoublePrecision){
 
 //-----------------------------------------------------------------------------
 BoardType
-convertValueToBoardType(uint32_t aBoardType) {
+convert_value_to_board_type(uint32_t aBoardType) {
     // not pleasnt, but works for now
     if (aBoardType > kBoardTLU) {
-        throw UnknownBoardType(ERS_HERE, "toolbox", formatRegValue(aBoardType));
+        throw UnknownBoardType(ERS_HERE, "toolbox", format_reg_value(aBoardType));
     } else {
         return static_cast<BoardType> (aBoardType);
     }
@@ -279,10 +279,10 @@ convertValueToBoardType(uint32_t aBoardType) {
 
 //-----------------------------------------------------------------------------
 CarrierType
-convertValueToCarrierType(uint32_t aCarrierType) {
+convert_value_to_carrier_type(uint32_t aCarrierType) {
     // not pleasnt, but works for now
     if (aCarrierType > kCarrierATFC) {
-        throw UnknownCarrierType(ERS_HERE, "toolbox", formatRegValue(aCarrierType));
+        throw UnknownCarrierType(ERS_HERE, "toolbox", format_reg_value(aCarrierType));
     } else {
         return static_cast<CarrierType> (aCarrierType);
     }
@@ -292,18 +292,18 @@ convertValueToCarrierType(uint32_t aCarrierType) {
 
 //-----------------------------------------------------------------------------
 DesignType
-convertValueToDesignType(uint32_t aDesignType) {
+convert_value_to_design_type(uint32_t aDesignType) {
     // not pleasnt, but works for now
     if (aDesignType > kDesingEndpoBICRT) {
-        throw UnknownDesignType(ERS_HERE, "toolbox", formatRegValue(aDesignType));
+        throw UnknownDesignType(ERS_HERE, "toolbox", format_reg_value(aDesignType));
     } else {
         return static_cast<DesignType> (aDesignType);
     }
 }
 //-----------------------------------------------------------------------------
 
-template std::string pdt::vecFmt<uint32_t>(const std::vector<uint32_t>& aVec);
-template std::string pdt::shortVecFmt<uint32_t>(const std::vector<uint32_t>& aVec);
+template std::string pdt::vec_fmt<uint32_t>(const std::vector<uint32_t>& aVec);
+template std::string pdt::short_vec_fmt<uint32_t>(const std::vector<uint32_t>& aVec);
 
 //-----------------------------------------------------------------------------
 uint32_t locate(float xx[], unsigned long n, float x) {

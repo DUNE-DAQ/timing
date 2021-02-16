@@ -45,7 +45,7 @@ public:
      * @param[in]  aBankId         A bank identifier
      * @param[in]  aInversionMask  A inversion mask
      */
-    void setInversion( uint8_t aBankId, uint32_t aInversionMask ) const;
+    void set_inversion( uint8_t aBankId, uint32_t aInversionMask ) const;
 
     /**
      * @brief      Set input/output mode for a set of channels
@@ -53,7 +53,7 @@ public:
      * @param[in]  aBankId  A bank identifier
      * @param[in]  aIOMask  A io mask
      */
-    void setIO( uint8_t aBankId, uint32_t aIOMask ) const;
+    void set_io( uint8_t aBankId, uint32_t aIOMask ) const;
 
     /**
      * @brief      Reads inputs values
@@ -62,7 +62,7 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    uint32_t readInputs( uint8_t aBankId ) const;
+    uint32_t read_inputs( uint8_t aBankId ) const;
 
     /**
      * @brief      Writes outputs values.
@@ -70,7 +70,7 @@ public:
      * @param[in]  aBankId  A bank identifier
      * @param[in]  aValues  A values
      */
-    void setOutputs( uint8_t aBankId,  uint32_t aValues ) const;
+    void set_outputs( uint8_t aBankId,  uint32_t aValues ) const;
 
     std::vector<uint32_t> debug() const;
 

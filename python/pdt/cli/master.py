@@ -64,7 +64,7 @@ def master(obj, device):
     lPatch = (lVersion >> 0) & 0xff
     
     if lBoardInfo['board_type'].value() in kLibrarySupportedBoards:
-        echo(lDevice.getNode('io').getHardwareInfo())
+        echo(lDevice.getNode('io').get_hardware_info())
 
     echo("Master FW rev: {}, partitions: {}, channels: {}".format(
         style(hex(lVersion), fg='cyan'),
@@ -97,7 +97,7 @@ def master(obj, device):
 def synctime(obj):
 
     lMasterTop = obj.mMasterTop
-    echo(lMasterTop.getStatus())
+    echo(lMasterTop.get_status())
 # ------------------------------------------------------------------------------
 
 
@@ -107,7 +107,7 @@ def synctime(obj):
 def synctime(obj):
 
     lMasterTop = obj.mMasterTop
-    lMasterTop.syncTimestamp()
+    lMasterTop.sync_timestamp()
 # ------------------------------------------------------------------------------
 
 
@@ -154,11 +154,11 @@ def partstatus(obj, watch, period):
         echo( "-- " + style("Master state", fg='green') + "---")
         echo()
         
-        echo(lMasterTop.getStatus())
+        echo(lMasterTop.get_status())
 
         echo()
 
-        echo(lPartNode.getStatus())
+        echo(lPartNode.get_status())
 
         if watch:
             time.sleep(period)
@@ -235,7 +235,7 @@ def trig(obj, on):
     '''
     Toggles triggers.
     '''
-    obj.mPartitionNode.enableTriggers(on)
+    obj.mPartitionNode.enable_triggers(on)
     secho("Partition {} triggers {}".format(obj.mPartitionId, 'enabled' if on else 'disbaled'), fg='green')
 # ------------------------------------------------------------------------------
 
@@ -284,7 +284,7 @@ def readback(obj, readall, keep):
     lPartNode = obj.mPartitionNode
 
     while(True):
-        lBufCount = lPartNode.readBufferWordCount()
+        lBufCount = lPartNode.read_buffer_word_count()
 
         echo ( "Words available in readout buffer: "+hex(lBufCount))
 
@@ -319,7 +319,7 @@ def rate_ctrl(obj, rate_ctrl_en):
     lPartId = obj.mPartitionId
     lPartNode = obj.mPartitionNode
 
-    lPartNode.configureRateCtrl(rate_ctrl_en)
+    lPartNode.configure_rate_ctrl(rate_ctrl_en)
     echo("Trigger throttling in partition {}: {}".format(lPartId, 'Enabled' if bool(rate_ctrl_en) else 'Disabled'))
 # ------------------------------------------------------------------------------
 
@@ -336,7 +336,7 @@ def sendcmd(obj, cmd, chan, n):
     '''
 
     lMasterTop = obj.mMasterTop
-    lMasterTop.sendFLCmd(defs.kCommandIDs[cmd],chan,n)
+    lMasterTop.send_fl_cmd(defs.kCommandIDs[cmd],chan,n)
 # ------------------------------------------------------------------------------
 
 
@@ -384,7 +384,7 @@ def faketriggen(obj, chan, rate, poisson):
     # c) 1-in-n prescaling set by n = rate_div_p
 
     lMasterTop = obj.mMasterTop
-    lMasterTop.enableFakeTrigger(chan,rate,poisson)
+    lMasterTop.enable_fake_trigger(chan,rate,poisson)
 # ------------------------------------------------------------------------------
 
 
@@ -397,7 +397,7 @@ def faketrigclear(obj, chan):
     Clear the internal trigger generator.
     '''
     lMasterTop = obj.mMasterTop
-    lMasterTop.disableFakeTrigger(chan)
+    lMasterTop.disable_fake_trigger(chan)
     secho( "Fake triggers disabled; chan: {}".format(chan), fg='green')
 # ------------------------------------------------------------------------------
 
@@ -412,7 +412,7 @@ def spillenable(obj):
     Enables the internal spill generator.
     '''
     lMasterTop = obj.mMasterTop
-    lMasterTop.enableSpillInterface()
+    lMasterTop.enable_spill_interface()
     secho( "Spill interface enabled", fg='green')
 # ------------------------------------------------------------------------------
 
@@ -434,7 +434,7 @@ def fakespillgen(obj):
     FREQ
     '''
     lMasterTop = obj.mMasterTop
-    lMasterTop.enableFakeSpills()
+    lMasterTop.enable_fake_spills()
     secho( "Fake spills enabled", fg='green')
 
 # ------------------------------------------------------------------------------

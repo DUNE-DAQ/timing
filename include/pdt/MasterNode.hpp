@@ -44,22 +44,22 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    virtual uint64_t readTimestamp() const;
+    virtual uint64_t read_timestamp() const;
 
     /**
      * @brief      Set the timestamp to current time.
      */
-    virtual void setTimestamp(uint64_t aTimestamp) const;
+    virtual void set_timestamp(uint64_t aTimestamp) const;
 
     /**
      * @brief     Control the tx line of endpoint sfp
      */
-    virtual void switchEndpointSFP(uint32_t aAddr, bool aOn) const = 0;
+    virtual void switch_endpoint_sfp(uint32_t aAddr, bool aOn) const = 0;
 
     /**
      * @brief     Enable RTT endpoint
      */
-    virtual void enableUpstreamEndpoint() const = 0;
+    virtual void enable_upstream_endpoint() const = 0;
 
     /**
      * @brief      Measure the endpoint round trip time.
@@ -71,24 +71,24 @@ public:
     /**
      * @brief     Apply delay to endpoint
      */
-    virtual void applyEndpointDelay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel, bool aMeasureRTT=false, bool aControlSFP=true) const = 0;
+    virtual void apply_endpoint_delay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel, bool aMeasureRTT=false, bool aControlSFP=true) const = 0;
 
     /**
      * @brief     Apply delay to endpoint
      */
-    virtual void applyEndpointDelay(const ActiveEndpointConfig& aEptConfig, bool aMeasureRTT=false) const;
+    virtual void apply_endpoint_delay(const ActiveEndpointConfig& aEptConfig, bool aMeasureRTT=false) const;
 
     /**
      * @brief     Send a fixed length command
      */
-    virtual void sendFLCmd(uint32_t aCmd, uint32_t aChan, uint32_t aNumber=1) const = 0;
+    virtual void send_fl_cmd(uint32_t aCmd, uint32_t aChan, uint32_t aNumber=1) const = 0;
 
     /**
      * @brief      Get partition node
      *
      * @return     { description_of_the_return_value }
      */
-    virtual const PartitionNode& getPartitionNode(uint32_t aPartID) const;
+    virtual const PartitionNode& get_partition_node(uint32_t aPartID) const;
 };
 
 

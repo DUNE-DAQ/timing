@@ -52,9 +52,9 @@ def exttrg_enable(ctx, obj, on):
     lExtTrig = obj.mExtTrig
 
     if on:
-        lExtTrig.enableTriggers()
+        lExtTrig.enable_triggers()
     else:
-        lExtTrig.disableTriggers()
+        lExtTrig.disable_triggers()
     secho("External triggers " + ("enabled" if on else "disabled"), fg='green')
     ctx.invoke(exttrg_status)
 # ------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ def exttrg_status(obj, watch, period):
         
         echo()
 
-        echo(lExtTrig.getStatus())
+        echo(lExtTrig.get_status())
         
         if watch:
             time.sleep(period)

@@ -156,7 +156,7 @@ class MasterShell(object):
 
 
     # ------------------------------------------------------------------------------
-    def sendEchoAndMeasureDelay( self, aTimeout=0.5 ):
+    def send_echo_and_measure_delay( self, aTimeout=0.5 ):
 
         lEcho = self.masterCtx.echoNode
 

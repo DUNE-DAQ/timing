@@ -40,7 +40,7 @@ public:
     /**
      * @brief      Reset timing node.
      */
-    virtual void softReset() const;
+    virtual void soft_reset() const;
 
     /**
      * @brief      Reset timing node.
@@ -52,26 +52,26 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    virtual const IO& getIONode() const;
+    virtual const IO& get_io_node() const;
 
     /**
      * @brief      Return the timing endpoint node.
      *
      * @return     { description_of_the_return_value }
      */
-    virtual const EndpointNode& getEndpointNode(uint32_t ept_id) const;
+    virtual const EndpointNode& get_endpoint_node(uint32_t ept_id) const;
 
     /**
      * @brief      Print hardware information
      */
-    virtual std::string getHardwareInfo(bool aPrint=false) const;
+    virtual std::string get_hardware_info(bool aPrint=false) const;
 
     /**
      * @brief      Return the timing endpoint node.
      *
      * @return     { description_of_the_return_value }
      */
-    virtual uint32_t getNumberOfEndpointNodes() const;
+    virtual uint32_t get_number_of_endpoint_nodes() const;
 };
 
 } // namespace pdt

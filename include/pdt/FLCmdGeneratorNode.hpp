@@ -79,22 +79,22 @@ public:
     /**
      * @brief     Send a fixed length command
      */
-    void sendFLCmd(uint32_t aCmd, uint32_t aChan, const TimestampGeneratorNode& aTSGen) const;
+    void send_fl_cmd(uint32_t aCmd, uint32_t aChan, const TimestampGeneratorNode& aTSGen) const;
 
     /**
      * @brief     Configure fake trigger
      */
-    void enableFakeTrigger(uint32_t aChan, uint32_t aDiv, uint32_t aPS, bool aPoisson) const;
+    void enable_fake_trigger(uint32_t aChan, uint32_t aDiv, uint32_t aPS, bool aPoisson) const;
 
     /**
      * @brief     Clear fake trigger configuration
      */
-    void disableFakeTrigger(uint32_t aChan) const;
+    void disable_fake_trigger(uint32_t aChan) const;
 
     /**
      * @brief     Get command counters status string
      */
-    std::string getCmdCountersTable(bool aPrint=false) const;
+    std::string get_cmd_counters_table(bool aPrint=false) const;
 };
 
 } // namespace pdt

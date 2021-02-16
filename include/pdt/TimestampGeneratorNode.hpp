@@ -44,19 +44,19 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    uhal::ValVector<uint32_t> readRawTimestamp(bool aDispatch=true) const;
+    uhal::ValVector<uint32_t> read_raw_timestamp(bool aDispatch=true) const;
 
     /**
      * @brief      Read the current timestamp words.
      *
      * @return     { description_of_the_return_value }
      */
-    uint64_t readTimestamp() const;
+    uint64_t read_timestamp() const;
 
     /**
      * @brief      Read the current timestamp words.
      */
-    void setTimestamp(uint64_t aTimestamp) const;
+    void set_timestamp(uint64_t aTimestamp) const;
 };
 
 

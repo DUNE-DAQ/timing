@@ -42,21 +42,21 @@ class PC059Shell(BoardShell):
     # ------------------------------------------------------------------------------
     def getAX3Slave(self):
         lIO = self.device.getNode('io')
-        return lIO.getNode('i2c').getSlave('AX3_Switch')
+        return lIO.getNode('i2c').get_slave('AX3_Switch')
     # ------------------------------------------------------------------------------
     
 
     # ------------------------------------------------------------------------------
     def getUIDSlave(self):
         lIO = self.device.getNode('io')
-        return lIO.getNode('i2c').getSlave('FMC_UID_PROM')
+        return lIO.getNode('i2c').get_slave('FMC_UID_PROM')
     # ------------------------------------------------------------------------------
     
     # ------------------------------------------------------------------------------
     def getSIChipSlave(self):
         # Access the clock chip
         lI2CBusNode = self.device.getNode("io.i2c")
-        return SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
+        return SI534xSlave(lI2CBusNode, lI2CBusNode.get_slave('SI5345').get_i2c_address())
     # ------------------------------------------------------------------------------
 
     
@@ -91,18 +91,18 @@ class PC059Shell(BoardShell):
     def configureSFPExpander(self):
 
         lI2CBusNode = self.device.getNode("io.i2c")
-        lSFPExp = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('SFPExpander').getI2CAddress())
+        lSFPExp = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.get_slave('SFPExpander').get_i2c_address())
 
         # Set invert registers to default for both banks
-        lSFPExp.setInversion(0, 0x00)
-        lSFPExp.setInversion(1, 0x00)
+        lSFPExp.set_inversion(0, 0x00)
+        lSFPExp.set_inversion(1, 0x00)
 
         # BAnk 0 input, bank 1 output
-        lSFPExp.setIO(0, 0x00)
-        lSFPExp.setIO(1, 0xff)
+        lSFPExp.set_io(0, 0x00)
+        lSFPExp.set_io(1, 0xff)
 
         # Bank 0 - enable all SFPGs (enable low)
-        lSFPExp.setOutputs(0, 0x00)
+        lSFPExp.set_outputs(0, 0x00)
     # ------------------------------------------------------------------------------
 
 
@@ -136,7 +136,7 @@ class PC059Shell(BoardShell):
             secho("Fanout mode enabled", fg='green')
 
         # Global soft reset
-        self.softReset()
+        self.soft_reset()
 
         if not soft:
             
@@ -183,7 +183,7 @@ class PC059Shell(BoardShell):
                 lFullClockConfigPath = expandvars(join('${PDT_TESTS}/etc/clock', lClockConfigPath))
 
             lSIChip.configure(lFullClockConfigPath)
-            echo("SI3545 configuration id: {}".format(style(lSIChip.readConfigID(), fg='green')))
+            echo("SI3545 configuration id: {}".format(style(lSIChip.read_config_id(), fg='green')))
 
             self.configureSFPExpander()
 

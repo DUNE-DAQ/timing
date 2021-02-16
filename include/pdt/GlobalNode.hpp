@@ -34,15 +34,15 @@ public:
     bool tx_error() const;
 
     uint32_t readTimeStamp() const;
-    uint32_t readSpillCounter() const;
+    uint32_t read_spill_counter() const;
 
-    void selectPartition() const;
-    void lockPartition() const;
+    void select_partition() const;
+    void lock_partition() const;
 
     /**
      * @brief     Enable the upstream endpoint.
      */
-    void enableUpstreamEndpoint(uint32_t aTimeout=500);
+    void enable_upstream_endpoint(uint32_t aTimeout=500);
 
     /**
      * @brief     Get status string, optionally print.

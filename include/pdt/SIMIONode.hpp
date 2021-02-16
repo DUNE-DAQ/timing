@@ -45,12 +45,12 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    BoardRevision getBoardRevision() const override;
+    BoardRevision get_board_revision() const override;
 
     /**
      * @brief      Print hardware information
      */
-    std::string getHardwareInfo(bool aPrint=false) const override;
+    std::string get_hardware_info(bool aPrint=false) const override;
 
     /**
      * @brief      Reset timing node.
@@ -62,37 +62,37 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    uint64_t readBoardUID() const override;
+    uint64_t read_board_uid() const override;
 
     /**
      * @brief      Configure clock chip.
      */
-    void configurePLL(const std::string& aClockConfigFile="") const override;
+    void configure_pll(const std::string& aClockConfigFile="") const override;
 
     /**
      * @brief      Read frequencies of on-board clocks.
      */
-    std::vector<double> readClockFrequencies() const override;
+    std::vector<double> read_clock_frequencies() const override;
 
     /**
      * @brief      Print frequencies of on-board clocks.
      */
-    std::string getClockFrequenciesTable(bool aPrint=false) const override;
+    std::string get_clock_frequencies_table(bool aPrint=false) const override;
 
     /**
      * @brief      Print status of on-board PLL.
      */
-    std::string getPLLStatus(bool aPrint=false) const override;
+    std::string get_pll_status(bool aPrint=false) const override;
 
     /**
      * @brief      Print status of on-board SFP 
      */
-    std::string getSFPStatus(uint32_t aSFPId, bool aPrint=false) const override;
+    std::string get_sfp_status(uint32_t aSFPId, bool aPrint=false) const override;
 
     /**
      * @brief      Control tx laser of on-board SFP softly (I2C command)
      */
-    virtual void switchSFPSoftTxControlBit(uint32_t aSFPId, bool aOn) const override;
+    virtual void switch_sfp_soft_tx_control_bit(uint32_t aSFPId, bool aOn) const override;
 
 };
 

@@ -24,7 +24,7 @@ std::string
 VLCmdGeneratorNode::get_status(bool aPrint) const {
     std::stringstream lStatus;
     auto subnodes = read_sub_nodes(getNode("csr.stat"));
-    lStatus << formatRegTable(subnodes, "VL Cmd gen state");
+    lStatus << format_reg_table(subnodes, "VL Cmd gen state");
 
     if (aPrint) std::cout << lStatus.str();
     return lStatus.str();
@@ -34,7 +34,7 @@ VLCmdGeneratorNode::get_status(bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 void
-VLCmdGeneratorNode::switchEndpointSFP(uint32_t aAddr, bool aEnable) const {
+VLCmdGeneratorNode::switch_endpoint_sfp(uint32_t aAddr, bool aEnable) const {
     reset_sub_nodes(getNode("csr.ctrl"));
     getNode("csr.ctrl.addr").write(aAddr);
     getNode("csr.ctrl.tx_en").write(aEnable);
@@ -47,7 +47,7 @@ VLCmdGeneratorNode::switchEndpointSFP(uint32_t aAddr, bool aEnable) const {
 
 //-----------------------------------------------------------------------------
 void
-VLCmdGeneratorNode::applyEndpointDelay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel) const {
+VLCmdGeneratorNode::apply_endpoint_delay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel) const {
     reset_sub_nodes(getNode("csr.ctrl"), false);
     getNode("csr.ctrl.tx_en").write(0x1);
     getNode("csr.ctrl.addr").write(aAddr);
@@ -59,9 +59,9 @@ VLCmdGeneratorNode::applyEndpointDelay(uint32_t aAddr, uint32_t aCDel, uint32_t 
     getNode("csr.ctrl.go").write(0x0);
     getClient().dispatch();
 
-    ERS_LOG("Coarse delay " << formatRegValue(aCDel) << " applied");
-    ERS_LOG("Fine delay   " << formatRegValue(aFDel) << " applied");
-    ERS_LOG("Phase delay  " << formatRegValue(aPDel) << " applied");
+    ERS_LOG("Coarse delay " << format_reg_value(aCDel) << " applied");
+    ERS_LOG("Fine delay   " << format_reg_value(aFDel) << " applied");
+    ERS_LOG("Phase delay  " << format_reg_value(aPDel) << " applied");
 }
 //-----------------------------------------------------------------------------
 

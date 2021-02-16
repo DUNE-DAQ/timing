@@ -103,7 +103,7 @@ def uuid(obj):
         lUID = lDevice.getNode('io.uid_i2c')
 
     lPROMSlave = 'UID_PROM' if lBoardType == kBoardTLU else 'FMC_UID_PROM'
-    lValues = lUID.getSlave(lPROMSlave).readI2CArray(0xfa, 6)
+    lValues = lUID.get_slave(lPROMSlave).read_i2cArray(0xfa, 6)
     lUniqueID = 0x0
     for lVal in lValues:
         lUniqueID = ( lUniqueID << 8 ) | lVal
@@ -122,7 +122,7 @@ def sfpexpander(obj):
         secho('No SFP expander on {}'.format(kBoardNamelMap[lBoardInfo['board_type'].value()]))
         return
     lI2CBusNode = lDevice.getNode("io.i2c")
-    lSFPExp = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.getSlave('SFPExpander').getI2CAddress())
+    lSFPExp = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.get_slave('SFPExpander').get_i2c_address())
     lSFPExpStatus = lSFPExp.debug()
 
     lLabels = [
@@ -157,10 +157,10 @@ def sfp_status(obj):
         lNodes = ['io.i2c']
     
     # if lBoardType == kBoardPC059:
-    #     lSFPSwitch = lDevice.getNode('io.i2c').getSlave('SFP_Switch')
-    #     print(lSFPSwitch.readI2CPrimitive(1))
-    #     print(lSFPSwitch.writeI2CPrimitive([0x1]))
-    #     print(lSFPSwitch.readI2CPrimitive(1))
+    #     lSFPSwitch = lDevice.getNode('io.i2c').get_slave('SFP_Switch')
+    #     print(lSFPSwitch.read_i2cPrimitive(1))
+    #     print(lSFPSwitch.write_i2cPrimitive([0x1]))
+    #     print(lSFPSwitch.read_i2cPrimitive(1))
 
     for n in lNodes:
         lI2CBusNode = lDevice.getNode(n)
@@ -190,16 +190,16 @@ def fanout_sfpscan(obj):
 
     lSFPNodeName = 'io.i2c'
     lI2CBusNode = lDevice.getNode(lSFPNodeName)
-    lSwitchSlave = lI2CBusNode.getSlave('SFP_Switch')
+    lSwitchSlave = lI2CBusNode.get_slave('SFP_Switch')
     print(lSwitchSlave.ping())
 
-    # print(lSwitchSlave.readI2CPrimitive(1))
+    # print(lSwitchSlave.read_i2cPrimitive(1))
     # time.sleep(0.1)
 
-    lSwitchSlave.writeI2CPrimitive([3])
-    print(lSwitchSlave.readI2CPrimitive(1))
-    print(lSwitchSlave.readI2CPrimitive(1))
-    print(lSwitchSlave.readI2CPrimitive(1))
+    lSwitchSlave.write_i2cPrimitive([3])
+    print(lSwitchSlave.read_i2cPrimitive(1))
+    print(lSwitchSlave.read_i2cPrimitive(1))
+    print(lSwitchSlave.read_i2cPrimitive(1))
 
 # ------------------------------------------------------------------------------
 @debug.command('sfp-status', short_help="Debug.")
@@ -220,8 +220,8 @@ def sfp_status(obj):
         return
 
     lI2CBusNode = lDevice.getNode(lSFPNodeName)
-    lEEPromSlave = lI2CBusNode.getSlave('SFP_EEProm')
-    lDiagSlave = lI2CBusNode.getSlave('SFP_Diag')
+    lEEPromSlave = lI2CBusNode.get_slave('SFP_EEProm')
+    lDiagSlave = lI2CBusNode.get_slave('SFP_Diag')
 
     readSFPStatus(lEEPromSlave, lDiagSlave, lSFPLabel)
 
@@ -233,16 +233,16 @@ def sfp_status(obj):
         time.sleep(0.1)
 
         lI2CBusNode = lDevice.getNode('io.i2c')
-        lSwitchSlave = lI2CBusNode.getSlave('SFP_Switch')
-        lEEPromSlave = lI2CBusNode.getSlave('SFP_EEProm')
-        lDiagSlave = lI2CBusNode.getSlave('SFP_Diag')
+        lSwitchSlave = lI2CBusNode.get_slave('SFP_Switch')
+        lEEPromSlave = lI2CBusNode.get_slave('SFP_EEProm')
+        lDiagSlave = lI2CBusNode.get_slave('SFP_Diag')
 
-        # lOld = lSwitchSlave.readI2CPrimitive(1)
-        # lSwitchSlave.writeI2CPrimitive([0x0])
+        # lOld = lSwitchSlave.read_i2cPrimitive(1)
+        # lSwitchSlave.write_i2cPrimitive([0x0])
         time.sleep(0.1)
         for iSFP in range(8):
             try:
-                lSwitchSlave.writeI2CPrimitive([1 << iSFP])
+                lSwitchSlave.write_i2cPrimitive([1 << iSFP])
             except RuntimeError as lExc:
                 pass
             if not lEEPromSlave.ping():
@@ -279,14 +279,14 @@ def readSFPStatus(aEEProm, aDiag, aLabel):
 
     echo()
     lVenInfoEnc = collections.OrderedDict()
-    lVenInfoEnc['Name'] = asciidecode(aEEProm.readI2CArray(20,16))
-    lVenInfoEnc['OUI'] = '{}.{}.{}'.format(*(aEEProm.readI2CArray(37,3)))
-    lVenInfoEnc['Part Number'] = asciidecode(aEEProm.readI2CArray(40,16))
-    lVenInfoEnc['Revision'] = asciidecode(aEEProm.readI2CArray(56,4))
-    lVenInfoEnc['Serial Number'] = asciidecode(aEEProm.readI2CArray(68,16))
-    lVenInfoEnc['Day'] = asciidecode(aEEProm.readI2CArray(88,2))
-    lVenInfoEnc['Month'] = asciidecode(aEEProm.readI2CArray(86,2))
-    lVenInfoEnc['Year'] = asciidecode(aEEProm.readI2CArray(84,2))
+    lVenInfoEnc['Name'] = asciidecode(aEEProm.read_i2cArray(20,16))
+    lVenInfoEnc['OUI'] = '{}.{}.{}'.format(*(aEEProm.read_i2cArray(37,3)))
+    lVenInfoEnc['Part Number'] = asciidecode(aEEProm.read_i2cArray(40,16))
+    lVenInfoEnc['Revision'] = asciidecode(aEEProm.read_i2cArray(56,4))
+    lVenInfoEnc['Serial Number'] = asciidecode(aEEProm.read_i2cArray(68,16))
+    lVenInfoEnc['Day'] = asciidecode(aEEProm.read_i2cArray(88,2))
+    lVenInfoEnc['Month'] = asciidecode(aEEProm.read_i2cArray(86,2))
+    lVenInfoEnc['Year'] = asciidecode(aEEProm.read_i2cArray(84,2))
 
     secho("{} Vendor info".format(aLabel), fg='cyan')
     # for k,v in lVenInfoEnc.items():
@@ -294,22 +294,22 @@ def readSFPStatus(aEEProm, aDiag, aLabel):
     #     echo(' - '+k+': '+style(v, fg='cyan'))
     echo(toolbox.formatDictTable(lVenInfoEnc, aHdr=False, aSort=False))
     echo()
-    lLaserWl = aEEProm.readI2CArray(60,2)
+    lLaserWl = aEEProm.read_i2cArray(60,2)
     lLaserWl = (lLaserWl[0] << 8) + lLaserWl[1]
     echo('Laser Wavelength: '+style(str(lLaserWl)+'nm', fg='cyan'))
 
     lRegs = collections.OrderedDict()
 
-    lRegs['Identifier'] = aEEProm.readI2C(0)
-    lRegs['Ext Identifier'] = aEEProm.readI2C(1)
-    lRegs['Connector'] = aEEProm.readI2C(2)
+    lRegs['Identifier'] = aEEProm.read_i2c(0)
+    lRegs['Ext Identifier'] = aEEProm.read_i2c(1)
+    lRegs['Connector'] = aEEProm.read_i2c(2)
 
     # Transciever Compatinility
-    lTransComp = aEEProm.readI2CArray(3, 8)
+    lTransComp = aEEProm.read_i2cArray(3, 8)
 
-    lRegs['Encoding'] = aEEProm.readI2C(11)
-    lRegs['BR, Nominal'] = aEEProm.readI2C(12)
-    lRegs['Rate ID'] = aEEProm.readI2C(13)
+    lRegs['Encoding'] = aEEProm.read_i2c(11)
+    lRegs['BR, Nominal'] = aEEProm.read_i2c(12)
+    lRegs['Rate ID'] = aEEProm.read_i2c(13)
 
     toolbox.printRegTable(lRegs, aHeader=False, sort=False)
 
@@ -318,12 +318,12 @@ def readSFPStatus(aEEProm, aDiag, aLabel):
 
     lReadings = collections.OrderedDict()
 
-    lReadings['Temp'] = tempdecode(aDiag.readI2CArray(96, 2))
-    lReadings['Vcc']  = vccdecode(aDiag.readI2CArray(98, 2))
-    lReadings['TX bias']  = biascurdecode(aDiag.readI2CArray(100, 2))
-    lReadings['TX power']  = powerdecode(aDiag.readI2CArray(102, 2))
-    lReadings['RX power']  = powerdecode(aDiag.readI2CArray(104, 2))
-    lMiscStatus = aDiag.readI2C(110)
+    lReadings['Temp'] = tempdecode(aDiag.read_i2cArray(96, 2))
+    lReadings['Vcc']  = vccdecode(aDiag.read_i2cArray(98, 2))
+    lReadings['TX bias']  = biascurdecode(aDiag.read_i2cArray(100, 2))
+    lReadings['TX power']  = powerdecode(aDiag.read_i2cArray(102, 2))
+    lReadings['RX power']  = powerdecode(aDiag.read_i2cArray(104, 2))
+    lMiscStatus = aDiag.read_i2c(110)
     lReadings['TX disable'] = (lMiscStatus >> 7) & 0x1
 
     # for k,v in lReadings.items():

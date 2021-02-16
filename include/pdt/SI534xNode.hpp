@@ -59,15 +59,15 @@ public:
 
     std::map<uint16_t, uint8_t> registers() const;
 
-    std::string readConfigID() const;
+    std::string read_config_id() const;
 
 private:
     typedef boost::tuple<uint16_t, uint8_t>  RegisterSetting_t;
 
-    std::string seekHeader(std::ifstream& aFile) const;
-    std::vector<RegisterSetting_t> readConfigSection( std::ifstream& aFile, std::string aTag ) const;
+    std::string seek_header(std::ifstream& aFile) const;
+    std::vector<RegisterSetting_t> read_config_section( std::ifstream& aFile, std::string aTag ) const;
 
-    void uploadConfig( const std::vector<SI534xSlave::RegisterSetting_t>& aConfig ) const;
+    void upload_config( const std::vector<SI534xSlave::RegisterSetting_t>& aConfig ) const;
 };
 
 /**

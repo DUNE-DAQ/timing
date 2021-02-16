@@ -53,12 +53,12 @@ public:
     /**
      * @brief     Enable external triggers
      */
-    void enableTriggers() const;
+    void enable_triggers() const;
 
     /**
      * @brief     Disable external triggers
      */
-    void disableTriggers() const;
+    void disable_triggers() const;
 
 };
 

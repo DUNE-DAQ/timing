@@ -75,7 +75,7 @@ void TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::configureSystem() c
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP, class FAN_TOP>
 void TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::resetPartition(uint32_t aPartID) const {
-	this->getMaster(0).getMasterNode().getPartitionNode(aPartID).reset();
+	this->getMaster(0).get_master_node().get_partition_node(aPartID).reset();
 }
 //-----------------------------------------------------------------------------
 
@@ -83,8 +83,8 @@ void TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::resetPartition(uint
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP, class FAN_TOP>
 void TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::configurePartition(uint32_t aPartID, uint32_t aTrigMask, bool aEnableSpillGate) const {
-	this->getMaster(0).getMasterNode().getPartitionNode(aPartID).configure(aTrigMask, aEnableSpillGate);
-	this->getMaster(0).getMasterNode().getPartitionNode(aPartID).enable();
+	this->getMaster(0).get_master_node().get_partition_node(aPartID).configure(aTrigMask, aEnableSpillGate);
+	this->getMaster(0).get_master_node().get_partition_node(aPartID).enable();
 }
 //-----------------------------------------------------------------------------
 
@@ -92,7 +92,7 @@ void TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::configurePartition(
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP, class FAN_TOP>
 void TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::startPartition(uint32_t aPartID) const {
-	this->getMaster(0).getMasterNode().getPartitionNode(aPartID).start();
+	this->getMaster(0).get_master_node().get_partition_node(aPartID).start();
 }
 //-----------------------------------------------------------------------------
 
@@ -100,15 +100,15 @@ void TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::startPartition(uint
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP, class FAN_TOP>
 void TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::stopPartition(uint32_t aPartID) const {
-	this->getMaster(0).getMasterNode().getPartitionNode(aPartID).stop();
+	this->getMaster(0).get_master_node().get_partition_node(aPartID).stop();
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP, class FAN_TOP>
-uint64_t TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::readMasterTimestamp() const {
-	return this->getMaster(0).readMasterTimestamp();
+uint64_t TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::read_master_timestamp() const {
+	return this->getMaster(0).read_master_timestamp();
 }
 //-----------------------------------------------------------------------------
 
@@ -119,18 +119,18 @@ uint64_t TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::measureEndpoint
 	
 	uint32_t lRTT;
 		
-	this->getMaster(0).getMasterNode().switchEndpointSFP(0x0, false);
-	this->getMaster(0).getMasterNode().switchEndpointSFP(aAddr, true);
+	this->getMaster(0).get_master_node().switch_endpoint_sfp(0x0, false);
+	this->getMaster(0).get_master_node().switch_endpoint_sfp(aAddr, true);
 
 	// TODO check which fanout is active, and switch if necessary
 		
 	// set fanout rtt mux channel, and wait for fanout rtt ept to be in a good state
-	if (aFanout >= 0) getFanout(aFanout).switchSFPMUXChannel(aMux, true);
+	if (aFanout >= 0) getFanout(aFanout).switch_sfp_mux_channel(aMux, true);
 		
 	// gets master rtt ept in a good state, and sends echo command (due to second argument endpoint sfp is not controlled in this call, already done above)
-	lRTT = this->getMaster(0).getMasterNode().measureEndpointRTT(aAddr, false);
+	lRTT = this->getMaster(0).get_master_node().measureEndpointRTT(aAddr, false);
 
-	this->getMaster(0).getMasterNode().switchEndpointSFP(aAddr, false);
+	this->getMaster(0).get_master_node().switch_endpoint_sfp(aAddr, false);
 		
 	return lRTT;
 }

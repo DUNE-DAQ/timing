@@ -23,7 +23,7 @@ class BoardShell(object):
 
 
     # ------------------------------------------------------------------------------
-    def softReset(self):
+    def soft_reset(self):
         lIO = self.device.getNode('io')
 
         # Global soft reset
@@ -36,18 +36,18 @@ class BoardShell(object):
     def enableI2CSwitch(self):
         try:
             # Wake up the switch
-            self.getAX3Slave().writeI2C(0x01, 0x7f)
+            self.getAX3Slave().write_i2c(0x01, 0x7f)
         except RuntimeError:
             pass
 
-        x = self.getAX3Slave().readI2C(0x01)
+        x = self.getAX3Slave().read_i2c(0x01)
         return x
     # ------------------------------------------------------------------------------
 
 
     # ------------------------------------------------------------------------------
     def readUID(self):
-        lValues = self.getUIDSlave().readI2CArray(0xfa, 6)
+        lValues = self.getUIDSlave().read_i2cArray(0xfa, 6)
         lUniqueID = 0x0
         for lVal in lValues:
             lUniqueID = ( lUniqueID << 8 ) | lVal
@@ -71,8 +71,8 @@ class BoardShell(object):
         lRes = {}
         for lI2CName in self.i2cMasters:
             lI2CNode = lIO.getNode(lI2CName)
-            for lSlaveName in lI2CNode.getSlaves():
-               lRes[lI2CName+'.'+lSlaveName] = (lSlaveName, lI2CNode.getSlaveAddress(lSlaveName), lI2CNode.getSlave(lSlaveName).ping())
+            for lSlaveName in lI2CNode.get_slaves():
+               lRes[lI2CName+'.'+lSlaveName] = (lSlaveName, lI2CNode.get_slave_address(lSlaveName), lI2CNode.get_slave(lSlaveName).ping())
 
         return lRes
     # ------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ class BoardShell(object):
 
     # ------------------------------------------------------------------------------
     def status(self):
-        def decRng( word, ibit, nbits=1):
+        def dec_rng( word, ibit, nbits=1):
             return (word >> ibit) & ((1<<nbits)-1)
 
         lDevice = self.device
@@ -120,7 +120,7 @@ class BoardShell(object):
 
     # ------------------------------------------------------------------------------
     def pllstatus(self, verbose=False):
-        def decRng( word, ibit, nbits=1):
+        def dec_rng( word, ibit, nbits=1):
             return (word >> ibit) & ((1<<nbits)-1)
 
         lDevice = self.device
@@ -130,48 +130,48 @@ class BoardShell(object):
         # Access the clock chip
         if lBoardType in [kBoardPC059, kBoardTLU]:
             lI2CBusNode = lIO.getNode("i2c")
-            lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.getSlave('SI5345').getI2CAddress())
+            lSIChip = SI534xSlave(lI2CBusNode, lI2CBusNode.get_slave('SI5345').get_i2c_address())
         else:
             lSIChip = lIO.getNode('pll_i2c')
 
-        # echo("PLL Configuration id: {}".format(style(lSIChip.readConfigID(), fg='cyan')))
+        # echo("PLL Configuration id: {}".format(style(lSIChip.read_config_id(), fg='cyan')))
         # secho("PLL Information", fg='cyan')
-        lConfigID = lSIChip.readConfigID()
+        lConfigID = lSIChip.read_config_id()
         lVersion = collections.OrderedDict()
-        lVersion['Part number'] = lSIChip.readDeviceVersion()
-        lVersion['Device grade'] = lSIChip.readClockRegister(0x4)
-        lVersion['Device revision'] = lSIChip.readClockRegister(0x5)
+        lVersion['Part number'] = lSIChip.read_device_version()
+        lVersion['Device grade'] = lSIChip.read_clock_register(0x4)
+        lVersion['Device revision'] = lSIChip.read_clock_register(0x5)
         # toolbox.printRegTable(lVersion)
 
-        w = lSIChip.readClockRegister(0xc)
+        w = lSIChip.read_clock_register(0xc)
 
         lRegisters = collections.OrderedDict()
-        lRegisters['SYSINCAL'] = decRng(w, 0)
-        lRegisters['LOSXAXB'] = decRng(w, 1)
-        lRegisters['XAXB_ERR'] = decRng(w, 3)
-        lRegisters['SMBUS_TIMEOUT'] = decRng(w, 5)
+        lRegisters['SYSINCAL'] = dec_rng(w, 0)
+        lRegisters['LOSXAXB'] = dec_rng(w, 1)
+        lRegisters['XAXB_ERR'] = dec_rng(w, 3)
+        lRegisters['SMBUS_TIMEOUT'] = dec_rng(w, 5)
 
-        w = lSIChip.readClockRegister(0xd)
+        w = lSIChip.read_clock_register(0xd)
 
-        lRegisters['LOS'] = decRng(w, 0, 4)
-        lRegisters['OOF'] = decRng(w, 4, 4)
+        lRegisters['LOS'] = dec_rng(w, 0, 4)
+        lRegisters['OOF'] = dec_rng(w, 4, 4)
 
-        w = lSIChip.readClockRegister(0xe)
+        w = lSIChip.read_clock_register(0xe)
 
-        lRegisters['LOL'] = decRng(w, 1)
-        lRegisters['HOLD'] = decRng(w, 5)
+        lRegisters['LOL'] = dec_rng(w, 1)
+        lRegisters['HOLD'] = dec_rng(w, 5)
 
-        w = lSIChip.readClockRegister(0xf)
-        lRegisters['CAL_PLL'] = decRng(w, 5)
+        w = lSIChip.read_clock_register(0xf)
+        lRegisters['CAL_PLL'] = dec_rng(w, 5)
 
-        w = lSIChip.readClockRegister(0x11)
-        lRegisters['SYSINCAL_FLG'] = decRng(w, 0)
-        lRegisters['LOSXAXB_FLG'] = decRng(w, 1)
-        lRegisters['XAXB_ERR_FLG'] = decRng(w, 3)
-        lRegisters['SMBUS_TIMEOUT_FLG'] = decRng(w, 5)
+        w = lSIChip.read_clock_register(0x11)
+        lRegisters['SYSINCAL_FLG'] = dec_rng(w, 0)
+        lRegisters['LOSXAXB_FLG'] = dec_rng(w, 1)
+        lRegisters['XAXB_ERR_FLG'] = dec_rng(w, 3)
+        lRegisters['SMBUS_TIMEOUT_FLG'] = dec_rng(w, 5)
 
-        w = lSIChip.readClockRegister(0x12)
-        lRegisters['OOF (sticky)'] = decRng(w, 4, 4)
+        w = lSIChip.read_clock_register(0x12)
+        lRegisters['OOF (sticky)'] = dec_rng(w, 4, 4)
 
         # secho("PLL Status", fg='cyan')
         return (lConfigID, lVersion, lRegisters)

@@ -35,7 +35,7 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    uint64_t sendEchoAndMeasureDelay(int64_t aTimeout=500) const;
+    uint64_t send_echo_and_measure_delay(int64_t aTimeout=500) const;
 
     /**
      * @brief     Get status string, optionally print.

@@ -37,7 +37,7 @@ def crt(obj, device):
     lDevice.dispatch()
 
     if lBoardInfo['board_type'].value() in kLibrarySupportedBoards:
-        echo(lDevice.getNode('io').getHardwareInfo())
+        echo(lDevice.getNode('io').get_hardware_info())
     # Ensure that target endpoint exists
 
     obj.mDevice = lDevice
@@ -55,7 +55,7 @@ def status(obj):
 
     lDevice = obj.mDevice
     lCRTEpt = obj.mCRTEndpoint
-    echo(lCRTEpt.getStatus())
+    echo(lCRTEpt.get_status())
 # ------------------------------------------------------------------------------
 
 

@@ -66,42 +66,42 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    uint64_t readTimestamp() const;
+    uint64_t read_timestamp() const;
 
     /**
      * @brief      Read the number of words in the data buffer.
      *
      * @return     { description_of_the_return_value }
      */
-    uint32_t readBufferCount() const;
+    uint32_t read_buffer_count() const;
     
     /**
      * @brief      Read the contents of the endpoint data buffer.
      *
      * @return     { description_of_the_return_value }
      */
-    uhal::ValVector< uint32_t > readDataBuffer(bool aReadall=false) const;
+    uhal::ValVector< uint32_t > read_data_buffer(bool aReadall=false) const;
 
     /**
      * @brief      Print the contents of the endpoint data buffer.
      *
      * @return     { description_of_the_return_value }
      */
-    std::string getDataBufferTable(bool aReadall=false, bool aPrint=false) const;
+    std::string get_data_buffer_table(bool aReadall=false, bool aPrint=false) const;
 
     /**
      * @brief      Read the endpoint clock frequency.
      *
      * @return     { description_of_the_return_value }
      */
-    double readClockFrequency() const;
+    double read_clock_frequency() const;
 
     /**
      * @brief      Read the endpoint wrapper version
      *
      * @return     { description_of_the_return_value }
      */
-    uint32_t readVersion() const;
+    uint32_t read_version() const;
 };
 
 } // namespace pdt

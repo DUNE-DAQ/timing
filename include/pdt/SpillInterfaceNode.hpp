@@ -49,12 +49,12 @@ public:
     /**
      * @brief     Configure and enable fake spill generator
      */
-    void enableFakeSpills(uint32_t aCycLen=16, uint32_t aSpillLen=8) const;
+    void enable_fake_spills(uint32_t aCycLen=16, uint32_t aSpillLen=8) const;
 
     /**
      * @brief     Read whether we are in spill or not
      */
-    bool readInSpill() const;
+    bool read_in_spill() const;
 
 };
 

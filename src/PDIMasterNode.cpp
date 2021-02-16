@@ -21,9 +21,9 @@ PDIMasterNode::~PDIMasterNode() {
 std::string
 PDIMasterNode::get_status(bool aPrint) const {
     std::stringstream lStatus;
-    auto lTStamp = getNode<TimestampGeneratorNode>("master.tstamp").readRawTimestamp();
-    lStatus << "Timestamp: 0x" << std::hex << tstamp2int(lTStamp) << " -> " << formatTimestamp(lTStamp) << std::endl << std::endl;
-    lStatus << getNode<FLCmdGeneratorNode>("master.scmd_gen").getCmdCountersTable();
+    auto lTStamp = getNode<TimestampGeneratorNode>("master.tstamp").read_raw_timestamp();
+    lStatus << "Timestamp: 0x" << std::hex << tstamp2int(lTStamp) << " -> " << format_timestamp(lTStamp) << std::endl << std::endl;
+    lStatus << getNode<FLCmdGeneratorNode>("master.scmd_gen").get_cmd_counters_table();
     if (aPrint) std::cout << lStatus.str();
     return lStatus.str();
 }
@@ -32,20 +32,20 @@ PDIMasterNode::get_status(bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::switchEndpointSFP(uint32_t aAddr, bool aOn) const {
+PDIMasterNode::switch_endpoint_sfp(uint32_t aAddr, bool aOn) const {
     auto vlCmdNode = getNode<VLCmdGeneratorNode>("master.acmd");
 
     // Switch off endpoint SFP tx
-    vlCmdNode.switchEndpointSFP(aAddr, aOn);
+    vlCmdNode.switch_endpoint_sfp(aAddr, aOn);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::enableUpstreamEndpoint() const {
+PDIMasterNode::enable_upstream_endpoint() const {
     auto lGlobal = getNode<GlobalNode>("master.global");
-    lGlobal.enableUpstreamEndpoint();
+    lGlobal.enable_upstream_endpoint();
 }
 //-----------------------------------------------------------------------------
 
@@ -60,19 +60,19 @@ PDIMasterNode::measureEndpointRTT(uint32_t aAddr, bool aControlSFP) const {
 
     if (aControlSFP) {
         // Switch off all TX SFPs
-        vlCmdNode.switchEndpointSFP(0x0, false);
+        vlCmdNode.switch_endpoint_sfp(0x0, false);
     
         // Turn on the current target
-        vlCmdNode.switchEndpointSFP(aAddr, true);
+        vlCmdNode.switch_endpoint_sfp(aAddr, true);
     
         millisleep(100);
     }
 
-    lGlobal.enableUpstreamEndpoint();
+    lGlobal.enable_upstream_endpoint();
         
-    uint32_t lEndpointRTT = lEcho.sendEchoAndMeasureDelay();
+    uint32_t lEndpointRTT = lEcho.send_echo_and_measure_delay();
     
-    if (aControlSFP) vlCmdNode.switchEndpointSFP(aAddr, false);
+    if (aControlSFP) vlCmdNode.switch_endpoint_sfp(aAddr, false);
 
     return lEndpointRTT;
 }
@@ -81,7 +81,7 @@ PDIMasterNode::measureEndpointRTT(uint32_t aAddr, bool aControlSFP) const {
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::applyEndpointDelay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel, bool aMeasureRTT, bool aControlSFP) const {
+PDIMasterNode::apply_endpoint_delay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel, bool aMeasureRTT, bool aControlSFP) const {
     
     auto vlCmdNode = getNode<VLCmdGeneratorNode>("master.acmd");
     auto lGlobal = getNode<GlobalNode>("master.global");
@@ -91,31 +91,31 @@ PDIMasterNode::applyEndpointDelay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel
         
         if (aControlSFP) {
             // Switch off all TX SFPs
-            vlCmdNode.switchEndpointSFP(0x0, false);
+            vlCmdNode.switch_endpoint_sfp(0x0, false);
             
             // Turn on the current target
-            vlCmdNode.switchEndpointSFP(aAddr, true);
+            vlCmdNode.switch_endpoint_sfp(aAddr, true);
         
             millisleep(100);
         }
 
-        lGlobal.enableUpstreamEndpoint();
+        lGlobal.enable_upstream_endpoint();
         
-        uint64_t lEndpointRTT = lEcho.sendEchoAndMeasureDelay();
-        ERS_LOG("Pre delay adjustment RTT:  " << formatRegValue(lEndpointRTT)); 
+        uint64_t lEndpointRTT = lEcho.send_echo_and_measure_delay();
+        ERS_LOG("Pre delay adjustment RTT:  " << format_reg_value(lEndpointRTT)); 
     }
     
-    vlCmdNode.applyEndpointDelay(aAddr, aCDel, aFDel, aPDel);
+    vlCmdNode.apply_endpoint_delay(aAddr, aCDel, aFDel, aPDel);
 
     millisleep(100);
 
     if (aMeasureRTT) {
-        lGlobal.enableUpstreamEndpoint();
+        lGlobal.enable_upstream_endpoint();
 
-        uint64_t lEndpointRTT = lEcho.sendEchoAndMeasureDelay();
-        ERS_LOG("Post delay adjustment RTT: " << formatRegValue(lEndpointRTT));
+        uint64_t lEndpointRTT = lEcho.send_echo_and_measure_delay();
+        ERS_LOG("Post delay adjustment RTT: " << format_reg_value(lEndpointRTT));
 
-        if (aControlSFP) vlCmdNode.switchEndpointSFP(aAddr, false);
+        if (aControlSFP) vlCmdNode.switch_endpoint_sfp(aAddr, false);
     }
 }
 //-----------------------------------------------------------------------------
@@ -123,9 +123,9 @@ PDIMasterNode::applyEndpointDelay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::sendFLCmd(uint32_t aCmd, uint32_t aChan, uint32_t aNumber) const {
+PDIMasterNode::send_fl_cmd(uint32_t aCmd, uint32_t aChan, uint32_t aNumber) const {
     for (uint32_t i=0; i < aNumber; i++) {
-        getNode<FLCmdGeneratorNode>("master.scmd_gen").sendFLCmd(aCmd, aChan, getNode<TimestampGeneratorNode>("master.tstamp"));
+        getNode<FLCmdGeneratorNode>("master.scmd_gen").send_fl_cmd(aCmd, aChan, getNode<TimestampGeneratorNode>("master.tstamp"));
     }
 }
 //-----------------------------------------------------------------------------
@@ -133,7 +133,7 @@ PDIMasterNode::sendFLCmd(uint32_t aCmd, uint32_t aChan, uint32_t aNumber) const 
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::enableFakeTrigger(uint32_t aChan, double aRate, bool aPoisson) const {
+PDIMasterNode::enable_fake_trigger(uint32_t aChan, double aRate, bool aPoisson) const {
 
     // Configures the internal command generator to produce triggers at a defined frequency.
     // Rate =  (50MHz / 2^(d+8)) / p where n in [0,15] and p in [1,256]
@@ -162,22 +162,22 @@ PDIMasterNode::enableFakeTrigger(uint32_t aChan, double aRate, bool aPoisson) co
         lTriggerModeStream << "periodic";
     }
     ERS_INFO(lTriggerModeStream.str());
-    getNode<FLCmdGeneratorNode>("master.scmd_gen").enableFakeTrigger(aChan, lFTConfig.mDiv, lFTConfig.mPS, aPoisson);
+    getNode<FLCmdGeneratorNode>("master.scmd_gen").enable_fake_trigger(aChan, lFTConfig.mDiv, lFTConfig.mPS, aPoisson);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::disableFakeTrigger(uint32_t aChan) const {
-    getNode<FLCmdGeneratorNode>("master.scmd_gen").disableFakeTrigger(aChan);
+PDIMasterNode::disable_fake_trigger(uint32_t aChan) const {
+    getNode<FLCmdGeneratorNode>("master.scmd_gen").disable_fake_trigger(aChan);
 }
 //------------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::enableSpillInterface() const {
+PDIMasterNode::enable_spill_interface() const {
      getNode<SpillInterfaceNode>("master.spill").enable();
 }
 //-----------------------------------------------------------------------------
@@ -185,23 +185,23 @@ PDIMasterNode::enableSpillInterface() const {
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::enableFakeSpills(uint32_t aCycLen, uint32_t aSpillLen) const {
-    getNode<SpillInterfaceNode>("master.spill").enableFakeSpills(aCycLen, aSpillLen);
+PDIMasterNode::enable_fake_spills(uint32_t aCycLen, uint32_t aSpillLen) const {
+    getNode<SpillInterfaceNode>("master.spill").enable_fake_spills(aCycLen, aSpillLen);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 bool
-PDIMasterNode::readInSpill() const {
-    return getNode<SpillInterfaceNode>("master.spill").readInSpill();
+PDIMasterNode::read_in_spill() const {
+    return getNode<SpillInterfaceNode>("master.spill").read_in_spill();
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::resetExternalTriggersEndpoint() const {
+PDIMasterNode::reset_external_triggers_endpoint() const {
     getNode<TriggerReceiverNode>("trig").reset();
 }
 //-----------------------------------------------------------------------------
@@ -209,23 +209,23 @@ PDIMasterNode::resetExternalTriggersEndpoint() const {
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::enableExternalTriggers() const {
-    getNode<TriggerReceiverNode>("trig").enableTriggers();
+PDIMasterNode::enable_external_triggers() const {
+    getNode<TriggerReceiverNode>("trig").enable_triggers();
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::disableExternalTriggers() const {
-    getNode<TriggerReceiverNode>("trig").disableTriggers();
+PDIMasterNode::disable_external_triggers() const {
+    getNode<TriggerReceiverNode>("trig").disable_triggers();
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 const PartitionNode&
-PDIMasterNode::getPartitionNode(uint32_t aPartID) const {
+PDIMasterNode::get_partition_node(uint32_t aPartID) const {
     const std::string nodeName = "master.partition" + std::to_string(aPartID);
     return getNode<PartitionNode>(nodeName);
 }
@@ -234,16 +234,16 @@ PDIMasterNode::getPartitionNode(uint32_t aPartID) const {
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::syncTimestamp() const {
+PDIMasterNode::sync_timestamp() const {
 
-    const uint64_t lOldTimestamp = readTimestamp();
-    ERS_LOG("Old timestamp: " << formatRegValue(lOldTimestamp) << ", " << formatTimestamp(lOldTimestamp));
+    const uint64_t lOldTimestamp = read_timestamp();
+    ERS_LOG("Old timestamp: " << format_reg_value(lOldTimestamp) << ", " << format_timestamp(lOldTimestamp));
     
-    const uint64_t lNow = getSecondsSinceEpoch() * kSPSClockInHz;
-    setTimestamp(lNow);
+    const uint64_t lNow = get_seconds_since_epoch() * kSPSClockInHz;
+    set_timestamp(lNow);
 
-    const uint64_t lNewTimestamp = readTimestamp();
-    ERS_LOG("New timestamp: " << formatRegValue(lNewTimestamp) << ", " << formatTimestamp(lNewTimestamp));
+    const uint64_t lNewTimestamp = read_timestamp();
+    ERS_LOG("New timestamp: " << format_reg_value(lNewTimestamp) << ", " << format_timestamp(lNewTimestamp));
 }
 //-----------------------------------------------------------------------------
 

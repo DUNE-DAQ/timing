@@ -59,7 +59,7 @@ PartitionNode::configure( uint32_t aTrigMask, bool aEnableSpillGate, bool aRateC
 
 //-----------------------------------------------------------------------------
 void
-PartitionNode::configureRateCtrl( bool aRateCtrl) const {
+PartitionNode::configure_rate_ctrl( bool aRateCtrl) const {
     getNode("csr.ctrl.rate_ctrl_en").write(aRateCtrl);
     getClient().dispatch();
 }
@@ -68,7 +68,7 @@ PartitionNode::configureRateCtrl( bool aRateCtrl) const {
 
 //-----------------------------------------------------------------------------
 void
-PartitionNode::enableTriggers( bool aEnable ) const {
+PartitionNode::enable_triggers( bool aEnable ) const {
     // Disable the buffer
     getNode("csr.ctrl.trig_en").write(aEnable);
     getClient().dispatch();
@@ -78,7 +78,7 @@ PartitionNode::enableTriggers( bool aEnable ) const {
 
 //-----------------------------------------------------------------------------
 uint32_t
-PartitionNode::readTriggerMask() const {
+PartitionNode::read_trigger_mask() const {
     uhal::ValWord<uint32_t> lMask = getNode("csr.ctrl.trig_mask").read();
     getClient().dispatch();
 
@@ -89,7 +89,7 @@ PartitionNode::readTriggerMask() const {
 
 //-----------------------------------------------------------------------------
 uint32_t
-PartitionNode::readBufferWordCount() const {
+PartitionNode::read_buffer_word_count() const {
     uhal::ValWord<uint32_t> lWords = getNode("buf.count").read();
     getClient().dispatch();
 
@@ -101,14 +101,14 @@ PartitionNode::readBufferWordCount() const {
 
 //-----------------------------------------------------------------------------
 uint32_t
-PartitionNode::numEventsInBuffer() const {
-    return readBufferWordCount() / kWordsPerEvent;
+PartitionNode::num_events_in_buffer() const {
+    return read_buffer_word_count() / kWordsPerEvent;
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 bool
-PartitionNode::readROBWarningOverflow() const {
+PartitionNode::read_rob_warning_overflow() const {
     uhal::ValWord<uint32_t> lWord = getNode("csr.stat.buf_warn").read();
     getClient().dispatch();
 
@@ -119,7 +119,7 @@ PartitionNode::readROBWarningOverflow() const {
 
 //-----------------------------------------------------------------------------
 bool
-PartitionNode::readROBError() const {
+PartitionNode::read_rob_error() const {
     uhal::ValWord<uint32_t> lWord = getNode("csr.stat.buf_err").read();
     getClient().dispatch();
 
@@ -132,9 +132,9 @@ PartitionNode::readROBError() const {
 
 //-----------------------------------------------------------------------------
 std::vector<uint32_t>
-PartitionNode::readEvents( size_t aNumEvents ) const {
+PartitionNode::read_events( size_t aNumEvents ) const {
 
-    uint32_t lEventsInBuffer = numEventsInBuffer();
+    uint32_t lEventsInBuffer = num_events_in_buffer();
 
     uint32_t lEventsToRead = ( aNumEvents == 0 ? lEventsInBuffer : aNumEvents);
 
@@ -231,7 +231,7 @@ PartitionNode::stop( uint32_t aTimeout /*milliseconds*/ ) const {
 
 //-----------------------------------------------------------------------------
 PartitionCounts
-PartitionNode::readCommandCounts() const {
+PartitionNode::read_command_counts() const {
 
     const uhal::Node& lAccCtrs = getNode("actrs");
     const uhal::Node& lRejCtrs = getNode("rctrs");
@@ -268,8 +268,8 @@ PartitionNode::get_status(bool aPrint) const {
     lStatus << "=> Partition " << lPartNum << std::endl;
     lStatus << std::endl;
 
-    lStatus << formatRegTable(lControls, "Controls") << std::endl;
-    lStatus << formatRegTable(lState, "State") << std::endl;
+    lStatus << format_reg_table(lControls, "Controls") << std::endl;
+    lStatus << format_reg_table(lState, "State") << std::endl;
 
     lStatus << "Event Counter: " << lEventCtr.value() << std::endl;
     std::string lBufferStatusString = !lState.find("buf_err")->second.value() ? "OK" : "Error";
@@ -280,7 +280,7 @@ PartitionNode::get_status(bool aPrint) const {
 
     std::vector<uhal::ValVector<uint32_t>> lCountersContainer = {lAccCounters, lRejCounters};
 
-    lStatus << formatCountersTable(lCountersContainer, {"Accept counters", "Reject counters"});
+    lStatus << format_counters_table(lCountersContainer, {"Accept counters", "Reject counters"});
 
     if (aPrint) std::cout << lStatus.str();
     return lStatus.str();

@@ -35,7 +35,7 @@ def endpoint(obj, device, ids):
         lDevice.setTimeoutPeriod(obj.mTimeout)
 
     echo('Created endpoint device ' + style(lDevice.id(), fg='blue'))
-    echo(lDevice.getNode('io').getHardwareInfo())
+    echo(lDevice.getNode('io').get_hardware_info())
     # Ensure that target endpoint exists
 
     lEPNames = lDevice.getNodes('endpoint('+'|'.join( ( str(i) for i in ids ) )+')')
@@ -45,7 +45,7 @@ def endpoint(obj, device, ids):
     
     lEndpoints = { pid:lDevice.getNode('endpoint{}'.format(pid)) for pid in ids}
 
-    lVersions = { pid:n.readVersion() for pid,n in lEndpoints.items()}
+    lVersions = { pid:n.read_version() for pid,n in lEndpoints.items()}
 
     if len(set( (v for v in lVersions.itervalues()) )) > 1:
         secho('WARNING: multiple enpoint versions detected', fg='yellow')
@@ -72,7 +72,7 @@ def freq(obj):
 
         secho("Endpoint frequency measurement:", fg='cyan')
         # Measure the generated clock frequency
-        freq = ep.readClockFrequency()
+        freq = ep.read_clock_frequency()
 
         echo( "Endpoint {} freq MHz : {}".format(i, freq) )
 # ------------------------------------------------------------------------------
@@ -143,7 +143,7 @@ def status(obj, watch, period):
         lDevice.dispatch()
 
 
-        lTimeStamp = lEndPointNode.readTimestamp()
+        lTimeStamp = lEndPointNode.read_timestamp()
 
         lEPSummary = Texttable(max_width=0)
         lEPSummary.set_deco(Texttable.VLINES | Texttable.BORDER | Texttable.HEADER )
@@ -243,5 +243,5 @@ def readback(obj, readall):
     
     for p,n in lEndpoints.items():
 
-        echo(n.getDataBufferTable(readall))
+        echo(n.get_data_buffer_table(readall))
 # ------------------------------------------------------------------------------

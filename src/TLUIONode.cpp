@@ -24,7 +24,7 @@ std::string
 TLUIONode::get_status(bool aPrint) const {
 	auto subnodes = read_sub_nodes(getNode("csr.stat"));
 	std::stringstream lStatus;
-	lStatus << formatRegTable(subnodes, "TLU IO state");
+	lStatus << format_reg_table(subnodes, "TLU IO state");
 
 	if (aPrint) std::cout << lStatus.str();
 	return lStatus.str();
@@ -51,50 +51,50 @@ TLUIONode::reset(const std::string& aClockConfigFile) const {
 
 	// enclustra i2c switch stuff
 	try {
-		getNode<I2CMasterNode>(mUIDI2CBus).getSlave("AX3_Switch").writeI2C(0x01, 0x7f);
+		getNode<I2CMasterNode>(mUIDI2CBus).get_slave("AX3_Switch").write_i2c(0x01, 0x7f);
 	} catch(...) {
 	}
 
 	// Find the right pll config file
-	std:: string lClockConfigFile = getFullClockConfigFilePath(aClockConfigFile);
+	std:: string lClockConfigFile = get_full_clock_config_file_path(aClockConfigFile);
 	ERS_INFO("PLL configuration file : " << lClockConfigFile);
 	
 	// Upload config file to PLL
-	configurePLL(lClockConfigFile);
+	configure_pll(lClockConfigFile);
 
 	// Tweak the PLL swing
-	auto lSIChip = getPLL();
-	lSIChip->writeI2CArray(0x113, {0x9, 0x33});
+	auto lSIChip = get_pll();
+	lSIChip->write_i2cArray(0x113, {0x9, 0x33});
 
 	// configure tlu io expanders
-	auto lIC6 = getI2CDevice<I2CExpanderSlave>(mUIDI2CBus, "Expander1");
-	auto lIC7 = getI2CDevice<I2CExpanderSlave>(mUIDI2CBus, "Expander2");
+	auto lIC6 = get_i2c_device<I2CExpanderSlave>(mUIDI2CBus, "Expander1");
+	auto lIC7 = get_i2c_device<I2CExpanderSlave>(mUIDI2CBus, "Expander2");
 
 	// Bank 0
-	lIC6->setInversion(0, 0x00);
-	lIC6->setIO(0, 0x00);
-	lIC6->setOutputs(0, 0x00);
+	lIC6->set_inversion(0, 0x00);
+	lIC6->set_io(0, 0x00);
+	lIC6->set_outputs(0, 0x00);
 
 	// Bank 1
-	lIC6->setInversion(1, 0x00);
-	lIC6->setIO(1, 0x00);
-	lIC6->setOutputs(1, 0x88);
+	lIC6->set_inversion(1, 0x00);
+	lIC6->set_io(1, 0x00);
+	lIC6->set_outputs(1, 0x88);
 
 	// Bank 0
-	lIC7->setInversion(0, 0x00);
-	lIC7->setIO(0, 0x00);
-	lIC7->setOutputs(0, 0xf0);
+	lIC7->set_inversion(0, 0x00);
+	lIC7->set_io(0, 0x00);
+	lIC7->set_outputs(0, 0xf0);
 
 	// Bank 1
-	lIC7->setInversion(1, 0x00);
-	lIC7->setIO(1, 0x00);
-	lIC7->setOutputs(1, 0xf0);
+	lIC7->set_inversion(1, 0x00);
+	lIC7->set_io(1, 0x00);
+	lIC7->set_outputs(1, 0xf0);
 
 	// BI signals are NIM
 	uint32_t lBISignalThreshold = 0x589D;
 	
-	configureDAC(0, lBISignalThreshold);
-	configureDAC(1, lBISignalThreshold);
+	configure_dac(0, lBISignalThreshold);
+	configure_dac(1, lBISignalThreshold);
 
 	ERS_INFO("DAC1 and DAC2 set to " << std::hex << lBISignalThreshold);
 
@@ -109,14 +109,14 @@ TLUIONode::reset(const std::string& aClockConfigFile) const {
 
 //-----------------------------------------------------------------------------
 void
-TLUIONode::configureDAC(uint32_t aDACId, uint32_t aDACValue, bool aInternalRef) const {
+TLUIONode::configure_dac(uint32_t aDACId, uint32_t aDACValue, bool aInternalRef) const {
 	std::string lDACDevice;
 	try {
 		lDACDevice = mDACDevices.at(aDACId);
 	} catch(const std::out_of_range& e) {
-        throw InvalidDACId(ERS_HERE, getId(), formatRegValue(aDACId));
+        throw InvalidDACId(ERS_HERE, getId(), format_reg_value(aDACId));
 	}
-	auto lDAC = getI2CDevice<DACSlave>(mUIDI2CBus, lDACDevice);
+	auto lDAC = get_i2c_device<DACSlave>(mUIDI2CBus, lDACDevice);
 	lDAC->setInteralRef(aInternalRef);
     lDAC->setDAC(7, aDACValue);
 }
@@ -125,7 +125,7 @@ TLUIONode::configureDAC(uint32_t aDACId, uint32_t aDACValue, bool aInternalRef) 
 
 //-----------------------------------------------------------------------------
 std::string
-TLUIONode::getSFPStatus(uint32_t /*aSFPId*/, bool /*aPrint*/) const {
+TLUIONode::get_sfp_status(uint32_t /*aSFPId*/, bool /*aPrint*/) const {
 	ERS_LOG("TLU does not support SFP I2C");
 	return "";
 }
@@ -133,7 +133,7 @@ TLUIONode::getSFPStatus(uint32_t /*aSFPId*/, bool /*aPrint*/) const {
 
 //-----------------------------------------------------------------------------
 void
-TLUIONode::switchSFPSoftTxControlBit(uint32_t /*aSFPId*/, bool /*aOn*/) const {
+TLUIONode::switch_sfp_soft_tx_control_bit(uint32_t /*aSFPId*/, bool /*aOn*/) const {
 	ERS_LOG("TLU does not support SFP I2C");
 }
 //-----------------------------------------------------------------------------
