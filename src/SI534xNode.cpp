@@ -310,6 +310,46 @@ SI534xSlave::registers( ) const {
 }
 //-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
+void
+SI534xSlave::get_info(timingmon::TimingPLLMonitorData& mon_data) const {
+
+    mon_data.config_id = this->read_config_id();
+
+    //lPLLVersion["Part number"] = pll->read_device_version();
+    //lPLLVersion["Device grade"] = pll->read_clock_register(0x4);
+    //lPLLVersion["Device revision"] = pll->read_clock_register(0x5);
+    
+    uint8_t lPLLReg_c = this->read_clock_register(0xc);
+    uint8_t lPLLReg_d = this->read_clock_register(0xd);
+    uint8_t lPLLReg_e = this->read_clock_register(0xe);
+    uint8_t lPLLReg_f = this->read_clock_register(0xf);
+    uint8_t lPLLReg_11 = this->read_clock_register(0x11);
+    uint8_t lPLLReg_12 = this->read_clock_register(0x12);
+
+    mon_data.cal_pll = dec_rng(lPLLReg_f, 5);
+    mon_data.hold = dec_rng(lPLLReg_e, 5);
+    mon_data.lol = dec_rng(lPLLReg_e, 1);
+    mon_data.los = dec_rng(lPLLReg_d, 0, 4);
+    mon_data.los_xaxb = dec_rng(lPLLReg_c, 1);
+    mon_data.los_xaxb_flg = dec_rng(lPLLReg_11, 1);
+
+    mon_data.oof = dec_rng(lPLLReg_d, 4, 4);
+    mon_data.oof_sticky = dec_rng(lPLLReg_12, 4, 4);
+
+    mon_data.smbus_timeout = dec_rng(lPLLReg_c, 5);
+    mon_data.smbus_timeout_flg = dec_rng(lPLLReg_11, 5);
+
+    mon_data.sys_in_cal = dec_rng(lPLLReg_c, 0);
+    mon_data.sys_in_cal_flg = dec_rng(lPLLReg_11, 0);
+
+    mon_data.xaxb_err = dec_rng(lPLLReg_c, 3);
+    mon_data.xaxb_err_flg = dec_rng(lPLLReg_11, 3);
+}
+//-----------------------------------------------------------------------------
+
+
 //-----------------------------------------------------------------------------
 SI534xNode::SI534xNode( const uhal::Node& aNode ) : I2CMasterNode(aNode), SI534xSlave(this, this->get_slave_address("i2caddr") ) {
 }

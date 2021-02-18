@@ -142,7 +142,7 @@ TLUIONode::switch_sfp_soft_tx_control_bit(uint32_t /*aSFPId*/, bool /*aOn*/) con
 
 //-----------------------------------------------------------------------------
 void
-TLUIONode::get_info(timing::timingmon::TimingTLUMonitorData& mon_data) const {
+TLUIONode::get_info(timingmon::TimingTLUMonitorData& mon_data) const {
 
 	auto subnodes = read_sub_nodes(getNode("csr.stat"));
 
@@ -154,6 +154,27 @@ TLUIONode::get_info(timing::timingmon::TimingTLUMonitorData& mon_data) const {
 	mon_data.pll_sticky = subnodes.at("pll_sticky");
 	mon_data.sfp_flt = subnodes.at("sfp_fault");
 	mon_data.sfp_los = subnodes.at("sfp_los");
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void
+TLUIONode::get_info(timingmon::TimingTLUMonitorDataDebug& mon_data) const {
+
+	// TODO, do something clever with function above?
+	auto subnodes = read_sub_nodes(getNode("csr.stat"));
+
+	mon_data.cdr_lol = subnodes.at("cdr_lol");
+	mon_data.cdr_los = subnodes.at("cdr_los");
+	mon_data.mmcm_ok = subnodes.at("mmcm_ok");
+	mon_data.mmcm_sticky = subnodes.at("mmcm_sticky");
+	mon_data.pll_ok = subnodes.at("pll_ok");
+	mon_data.pll_sticky = subnodes.at("pll_sticky");
+	mon_data.sfp_flt = subnodes.at("sfp_fault");
+	mon_data.sfp_los = subnodes.at("sfp_los");
+
+	this->get_pll()->get_info(mon_data.pll_mon_data);
 }
 //-----------------------------------------------------------------------------
 

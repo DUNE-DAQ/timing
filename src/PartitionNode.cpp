@@ -286,6 +286,40 @@ PartitionNode::get_status(bool aPrint) const {
     return lStatus.str();
 }
 //-----------------------------------------------------------------------------
+void
+PartitionNode::get_info(timingmon::TimingPartitionMonitorData& mon_data) const {
+    auto lControls = read_sub_nodes(getNode("csr.ctrl"), false);
+    auto lState = read_sub_nodes(getNode("csr.stat"), false);
 
+    auto lEventCtr = getNode("evtctr").read();
+    auto lBufCount = getNode("buf.count").read();
+
+    //auto lAccCounters = getNode("actrs").readBlock(getNode("actrs").getSize());
+    //auto lRejCounters = getNode("rctrs").readBlock(getNode("actrs").getSize());
+    
+    getClient().dispatch();
+
+    mon_data.enabled = lControls.at("part_en").value();
+    mon_data.spill_interface_enabled = lControls.at("spill_gate_en").value();
+    mon_data.trig_enabled = lControls.at("trig_en").value();
+    mon_data.trig_mask = lControls.at("trig_mask").value();
+    mon_data.rate_ctrl_enabled = lControls.at("rate_ctrl_en").value();
+    mon_data.frag_mask = lControls.at("frag_mask").value(); 
+    mon_data.buffer_enabled = lControls.at("buf_en").value();
+    
+    mon_data.in_run = lState.at("in_run").value();
+    mon_data.in_spill = lState.at("in_spill").value();
+   
+    mon_data.buffer_warning = lState.at("buf_warn").value();
+    mon_data.buffer_error = lState.at("buf_err").value();
+    mon_data.buffer_occupancy = lBufCount.value();
+
+
+    //lStatus << "Event Counter: " << lEventCtr.value() << std::endl;
+
+    // probably debug info, not in this struct
+    //std::vector<uhal::ValVector<uint32_t>> lCountersContainer = {lAccCounters, lRejCounters};
+}
+//-----------------------------------------------------------------------------
 } // namespace pdt
 } // namespace dunedaq

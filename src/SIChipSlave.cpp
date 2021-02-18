@@ -29,7 +29,7 @@ SIChipSlave::~SIChipSlave( ) {
 uint8_t
 SIChipSlave::read_page( ) const {
 
-    ERS_DEBUG(0, "<- Reading page ");
+    ERS_DEBUG(2, "<- Reading page ");
 
     // Read from the page address (0x1?)
     return read_i2c(0x1);
@@ -43,7 +43,7 @@ SIChipSlave::switch_page( uint8_t aPage ) const {
 
     // Prepare a data block with address and new page
     // std::vector<uint8_t> lData = {0x1, aPage};
-    ERS_DEBUG(0, "-> Switching to page " 
+    ERS_DEBUG(2, "-> Switching to page " 
         << format_reg_value((uint32_t)aPage));
     write_i2c(0x1, aPage);
 }
@@ -75,7 +75,7 @@ SIChipSlave::read_clock_register( uint16_t aAddr ) const {
         << "Read Address " << (uint32_t)aAddr 
         << " reg: " << (uint32_t)lRegAddr 
         << " page: " << (uint32_t)lPageAddr;
-    ERS_DEBUG(0, debug_stream.str());
+    ERS_DEBUG(2, debug_stream.str());
     // Change page only when required.
     // (The SI5344 don't like to have the page register id to be written all the time.)
     uint8_t lCurrentPage = read_page();
@@ -101,7 +101,7 @@ SIChipSlave::write_clock_register( uint16_t aAddr, uint8_t aData ) const {
         << "Write Address " << (uint32_t)aAddr 
         << " reg: " << (uint32_t)lRegAddr 
         << " page: " << (uint32_t)lPageAddr;
-    ERS_DEBUG(0, debug_stream.str());
+    ERS_DEBUG(2, debug_stream.str());
     // Change page only when required.
     // (The SI5344 don't like to have the page register id to be written all the time.)
     uint8_t lCurrentPage = read_page();

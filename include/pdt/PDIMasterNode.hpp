@@ -17,6 +17,7 @@
 #include "pdt/SpillInterfaceNode.hpp"
 #include "pdt/TriggerReceiverNode.hpp"
 #include "pdt/FLCmdGeneratorNode.hpp"
+#include "pdt/timingmon/Structs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -119,6 +120,11 @@ public:
      * @brief     Set timestamp to current machine time
      */
     void sync_timestamp() const;
+
+    /**
+     * @brief     Fill the PD-I master monitoring structure.
+     */
+    void get_info(timingmon::TimingPDIMasterMonitorData& mon_data) const;
 };
 
 

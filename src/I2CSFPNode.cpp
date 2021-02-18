@@ -377,6 +377,54 @@ I2CSFPSlave::get_status(bool aPrint) const {
 }
 //-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
+void
+I2CSFPSlave::get_info(timingmon::TimingSFPMonitorData& mon_data) const {
+    sfp_reachable();
+    
+    // TODO ?
+    //fault
+
+    // Vendor name
+    mon_data.vendor_name = this->read_vendor_name();
+     
+    // Vendor part number
+    mon_data.vendor_pn = this->read_vendor_part_number();
+
+    // Serial number TP DO?
+    //lSFPInfo.push_back(std::make_pair("Serial number", read_serial_number()));
+    
+    // Does the SFP support DDM
+    if (!this->read_ddm_support_bit()) {
+        ERS_LOG("DDM not available for SFP on I2C bus: " << get_master_id());
+        mon_data.ddm_supported = 0;
+        return;
+    } else {
+        if (this->read_i2cAddressSwapBit()) {
+            ERS_LOG("SFP DDM I2C address swap not supported. SFP on I2C bus: " << get_master_id());
+            return;
+        }
+    }
+
+    mon_data.temperature = this->read_temperature();
+    
+    mon_data.supply_voltage = this->read_voltage();
+
+    mon_data.rx_power = this->read_rx_ower();
+
+    mon_data.tx_power = this->read_tx_power();
+
+    mon_data.laser_current = this->read_current();
+
+    mon_data.tx_disable_sw_supported = this->read_soft_tx_control_support_bit();
+
+    mon_data.tx_disable_sw = this->read_soft_tx_control_state();
+    
+    mon_data.tx_disable_hw = this->read_tx_disable_pin_state();
+}
+//-----------------------------------------------------------------------------
+
 // uHAL Node registation
 UHAL_REGISTER_DERIVED_NODE(I2CSFPNode)
 

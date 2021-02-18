@@ -76,8 +76,25 @@ FMCIONode::reset(const std::string& aClockConfigFile) const {
 
 //-----------------------------------------------------------------------------
 void
-FMCIONode::get_info(timing::timingmon::TimingFMCMonitorData& mon_data) const {
+FMCIONode::get_info(timingmon::TimingFMCMonitorData& mon_data) const {
 
+	auto subnodes = read_sub_nodes(getNode("csr.stat"));
+
+	mon_data.cdr_lol = subnodes.at("cdr_lol").value();
+	mon_data.cdr_los = subnodes.at("cdr_los").value();
+	mon_data.mmcm_ok = subnodes.at("mmcm_ok").value();
+	mon_data.mmcm_sticky = subnodes.at("mmcm_sticky").value();
+	mon_data.sfp_flt = subnodes.at("sfp_flt").value();
+	mon_data.sfp_los = subnodes.at("sfp_los").value();
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void
+FMCIONode::get_info(timingmon::TimingFMCMonitorDataDebug& mon_data) const {
+
+	// TODO, do something clever with function above?
 	auto subnodes = read_sub_nodes(getNode("csr.stat"));
 
 	mon_data.cdr_lol = subnodes.at("cdr_lol");
@@ -86,6 +103,10 @@ FMCIONode::get_info(timing::timingmon::TimingFMCMonitorData& mon_data) const {
 	mon_data.mmcm_sticky = subnodes.at("mmcm_sticky");
 	mon_data.sfp_flt = subnodes.at("sfp_flt");
 	mon_data.sfp_los = subnodes.at("sfp_los");
+
+	this->get_pll()->get_info(mon_data.pll_mon_data);
+	auto sfp = this->get_i2c_device<I2CSFPSlave>(mSFPI2CBuses.at(0), "SFP_EEProm");
+	sfp->get_info(mon_data.sfp_mon_data);
 }
 //-----------------------------------------------------------------------------
 

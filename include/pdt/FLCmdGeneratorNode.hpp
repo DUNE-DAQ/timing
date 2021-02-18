@@ -15,6 +15,7 @@
 // PDT Headers
 #include "pdt/TimingNode.hpp"
 #include "pdt/TimestampGeneratorNode.hpp"
+#include "pdt/timingmon/Structs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -95,6 +96,11 @@ public:
      * @brief     Get command counters status string
      */
     std::string get_cmd_counters_table(bool aPrint=false) const;
+
+    /**
+     * @brief     Fill the fixed length command counters monitoring structure.
+     */
+    void get_info(timingmon::TimingFLCmdCountersVector& mon_data) const;
 };
 
 } // namespace pdt

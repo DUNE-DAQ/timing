@@ -247,5 +247,29 @@ PDIMasterNode::sync_timestamp() const {
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+void
+PDIMasterNode::get_info(timingmon::TimingPDIMasterMonitorData& mon_data) const {
+    auto lTStamp = getNode<TimestampGeneratorNode>("master.tstamp").read_raw_timestamp();
+    mon_data.timestamp = tstamp2int(lTStamp);
+
+    auto spill_interface_enabled = getNode("master.spill.csr.ctrl.en").read();
+    auto trig_interface_enabled = getNode("trig.csr.ctrl.ep_en").read();
+    getClient().dispatch();
+
+    mon_data.spill_interface_enabled = spill_interface_enabled.value();
+    mon_data.trig_interface_enabled = trig_interface_enabled.value();
+
+    getNode<FLCmdGeneratorNode>("master.scmd_gen").get_info(mon_data.command_counters);
+
+    for (uint i=0; i < 4; ++i) {
+        timingmon::TimingPartitionMonitorData partition_data;
+        get_partition_node(i).get_info(partition_data);
+        mon_data.partitions_data.push_back(partition_data);
+    }
+
+}
+//-----------------------------------------------------------------------------
+
 } // namespace pdt
 } // namespace dunedaq

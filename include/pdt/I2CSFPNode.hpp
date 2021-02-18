@@ -15,6 +15,7 @@
 #include "pdt/I2CSlave.hpp"
 #include "pdt/I2CMasterNode.hpp"
 #include "pdt/toolbox.hpp"
+#include "pdt/timingmon/Structs.hpp"
 #include "TimingIssues.hpp"
 
 #include "ers/ers.h"
@@ -175,6 +176,11 @@ public:
      * @brief      Get SFP status
      */
     std::string get_status(bool aPrint=false) const;
+
+    /**
+     * @brief      Get and fill SFP hardware data
+     */
+    void get_info(timingmon::TimingSFPMonitorData& mon_data) const;
 };
 
 /**

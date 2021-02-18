@@ -14,6 +14,7 @@
 
 #include "pdt/SIChipSlave.hpp"
 #include "pdt/I2CMasterNode.hpp"
+#include "pdt/timingmon/Structs.hpp"
 
 #include "ers/ers.h"
 
@@ -60,6 +61,8 @@ public:
     std::map<uint16_t, uint8_t> registers() const;
 
     std::string read_config_id() const;
+
+    void get_info(timingmon::TimingPLLMonitorData& mon_data) const;
 
 private:
     typedef boost::tuple<uint16_t, uint8_t>  RegisterSetting_t;

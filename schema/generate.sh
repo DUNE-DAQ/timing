@@ -10,7 +10,7 @@ render () {
     local What="$1" ; shift
 
     local name_lc=$( echo "$name" | tr '[:upper:]' '[:lower:]' )
-    local outdir="${1:-$srcdir/include/timing/${name_lc}}"
+    local outdir="${1:-$srcdir/include/pdt/${name_lc}}"
     local what="$(echo $What | tr '[:upper:]' '[:lower:]')"
     local tmpl="o${what}.hpp.j2"
     local outhpp="$outdir/${What}.hpp"
@@ -18,9 +18,9 @@ render () {
     mkdir -p $outdir
     moo -g '/lang:ocpp.jsonnet' \
         -M $mydir -T $mydir \
-        -A path="dunedaq.timing.${name_lc}" \
+        -A path="dunedaq.pdt.${name_lc}" \
         -A ctxpath="dunedaq" \
-        -A os="timing-${name}-schema.jsonnet" \
+        -A os="pdt-${name}-schema.jsonnet" \
         render omodel.jsonnet $tmpl \
         > $outhpp || exit -1
     echo $outhpp

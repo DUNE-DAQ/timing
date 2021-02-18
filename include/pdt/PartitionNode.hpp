@@ -15,6 +15,7 @@
 // PDT Headers
 #include "TimingIssues.hpp"
 #include "pdt/TimingNode.hpp"
+#include "pdt/timingmon/Structs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -169,6 +170,11 @@ public:
      * @brief     Print the status of the timing node.
      */
     std::string get_status(bool aPrint=false) const override;
+
+    /**
+     * @brief     Fill the partition monitoring structure.
+     */
+    void get_info(timingmon::TimingPartitionMonitorData& mon_data) const;
 
 };
 
