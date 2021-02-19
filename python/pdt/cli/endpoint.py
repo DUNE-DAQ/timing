@@ -47,7 +47,7 @@ def endpoint(obj, device, ids):
 
     lVersions = { pid:n.read_version() for pid,n in lEndpoints.items()}
 
-    if len(set( (v for v in lVersions.itervalues()) )) > 1:
+    if len(set( (v for v in lVersions.values()) )) > 1:
         secho('WARNING: multiple enpoint versions detected', fg='yellow')
         secho()
 

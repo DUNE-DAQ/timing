@@ -116,7 +116,7 @@ std::string
 format_reg_value(T regValue, uint32_t base) {
   std::stringstream lValueStream;
   if (base == 16) {
-    lValueStream << "0x" << std::hex;
+    lValueStream << std::showbase << std::hex;
   } else if (base == 10) {
     lValueStream << std::dec;
   } else {
@@ -127,6 +127,36 @@ format_reg_value(T regValue, uint32_t base) {
   return lValueStream.str();
 }
 //-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template <>
+inline std::string
+format_reg_value(std::string regValue, uint32_t /*base*/) {
+    return regValue;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template <>
+inline std::string
+format_reg_value(uhal::ValWord<uint32_t> regValue, uint32_t base) {
+    std::stringstream lValueStream;
+    if (base == 16) {
+        lValueStream << std::showbase << std::hex;
+    } else if (base == 10) {
+        lValueStream << std::dec;
+    } else {
+        // TODO warning?
+        ERS_LOG("format_reg_value: unsupported number base: " << base);
+        lValueStream << std::dec;
+    }
+    lValueStream << regValue.value();
+    return lValueStream.str();
+}
+//-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 template<class T>

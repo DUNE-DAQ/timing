@@ -116,7 +116,7 @@ uint8_t dec_rng(uint8_t word, uint8_t ibit, uint8_t nbits=1);
 uint64_t tstamp2int(uhal::ValVector< uint32_t > rawTimestamp);
 
 /**
- * ""
+ * Format reg-value
  * @return 
  */
 template <class T>

@@ -165,35 +165,6 @@ tstamp2int(uhal::ValVector< uint32_t > rawTimestamp) {
 
 
 //-----------------------------------------------------------------------------
-template <>
-std::string
-format_reg_value<uhal::ValWord<uint32_t>>(uhal::ValWord<uint32_t> regValue, uint32_t base) {
-    std::stringstream lValueStream;
-    if (base == 16) {
-        lValueStream << "0x" << std::hex;
-    } else if (base == 10) {
-        lValueStream << std::dec;
-    } else {
-        // TODO warning?
-        ERS_LOG("format_reg_value: unsupported number base: " << base);
-        lValueStream << std::dec;
-    }
-    lValueStream << regValue.value();
-    return lValueStream.str();
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-template <>
-std::string
-format_reg_value<std::string>(std::string regValue, uint32_t /*base*/) {
-    return regValue;
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
 int64_t
 get_seconds_since_epoch() {
     // get the current time

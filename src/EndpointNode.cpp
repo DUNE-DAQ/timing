@@ -192,5 +192,39 @@ EndpointNode::read_version() const {
 }
 //-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
+void
+EndpointNode::get_info(timingmon::TimingEndpointMonitorData& mon_data) const {
+	
+	auto timestamp = getNode("tstamp").readBlock(2);
+	auto event_counter = getNode("evtctr").read();
+	auto buffer_count = getNode("buf.count").read();
+	auto endpoint_control = read_sub_nodes(getNode("csr.ctrl"), false);
+	auto endpoint_state = read_sub_nodes(getNode("csr.stat"), false);
+	auto counters = getNode("ctrs").readBlock(kCommandNumber);
+	getClient().dispatch();
+	
+	mon_data.state = endpoint_state.at("ep_stat").value();
+	mon_data.ready = endpoint_state.at("ep_rdy").value();
+	mon_data.partition = endpoint_control.at("tgrp").value();
+	mon_data.address = endpoint_control.at("addr").value();
+	mon_data.timestamp = tstamp2int(timestamp);
+	mon_data.in_run = endpoint_state.at("in_run").value();
+	mon_data.in_spill = endpoint_state.at("in_spill").value();
+	mon_data.buffer_warning = endpoint_state.at("buf_warn").value();
+	mon_data.buffer_error = endpoint_state.at("buf_err").value();
+	mon_data.buffer_occupancy = buffer_count.value();
+	mon_data.event_counter = event_counter.value();
+    mon_data.reset_out = endpoint_state.at("ep_rsto").value();
+	mon_data.sfp_tx_disable = endpoint_state.at("sfp_tx_dis").value();
+	mon_data.coarse_delay = endpoint_state.at("cdelay").value();
+	mon_data.fine_delay = endpoint_state.at("fdelay").value();
+
+	//for (uint32_t i=0; i < kCommandNumber; ++i) {
+	//	counters.push_back(std::make_pair(kCommandMap.at(i), std::to_string(counters[i])));	
+	//}      
+}
+//-----------------------------------------------------------------------------
 } // namespace pdt
 } // namespace dunedaq
