@@ -32,20 +32,20 @@ namespace pdt {
 class FrequencyCounterNode : public TimingNode {
     UHAL_DERIVEDNODE(FrequencyCounterNode)
 public:
-    FrequencyCounterNode(const uhal::Node& aNode);
+    FrequencyCounterNode(const uhal::Node& node);
     virtual ~FrequencyCounterNode();
 	
 	/**
      * @brief     Get status string, optionally print.
      */
-    std::string get_status(bool aPrint=false) const override;//TODO something here
+    std::string get_status(bool print_out=false) const override;//TODO something here
 
     /**
      * @brief     Measure clock frequencies.
      *
      * @return     { description_of_the_return_value }
      */
-    std::vector<double> measure_frequencies(uint8_t nClocks) const;
+    std::vector<double> measure_frequencies(uint8_t number_of_clocks) const;
 
 };
 

@@ -33,7 +33,7 @@ template <class IO, class MST>
 class MasterDesign : public TopDesign<IO> {
 
 public:
-    MasterDesign(const uhal::Node& aNode);
+    MasterDesign(const uhal::Node& node);
     virtual ~MasterDesign();
 
     /**
@@ -60,12 +60,12 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    virtual uint32_t measureEndpointRTT(uint32_t aAddr, bool aControlSFP=true) const;
+    virtual uint32_t measure_endpoint_rtt(uint32_t address, bool control_sfp=true) const;
 
     /**
      * @brief      Apply delay to endpoint
      */
-    virtual void apply_endpoint_delay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel, bool aMeasureRTT=false, bool aControlSFP=true) const;
+    virtual void apply_endpoint_delay(uint32_t address, uint32_t coarse_delay, uint32_t fine_delay, uint32_t phase_delay, bool measure_rtt=false, bool control_sfp=true) const;
 
 };
 

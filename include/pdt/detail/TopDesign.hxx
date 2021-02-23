@@ -10,7 +10,7 @@ namespace dunedaq::pdt
 
 //-----------------------------------------------------------------------------
 template< class IO>
-TopDesign<IO>::TopDesign(const uhal::Node& aNode) : TimingNode(aNode) {
+TopDesign<IO>::TopDesign(const uhal::Node& node) : TimingNode(node) {
 }
 //-----------------------------------------------------------------------------
 
@@ -32,8 +32,8 @@ void TopDesign<IO>::soft_reset() const {
 
 //-----------------------------------------------------------------------------
 template< class IO>
-void TopDesign<IO>::reset(const std::string& aClockConfigFile) const {
-	get_io_node().reset(aClockConfigFile);
+void TopDesign<IO>::reset(const std::string& clock_config_file) const {
+	get_io_node().reset(clock_config_file);
 }
 //-----------------------------------------------------------------------------
 
@@ -57,9 +57,9 @@ const EndpointNode& TopDesign<IO>::get_endpoint_node(uint32_t ept_id) const {
 
 //-----------------------------------------------------------------------------
 template< class IO>
-std::string TopDesign<IO>::get_hardware_info(bool aPrint) const {
+std::string TopDesign<IO>::get_hardware_info(bool print_out) const {
 	auto lInfo = get_io_node().get_hardware_info();
-	if (aPrint) std::cout << lInfo;
+	if (print_out) std::cout << lInfo;
 	return lInfo;
 }
 //-----------------------------------------------------------------------------

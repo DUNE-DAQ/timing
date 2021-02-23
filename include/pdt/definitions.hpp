@@ -164,14 +164,14 @@ struct ActiveEndpointConfig {
     uint32_t fdelay;
     uint32_t pdelay;
 
-    ActiveEndpointConfig(std::string aId, uint32_t aAdr, int32_t aFanout=-1, uint32_t aMux=0, uint32_t aCDelay=0, uint32_t aFDelay=0) : 
+    ActiveEndpointConfig(std::string aId, uint32_t aAdr, int32_t aFanout=-1, uint32_t aMux=0, uint32_t coarse_delayay=0, uint32_t fine_delayay=0) : 
     id(aId), 
     adr(aAdr), 
     fanout(aFanout),
     mux(aMux), 
     active(true),
-    cdelay(aCDelay),
-    fdelay(aFDelay),
+    cdelay(coarse_delayay),
+    fdelay(fine_delayay),
     pdelay(0)
     {
 
@@ -185,11 +185,11 @@ struct EndpointRTTResult {
     uint32_t mux;
     int32_t measuredRTT;
 
-    EndpointRTTResult(ActiveEndpointConfig aEptConfig, uint32_t aMeasuredRTT) :
-    id(aEptConfig.id),
-    adr(aEptConfig.adr),
-    fanout (aEptConfig.fanout),
-    mux(aEptConfig.mux),
+    EndpointRTTResult(ActiveEndpointConfig ept_config, uint32_t aMeasuredRTT) :
+    id(ept_config.id),
+    adr(ept_config.adr),
+    fanout (ept_config.fanout),
+    mux(ept_config.mux),
     measuredRTT(aMeasuredRTT) {
     }
 };

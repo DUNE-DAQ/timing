@@ -6,7 +6,7 @@ namespace pdt {
 UHAL_REGISTER_DERIVED_NODE(EchoMonitorNode)
 
 //-----------------------------------------------------------------------------
-EchoMonitorNode::EchoMonitorNode(const uhal::Node& aNode) : TimingNode(aNode) {
+EchoMonitorNode::EchoMonitorNode(const uhal::Node& node) : TimingNode(node) {
 
 }
 //-----------------------------------------------------------------------------
@@ -20,11 +20,11 @@ EchoMonitorNode::~EchoMonitorNode() {
 
 //-----------------------------------------------------------------------------
 std::string
-EchoMonitorNode::get_status(bool aPrint) const {
+EchoMonitorNode::get_status(bool print_out) const {
 	std::stringstream lStatus;
 	auto subnodes = read_sub_nodes(getNode("csr.stat"));
     lStatus << format_reg_table(subnodes, "Echo mon state");
-    if (aPrint) std::cout << lStatus.str();
+    if (print_out) std::cout << lStatus.str();
     return lStatus.str();
 }
 //-----------------------------------------------------------------------------
@@ -32,7 +32,7 @@ EchoMonitorNode::get_status(bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 uint64_t
-EchoMonitorNode::send_echo_and_measure_delay(int64_t aTimeout) const {
+EchoMonitorNode::send_echo_and_measure_delay(int64_t timeout) const {
 	
 	getNode("csr.ctrl.go").write(0x1);
     getClient().dispatch();
@@ -43,7 +43,7 @@ EchoMonitorNode::send_echo_and_measure_delay(int64_t aTimeout) const {
 
 	uhal::ValWord<uint32_t> lDone;
 
-	while (msSinceStart.count() < aTimeout) {
+	while (msSinceStart.count() < timeout) {
 
 		auto now = std::chrono::high_resolution_clock::now();
 		msSinceStart = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
@@ -59,7 +59,7 @@ EchoMonitorNode::send_echo_and_measure_delay(int64_t aTimeout) const {
 	}
 
 	if (!lDone.value()) {
-        throw EchoTimeout(ERS_HERE, getId(), aTimeout);
+        throw EchoTimeout(ERS_HERE, getId(), timeout);
 	}
 
 	auto lTimeRxL = getNode("csr.rx_l").read();

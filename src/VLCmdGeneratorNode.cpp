@@ -6,7 +6,7 @@ namespace pdt {
 UHAL_REGISTER_DERIVED_NODE(VLCmdGeneratorNode)
 
 //-----------------------------------------------------------------------------
-VLCmdGeneratorNode::VLCmdGeneratorNode(const uhal::Node& aNode) : TimingNode(aNode) {
+VLCmdGeneratorNode::VLCmdGeneratorNode(const uhal::Node& node) : TimingNode(node) {
 
 }
 //-----------------------------------------------------------------------------
@@ -21,12 +21,12 @@ VLCmdGeneratorNode::~VLCmdGeneratorNode() {
 
 //-----------------------------------------------------------------------------
 std::string
-VLCmdGeneratorNode::get_status(bool aPrint) const {
+VLCmdGeneratorNode::get_status(bool print_out) const {
     std::stringstream lStatus;
     auto subnodes = read_sub_nodes(getNode("csr.stat"));
     lStatus << format_reg_table(subnodes, "VL Cmd gen state");
 
-    if (aPrint) std::cout << lStatus.str();
+    if (print_out) std::cout << lStatus.str();
     return lStatus.str();
 }
 //-----------------------------------------------------------------------------
@@ -34,10 +34,10 @@ VLCmdGeneratorNode::get_status(bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 void
-VLCmdGeneratorNode::switch_endpoint_sfp(uint32_t aAddr, bool aEnable) const {
+VLCmdGeneratorNode::switch_endpoint_sfp(uint32_t address, bool enable) const {
     reset_sub_nodes(getNode("csr.ctrl"));
-    getNode("csr.ctrl.addr").write(aAddr);
-    getNode("csr.ctrl.tx_en").write(aEnable);
+    getNode("csr.ctrl.addr").write(address);
+    getNode("csr.ctrl.tx_en").write(enable);
     getNode("csr.ctrl.go").write(0x1);
     getNode("csr.ctrl.go").write(0x0);
     getClient().dispatch();
@@ -47,21 +47,21 @@ VLCmdGeneratorNode::switch_endpoint_sfp(uint32_t aAddr, bool aEnable) const {
 
 //-----------------------------------------------------------------------------
 void
-VLCmdGeneratorNode::apply_endpoint_delay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel) const {
+VLCmdGeneratorNode::apply_endpoint_delay(uint32_t address, uint32_t coarse_delay, uint32_t fine_delay, uint32_t phase_delay) const {
     reset_sub_nodes(getNode("csr.ctrl"), false);
     getNode("csr.ctrl.tx_en").write(0x1);
-    getNode("csr.ctrl.addr").write(aAddr);
-    getNode("csr.ctrl.cdel").write(aCDel);
-    getNode("csr.ctrl.fdel").write(aFDel);
-    getNode("csr.ctrl.pdel").write(aPDel);
+    getNode("csr.ctrl.addr").write(address);
+    getNode("csr.ctrl.cdel").write(coarse_delay);
+    getNode("csr.ctrl.fdel").write(fine_delay);
+    getNode("csr.ctrl.pdel").write(phase_delay);
     getNode("csr.ctrl.update").write(0x1);
     getNode("csr.ctrl.go").write(0x1);
     getNode("csr.ctrl.go").write(0x0);
     getClient().dispatch();
 
-    ERS_LOG("Coarse delay " << format_reg_value(aCDel) << " applied");
-    ERS_LOG("Fine delay   " << format_reg_value(aFDel) << " applied");
-    ERS_LOG("Phase delay  " << format_reg_value(aPDel) << " applied");
+    ERS_LOG("Coarse delay " << format_reg_value(coarse_delay) << " applied");
+    ERS_LOG("Fine delay   " << format_reg_value(fine_delay) << " applied");
+    ERS_LOG("Phase delay  " << format_reg_value(phase_delay) << " applied");
 }
 //-----------------------------------------------------------------------------
 

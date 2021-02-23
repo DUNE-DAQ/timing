@@ -13,7 +13,7 @@ const uint32_t PartitionNode::kWordsPerEvent = 6;
 
 
 //-----------------------------------------------------------------------------
-PartitionNode::PartitionNode(const uhal::Node& aNode) : TimingNode(aNode) {
+PartitionNode::PartitionNode(const uhal::Node& node) : TimingNode(node) {
 
 }
 //-----------------------------------------------------------------------------
@@ -28,10 +28,10 @@ PartitionNode::~PartitionNode() {
 
 //-----------------------------------------------------------------------------
 void
-PartitionNode::enable(bool aEnable, bool aDispatch) const {
-    getNode("csr.ctrl.part_en").write(aEnable);
+PartitionNode::enable(bool enable, bool dispatch) const {
+    getNode("csr.ctrl.part_en").write(enable);
     
-    if ( aDispatch )
+    if ( dispatch )
         getClient().dispatch();
 }
 //-----------------------------------------------------------------------------
@@ -48,10 +48,10 @@ PartitionNode::enable(bool aEnable, bool aDispatch) const {
 
 //-----------------------------------------------------------------------------
 void
-PartitionNode::configure( uint32_t aTrigMask, bool aEnableSpillGate, bool aRateCtrl) const {
-    getNode("csr.ctrl.rate_ctrl_en").write(aRateCtrl);
-    getNode("csr.ctrl.trig_mask").write(aTrigMask);
-    getNode("csr.ctrl.spill_gate_en").write(aEnableSpillGate);
+PartitionNode::configure( uint32_t trigger_mask, bool enableSpillGate, bool rate_control_enabled) const {
+    getNode("csr.ctrl.rate_ctrl_en").write(rate_control_enabled);
+    getNode("csr.ctrl.trig_mask").write(trigger_mask);
+    getNode("csr.ctrl.spill_gate_en").write(enableSpillGate);
     getClient().dispatch();
 }
 //-----------------------------------------------------------------------------
@@ -59,8 +59,8 @@ PartitionNode::configure( uint32_t aTrigMask, bool aEnableSpillGate, bool aRateC
 
 //-----------------------------------------------------------------------------
 void
-PartitionNode::configure_rate_ctrl( bool aRateCtrl) const {
-    getNode("csr.ctrl.rate_ctrl_en").write(aRateCtrl);
+PartitionNode::configure_rate_ctrl( bool rate_control_enabled) const {
+    getNode("csr.ctrl.rate_ctrl_en").write(rate_control_enabled);
     getClient().dispatch();
 }
 //-----------------------------------------------------------------------------
@@ -68,9 +68,9 @@ PartitionNode::configure_rate_ctrl( bool aRateCtrl) const {
 
 //-----------------------------------------------------------------------------
 void
-PartitionNode::enable_triggers( bool aEnable ) const {
+PartitionNode::enable_triggers( bool enable ) const {
     // Disable the buffer
-    getNode("csr.ctrl.trig_en").write(aEnable);
+    getNode("csr.ctrl.trig_en").write(enable);
     getClient().dispatch();
 }
 //-----------------------------------------------------------------------------
@@ -132,14 +132,14 @@ PartitionNode::read_rob_error() const {
 
 //-----------------------------------------------------------------------------
 std::vector<uint32_t>
-PartitionNode::read_events( size_t aNumEvents ) const {
+PartitionNode::read_events( size_t number_of_events ) const {
 
     uint32_t lEventsInBuffer = num_events_in_buffer();
 
-    uint32_t lEventsToRead = ( aNumEvents == 0 ? lEventsInBuffer : aNumEvents);
+    uint32_t lEventsToRead = ( number_of_events == 0 ? lEventsInBuffer : number_of_events);
 
     if (lEventsInBuffer < lEventsToRead ) {
-        throw EventReadError(ERS_HERE, getId(), aNumEvents, lEventsInBuffer);
+        throw EventReadError(ERS_HERE, getId(), number_of_events, lEventsInBuffer);
     }  
 
     uhal::ValVector<uint32_t> lRawEvents = getNode("buf.data").readBlock(lEventsToRead * kWordsPerEvent);
@@ -168,7 +168,7 @@ PartitionNode::reset() const {
 
 //-----------------------------------------------------------------------------
 void
-PartitionNode::start( uint32_t aTimeout /*milliseconds*/ ) const {
+PartitionNode::start( uint32_t timeout /*milliseconds*/ ) const {
 
     // Disable triggers (just in case)
     getNode("csr.ctrl.trig_en").write(0);
@@ -193,8 +193,8 @@ PartitionNode::start( uint32_t aTimeout /*milliseconds*/ ) const {
         if ( lInRun ) break;
 
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        if ( (end - start) > std::chrono::milliseconds(aTimeout) ) {
-            throw RunRequestTimeoutExpired(ERS_HERE, getId(), aTimeout);
+        if ( (end - start) > std::chrono::milliseconds(timeout) ) {
+            throw RunRequestTimeoutExpired(ERS_HERE, getId(), timeout);
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
@@ -205,7 +205,7 @@ PartitionNode::start( uint32_t aTimeout /*milliseconds*/ ) const {
 
 //-----------------------------------------------------------------------------
 void
-PartitionNode::stop( uint32_t aTimeout /*milliseconds*/ ) const {
+PartitionNode::stop( uint32_t timeout /*milliseconds*/ ) const {
     getNode("csr.ctrl.run_req").write(0);
     getClient().dispatch();
 
@@ -219,8 +219,8 @@ PartitionNode::stop( uint32_t aTimeout /*milliseconds*/ ) const {
         if ( !lInRun ) break;
 
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        if ( (end - start) > std::chrono::milliseconds(aTimeout) ) {
-            throw RunRequestTimeoutExpired(ERS_HERE, getId(), aTimeout);
+        if ( (end - start) > std::chrono::milliseconds(timeout) ) {
+            throw RunRequestTimeoutExpired(ERS_HERE, getId(), timeout);
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -248,7 +248,7 @@ PartitionNode::read_command_counts() const {
 
 //-----------------------------------------------------------------------------
 std::string
-PartitionNode::get_status(bool aPrint) const {
+PartitionNode::get_status(bool print_out) const {
     std::stringstream lStatus;
 
     auto lControls = read_sub_nodes(getNode("csr.ctrl"), false);
@@ -282,7 +282,7 @@ PartitionNode::get_status(bool aPrint) const {
 
     lStatus << format_counters_table(lCountersContainer, {"Accept counters", "Reject counters"});
 
-    if (aPrint) std::cout << lStatus.str();
+    if (print_out) std::cout << lStatus.str();
     return lStatus.str();
 }
 //-----------------------------------------------------------------------------

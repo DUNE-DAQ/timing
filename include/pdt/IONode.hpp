@@ -39,20 +39,20 @@ namespace pdt {
  */
 class IONode : public TimingNode {
 protected:
-    const std::string mUIDI2CBus;
-    const std::string mUIDI2CDevice;
-    const std::string mPLLI2CBus;
-    const std::string mPLLI2CDevice;
-    const std::vector<std::string> mClockNames;
-    const std::vector<std::string> mSFPI2CBuses;
+    const std::string m_uid_i2c_bus;
+    const std::string m_uid_i2c_device;
+    const std::string m_pll_i2c_bus;
+    const std::string m_pll_i2c_device;
+    const std::vector<std::string> m_clock_names;
+    const std::vector<std::string> m_sfp_i2c_buses;
 
 
     /**
-     * @brief      Reset timing node.
+     * @brief      Write soft reset register.
      */
     virtual void writeSoftResetRegister() const;
 public:
-    IONode(const uhal::Node& aNode, std::string aUIDI2CBus, std::string aUIDI2CDevice, std::string aPLLI2CBus, std::string aPLLI2CDevice, std::vector<std::string> aClockNames, std::vector<std::string> aSFPI2CBuses);
+    IONode(const uhal::Node& node, std::string uid_i2c_bus, std::string uid_i2c_device, std::string pll_i2c_bus, std::string pll_i2c_device, std::vector<std::string> clock_names, std::vector<std::string> sfp_i2c_buses);
     virtual ~IONode();
 
     /**
@@ -93,14 +93,14 @@ public:
     /**
      * @brief      Print hardware information
      */
-    virtual std::string get_hardware_info(bool aPrint=false) const;
+    virtual std::string get_hardware_info(bool print_out=false) const;
 
     /**
      * @brief      Get the full config path.
      *
      * @return     { description_of_the_return_value }
      */
-    virtual std::string get_full_clock_config_file_path(const std::string& aClockConfigFile, int32_t aMode=-1) const;
+    virtual std::string get_full_clock_config_file_path(const std::string& clock_config_file, int32_t mode=-1) const;
 
     /**
      * @brief      Get the an I2C chip.
@@ -108,7 +108,7 @@ public:
      * @return     { description_of_the_return_value }
      */
     template < class T> 
-    std::unique_ptr<const T> get_i2c_device(const std::string& i2cBusName, const std::string& i2cDeviceName) const;
+    std::unique_ptr<const T> get_i2c_device(const std::string& i2c_bus_name, const std::string& i2c_device_name) const;
 
     /**
      * @brief      Get the PLL chip.
@@ -120,7 +120,7 @@ public:
     /**
      * @brief      Configure clock chip.
      */
-    virtual void configure_pll(const std::string& aClockConfigFile="") const;
+    virtual void configure_pll(const std::string& clock_config_file="") const;
 
     /**
      * @brief      Read frequencies of on-board clocks.
@@ -130,22 +130,22 @@ public:
     /**
      * @brief      Print frequencies of on-board clocks.
      */
-    virtual std::string get_clock_frequencies_table(bool aPrint=false) const;
+    virtual std::string get_clock_frequencies_table(bool print_out=false) const;
 
     /**
      * @brief      Print status of on-board PLL.
      */
-    virtual std::string get_pll_status(bool aPrint=false) const;
+    virtual std::string get_pll_status(bool print_out=false) const;
 
     /**
      * @brief      Print status of on-board SFP.
      */
-    virtual std::string get_sfp_status(uint32_t aSFPId, bool aPrint=false) const;
+    virtual std::string get_sfp_status(uint32_t sfp_id, bool print_out=false) const;
 
     /**
      * @brief      control tx laser of on-board SFP softly (I2C command)
      */
-    virtual void switch_sfp_soft_tx_control_bit(uint32_t aSFPId, bool aOn) const;
+    virtual void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const;
 
     /**
      * @brief      Reset timing node.
@@ -155,7 +155,7 @@ public:
     /**
      * @brief      Reset timing node.
      */
-    virtual void reset(const std::string& aClockConfigFile="") const = 0;
+    virtual void reset(const std::string& clock_config_file="") const = 0;
 };
 
 } // namespace pdt

@@ -46,10 +46,10 @@ template< typename T, typename U>
 T safe_enum_cast(const U& value, const std::vector<T>& valid);
 
 //! Walk & read the node structure.
-Snapshot snapshot(const uhal::Node& aNode);
+Snapshot snapshot(const uhal::Node& node);
 
 //! Walk & read the sub-nodes whose IDs match this regex.
-Snapshot snapshot(const uhal::Node& aNode, const std::string& aRegex);
+Snapshot snapshot(const uhal::Node& node, const std::string& aRegex);
 
 /**
  * Sleeps for a given number of milliseconds

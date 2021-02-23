@@ -20,8 +20,8 @@ namespace pdt {
 UHAL_REGISTER_DERIVED_NODE(SI534xNode)
 
 //-----------------------------------------------------------------------------
-SI534xSlave::SI534xSlave( const I2CMasterNode* aMaster, uint8_t aAddr ) :
-SIChipSlave( aMaster, aAddr ) {
+SI534xSlave::SI534xSlave( const I2CMasterNode* i2c_master, uint8_t address ) :
+SIChipSlave( i2c_master, address ) {
 }
 //-----------------------------------------------------------------------------
 
@@ -48,14 +48,14 @@ SI534xSlave::read_config_id() const {
 
 //-----------------------------------------------------------------------------
 std::string
-SI534xSlave::seek_header( std::ifstream& aFile ) const {
+SI534xSlave::seek_header( std::ifstream& file ) const {
 
     // std::string lLine;
     std::string lDesignID;
 
     std::string lLine;
     uint32_t lLineNum;
-    for( lLineNum = 1; std::getline(aFile, lLine); ++lLineNum) {
+    for( lLineNum = 1; std::getline(file, lLine); ++lLineNum) {
 
         // Gracefully deal with those damn dos-encoded files
         if ( lLine.back() == '\r' )
@@ -75,7 +75,7 @@ SI534xSlave::seek_header( std::ifstream& aFile ) const {
         // OK, header found, stop here
         if ( lLine == "Address,Data" ) break;
 
-        if ( aFile.eof() ) {
+        if ( file.eof() ) {
             throw SI534xConfigError(ERS_HERE, "SI534xSlave", "Incomplete file: End of file detected while seeking the header.");
         }
     }
@@ -92,7 +92,7 @@ SI534xSlave::seek_header( std::ifstream& aFile ) const {
 // Stop on conf end
 
 std::vector<SI534xSlave::RegisterSetting_t>
-SI534xSlave::read_config_section( std::ifstream& aFile, std::string aTag ) const {
+SI534xSlave::read_config_section( std::ifstream& file, std::string tag ) const {
 
     // Line buffer
     // std::string lLine;
@@ -102,7 +102,7 @@ SI534xSlave::read_config_section( std::ifstream& aFile, std::string aTag ) const
     std::vector<RegisterSetting_t> lConfig;
     std::string lLine;
     uint32_t lLineNum;
-    for( lLineNum = 1; std::getline(aFile, lLine); ++lLineNum) {
+    for( lLineNum = 1; std::getline(file, lLine); ++lLineNum) {
 
         // Gracefully deal with those damn dos-encoded files
         if ( lLine.back() == '\r' )
@@ -111,14 +111,14 @@ SI534xSlave::read_config_section( std::ifstream& aFile, std::string aTag ) const
         // Is it a comment 
         if( lLine[0] == '#' ) {
 
-            if ( aTag.empty() ) continue;
+            if ( tag.empty() ) continue;
 
-            if (boost::starts_with(lLine, "# Start configuration "+aTag)) {
+            if (boost::starts_with(lLine, "# Start configuration "+tag)) {
                 lSectionFound = true;
             }
 
             // Section end found. Break here
-            if (boost::starts_with(lLine, "# End configuration "+aTag)) {
+            if (boost::starts_with(lLine, "# End configuration "+tag)) {
                 break;
             }
 
@@ -126,19 +126,19 @@ SI534xSlave::read_config_section( std::ifstream& aFile, std::string aTag ) const
         }
 
         // Oops
-        if ( aFile.eof() ) {
-            if ( aTag.empty() )
+        if ( file.eof() ) {
+            if ( tag.empty() )
                 return lConfig;
             else
-                throw SI534xConfigError(ERS_HERE, "SI534xSlave", "Incomplete file: End of file detected before the end of "+aTag+" section.");
+                throw SI534xConfigError(ERS_HERE, "SI534xSlave", "Incomplete file: End of file detected before the end of "+tag+" section.");
         }
 
         // Stop if the line is empty
         if( lLine.length() == 0 ) continue;
 
         // If no sec
-        if ( !lSectionFound and !aTag.empty()) {
-            throw SI534xMissingConfigSectionError(ERS_HERE, "SI534xSlave", aTag);
+        if ( !lSectionFound and !tag.empty()) {
+            throw SI534xMissingConfigSectionError(ERS_HERE, "SI534xSlave", tag);
         }
 
         uint32_t lAddress, lData;
@@ -226,12 +226,12 @@ SI534xSlave::configure( const std::string& aPath ) const {
 
 //-----------------------------------------------------------------------------
 void 
-SI534xSlave::upload_config( const std::vector<SI534xSlave::RegisterSetting_t>& aConfig ) const {
+SI534xSlave::upload_config( const std::vector<SI534xSlave::RegisterSetting_t>& config ) const {
 
     size_t k(0), lNotifyPercent(10);
-    size_t lNotifyEvery = ( lNotifyPercent < aConfig.size() ? aConfig.size()/lNotifyPercent : 1);
+    size_t lNotifyEvery = ( lNotifyPercent < config.size() ? config.size()/lNotifyPercent : 1);
 
-    for ( const auto& lSetting : aConfig ) {
+    for ( const auto& lSetting : config ) {
         std::stringstream debug_stream;
         debug_stream   << std::showbase << std::hex 
                        << "Writing to "  << (uint32_t)lSetting.get<0>() 
@@ -351,13 +351,13 @@ SI534xSlave::get_info(timingmon::TimingPLLMonitorData& mon_data) const {
 
 
 //-----------------------------------------------------------------------------
-SI534xNode::SI534xNode( const uhal::Node& aNode ) : I2CMasterNode(aNode), SI534xSlave(this, this->get_slave_address("i2caddr") ) {
+SI534xNode::SI534xNode( const uhal::Node& node ) : I2CMasterNode(node), SI534xSlave(this, this->get_slave_address("i2caddr") ) {
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-SI534xNode::SI534xNode( const SI534xNode& aOther ) : I2CMasterNode(aOther), SI534xSlave(this, this->get_slave_address("i2caddr") ) {
+SI534xNode::SI534xNode( const SI534xNode& node ) : I2CMasterNode(node), SI534xSlave(this, this->get_slave_address("i2caddr") ) {
 }
 //-----------------------------------------------------------------------------
 

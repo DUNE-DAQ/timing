@@ -15,7 +15,7 @@ uhal::Node* PDIMasterDesign<IO>::clone() const {
 
 //-----------------------------------------------------------------------------
 template<class IO>
-PDIMasterDesign<IO>::PDIMasterDesign(const uhal::Node& aNode) : MasterDesign<IO,PDIMasterNode>(aNode) {
+PDIMasterDesign<IO>::PDIMasterDesign(const uhal::Node& node) : MasterDesign<IO,PDIMasterNode>(node) {
 }
 //-----------------------------------------------------------------------------
 
@@ -29,11 +29,11 @@ PDIMasterDesign<IO>::~PDIMasterDesign() {
 
 //-----------------------------------------------------------------------------
 template<class IO>
-std::string PDIMasterDesign<IO>::get_status(bool aPrint) const {
+std::string PDIMasterDesign<IO>::get_status(bool print_out) const {
 	std::stringstream lStatus;
 	lStatus << this->get_io_node().get_pll_status();
 	lStatus << this->get_master_node().get_status();
-	if (aPrint) std::cout << lStatus.str();
+	if (print_out) std::cout << lStatus.str();
 	return lStatus.str();
 }
 //-----------------------------------------------------------------------------

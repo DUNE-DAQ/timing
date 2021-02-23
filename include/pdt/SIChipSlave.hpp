@@ -32,7 +32,7 @@ namespace pdt
  */
 class SIChipSlave : public I2CSlave {
 public:
-    SIChipSlave(const I2CMasterNode* aMaster, uint8_t aSlaveAddress);
+    SIChipSlave(const I2CMasterNode* i2c_master, uint8_t i2c_device_address);
     virtual ~SIChipSlave();
 
     /**
@@ -45,9 +45,9 @@ public:
     /**
      * @brief      { function_description }
      *
-     * @param[in]  aPage  A page
+     * @param[in]  page  A page
      */
-    void switch_page(uint8_t aPage) const;
+    void switch_page(uint8_t page) const;
 
     /**
      * @brief      Reads a device version.
@@ -59,19 +59,19 @@ public:
     /**
      * @brief      Reads a clock register.
      *
-     * @param[in]  aAddr  A address
+     * @param[in]  address  A address
      *
      * @return     { description_of_the_return_value }
      */
-    uint8_t read_clock_register( uint16_t aAddr ) const;
+    uint8_t read_clock_register( uint16_t address ) const;
 
     /**
      * @brief      Writes a clock register.
      *
-     * @param[in]  aAddr  A address
-     * @param[in]  aData  A data
+     * @param[in]  address  A address
+     * @param[in]  data  A data
      */
-    void write_clock_register( uint16_t aAddr, uint8_t aData) const;
+    void write_clock_register( uint16_t address, uint8_t data) const;
 
 
 };

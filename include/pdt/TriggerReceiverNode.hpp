@@ -27,13 +27,13 @@ namespace pdt {
 class TriggerReceiverNode : public TimingNode {
     UHAL_DERIVEDNODE(TriggerReceiverNode)
 public:
-    TriggerReceiverNode(const uhal::Node& aNode);
+    TriggerReceiverNode(const uhal::Node& node);
     virtual ~TriggerReceiverNode();
 
     /**
      * @brief     Print the status of the timing node.
      */
-    std::string get_status(bool aPrint=false) const override;
+    std::string get_status(bool print_out=false) const override;
     
     /**
      * @brief     Enable trigger rx endpoint

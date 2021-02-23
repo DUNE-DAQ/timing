@@ -27,7 +27,7 @@ namespace pdt {
 class EchoMonitorNode : public TimingNode {
     UHAL_DERIVEDNODE(EchoMonitorNode)
 public:
-    EchoMonitorNode(const uhal::Node& aNode);
+    EchoMonitorNode(const uhal::Node& node);
     virtual ~EchoMonitorNode();
 
     /**
@@ -35,12 +35,12 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    uint64_t send_echo_and_measure_delay(int64_t aTimeout=500) const;
+    uint64_t send_echo_and_measure_delay(int64_t timeout=500) const;
 
     /**
      * @brief     Get status string, optionally print.
      */
-    std::string get_status(bool aPrint=false) const override;
+    std::string get_status(bool print_out=false) const override;
 };
 
 } // namespace pdt

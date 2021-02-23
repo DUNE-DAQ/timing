@@ -4,9 +4,9 @@ namespace dunedaq {
 namespace pdt {
 
 //-----------------------------------------------------------------------------
-I2CSFPSlave::I2CSFPSlave( const I2CMasterNode* aMaster, uint8_t aAddr ) :
-I2CSlave( aMaster, aAddr ),
-mCalibrationParameterStartAddresses({0x4C, 0x50, 0x54, 0x58}) // laser current, tx_pwr, temp, voltage
+I2CSFPSlave::I2CSFPSlave( const I2CMasterNode* i2c_master, uint8_t address ) :
+I2CSlave( i2c_master, address ),
+m_calibration_parameter_start_addresses({0x4C, 0x50, 0x54, 0x58}) // laser current, tx_pwr, temp, voltage
 {
 }
 //-----------------------------------------------------------------------------
@@ -33,7 +33,7 @@ I2CSFPSlave::ddm_available() const {
     if (!read_ddm_support_bit()) {
         throw SFPDDMUnsupported(ERS_HERE, "I2CSFPSlave", get_master_id());
     } else {
-        if (read_i2cAddressSwapBit()) {
+        if (read_i2c_reg_addressSwapBit()) {
             throw SFPDDMI2CAddressSwapUnsupported(ERS_HERE, "I2CSFPSlave", get_master_id());
         }
     }
@@ -43,11 +43,11 @@ I2CSFPSlave::ddm_available() const {
 
 //-----------------------------------------------------------------------------
 std::pair<double, double> 
-I2CSFPSlave::read_calibration_parameter_pair(uint32_t aCalibID) const {
+I2CSFPSlave::read_calibration_parameter_pair(uint32_t calib_parameter_id) const {
     
     ddm_available();
 
-    auto lParameterArray = this->read_i2cArray(0x51, mCalibrationParameterStartAddresses.at(aCalibID), 0x4);
+    auto lParameterArray = this->read_i2cArray(0x51, m_calibration_parameter_start_addresses.at(calib_parameter_id), 0x4);
 
     // slope
     double lSlope = lParameterArray.at(0) + (lParameterArray.at(1) / 256.0);
@@ -276,7 +276,7 @@ I2CSFPSlave::read_tx_disable_pin_state() const {
 
 //-----------------------------------------------------------------------------
 bool
-I2CSFPSlave::read_i2cAddressSwapBit() const {
+I2CSFPSlave::read_i2c_reg_addressSwapBit() const {
     sfp_reachable();
 
     auto lDDMInfoByte = this->read_i2c(0x5C);
@@ -288,7 +288,7 @@ I2CSFPSlave::read_i2cAddressSwapBit() const {
 
 //-----------------------------------------------------------------------------
 void
-I2CSFPSlave::switch_soft_tx_control_bit(bool aOn) const {
+I2CSFPSlave::switch_soft_tx_control_bit(bool turn_on) const {
     ddm_available();
 
     if (!read_soft_tx_control_support_bit()) {
@@ -300,7 +300,7 @@ I2CSFPSlave::switch_soft_tx_control_bit(bool aOn) const {
 
     uint8_t lNewOptStatusCtrlByte;
     // Bit 6 of byte 0x6e controls the soft tx_disable
-    if (aOn) {
+    if (turn_on) {
         lNewOptStatusCtrlByte = lOptStatusCtrlByte & ~(1UL << 6);     
     } else {
         lNewOptStatusCtrlByte = lOptStatusCtrlByte | (1UL << 6);
@@ -312,7 +312,7 @@ I2CSFPSlave::switch_soft_tx_control_bit(bool aOn) const {
 
 //-----------------------------------------------------------------------------
 std::string
-I2CSFPSlave::get_status(bool aPrint) const {
+I2CSFPSlave::get_status(bool print_out) const {
     sfp_reachable();
     
     std::stringstream lStatus;
@@ -331,13 +331,13 @@ I2CSFPSlave::get_status(bool aPrint) const {
     if (!read_ddm_support_bit()) {
         ERS_LOG("DDM not available for SFP on I2C bus: " << get_master_id());
         lStatus << format_reg_table(lSFPInfo, "SFP status", {"", ""});
-        if (aPrint) std::cout << lStatus.str();
+        if (print_out) std::cout << lStatus.str();
         return lStatus.str();
     } else {
-        if (read_i2cAddressSwapBit()) {
+        if (read_i2c_reg_addressSwapBit()) {
             ERS_LOG("SFP DDM I2C address swap not supported. SFP on I2C bus: " << get_master_id());
             lStatus << format_reg_table(lSFPInfo, "SFP status", {"", ""});
-            if (aPrint) std::cout << lStatus.str();
+            if (print_out) std::cout << lStatus.str();
             return lStatus.str();
         }
     }
@@ -372,7 +372,7 @@ I2CSFPSlave::get_status(bool aPrint) const {
     lSFPInfo.push_back(std::make_pair("Tx disable pin", std::to_string(read_tx_disable_pin_state())));
 
     lStatus << format_reg_table(lSFPInfo, "SFP status", {"", ""});
-    if (aPrint) std::cout << lStatus.str();
+    if (print_out) std::cout << lStatus.str();
     return lStatus.str();
 }
 //-----------------------------------------------------------------------------
@@ -401,7 +401,7 @@ I2CSFPSlave::get_info(timingmon::TimingSFPMonitorData& mon_data) const {
         mon_data.ddm_supported = 0;
         return;
     } else {
-        if (this->read_i2cAddressSwapBit()) {
+        if (this->read_i2c_reg_addressSwapBit()) {
             ERS_LOG("SFP DDM I2C address swap not supported. SFP on I2C bus: " << get_master_id());
             return;
         }
@@ -429,13 +429,13 @@ I2CSFPSlave::get_info(timingmon::TimingSFPMonitorData& mon_data) const {
 UHAL_REGISTER_DERIVED_NODE(I2CSFPNode)
 
 //-----------------------------------------------------------------------------
-I2CSFPNode::I2CSFPNode( const uhal::Node& aNode ) : I2CMasterNode(aNode), I2CSFPSlave(this, this->get_slave_address("i2caddr") ) {
+I2CSFPNode::I2CSFPNode( const uhal::Node& node ) : I2CMasterNode(node), I2CSFPSlave(this, this->get_slave_address("i2caddr") ) {
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-I2CSFPNode::I2CSFPNode( const I2CSFPNode& aOther ) : I2CMasterNode(aOther), I2CSFPSlave(this, this->get_slave_address("i2caddr") ) {
+I2CSFPNode::I2CSFPNode( const I2CSFPNode& node ) : I2CMasterNode(node), I2CSFPSlave(this, this->get_slave_address("i2caddr") ) {
 }
 //-----------------------------------------------------------------------------
 

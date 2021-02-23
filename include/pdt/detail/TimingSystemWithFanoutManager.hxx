@@ -74,33 +74,33 @@ void TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::configureSystem() c
 
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP, class FAN_TOP>
-void TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::resetPartition(uint32_t aPartID) const {
-	this->getMaster(0).get_master_node().get_partition_node(aPartID).reset();
+void TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::resetPartition(uint32_t partition_id) const {
+	this->getMaster(0).get_master_node().get_partition_node(partition_id).reset();
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP, class FAN_TOP>
-void TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::configurePartition(uint32_t aPartID, uint32_t aTrigMask, bool aEnableSpillGate) const {
-	this->getMaster(0).get_master_node().get_partition_node(aPartID).configure(aTrigMask, aEnableSpillGate);
-	this->getMaster(0).get_master_node().get_partition_node(aPartID).enable();
+void TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::configurePartition(uint32_t partition_id, uint32_t trigger_mask, bool enableSpillGate) const {
+	this->getMaster(0).get_master_node().get_partition_node(partition_id).configure(trigger_mask, enableSpillGate);
+	this->getMaster(0).get_master_node().get_partition_node(partition_id).enable();
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP, class FAN_TOP>
-void TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::startPartition(uint32_t aPartID) const {
-	this->getMaster(0).get_master_node().get_partition_node(aPartID).start();
+void TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::startPartition(uint32_t partition_id) const {
+	this->getMaster(0).get_master_node().get_partition_node(partition_id).start();
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP, class FAN_TOP>
-void TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::stopPartition(uint32_t aPartID) const {
-	this->getMaster(0).get_master_node().get_partition_node(aPartID).stop();
+void TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::stopPartition(uint32_t partition_id) const {
+	this->getMaster(0).get_master_node().get_partition_node(partition_id).stop();
 }
 //-----------------------------------------------------------------------------
 
@@ -115,12 +115,12 @@ uint64_t TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::read_master_tim
 
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP, class FAN_TOP>
-uint64_t TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::measureEndpointRTT(uint32_t aAddr, int32_t aFanout, uint32_t aMux) const {
+uint64_t TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::measure_endpoint_rtt(uint32_t address, int32_t aFanout, uint32_t aMux) const {
 	
 	uint32_t lRTT;
 		
 	this->getMaster(0).get_master_node().switch_endpoint_sfp(0x0, false);
-	this->getMaster(0).get_master_node().switch_endpoint_sfp(aAddr, true);
+	this->getMaster(0).get_master_node().switch_endpoint_sfp(address, true);
 
 	// TODO check which fanout is active, and switch if necessary
 		
@@ -128,9 +128,9 @@ uint64_t TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::measureEndpoint
 	if (aFanout >= 0) getFanout(aFanout).switch_sfp_mux_channel(aMux, true);
 		
 	// gets master rtt ept in a good state, and sends echo command (due to second argument endpoint sfp is not controlled in this call, already done above)
-	lRTT = this->getMaster(0).get_master_node().measureEndpointRTT(aAddr, false);
+	lRTT = this->getMaster(0).get_master_node().measure_endpoint_rtt(address, false);
 
-	this->getMaster(0).get_master_node().switch_endpoint_sfp(aAddr, false);
+	this->getMaster(0).get_master_node().switch_endpoint_sfp(address, false);
 		
 	return lRTT;
 }
@@ -139,20 +139,20 @@ uint64_t TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::measureEndpoint
 
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP, class FAN_TOP>
-uint64_t TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::measureEndpointRTT(uint32_t aAddr) const {
-	return this->measureEndpointRTT(aAddr, -1, 0);
+uint64_t TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::measure_endpoint_rtt(uint32_t address) const {
+	return this->measure_endpoint_rtt(address, -1, 0);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP, class FAN_TOP>
-uint64_t TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::measureEndpointRTT(const ActiveEndpointConfig& aEptConfig) const {
-	uint32_t lEptAdr = aEptConfig.adr;
-	uint32_t lEptFanout = aEptConfig.fanout;
-	uint32_t lEptMux = aEptConfig.mux;	
+uint64_t TimingSystemWithFanoutManager<MST_TOP,EPT_TOP,FAN_TOP>::measure_endpoint_rtt(const ActiveEndpointConfig& ept_config) const {
+	uint32_t lEptAdr = ept_config.adr;
+	uint32_t lEptFanout = ept_config.fanout;
+	uint32_t lEptMux = ept_config.mux;	
 
-	return this->measureEndpointRTT(lEptAdr, lEptFanout, lEptMux);
+	return this->measure_endpoint_rtt(lEptAdr, lEptFanout, lEptMux);
 }
 //-----------------------------------------------------------------------------
 

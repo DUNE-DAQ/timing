@@ -40,13 +40,13 @@ protected:
     virtual uhal::Node* clone() const;
 //
 public:
-    MasterMuxDesign(const uhal::Node& aNode);
+    MasterMuxDesign(const uhal::Node& node);
     virtual ~MasterMuxDesign();
 
     /**
      * @brief     Get status string, optionally print.
      */
-    std::string get_status(bool aPrint=false) const override;
+    std::string get_status(bool print_out=false) const override;
     
     /**
      * @brief      Prepare the timing fanout for data taking.
@@ -57,12 +57,12 @@ public:
     /**
      * @brief      Reset timing fanout node.
      */
-    void reset(const std::string& aClockConfigFile="") const override;
+    void reset(const std::string& clock_config_file="") const override;
 
     /**
      * @brief     Switch the SFP mux channel
      */
-    virtual void switch_sfp_mux_channel(uint32_t aSFPID, bool aWaitForRttEptLock) const;
+    virtual void switch_sfp_mux_channel(uint32_t sfp_id, bool wait_for_rtt_ept_lock) const;
 
     /**
      * @brief     Read the active SFP mux channel
@@ -74,12 +74,12 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    virtual uint32_t measureEndpointRTT(uint32_t aAddr, bool aControlSFP, uint32_t aSFPMUX) const;
+    virtual uint32_t measure_endpoint_rtt(uint32_t address, bool control_sfp, uint32_t sfp_mux) const;
 
     /**
      * @brief      Apply delay to endpoint
      */
-    virtual void apply_endpoint_delay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel, bool aMeasureRTT, bool aControlSFP, uint32_t aSFPMUX) const;
+    virtual void apply_endpoint_delay(uint32_t address, uint32_t coarse_delay, uint32_t fine_delay, uint32_t phase_delay, bool measure_rtt, bool control_sfp, uint32_t sfp_mux) const;
 
     /**
      * @brief      Apply delay to endpoint

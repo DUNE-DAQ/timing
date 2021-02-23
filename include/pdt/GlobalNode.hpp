@@ -27,7 +27,7 @@ namespace pdt {
 class GlobalNode : public TimingNode {
     UHAL_DERIVEDNODE(GlobalNode)
 public:
-    GlobalNode(const uhal::Node& aNode);
+    GlobalNode(const uhal::Node& node);
     virtual ~GlobalNode();
 
     bool in_spill() const;
@@ -42,12 +42,12 @@ public:
     /**
      * @brief     Enable the upstream endpoint.
      */
-    void enable_upstream_endpoint(uint32_t aTimeout=500);
+    void enable_upstream_endpoint(uint32_t timeout=500);
 
     /**
      * @brief     Get status string, optionally print.
      */
-    std::string get_status(bool aPrint=false) const override;
+    std::string get_status(bool print_out=false) const override;
 };
 
 } // namespace pdt

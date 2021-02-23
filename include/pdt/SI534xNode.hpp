@@ -53,10 +53,10 @@ namespace pdt
  */
 class SI534xSlave : public SIChipSlave {
 public:
-    SI534xSlave(const I2CMasterNode* aMaster, uint8_t aSlaveAddress);
+    SI534xSlave(const I2CMasterNode* i2c_master, uint8_t i2c_device_address);
     virtual ~SI534xSlave();
 
-    void configure(const std::string& aFilename) const;
+    void configure(const std::string& filename) const;
 
     std::map<uint16_t, uint8_t> registers() const;
 
@@ -67,10 +67,10 @@ public:
 private:
     typedef boost::tuple<uint16_t, uint8_t>  RegisterSetting_t;
 
-    std::string seek_header(std::ifstream& aFile) const;
-    std::vector<RegisterSetting_t> read_config_section( std::ifstream& aFile, std::string aTag ) const;
+    std::string seek_header(std::ifstream& file) const;
+    std::vector<RegisterSetting_t> read_config_section( std::ifstream& file, std::string tag ) const;
 
-    void upload_config( const std::vector<SI534xSlave::RegisterSetting_t>& aConfig ) const;
+    void upload_config( const std::vector<SI534xSlave::RegisterSetting_t>& config ) const;
 };
 
 /**
@@ -84,8 +84,8 @@ private:
 class SI534xNode : public I2CMasterNode, public SI534xSlave {
     UHAL_DERIVEDNODE(SI534xNode)
 public:
-    SI534xNode(const uhal::Node& aNode);
-    SI534xNode(const SI534xNode& aOther);
+    SI534xNode(const uhal::Node& node);
+    SI534xNode(const SI534xNode& node);
     virtual ~SI534xNode();
 
 };

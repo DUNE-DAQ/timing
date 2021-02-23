@@ -6,7 +6,7 @@ namespace pdt {
 UHAL_REGISTER_DERIVED_NODE(TriggerReceiverNode)
 
 //-----------------------------------------------------------------------------
-TriggerReceiverNode::TriggerReceiverNode(const uhal::Node& aNode) : TimingNode(aNode) {
+TriggerReceiverNode::TriggerReceiverNode(const uhal::Node& node) : TimingNode(node) {
 
 }
 //-----------------------------------------------------------------------------
@@ -21,7 +21,7 @@ TriggerReceiverNode::~TriggerReceiverNode() {
 
 //-----------------------------------------------------------------------------
 std::string
-TriggerReceiverNode::get_status(bool aPrint) const {
+TriggerReceiverNode::get_status(bool print_out) const {
     std::stringstream lStatus;
 
     auto lState = read_sub_nodes(getNode("csr.stat"), false);
@@ -35,7 +35,7 @@ TriggerReceiverNode::get_status(bool aPrint) const {
     std::vector<uhal::ValVector<uint32_t>> lCountersContainer = {lCounters};
     lStatus << format_counters_table(lCountersContainer, {"Counters"}, "Trig rx counters");
 
-    if (aPrint) std::cout << lStatus.str();
+    if (print_out) std::cout << lStatus.str();
     return lStatus.str();
 }
 //-----------------------------------------------------------------------------

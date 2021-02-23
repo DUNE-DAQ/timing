@@ -18,8 +18,8 @@ register_endpoint(py::module& m) {
       .def("enable", &pdt::EndpointNode::enable, py::arg("partition") = 0, py::arg("address") = 0)
       .def("reset", &pdt::EndpointNode::reset, py::arg("partition") = 0, py::arg("address") = 0)
       .def("read_buffer_count", &pdt::EndpointNode::read_buffer_count)
-      .def("read_data_buffer", &pdt::EndpointNode::read_data_buffer, py::arg("aReadall") = false)
-      .def("get_data_buffer_table", &pdt::EndpointNode::get_data_buffer_table, py::arg("aReadall") = false, py::arg("aPrint") = false)
+      .def("read_data_buffer", &pdt::EndpointNode::read_data_buffer, py::arg("read_all") = false)
+      .def("get_data_buffer_table", &pdt::EndpointNode::get_data_buffer_table, py::arg("read_all") = false, py::arg("print_out") = false)
       .def("read_version", &pdt::EndpointNode::read_version)
       .def("read_timestamp", &pdt::EndpointNode::read_timestamp)
       .def("read_clock_frequency", &pdt::EndpointNode::read_clock_frequency)
@@ -29,7 +29,7 @@ register_endpoint(py::module& m) {
       .def(py::init<const uhal::Node&>())
       .def("disable", &pdt::CRTNode::disable)
       .def("enable", &pdt::CRTNode::enable)
-      .def("get_status", &pdt::CRTNode::get_status, py::arg("aPrint") = false)
+      .def("get_status", &pdt::CRTNode::get_status, py::arg("print_out") = false)
       .def("read_last_pulse_timestamp", &pdt::CRTNode::read_last_pulse_timestamp)
       ;
 }

@@ -34,18 +34,18 @@ namespace pdt {
 class PDIMasterNode : public MasterNode {
     UHAL_DERIVEDNODE(PDIMasterNode)
 public:
-    PDIMasterNode(const uhal::Node& aNode);
+    PDIMasterNode(const uhal::Node& node);
     virtual ~PDIMasterNode();
     
     /**
      * @brief     Print the status of the timing node.
      */
-    std::string get_status(bool aPrint=false) const override;
+    std::string get_status(bool print_out=false) const override;
     
     /**
      * @brief     Control the tx line of endpoint sfp
      */
-    void switch_endpoint_sfp(uint32_t aAddr, bool aOn) const override;
+    void switch_endpoint_sfp(uint32_t address, bool turn_on) const override;
 
     /**
      * @brief     Enable RTT endpoint
@@ -57,29 +57,29 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    uint32_t measureEndpointRTT(uint32_t aAddr, bool aControlSFP=true) const override;
+    uint32_t measure_endpoint_rtt(uint32_t address, bool control_sfp=true) const override;
 
     /**
      * @brief     Apply delay to endpoint
      */
-    void apply_endpoint_delay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel, bool aMeasureRTT=false, bool aControlSFP=true) const override;
+    void apply_endpoint_delay(uint32_t address, uint32_t coarse_delay, uint32_t fine_delay, uint32_t phase_delay, bool measure_rtt=false, bool control_sfp=true) const override;
 
     using MasterNode::apply_endpoint_delay;
     
     /**
      * @brief     Send a fixed length command
      */
-    void send_fl_cmd(uint32_t aCmd, uint32_t aChan, uint32_t aNumber=1) const override;
+    void send_fl_cmd(uint32_t command, uint32_t channel, uint32_t number_of_commands=1) const override;
 
     /**
      * @brief     Configure fake trigger generator
      */
-    void enable_fake_trigger(uint32_t aChan, double aRate, bool aPoisson=false) const;
+    void enable_fake_trigger(uint32_t channel, double rate, bool poisson=false) const;
 
     /**
      * @brief     Clear fake trigger configuration
      */
-    void disable_fake_trigger(uint32_t aChan) const;
+    void disable_fake_trigger(uint32_t channel) const;
 
     /**
      * @brief     Enable spill interface
@@ -89,7 +89,7 @@ public:
     /**
      * @brief     Configure and enable fake spill generator
      */
-    void enable_fake_spills(uint32_t aCycLen=16, uint32_t aSpillLen=8) const;
+    void enable_fake_spills(uint32_t cycle_length=16, uint32_t spill_length=8) const;
 
     /**
      * @brief     Read whether we are in spill or not
@@ -114,7 +114,7 @@ public:
      /**
      * @brief     Retrieve partition node
      */
-    const PartitionNode& get_partition_node(uint32_t aPartID) const;
+    const PartitionNode& get_partition_node(uint32_t partition_id) const;
 
      /**
      * @brief     Set timestamp to current machine time

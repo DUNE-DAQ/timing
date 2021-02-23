@@ -4,7 +4,7 @@ namespace dunedaq {
 namespace pdt {
 
 //-----------------------------------------------------------------------------
-TimingNode::TimingNode(const uhal::Node& aNode) : uhal::Node(aNode) {
+TimingNode::TimingNode(const uhal::Node& node) : uhal::Node(node) {
 }
 //-----------------------------------------------------------------------------
 
@@ -17,12 +17,12 @@ TimingNode::~TimingNode() {
 
 //-----------------------------------------------------------------------------
 std::map<std::string,uhal::ValWord<uint32_t>>
-TimingNode::read_sub_nodes(const uhal::Node& aNode, bool dispatch) const {
-	auto lNodeNames = aNode.getNodes();
+TimingNode::read_sub_nodes(const uhal::Node& node, bool dispatch) const {
+	auto lNodeNames = node.getNodes();
 	
 	std::map<std::string,uhal::ValWord<uint32_t>> lNodeNameValuePairs;
 
-	for (auto it=lNodeNames.begin(); it != lNodeNames.end(); ++it) lNodeNameValuePairs[*it] = aNode.getNode(*it).read();
+	for (auto it=lNodeNames.begin(); it != lNodeNames.end(); ++it) lNodeNameValuePairs[*it] = node.getNode(*it).read();
 	if (dispatch) getClient().dispatch();
 	return lNodeNameValuePairs;
 }
@@ -31,11 +31,11 @@ TimingNode::read_sub_nodes(const uhal::Node& aNode, bool dispatch) const {
 
 //-----------------------------------------------------------------------------
 void
-TimingNode::reset_sub_nodes(const uhal::Node& aNode, uint32_t aValue, bool dispatch) const {
+TimingNode::reset_sub_nodes(const uhal::Node& node, uint32_t aValue, bool dispatch) const {
 
-	auto lNodeNames = aNode.getNodes();
+	auto lNodeNames = node.getNodes();
 
-	for (auto it=lNodeNames.begin(); it != lNodeNames.end(); ++it) aNode.getNode(*it).write(aValue);
+	for (auto it=lNodeNames.begin(); it != lNodeNames.end(); ++it) node.getNode(*it).write(aValue);
 
     if (dispatch) getClient().dispatch();
 }

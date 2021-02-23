@@ -23,8 +23,8 @@ namespace pdt {
 
 
 //-----------------------------------------------------------------------------
-I2CSlave::I2CSlave(const I2CMasterNode* aMaster, uint8_t aSlaveAddress) :
-mMaster(aMaster), mAddress(aSlaveAddress) {
+I2CSlave::I2CSlave(const I2CMasterNode* i2c_master, uint8_t i2c_device_address) :
+m_i2c_master(i2c_master), m_i2c_device_address(i2c_device_address) {
 }
 //-----------------------------------------------------------------------------
 
@@ -39,80 +39,80 @@ I2CSlave::~I2CSlave() {
 // comodity functions
 //-----------------------------------------------------------------------------
 uint8_t
-I2CSlave::read_i2c(uint32_t aDeviceAddress, uint32_t aRegAddress) const {
-	return mMaster->read_i2c(aDeviceAddress, aRegAddress);
+I2CSlave::read_i2c(uint32_t i2c_device_address, uint32_t i2c_reg_address) const {
+	return m_i2c_master->read_i2c(i2c_device_address, i2c_reg_address);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 uint8_t
-I2CSlave::read_i2c(uint32_t i2cAddress) const {
-    return mMaster->read_i2c(mAddress, i2cAddress);
+I2CSlave::read_i2c(uint32_t i2c_reg_address) const {
+    return m_i2c_master->read_i2c(m_i2c_device_address, i2c_reg_address);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void
-I2CSlave::write_i2c(uint32_t aDeviceAddress, uint32_t i2cAddress, uint8_t aData, bool aSendStop) const {
-    mMaster->write_i2c(aDeviceAddress, i2cAddress, aData, aSendStop);
+I2CSlave::write_i2c(uint32_t i2c_device_address, uint32_t i2c_reg_address, uint8_t data, bool send_stop) const {
+    m_i2c_master->write_i2c(i2c_device_address, i2c_reg_address, data, send_stop);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void
-I2CSlave::write_i2c(uint32_t i2cAddress, uint8_t aData, bool aSendStop) const {
-    mMaster->write_i2c(mAddress, i2cAddress, aData, aSendStop);
+I2CSlave::write_i2c(uint32_t i2c_reg_address, uint8_t data, bool send_stop) const {
+    m_i2c_master->write_i2c(m_i2c_device_address, i2c_reg_address, data, send_stop);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 std::vector<uint8_t>
-I2CSlave::read_i2cArray(uint32_t aDeviceAddress, uint32_t aRegAddress, uint32_t aNumWords) const {
-	return mMaster->read_i2cArray(aDeviceAddress, aRegAddress, aNumWords);	
+I2CSlave::read_i2cArray(uint32_t i2c_device_address, uint32_t i2c_reg_address, uint32_t number_of_words) const {
+	return m_i2c_master->read_i2cArray(i2c_device_address, i2c_reg_address, number_of_words);	
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 std::vector<uint8_t>
-I2CSlave::read_i2cArray(uint32_t i2cAddress, uint32_t aNumWords) const {
-    return mMaster->read_i2cArray(mAddress, i2cAddress, aNumWords);
+I2CSlave::read_i2cArray(uint32_t i2c_reg_address, uint32_t number_of_words) const {
+    return m_i2c_master->read_i2cArray(m_i2c_device_address, i2c_reg_address, number_of_words);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void
-I2CSlave::write_i2cArray(uint32_t aDeviceAddress,uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop) const {
-    mMaster->write_i2cArray(aDeviceAddress, i2cAddress, aData, aSendStop);
+I2CSlave::write_i2cArray(uint32_t i2c_device_address,uint32_t i2c_reg_address, std::vector<uint8_t> data, bool send_stop) const {
+    m_i2c_master->write_i2cArray(i2c_device_address, i2c_reg_address, data, send_stop);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void
-I2CSlave::write_i2cArray(uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop) const {
-    mMaster->write_i2cArray(mAddress, i2cAddress, aData, aSendStop);
+I2CSlave::write_i2cArray(uint32_t i2c_reg_address, std::vector<uint8_t> data, bool send_stop) const {
+    m_i2c_master->write_i2cArray(m_i2c_device_address, i2c_reg_address, data, send_stop);
 }
 //-----------------------------------------------------------------------------
 
 // comodity functions
 //-----------------------------------------------------------------------------
 std::vector<uint8_t>
-I2CSlave::read_i2cPrimitive(uint32_t aNumBytes) const {
-    return mMaster->read_i2cPrimitive(mAddress, aNumBytes);
+I2CSlave::read_i2cPrimitive(uint32_t number_of_bytes) const {
+    return m_i2c_master->read_i2cPrimitive(m_i2c_device_address, number_of_bytes);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void
-I2CSlave::write_i2cPrimitive(const std::vector<uint8_t>& aData, bool aSendStop) const {
-    mMaster->write_i2cPrimitive(mAddress, aData, aSendStop);
+I2CSlave::write_i2cPrimitive(const std::vector<uint8_t>& data, bool send_stop) const {
+    m_i2c_master->write_i2cPrimitive(m_i2c_device_address, data, send_stop);
 }
 //-----------------------------------------------------------------------------
 
@@ -120,7 +120,7 @@ I2CSlave::write_i2cPrimitive(const std::vector<uint8_t>& aData, bool aSendStop) 
 //-----------------------------------------------------------------------------
 bool
 I2CSlave::ping() const {
-    return mMaster->ping(mAddress);
+    return m_i2c_master->ping(m_i2c_device_address);
 }
 //-----------------------------------------------------------------------------
 
@@ -128,7 +128,7 @@ I2CSlave::ping() const {
 //-----------------------------------------------------------------------------
 std::string
 I2CSlave::get_master_id() const {
-    return mMaster->getId();
+    return m_i2c_master->getId();
 }
 //-----------------------------------------------------------------------------
 

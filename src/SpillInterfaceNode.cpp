@@ -6,7 +6,7 @@ namespace pdt {
 UHAL_REGISTER_DERIVED_NODE(SpillInterfaceNode)
 
 //-----------------------------------------------------------------------------
-SpillInterfaceNode::SpillInterfaceNode(const uhal::Node& aNode) : TimingNode(aNode) {
+SpillInterfaceNode::SpillInterfaceNode(const uhal::Node& node) : TimingNode(node) {
 
 }
 //-----------------------------------------------------------------------------
@@ -21,12 +21,12 @@ SpillInterfaceNode::~SpillInterfaceNode() {
 
 //-----------------------------------------------------------------------------
 std::string
-SpillInterfaceNode::get_status(bool aPrint) const {
+SpillInterfaceNode::get_status(bool print_out) const {
     std::stringstream lStatus;
     auto subnodes = read_sub_nodes(getNode("csr.stat"));
     lStatus << format_reg_table(subnodes, "Spill interface state");
     
-    if (aPrint) std::cout << lStatus.str();
+    if (print_out) std::cout << lStatus.str();
     return lStatus.str();
 }
 //-----------------------------------------------------------------------------
@@ -55,7 +55,7 @@ SpillInterfaceNode::disable() const {
 
 //-----------------------------------------------------------------------------
 void
-SpillInterfaceNode::enable_fake_spills(uint32_t aCycLen, uint32_t aSpillLen) const {
+SpillInterfaceNode::enable_fake_spills(uint32_t cycle_length, uint32_t spill_length) const {
 
 
     // Enables the internal spill generator.
@@ -64,8 +64,8 @@ SpillInterfaceNode::enable_fake_spills(uint32_t aCycLen, uint32_t aSpillLen) con
     // Rate = 50 Mhz / 2**( 12 + divider ) for divider between 0 and 15
     // cyc_len and spill_len are in units of 1 / (50MHz / 2^24) = 0.34s
 
-    getNode("csr.ctrl.fake_cyc_len").write(aCycLen);
-    getNode("csr.ctrl.fake_spill_len").write(aSpillLen);
+    getNode("csr.ctrl.fake_cyc_len").write(cycle_length);
+    getNode("csr.ctrl.fake_spill_len").write(spill_length);
     getNode("csr.ctrl.src").write(1);
     getNode("csr.ctrl.en").write(1);
     getClient().dispatch();

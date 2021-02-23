@@ -38,12 +38,18 @@ namespace pdt {
 class DACSlave : public I2CSlave
 {
 public:
-    DACSlave(const I2CMasterNode* aMaster, uint8_t aSlaveAddress);
+    DACSlave(const I2CMasterNode* i2c_master, uint8_t i2c_device_address);
     virtual ~DACSlave() = default;
-  
-    void setInteralRef( bool aInternal ) const;
+    
+    /**
+     * @brief     Use DAC internal reference
+     */
+    void set_interal_ref( bool internal_ref ) const;
 
-    void setDAC(uint8_t aChan, uint32_t aCode) const;
+    /**
+     * @brief     Configure DAC channel
+     */
+    void set_dac(uint8_t channel, uint32_t code) const;
 };
 
 /**
@@ -57,8 +63,8 @@ public:
 class DACNode : public I2CMasterNode, public DACSlave {
     UHAL_DERIVEDNODE(DACNode)
 public:
-    DACNode(const uhal::Node& aNode);
-    DACNode(const DACNode& aOther);
+    DACNode(const uhal::Node& node);
+    DACNode(const DACNode& node);
     virtual ~DACNode();
 
 };

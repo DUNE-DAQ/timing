@@ -16,7 +16,7 @@ uhal::Node* MasterMuxDesign<IO,MST>::clone() const {
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-MasterMuxDesign<IO,MST>::MasterMuxDesign(const uhal::Node& aNode) : MasterDesign<IO,MST>(aNode) {
+MasterMuxDesign<IO,MST>::MasterMuxDesign(const uhal::Node& node) : MasterDesign<IO,MST>(node) {
 }
 //-----------------------------------------------------------------------------
 
@@ -30,12 +30,12 @@ MasterMuxDesign<IO,MST>::~MasterMuxDesign() {
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-std::string MasterMuxDesign<IO,MST>::get_status(bool aPrint) const {
+std::string MasterMuxDesign<IO,MST>::get_status(bool print_out) const {
 	std::stringstream lStatus;
 	lStatus << this->get_io_node().get_pll_status();
 	lStatus << this->get_master_node().get_status();
 	// TODO mux specific status
-	if (aPrint) std::cout << lStatus.str();
+	if (print_out) std::cout << lStatus.str();
 	return lStatus.str();
 }
 //-----------------------------------------------------------------------------
@@ -67,17 +67,17 @@ void MasterMuxDesign<IO,MST>::configure() const {
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-void MasterMuxDesign<IO,MST>::reset(const std::string& aClockConfigFile) const {
-	this->get_io_node().reset(-1, aClockConfigFile);
+void MasterMuxDesign<IO,MST>::reset(const std::string& clock_config_file) const {
+	this->get_io_node().reset(-1, clock_config_file);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-void MasterMuxDesign<IO,MST>::switch_sfp_mux_channel(uint32_t aSFPID, bool aWaitForRttEptLock) const {
-	this->get_io_node().switch_sfp_mux_channel(aSFPID);
-	if (aWaitForRttEptLock) {
+void MasterMuxDesign<IO,MST>::switch_sfp_mux_channel(uint32_t sfp_id, bool wait_for_rtt_ept_lock) const {
+	this->get_io_node().switch_sfp_mux_channel(sfp_id);
+	if (wait_for_rtt_ept_lock) {
 		this->get_master_node().enable_upstream_endpoint();
 	}
 }
@@ -94,20 +94,20 @@ uint32_t MasterMuxDesign<IO,MST>::read_active_sfp_mux_channel() const {
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-uint32_t MasterMuxDesign<IO,MST>::measureEndpointRTT(uint32_t aAddr, bool aControlSFP, uint32_t aSFPMUX) const {
+uint32_t MasterMuxDesign<IO,MST>::measure_endpoint_rtt(uint32_t address, bool control_sfp, uint32_t sfp_mux) const {
 	
-	if (aControlSFP) {
+	if (control_sfp) {
 		this->get_master_node().switch_endpoint_sfp(0x0, false);
-		this->get_master_node().switch_endpoint_sfp(aAddr, true);
+		this->get_master_node().switch_endpoint_sfp(address, true);
 	}
 	
 	// set fanout rtt mux channel, and wait for fanout rtt ept to be in a good state
-	this->switch_sfp_mux_channel(aSFPMUX, true);
+	this->switch_sfp_mux_channel(sfp_mux, true);
 		
 	// gets master rtt ept in a good state, and sends echo command (due to second argument endpoint sfp is not controlled in this call, already done above)
-	uint32_t lRTT = this->get_master_node().measureEndpointRTT(aAddr, false);
+	uint32_t lRTT = this->get_master_node().measure_endpoint_rtt(address, false);
 
-	if (aControlSFP) this->get_master_node().switch_endpoint_sfp(aAddr, false);
+	if (control_sfp) this->get_master_node().switch_endpoint_sfp(address, false);
 	return lRTT;
 }
 //-----------------------------------------------------------------------------
@@ -115,21 +115,21 @@ uint32_t MasterMuxDesign<IO,MST>::measureEndpointRTT(uint32_t aAddr, bool aContr
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-void MasterMuxDesign<IO,MST>::apply_endpoint_delay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel, bool aMeasureRTT, bool aControlSFP, uint32_t aSFPMUX) const {
+void MasterMuxDesign<IO,MST>::apply_endpoint_delay(uint32_t address, uint32_t coarse_delay, uint32_t fine_delay, uint32_t phase_delay, bool measure_rtt, bool control_sfp, uint32_t sfp_mux) const {
 
-	if (aMeasureRTT) {
-		if (aControlSFP) {
+	if (measure_rtt) {
+		if (control_sfp) {
 			this->get_master_node().switch_endpoint_sfp(0x0, false);
-			this->get_master_node().switch_endpoint_sfp(aAddr, true);
+			this->get_master_node().switch_endpoint_sfp(address, true);
 		}
 		
 		// set fanout rtt mux channel, and wait for fanout rtt ept to be in a good state, don't bother waiting for a good rtt endpoint, the next method call takes care of that
-		this->switch_sfp_mux_channel(aSFPMUX, false);
+		this->switch_sfp_mux_channel(sfp_mux, false);
 	}
 	
-	this->get_master_node().apply_endpoint_delay(aAddr, aCDel, aFDel, aPDel, aMeasureRTT, false);
+	this->get_master_node().apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay, measure_rtt, false);
 
-	if (aMeasureRTT && aControlSFP) this->get_master_node().switch_endpoint_sfp(aAddr, false);
+	if (measure_rtt && control_sfp) this->get_master_node().switch_endpoint_sfp(address, false);
 }
 //-----------------------------------------------------------------------------
 

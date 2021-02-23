@@ -50,7 +50,7 @@ struct PartitionCounts {
 class PartitionNode : public TimingNode {
     UHAL_DERIVEDNODE(PartitionNode)
 public:
-    PartitionNode(const uhal::Node& aNode);
+    PartitionNode(const uhal::Node& node);
     virtual ~PartitionNode();
 
     static const uint32_t kWordsPerEvent;
@@ -94,19 +94,19 @@ public:
     /**
      * @brief      Read multiple events from the rob.
      *
-     * @param[in]  aNumEvents  Number of events to read
+     * @param[in]  number_of_events  Number of events to read
      *
      * @return     Standard vector containing all events extracted from rob
      */
-    std::vector<uint32_t> read_events( size_t aNumEvents = 0 ) const;
+    std::vector<uint32_t> read_events( size_t number_of_events = 0 ) const;
 
 
     /**
      * @brief      Enables the partition now.
      *
-     * @param[in]  aEnable  A enable
+     * @param[in]  enable  A enable
      */
-    void enable( bool aEnable=true, bool aDispatch=true ) const;
+    void enable( bool enable=true, bool dispatch=true ) const;
 
     /**
      * @brief      Writes the trigger mask.
@@ -115,21 +115,21 @@ public:
      */
     // void writeTriggerMask( uint32_t aMask ) const;
 
-    void configure( uint32_t aTrigMask, bool aEnableSpillGate, bool aRateCtrl=0x1 ) const;
+    void configure( uint32_t trigger_mask, bool enableSpillGate, bool rate_control_enabled=0x1 ) const;
     
     /**
      * @brief      Writes the trigger mask.
      *
      * @param[in]  aMask  A mask
      */
-    void configure_rate_ctrl( bool aRateCtrl=0x1 ) const;
+    void configure_rate_ctrl( bool rate_control_enabled=0x1 ) const;
 
     /**
      * @brief      Enables the triggers.
      *
-     * @param[in]  aEnable  The enable switch
+     * @param[in]  enable  The enable switch
      */
-    void enable_triggers( bool aEnable = true ) const;
+    void enable_triggers( bool enable = true ) const;
 
     /**
      * @brief      Resets the partition.
@@ -145,18 +145,18 @@ public:
      *             Flushes the readout buffer, set the run bit and wait for
      *             acknowledgment (to implement in v4)
      *
-     * @param[in]  aTimeout  in milliseconds
+     * @param[in]  timeout  in milliseconds
      */
-    void start( uint32_t aTimeout = 5000 ) const;
+    void start( uint32_t timeout = 5000 ) const;
 
     /**
      * @brief      Stops the partition.
      *
      *             Disable readout buffer and triggers.
      *
-     * @param[in]  aTimeout  in milliseconds
+     * @param[in]  timeout  in milliseconds
      */
-    void stop( uint32_t aTimeout = 5000 ) const;
+    void stop( uint32_t timeout = 5000 ) const;
 
 
     /**
@@ -169,7 +169,7 @@ public:
     /**
      * @brief     Print the status of the timing node.
      */
-    std::string get_status(bool aPrint=false) const override;
+    std::string get_status(bool print_out=false) const override;
 
     /**
      * @brief     Fill the partition monitoring structure.

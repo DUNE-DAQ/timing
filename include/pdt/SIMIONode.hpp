@@ -32,13 +32,13 @@ class SIMIONode : public IONode {
     UHAL_DERIVEDNODE(SIMIONode)
 
 public:
-    SIMIONode(const uhal::Node& aNode);
+    SIMIONode(const uhal::Node& node);
     virtual ~SIMIONode();
     
     /**
      * @brief     Get status string, optionally print.
      */
-    std::string get_status(bool aPrint=false) const override;
+    std::string get_status(bool print_out=false) const override;
 
     /**
      * @brief      Read the word identifying the timing board.
@@ -50,12 +50,12 @@ public:
     /**
      * @brief      Print hardware information
      */
-    std::string get_hardware_info(bool aPrint=false) const override;
+    std::string get_hardware_info(bool print_out=false) const override;
 
     /**
      * @brief      Reset timing node.
      */
-    void reset(const std::string& aClockConfigFile="") const override;
+    void reset(const std::string& clock_config_file="") const override;
 
     /**
      * @brief      Read the word containing the timing board UID.
@@ -67,7 +67,7 @@ public:
     /**
      * @brief      Configure clock chip.
      */
-    void configure_pll(const std::string& aClockConfigFile="") const override;
+    void configure_pll(const std::string& clock_config_file="") const override;
 
     /**
      * @brief      Read frequencies of on-board clocks.
@@ -77,22 +77,22 @@ public:
     /**
      * @brief      Print frequencies of on-board clocks.
      */
-    std::string get_clock_frequencies_table(bool aPrint=false) const override;
+    std::string get_clock_frequencies_table(bool print_out=false) const override;
 
     /**
      * @brief      Print status of on-board PLL.
      */
-    std::string get_pll_status(bool aPrint=false) const override;
+    std::string get_pll_status(bool print_out=false) const override;
 
     /**
      * @brief      Print status of on-board SFP 
      */
-    std::string get_sfp_status(uint32_t aSFPId, bool aPrint=false) const override;
+    std::string get_sfp_status(uint32_t sfp_id, bool print_out=false) const override;
 
     /**
      * @brief      Control tx laser of on-board SFP softly (I2C command)
      */
-    virtual void switch_sfp_soft_tx_control_bit(uint32_t aSFPId, bool aOn) const override;
+    virtual void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const override;
 
 };
 

@@ -30,20 +30,20 @@ namespace pdt {
 class CRTNode : public TimingNode {
     UHAL_DERIVEDNODE(CRTNode)
 public:
-    CRTNode(const uhal::Node& aNode);
+    CRTNode(const uhal::Node& node);
     ~CRTNode();
 
     /**
      * @brief     Get status string, optionally print.
      */
-    std::string get_status(bool aPrint=false) const override;
+    std::string get_status(bool print_out=false) const override;
 
     /**
      * @brief      Enable the crt endpoint
      *
      * @return     { description_of_the_return_value }
      */
-    void enable(uint32_t aPartition, uint32_t aCmd) const;
+    void enable(uint32_t partition, uint32_t command) const;
 
     /**
      * @brief      Disable the crt endpoint

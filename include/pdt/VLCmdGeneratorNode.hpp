@@ -27,23 +27,23 @@ namespace pdt {
 class VLCmdGeneratorNode : public TimingNode {
     UHAL_DERIVEDNODE(VLCmdGeneratorNode)
 public:
-    VLCmdGeneratorNode(const uhal::Node& aNode);
+    VLCmdGeneratorNode(const uhal::Node& node);
     virtual ~VLCmdGeneratorNode();
 
     /**
      * @brief     Print the status of the timing node.
      */
-    std::string get_status(bool aPrint=false) const override;
+    std::string get_status(bool print_out=false) const override;
     
     /**
      * @brief     Control the endpoint sfp tx laser.
      */
-    void switch_endpoint_sfp(uint32_t aAddr, bool aEnable=false) const;
+    void switch_endpoint_sfp(uint32_t address, bool enable=false) const;
 
     /**
      * @brief     Adjust endpoint delay.
      */
-    void apply_endpoint_delay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel) const;
+    void apply_endpoint_delay(uint32_t address, uint32_t coarse_delay, uint32_t fine_delay, uint32_t phase_delay) const;
 };
 
 } // namespace pdt

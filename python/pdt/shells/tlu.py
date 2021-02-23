@@ -119,10 +119,10 @@ class TLUShell(BoardShell):
         # BI signals are NIM
         lBISignalThreshold = 0x589D
 
-        lDAC1.setInteralRef(False);
-        lDAC2.setInteralRef(False);
-        lDAC1.setDAC(7, lBISignalThreshold);
-        lDAC2.setDAC(7, lBISignalThreshold);
+        lDAC1.set_interal_ref(False);
+        lDAC2.set_interal_ref(False);
+        lDAC1.set_dac(7, lBISignalThreshold);
+        lDAC2.set_dac(7, lBISignalThreshold);
 
         secho("DAC1 and DAC2 set to " + hex(lBISignalThreshold), fg='cyan')
     # ------------------------------------------------------------------------------

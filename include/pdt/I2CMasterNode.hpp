@@ -22,9 +22,6 @@
 namespace dunedaq {
 namespace pdt {
 
-// PDTExceptionClass(I2CSlaveNotFound, "Exception class to handle missing I2C slaves");
-// PDTExceptionClass(I2CException, "Exception class to handle I2C Exceptions");
-
 class I2CSlave; 
 
 /*!
@@ -41,13 +38,13 @@ class I2CSlave;
 class I2CMasterNode : public uhal::Node {
     UHAL_DERIVEDNODE(I2CMasterNode)
 public:
-    I2CMasterNode(const uhal::Node& aNode);
-    I2CMasterNode(const I2CMasterNode& aOther );
+    I2CMasterNode(const uhal::Node& node);
+    I2CMasterNode(const I2CMasterNode& node );
     virtual ~I2CMasterNode();
 
     ///
     virtual uint16_t get_i2c_clock_prescale() const {
-        return mClockPrescale;
+        return m_clock_prescale;
     }
 
     virtual std::vector<std::string>  get_slaves() const;
@@ -57,36 +54,36 @@ public:
     void reset() const;
 
     /// commodity functions
-    virtual uint8_t read_i2c(uint8_t aSlaveAddress, uint32_t i2cAddress) const;
-    virtual void write_i2c(uint8_t aSlaveAddress, uint32_t i2cAddress, uint8_t aData, bool aSendStop = true) const;
+    virtual uint8_t read_i2c(uint8_t i2c_device_address, uint32_t i2c_reg_address) const;
+    virtual void write_i2c(uint8_t i2c_device_address, uint32_t i2c_reg_address, uint8_t data, bool send_stop = true) const;
 
-    virtual std::vector<uint8_t> read_i2cArray(uint8_t aSlaveAddress, uint32_t i2cAddress, uint32_t aNumWords) const;
-    virtual void write_i2cArray(uint8_t aSlaveAddress, uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop = true ) const;
+    virtual std::vector<uint8_t> read_i2cArray(uint8_t i2c_device_address, uint32_t i2c_reg_address, uint32_t number_of_words) const;
+    virtual void write_i2cArray(uint8_t i2c_device_address, uint32_t i2c_reg_address, std::vector<uint8_t> data, bool send_stop = true ) const;
 
-    virtual std::vector<uint8_t> read_i2cPrimitive(uint8_t aSlaveAddress, uint32_t aNumBytes) const;
-    virtual void write_i2cPrimitive(uint8_t aSlaveAddress, const std::vector<uint8_t>& aData, bool aSendStop = true) const;
+    virtual std::vector<uint8_t> read_i2cPrimitive(uint8_t i2c_device_address, uint32_t number_of_bytes) const;
+    virtual void write_i2cPrimitive(uint8_t i2c_device_address, const std::vector<uint8_t>& data, bool send_stop = true) const;
 
-    bool ping(uint8_t aSlaveAddress) const;
+    bool ping(uint8_t i2c_device_address) const;
 
     std::vector<uint8_t> scan() const;
 protected:
 
     // low level i2c functions
-    std::vector<uint8_t> virtual read_block_i2c(uint8_t aSlaveAddress, uint32_t aNumBytes) const;
-    void virtual write_block_i2c(uint8_t aSlaveAddress, const std::vector<uint8_t>& aData, bool aSendStop = true) const;
+    std::vector<uint8_t> virtual read_block_i2c(uint8_t i2c_device_address, uint32_t number_of_bytes) const;
+    void virtual write_block_i2c(uint8_t i2c_device_address, const std::vector<uint8_t>& data, bool send_stop = true) const;
 
-    uint8_t send_i2c_command_and_read_data( uint8_t aCmd ) const;
-    void send_i2c_command_and_write_data( uint8_t aCmd, uint8_t aData ) const;
+    uint8_t send_i2c_command_and_read_data( uint8_t command ) const;
+    void send_i2c_command_and_write_data( uint8_t command, uint8_t data ) const;
 
     //! Slaves 
-    std::unordered_map<std::string,uint8_t> mSlavesAddresses;
+    std::unordered_map<std::string,uint8_t> m_i2c_device_addresses;
 
 private:
     ///
     void constructor();
     
     // low level i2c functions
-    void wait_until_finished(bool requireAcknowledgement = true, bool requireBusIdleAtEnd = false) const;
+    void wait_until_finished(bool require_acknowledgement = true, bool require_bus_idle_at_end = false) const;
     
     //! IPBus register names for i2c bus
     static const std::string kPreHiNode;
@@ -112,10 +109,10 @@ private:
     static const uint8_t kInterruptBit;// interrupt = 0x1
     
     //! clock prescale factor
-    uint16_t mClockPrescale;
+    uint16_t m_clock_prescale;
 
     //! I2C slaves attached to this node
-    std::unordered_map<std::string,I2CSlave*> mSlaves;
+    std::unordered_map<std::string,I2CSlave*> m_i2c_devices;
 
     friend class I2CSlave;
 };
@@ -123,5 +120,5 @@ private:
 } // namespace pdt
 } // namespace dunedaq
 
-#endif	/* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CMASTERNODE_HPP_ */
+#endif	// TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CMASTERNODE_HPP_ 
 

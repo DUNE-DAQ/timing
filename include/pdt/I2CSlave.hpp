@@ -41,7 +41,7 @@ class I2CMasterNode;
 class I2CSlave : boost::noncopyable {
 protected:
     // Private constructor, accessible to I2CMaster
-    I2CSlave(const I2CMasterNode* aMaster, uint8_t aSlaveAddress);
+    I2CSlave(const I2CMasterNode* i2c_master, uint8_t i2c_device_address);
 public:
 
     virtual ~I2CSlave();
@@ -49,35 +49,35 @@ public:
     ///
 
     uint8_t get_i2c_address() const {
-        return mAddress;
+        return m_i2c_device_address;
     }
 
     /// comodity functions
-    uint8_t read_i2c(uint32_t aDeviceAddress, uint32_t aRegAddress) const;
-    uint8_t read_i2c(uint32_t i2cAddress) const;
+    uint8_t read_i2c(uint32_t i2c_device_address, uint32_t i2c_reg_address) const;
+    uint8_t read_i2c(uint32_t i2c_reg_address) const;
 
-    void write_i2c(uint32_t aDeviceAddress, uint32_t i2cAddress, uint8_t aData, bool aSendStop = true) const;
-    void write_i2c(uint32_t i2cAddress, uint8_t aData, bool aSendStop = true) const;
+    void write_i2c(uint32_t i2c_device_address, uint32_t i2c_reg_address, uint8_t data, bool send_stop = true) const;
+    void write_i2c(uint32_t i2c_reg_address, uint8_t data, bool send_stop = true) const;
 
-    std::vector<uint8_t> read_i2cArray(uint32_t aDeviceAddress, uint32_t aRegAddress, uint32_t aNumWords) const;
-    std::vector<uint8_t> read_i2cArray(uint32_t i2cAddress, uint32_t aNumWords) const;
+    std::vector<uint8_t> read_i2cArray(uint32_t i2c_device_address, uint32_t i2c_reg_address, uint32_t number_of_words) const;
+    std::vector<uint8_t> read_i2cArray(uint32_t i2c_reg_address, uint32_t number_of_words) const;
     
-    void write_i2cArray(uint32_t aDeviceAddress, uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop = true) const;
-    void write_i2cArray(uint32_t i2cAddress, std::vector<uint8_t> aData, bool aSendStop = true) const;
+    void write_i2cArray(uint32_t i2c_device_address, uint32_t i2c_reg_address, std::vector<uint8_t> data, bool send_stop = true) const;
+    void write_i2cArray(uint32_t i2c_reg_address, std::vector<uint8_t> data, bool send_stop = true) const;
 
 
-    std::vector<uint8_t> read_i2cPrimitive(uint32_t aNumBytes) const;
-    void write_i2cPrimitive(const std::vector<uint8_t>& aData, bool aSendStop = true) const;
+    std::vector<uint8_t> read_i2cPrimitive(uint32_t number_of_bytes) const;
+    void write_i2cPrimitive(const std::vector<uint8_t>& data, bool send_stop = true) const;
 
     bool ping() const;
 
     std::string get_master_id() const;
 
 private:
-    const I2CMasterNode* mMaster;
+    const I2CMasterNode* m_i2c_master;
 
     // slave address
-    uint8_t mAddress;
+    uint8_t m_i2c_device_address;
 
     friend class I2CMasterNode;
 };

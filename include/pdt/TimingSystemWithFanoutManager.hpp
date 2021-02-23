@@ -69,22 +69,22 @@ public:
     /**
      * @brief      Reset timing system partition
      */
-    void resetPartition(uint32_t aPartID) const override;
+    void resetPartition(uint32_t partition_id) const override;
 
     /**
      * @brief      Configure and enable timing system partition
      */
-    void configurePartition(uint32_t aPartID, uint32_t aTrigMask, bool aEnableSpillGate) const override;
+    void configurePartition(uint32_t partition_id, uint32_t trigger_mask, bool enableSpillGate) const override;
 
     /**
      * @brief      Start timing system partition
      */
-    void startPartition(uint32_t aPartID) const override;
+    void startPartition(uint32_t partition_id) const override;
 
     /**
      * @brief      Stop timing system partition
      */
-    void stopPartition(uint32_t aPartID) const override;
+    void stopPartition(uint32_t partition_id) const override;
 
     /**
      * @brief      Read the current timestamp
@@ -98,14 +98,14 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    uint64_t measureEndpointRTT(uint32_t aAddr) const override;
+    uint64_t measure_endpoint_rtt(uint32_t address) const override;
 
     /**
      * @brief      Measure the endpoint round trip time.
      *
      * @return     { description_of_the_return_value }
      */
-    virtual uint64_t measureEndpointRTT(uint32_t aAddr, int32_t aFanout, uint32_t aMux) const;
+    virtual uint64_t measure_endpoint_rtt(uint32_t address, int32_t aFanout, uint32_t aMux) const;
 
 
     /**
@@ -113,7 +113,7 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    uint64_t measureEndpointRTT(const ActiveEndpointConfig& aEptConfig) const override;
+    uint64_t measure_endpoint_rtt(const ActiveEndpointConfig& ept_config) const override;
 
 
 };

@@ -6,15 +6,15 @@ namespace pdt {
 //UHAL_REGISTER_DERIVED_NODE(IONode);
 
 //-----------------------------------------------------------------------------
-IONode::IONode(const uhal::Node& aNode, std::string aUIDI2CBus, std::string aUIDI2CDevice, std::string aPLLI2CBus, std::string aPLLI2CDevice, std::vector<std::string> aClockNames, std::vector<std::string> aSFPI2CBuses) : 
-	TimingNode(aNode), 
-	mUIDI2CBus(aUIDI2CBus), 
-	mUIDI2CDevice(aUIDI2CDevice),
-	mPLLI2CBus(aPLLI2CBus),
-	mPLLI2CDevice(aPLLI2CDevice),
-	mClockNames(aClockNames),
-	mSFPI2CBuses(aSFPI2CBuses)
-	//mPLL (new SI534xSlave( getNode<I2CMasterNode>(mPLLI2CBus)& , getNode<I2CMasterNode>(mPLLI2CBus).get_slave_address(aPLLI2CDevice) )) 
+IONode::IONode(const uhal::Node& node, std::string uid_i2c_bus, std::string uid_i2c_device, std::string pll_i2c_bus, std::string pll_i2c_device, std::vector<std::string> clock_names, std::vector<std::string> sfp_i2c_buses) : 
+	TimingNode(node), 
+	m_uid_i2c_bus(uid_i2c_bus), 
+	m_uid_i2c_device(uid_i2c_device),
+	m_pll_i2c_bus(pll_i2c_bus),
+	m_pll_i2c_device(pll_i2c_device),
+	m_clock_names(clock_names),
+	m_sfp_i2c_buses(sfp_i2c_buses)
+	//mPLL (new SI534xSlave( getNode<I2CMasterNode>(m_pll_i2c_bus)& , getNode<I2CMasterNode>(m_pll_i2c_bus).get_slave_address(pll_i2c_device) )) 
 	{
 } 
 //-----------------------------------------------------------------------------
@@ -61,7 +61,7 @@ uint64_t
 IONode::read_board_uid() const {
 
 	uint64_t lUID = 0;
-	std::vector<uint8_t> lUIDValues = getNode<I2CMasterNode>(mUIDI2CBus).get_slave(mUIDI2CDevice).read_i2cArray(0xfa, 6);
+	std::vector<uint8_t> lUIDValues = getNode<I2CMasterNode>(m_uid_i2c_bus).get_slave(m_uid_i2c_device).read_i2cArray(0xfa, 6);
 	
 	for (uint8_t i=0; i < lUIDValues.size(); ++i) {
 		lUID = (lUID << 8) | lUIDValues.at(i);
@@ -87,7 +87,7 @@ IONode::get_board_revision() const {
 
 //-----------------------------------------------------------------------------
 std::string
-IONode::get_hardware_info(bool aPrint) const {
+IONode::get_hardware_info(bool print_out) const {
 	std::stringstream lInfo;
 	const BoardType lBoardType = convert_value_to_board_type(read_board_type());
 	const BoardRevision lBoardRevision = get_board_revision();
@@ -124,7 +124,7 @@ IONode::get_hardware_info(bool aPrint) const {
 	}
 	lInfo << format_reg_table(lHardwareInfo, "Hardware info", {"", ""});
 
-	if (aPrint) std::cout << lInfo.str();
+	if (print_out) std::cout << lInfo.str();
 	return lInfo.str();
 }
 //-----------------------------------------------------------------------------
@@ -132,12 +132,12 @@ IONode::get_hardware_info(bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 std::string 
-IONode::get_full_clock_config_file_path(const std::string& aClockConfigFile, int32_t aMode) const {
+IONode::get_full_clock_config_file_path(const std::string& clock_config_file, int32_t mode) const {
 
 	
-	if (aClockConfigFile.size()) {
+	if (clock_config_file.size()) {
 		// config file provided explicitly, no need for lookup
-		return aClockConfigFile;
+		return clock_config_file;
 	} else {
 
 		std::string lConfigFile;
@@ -166,7 +166,7 @@ IONode::get_full_clock_config_file_path(const std::string& aClockConfigFile, int
 		}
 
 		// modifier in case a different clock file is needed based on firmware configuration
-		if (aMode >= 0) lClockConfigKey = lClockConfigKey + "_mode" + std::to_string(aMode);
+		if (mode >= 0) lClockConfigKey = lClockConfigKey + "_mode" + std::to_string(mode);
 
 		try {
 			lConfigFile = kClockConfigMap.at(lClockConfigKey);
@@ -184,20 +184,20 @@ IONode::get_full_clock_config_file_path(const std::string& aClockConfigFile, int
 //-----------------------------------------------------------------------------
 std::unique_ptr<const SI534xSlave>
 IONode::get_pll() const {
-	return get_i2c_device<SI534xSlave>(mPLLI2CBus, mPLLI2CDevice);
+	return get_i2c_device<SI534xSlave>(m_pll_i2c_bus, m_pll_i2c_device);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void 
-IONode::configure_pll(const std::string& aClockConfigFile) const {
+IONode::configure_pll(const std::string& clock_config_file) const {
 	auto pll = get_pll();
 
 	uint32_t lSIVersion = pll->read_device_version();
 	ERS_INFO("Configuring PLL        : SI" << format_reg_value(lSIVersion));
 
-	pll->configure(aClockConfigFile);
+	pll->configure(clock_config_file);
 	
 	ERS_INFO("PLL configuration id   : " << pll->read_config_id());
 }
@@ -207,21 +207,21 @@ IONode::configure_pll(const std::string& aClockConfigFile) const {
 //-----------------------------------------------------------------------------
 std::vector<double>
 IONode::read_clock_frequencies() const {
-	return getNode<FrequencyCounterNode>("freq").measure_frequencies(mClockNames.size());
+	return getNode<FrequencyCounterNode>("freq").measure_frequencies(m_clock_names.size());
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 std::string
-IONode::get_clock_frequencies_table(bool aPrint) const {
+IONode::get_clock_frequencies_table(bool print_out) const {
 	std::stringstream lTable;
 	std::vector<double> lFrequencies = read_clock_frequencies();
 	for (uint8_t i=0; i < lFrequencies.size(); ++i) {
-		lTable << mClockNames.at(i) << " freq: " << std::setprecision (12) << lFrequencies.at(i) << std::endl;
+		lTable << m_clock_names.at(i) << " freq: " << std::setprecision (12) << lFrequencies.at(i) << std::endl;
 	}
 	//TODO add freq validation
-	if (aPrint) std::cout << lTable.str();
+	if (print_out) std::cout << lTable.str();
 	return lTable.str();
 }
 //-----------------------------------------------------------------------------
@@ -229,7 +229,7 @@ IONode::get_clock_frequencies_table(bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 std::string
-IONode::get_pll_status(bool aPrint) const {
+IONode::get_pll_status(bool print_out) const {
 
 	std::stringstream lStatus;
 
@@ -273,7 +273,7 @@ IONode::get_pll_status(bool aPrint) const {
 
 	lStatus << format_reg_table(lPLLRegisters, "PLL state");
 
-	if (aPrint) std::cout << lStatus.str();
+	if (print_out) std::cout << lStatus.str();
     return lStatus.str();
 }
 //-----------------------------------------------------------------------------
@@ -299,17 +299,17 @@ IONode::soft_reset() const {
 
 //-----------------------------------------------------------------------------
 std::string
-IONode::get_sfp_status(uint32_t aSFPId, bool aPrint) const {
+IONode::get_sfp_status(uint32_t sfp_id, bool print_out) const {
 	std::stringstream lStatus;
 	std::string lSFPI2CBus;
 	try {
-		lSFPI2CBus = mSFPI2CBuses.at(aSFPId);
+		lSFPI2CBus = m_sfp_i2c_buses.at(sfp_id);
 	} catch(const std::out_of_range& e) {
-        throw InvalidSFPId(ERS_HERE, getId(), format_reg_value(aSFPId), e);
+        throw InvalidSFPId(ERS_HERE, getId(), format_reg_value(sfp_id), e);
 	}
 	auto sfp = get_i2c_device<I2CSFPSlave>(lSFPI2CBus, "SFP_EEProm");
 	lStatus << sfp->get_status();
-	if (aPrint) std::cout << lStatus.str();
+	if (print_out) std::cout << lStatus.str();
 	return lStatus.str();
 }
 //-----------------------------------------------------------------------------
@@ -317,15 +317,15 @@ IONode::get_sfp_status(uint32_t aSFPId, bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 void
-IONode::switch_sfp_soft_tx_control_bit(uint32_t aSFPId, bool aOn) const {
+IONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const {
 	std::string lSFPI2CBus;
 	try {
-		lSFPI2CBus = mSFPI2CBuses.at(aSFPId);
+		lSFPI2CBus = m_sfp_i2c_buses.at(sfp_id);
 	} catch(const std::out_of_range& e) {
-        throw InvalidSFPId(ERS_HERE, getId(), format_reg_value(aSFPId), e);
+        throw InvalidSFPId(ERS_HERE, getId(), format_reg_value(sfp_id), e);
 	}
 	auto sfp = get_i2c_device<I2CSFPSlave>(lSFPI2CBus, "SFP_EEProm");
-	sfp->switch_soft_tx_control_bit(aOn);
+	sfp->switch_soft_tx_control_bit(turn_on);
 }
 //-----------------------------------------------------------------------------
 

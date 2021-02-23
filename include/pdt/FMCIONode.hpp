@@ -33,18 +33,18 @@ class FMCIONode : public IONode {
     UHAL_DERIVEDNODE(FMCIONode)
 
 public:
-    FMCIONode(const uhal::Node& aNode);
+    FMCIONode(const uhal::Node& node);
     virtual ~FMCIONode();
     
     /**
      * @brief     Get status string, optionally print.
      */
-    std::string get_status(bool aPrint=false) const override;
+    std::string get_status(bool print_out=false) const override;
 
     /**
      * @brief      Reset timing node.
      */
-    void reset(const std::string& aClockConfigFile="") const override;
+    void reset(const std::string& clock_config_file="") const override;
 
     /**
      * @brief      Fill hardware monitoring structure.

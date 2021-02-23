@@ -32,28 +32,28 @@ class PC059IONode : public FanoutIONode {
     UHAL_DERIVEDNODE(PC059IONode)
 
 public:
-    PC059IONode(const uhal::Node& aNode);
+    PC059IONode(const uhal::Node& node);
     virtual ~PC059IONode();
 
     /**
      * @brief     Get status string, optionally print.
      */
-    std::string get_status(bool aPrint=false) const override;
+    std::string get_status(bool print_out=false) const override;
     
     /**
      * @brief      Reset pc059 node.
      */
-    void reset(int32_t aFanoutMode, const std::string& aClockConfigFile="") const override;
+    void reset(int32_t fanout_mode, const std::string& clock_config_file="") const override;
 
     /**
      * @brief      Reset pc059 node.
      */
-    void reset(const std::string& aClockConfigFile="") const override;
+    void reset(const std::string& clock_config_file="") const override;
 
     /**
      * @brief     Switch the SFP mux channel
      */
-    void switch_sfp_mux_channel(uint32_t aSFPID) const override;
+    void switch_sfp_mux_channel(uint32_t sfp_id) const override;
 
     /**
      * @brief     Read the active SFP mux channel
@@ -63,17 +63,17 @@ public:
     /**
      * @brief     Switch the SFP I2C mux channel
      */
-    void switch_sfp_i2c_mux_channel(uint32_t aSFPId) const;
+    void switch_sfp_i2c_mux_channel(uint32_t sfp_id) const;
 
     /**
      * @brief      Print status of on-board SFP.
      */
-    std::string get_sfp_status(uint32_t aSFPId, bool aPrint=false) const override;
+    std::string get_sfp_status(uint32_t sfp_id, bool print_out=false) const override;
 
     /**
      * @brief      control tx laser of on-board SFP softly (I2C command)
      */
-    void switch_sfp_soft_tx_control_bit(uint32_t aSFPId, bool aOn) const override;
+    void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const override;
 
 };
 

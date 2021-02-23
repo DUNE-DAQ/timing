@@ -36,47 +36,47 @@ namespace pdt
  */
 class I2CExpanderSlave : public I2CSlave {
 public:
-    I2CExpanderSlave(const I2CMasterNode* aMaster, uint8_t aSlaveAddress);
+    I2CExpanderSlave(const I2CMasterNode* i2c_master, uint8_t i2c_device_address);
     virtual ~I2CExpanderSlave();
   
     /**
      * @brief      Sets the inversion status for a set of channels.
      *
-     * @param[in]  aBankId         A bank identifier
-     * @param[in]  aInversionMask  A inversion mask
+     * @param[in]  bank_id         A bank identifier
+     * @param[in]  inversion_mask  A inversion mask
      */
-    void set_inversion( uint8_t aBankId, uint32_t aInversionMask ) const;
+    void set_inversion( uint8_t bank_id, uint32_t inversion_mask ) const;
 
     /**
      * @brief      Set input/output mode for a set of channels
      *
-     * @param[in]  aBankId  A bank identifier
-     * @param[in]  aIOMask  A io mask
+     * @param[in]  bank_id  A bank identifier
+     * @param[in]  io_mask  A io mask
      */
-    void set_io( uint8_t aBankId, uint32_t aIOMask ) const;
+    void set_io( uint8_t bank_id, uint32_t io_mask ) const;
 
     /**
      * @brief      Reads inputs values
      *
-     * @param[in]  aBankId  A bank identifier
+     * @param[in]  bank_id  A bank identifier
      *
      * @return     { description_of_the_return_value }
      */
-    uint32_t read_inputs( uint8_t aBankId ) const;
+    uint32_t read_inputs( uint8_t bank_id ) const;
 
     /**
      * @brief      Writes outputs values.
      *
-     * @param[in]  aBankId  A bank identifier
-     * @param[in]  aValues  A values
+     * @param[in]  bank_id  A bank identifier
+     * @param[in]  output_values  A values
      */
-    void set_outputs( uint8_t aBankId,  uint32_t aValues ) const;
+    void set_outputs( uint8_t bank_id,  uint32_t output_values ) const;
 
     std::vector<uint32_t> debug() const;
 
 private:
 
-    void ensureValidBankId( uint8_t aBankId ) const;
+    void ensure_valid_bank_id( uint8_t bank_id ) const;
 
 };
 
@@ -91,8 +91,8 @@ private:
 class I2CExpanderNode : public I2CMasterNode, public I2CExpanderSlave {
     UHAL_DERIVEDNODE(I2CExpanderNode)
 public:
-    I2CExpanderNode(const uhal::Node& aNode);
-    I2CExpanderNode(const I2CExpanderNode& aOther);
+    I2CExpanderNode(const uhal::Node& node);
+    I2CExpanderNode(const I2CExpanderNode& node);
     virtual ~I2CExpanderNode();
 
 };

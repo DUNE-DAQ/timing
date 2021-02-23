@@ -24,12 +24,12 @@ namespace dunedaq {
 namespace pdt {
 
 struct FakeTriggerConfig {
-    double mReqRate;
-    uint32_t mDiv;
-    uint32_t mPS;
-    double mActRate;
+    double requested_rate;
+    uint32_t divisor;
+    uint32_t prescale;
+    double actual_rate;
 
-    FakeTriggerConfig(double aRate) : mReqRate(aRate) {
+    FakeTriggerConfig(double rate) : requested_rate(rate) {
         // Rate =  (50MHz / 2^(d+8)) / p where n in [0,15] and p in [1,256]
     
         // DIVIDER (int): Frequency divider.
@@ -39,27 +39,27 @@ struct FakeTriggerConfig {
         // b) Division by a power of two set by n = 2 ^ rate_div_d (ranging from 2^0 -> 2^15)
         // c) 1-in-n prescaling set by n = rate_div_p
         
-        double lDiv = ceil( log(kSPSClockInHz / (mReqRate * 256 * 256)) / log(2) );
-        if (lDiv < 0) {
-            mDiv = 0;
-        } else if (lDiv > 15) {
-            mDiv = 15;
+        double div = ceil( log(kSPSClockInHz / (requested_rate * 256 * 256)) / log(2) );
+        if (div < 0) {
+            divisor = 0;
+        } else if (div > 15) {
+            divisor = 15;
         } else {
-            mDiv = lDiv;
+            divisor = div;
         }
         
-        uint32_t lPS = (uint32_t) ((kSPSClockInHz / (aRate * 256 * (1 << mDiv))) + 0.5);
-        if (lPS  == 0 || lPS > 256) {
-            throw BadRequestedFakeTriggerRate(ERS_HERE, "FakeTriggerConfig", aRate, lPS);
+        uint32_t ps = (uint32_t) ((kSPSClockInHz / (rate * 256 * (1 << divisor))) + 0.5);
+        if (ps  == 0 || ps > 256) {
+            throw BadRequestedFakeTriggerRate(ERS_HERE, "FakeTriggerConfig", rate, ps);
         } else {
-            mPS = lPS;
+            prescale = ps;
         }
-        mActRate = (double) kSPSClockInHz / (256 * mPS * (1 << mDiv));
+        actual_rate = (double) kSPSClockInHz / (256 * prescale * (1 << divisor));
     }
 
     void print() const {
-        ERS_INFO("Requested rate, actual rate: " << mReqRate << ", " << mActRate);
-        ERS_INFO("prescale, divisor: " << mPS << ", " << mDiv);
+        ERS_INFO("Requested rate, actual rate: " << requested_rate << ", " << actual_rate);
+        ERS_INFO("prescale, divisor: " << prescale << ", " << divisor);
     }
 };
 
@@ -69,33 +69,33 @@ struct FakeTriggerConfig {
 class FLCmdGeneratorNode : public TimingNode {
     UHAL_DERIVEDNODE(FLCmdGeneratorNode)
 public:
-    FLCmdGeneratorNode(const uhal::Node& aNode);
+    FLCmdGeneratorNode(const uhal::Node& node);
     virtual ~FLCmdGeneratorNode();
 
     /**
      * @brief     Get status string, optionally print.
      */
-    std::string get_status(bool aPrint=false) const override;
+    std::string get_status(bool print_out=false) const override;
     
     /**
      * @brief     Send a fixed length command
      */
-    void send_fl_cmd(uint32_t aCmd, uint32_t aChan, const TimestampGeneratorNode& aTSGen) const;
+    void send_fl_cmd(uint32_t command, uint32_t channel, const TimestampGeneratorNode& timestamp_gen_node) const;
 
     /**
      * @brief     Configure fake trigger
      */
-    void enable_fake_trigger(uint32_t aChan, uint32_t aDiv, uint32_t aPS, bool aPoisson) const;
+    void enable_fake_trigger(uint32_t channel, uint32_t divisor, uint32_t prescale, bool poisson) const;
 
     /**
      * @brief     Clear fake trigger configuration
      */
-    void disable_fake_trigger(uint32_t aChan) const;
+    void disable_fake_trigger(uint32_t channel) const;
 
     /**
      * @brief     Get command counters status string
      */
-    std::string get_cmd_counters_table(bool aPrint=false) const;
+    std::string get_cmd_counters_table(bool print_out=false) const;
 
     /**
      * @brief     Fill the fixed length command counters monitoring structure.

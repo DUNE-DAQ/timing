@@ -34,7 +34,7 @@ namespace pdt {
 template <class IO>
 class TopDesign : public TimingNode {
 public:
-    TopDesign(const uhal::Node& aNode);
+    TopDesign(const uhal::Node& node);
     virtual ~TopDesign();
 
     /**
@@ -45,7 +45,7 @@ public:
     /**
      * @brief      Reset timing node.
      */
-    virtual void reset(const std::string& aClockConfigFile="") const;
+    virtual void reset(const std::string& clock_config_file="") const;
     
     /**
      * @brief      Return the timing IO node.
@@ -64,7 +64,7 @@ public:
     /**
      * @brief      Print hardware information
      */
-    virtual std::string get_hardware_info(bool aPrint=false) const;
+    virtual std::string get_hardware_info(bool print_out=false) const;
 
     /**
      * @brief      Return the timing endpoint node.

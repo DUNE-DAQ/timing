@@ -28,14 +28,14 @@ namespace pdt {
 
 //-----------------------------------------------------------------------------
 Snapshot
-snapshot(const uhal::Node& aNode) {
+snapshot(const uhal::Node& node) {
     /// snapshot( node ) -> { subnode:value }
     std::map<string, uhal::ValWord<uint32_t> > valWords;
 
-    for(string n :  aNode.getNodes()) {
-        valWords.insert(make_pair(n, aNode.getNode(n).read()));
+    for(string n :  node.getNodes()) {
+        valWords.insert(make_pair(n, node.getNode(n).read()));
     }
-    aNode.getClient().dispatch();
+    node.getClient().dispatch();
 
     Snapshot vals;
     std::map<string, uhal::ValWord<uint32_t> >::iterator it;
@@ -49,13 +49,13 @@ snapshot(const uhal::Node& aNode) {
 
 //-----------------------------------------------------------------------------
 Snapshot
-snapshot(const uhal::Node& aNode, const std::string& aRegex) {
+snapshot(const uhal::Node& node, const std::string& aRegex) {
     std::map<string, uhal::ValWord<uint32_t> > valWords;
 
-    for(string n :  aNode.getNodes(aRegex)) {
-        valWords.insert(make_pair(n, aNode.getNode(n).read()));
+    for(string n :  node.getNodes(aRegex)) {
+        valWords.insert(make_pair(n, node.getNode(n).read()));
     }
-    aNode.getClient().dispatch();
+    node.getClient().dispatch();
 
     Snapshot vals;
     std::map<string, uhal::ValWord<uint32_t> >::iterator it;

@@ -37,8 +37,8 @@ const MST_TOP& TimingSystemManager<MST_TOP,EPT_TOP>::getMaster(uint32_t aMstId) 
 
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP>
-const EPT_TOP& TimingSystemManager<MST_TOP,EPT_TOP>::getEndpoint(uint32_t aEptId) const {
-	return endpointHardware.at(aEptId).getNode<EPT_TOP>("");
+const EPT_TOP& TimingSystemManager<MST_TOP,EPT_TOP>::getEndpoint(uint32_t endpoint_id) const {
+	return endpointHardware.at(endpoint_id).getNode<EPT_TOP>("");
 }
 //-----------------------------------------------------------------------------
 
@@ -77,33 +77,33 @@ void TimingSystemManager<MST_TOP,EPT_TOP>::configureSystem() const {
 
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP>
-void TimingSystemManager<MST_TOP,EPT_TOP>::resetPartition(uint32_t aPartID) const {
-	getMaster(0).get_master_node().get_partition_node(aPartID).reset();
+void TimingSystemManager<MST_TOP,EPT_TOP>::resetPartition(uint32_t partition_id) const {
+	getMaster(0).get_master_node().get_partition_node(partition_id).reset();
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP>
-void TimingSystemManager<MST_TOP,EPT_TOP>::configurePartition(uint32_t aPartID, uint32_t aTrigMask, bool aEnableSpillGate) const {
-	getMaster(0).get_master_node().get_partition_node(aPartID).configure(aTrigMask, aEnableSpillGate);
-	getMaster(0).get_master_node().get_partition_node(aPartID).enable();
+void TimingSystemManager<MST_TOP,EPT_TOP>::configurePartition(uint32_t partition_id, uint32_t trigger_mask, bool enableSpillGate) const {
+	getMaster(0).get_master_node().get_partition_node(partition_id).configure(trigger_mask, enableSpillGate);
+	getMaster(0).get_master_node().get_partition_node(partition_id).enable();
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP>
-void TimingSystemManager<MST_TOP,EPT_TOP>::startPartition(uint32_t aPartID) const {
-	getMaster(0).get_master_node().get_partition_node(aPartID).start();
+void TimingSystemManager<MST_TOP,EPT_TOP>::startPartition(uint32_t partition_id) const {
+	getMaster(0).get_master_node().get_partition_node(partition_id).start();
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP>
-void TimingSystemManager<MST_TOP,EPT_TOP>::stopPartition(uint32_t aPartID) const {
-	getMaster(0).get_master_node().get_partition_node(aPartID).stop();
+void TimingSystemManager<MST_TOP,EPT_TOP>::stopPartition(uint32_t partition_id) const {
+	getMaster(0).get_master_node().get_partition_node(partition_id).stop();
 }
 //-----------------------------------------------------------------------------
 
@@ -118,24 +118,24 @@ uint64_t TimingSystemManager<MST_TOP,EPT_TOP>::read_master_timestamp() const {
 
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP>
-uint64_t TimingSystemManager<MST_TOP,EPT_TOP>::measureEndpointRTT(uint32_t aAddr) const {
-	return getMaster(0).get_master_node().measureEndpointRTT(aAddr);
+uint64_t TimingSystemManager<MST_TOP,EPT_TOP>::measure_endpoint_rtt(uint32_t address) const {
+	return getMaster(0).get_master_node().measure_endpoint_rtt(address);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP>
-uint64_t TimingSystemManager<MST_TOP,EPT_TOP>::measureEndpointRTT(const ActiveEndpointConfig& aEptConfig) const {
-	uint32_t lEptAdr = aEptConfig.adr;
-	uint32_t lEptFanout = aEptConfig.fanout;
+uint64_t TimingSystemManager<MST_TOP,EPT_TOP>::measure_endpoint_rtt(const ActiveEndpointConfig& ept_config) const {
+	uint32_t lEptAdr = ept_config.adr;
+	uint32_t lEptFanout = ept_config.fanout;
 	
 	if (lEptFanout < 0) {
 		// TODO warning?
 		ERS_LOG( "Endpoint config contains an fanout ept mux value. This is a system without fanouts");
 	}
 
-	return getMaster(0).get_master_node().measureEndpointRTT(lEptAdr);
+	return getMaster(0).get_master_node().measure_endpoint_rtt(lEptAdr);
 }
 //-----------------------------------------------------------------------------
 
@@ -147,7 +147,7 @@ std::vector<EndpointRTTResult> TimingSystemManager<MST_TOP,EPT_TOP>::performEndp
 	std::vector<EndpointRTTResult> lEndpointResults;
 
 	for (auto it = this->mExpectedEndpoints.begin(); it != this->mExpectedEndpoints.end(); ++it) {
-		uint32_t lRTT = this->measureEndpointRTT(it->second);
+		uint32_t lRTT = this->measure_endpoint_rtt(it->second);
 		
 		if (lRTT > this->mMaxMeasuredRTT) this->mMaxMeasuredRTT = lRTT;
 		
@@ -160,7 +160,7 @@ std::vector<EndpointRTTResult> TimingSystemManager<MST_TOP,EPT_TOP>::performEndp
 
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP>
-void TimingSystemManager<MST_TOP,EPT_TOP>::apply_endpoint_delays(uint32_t aMeasureRTT) const {
+void TimingSystemManager<MST_TOP,EPT_TOP>::apply_endpoint_delays(uint32_t measure_rtt) const {
 
 	for (auto it = this->mExpectedEndpoints.begin(); it != this->mExpectedEndpoints.end(); ++it) {
 		std::string lEptIdD = it->second.id;
@@ -169,12 +169,12 @@ void TimingSystemManager<MST_TOP,EPT_TOP>::apply_endpoint_delays(uint32_t aMeasu
 
 		uint32_t lRttBefore;
 
-		if (aMeasureRTT) lRttBefore = measureEndpointRTT(it->second);
+		if (measure_rtt) lRttBefore = measure_endpoint_rtt(it->second);
 		
 		getMaster(0).get_master_node().apply_endpoint_delay(it->second, false);
 
-		if (aMeasureRTT) {
-			uint32_t lRttAfter = measureEndpointRTT(it->second);
+		if (measure_rtt) {
+			uint32_t lRttAfter = measure_endpoint_rtt(it->second);
 			ERS_INFO(lEptIdD << " delay adjustment; cdel: " << lCDelay << ", fdel: " << lFDelay);
 			ERS_INFO("before RTT: " << std::dec << lRttBefore << ", after RTT: " << lRttAfter);
 		}

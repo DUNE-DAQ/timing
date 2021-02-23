@@ -13,8 +13,8 @@ namespace dunedaq {
 namespace pdt {
 
 //-----------------------------------------------------------------------------
-SIChipSlave::SIChipSlave( const I2CMasterNode* aMaster, uint8_t aAddr ) :
-I2CSlave( aMaster, aAddr ) {
+SIChipSlave::SIChipSlave( const I2CMasterNode* i2c_master, uint8_t address ) :
+I2CSlave( i2c_master, address ) {
 }
 //-----------------------------------------------------------------------------
 
@@ -39,13 +39,13 @@ SIChipSlave::read_page( ) const {
 
 //-----------------------------------------------------------------------------
 void
-SIChipSlave::switch_page( uint8_t aPage ) const {
+SIChipSlave::switch_page( uint8_t page ) const {
 
     // Prepare a data block with address and new page
-    // std::vector<uint8_t> lData = {0x1, aPage};
+    // std::vector<uint8_t> lData = {0x1, page};
     ERS_DEBUG(2, "-> Switching to page " 
-        << format_reg_value((uint32_t)aPage));
-    write_i2c(0x1, aPage);
+        << format_reg_value((uint32_t)page));
+    write_i2c(0x1, page);
 }
 //-----------------------------------------------------------------------------
 
@@ -66,13 +66,13 @@ SIChipSlave::read_device_version( ) const {
 
 //-----------------------------------------------------------------------------
 uint8_t
-SIChipSlave::read_clock_register( uint16_t aAddr ) const {
+SIChipSlave::read_clock_register( uint16_t address ) const {
 
-    uint8_t lRegAddr = (aAddr & 0xff);
-    uint8_t lPageAddr = (aAddr >> 8) & 0xff;
+    uint8_t lRegAddr = (address & 0xff);
+    uint8_t lPageAddr = (address >> 8) & 0xff;
     std::stringstream debug_stream;
     debug_stream << std::showbase << std::hex 
-        << "Read Address " << (uint32_t)aAddr 
+        << "Read Address " << (uint32_t)address 
         << " reg: " << (uint32_t)lRegAddr 
         << " page: " << (uint32_t)lPageAddr;
     ERS_DEBUG(2, debug_stream.str());
@@ -91,14 +91,14 @@ SIChipSlave::read_clock_register( uint16_t aAddr ) const {
 
 //-----------------------------------------------------------------------------
 void
-SIChipSlave::write_clock_register( uint16_t aAddr, uint8_t aData ) const {
+SIChipSlave::write_clock_register( uint16_t address, uint8_t data ) const {
 
-    uint8_t lRegAddr = (aAddr & 0xff);
-    uint8_t lPageAddr = (aAddr >> 8) & 0xff;
+    uint8_t lRegAddr = (address & 0xff);
+    uint8_t lPageAddr = (address >> 8) & 0xff;
 
     std::stringstream debug_stream;
     debug_stream << std::showbase << std::hex 
-        << "Write Address " << (uint32_t)aAddr 
+        << "Write Address " << (uint32_t)address 
         << " reg: " << (uint32_t)lRegAddr 
         << " page: " << (uint32_t)lPageAddr;
     ERS_DEBUG(2, debug_stream.str());
@@ -109,7 +109,7 @@ SIChipSlave::write_clock_register( uint16_t aAddr, uint8_t aData ) const {
         switch_page(lPageAddr);
     }
 
-    return write_i2c( lRegAddr, aData );
+    return write_i2c( lRegAddr, data );
 }
 //-----------------------------------------------------------------------------
 

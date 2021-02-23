@@ -33,30 +33,30 @@ class TLUIONode : public IONode {
     UHAL_DERIVEDNODE(TLUIONode)
 
 protected:
-    const std::vector<std::string> mDACDevices;
+    const std::vector<std::string> m_dac_devices;
 public:
-    TLUIONode(const uhal::Node& aNode);
+    TLUIONode(const uhal::Node& node);
     virtual ~TLUIONode();
 
     /**
      * @brief     Print the status of the timing node.
      */
-    std::string get_status(bool aPrint=false) const;
+    std::string get_status(bool print_out=false) const;
     
     /**
      * @brief      Reset timing node.
      */
-    void reset(const std::string& aClockConfigFile="") const override;
+    void reset(const std::string& clock_config_file="") const override;
 
     /**
      * @brief      Configure on-board DAC
      */
-    void configure_dac(uint32_t aDACId, uint32_t aDACValue, bool aInternalRef=false) const;
+    void configure_dac(uint32_t dac_id, uint32_t dac_value, bool internal_ref=false) const;
 
     /**
      * @brief      Print status of on-board SFP 
      */
-    std::string get_sfp_status(uint32_t aSFPId, bool aPrint=false) const override;
+    std::string get_sfp_status(uint32_t sfp_id, bool print_out=false) const override;
 
     /**
      * @brief      Control tx laser of on-board SFP softly (I2C command)

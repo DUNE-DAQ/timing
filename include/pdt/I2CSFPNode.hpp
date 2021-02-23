@@ -34,10 +34,10 @@ namespace pdt {
  */
 class I2CSFPSlave : public I2CSlave {
 protected:
-    const std::vector<uint32_t> mCalibrationParameterStartAddresses;
+    const std::vector<uint32_t> m_calibration_parameter_start_addresses;
 
 public:
-    I2CSFPSlave(const I2CMasterNode* aMaster, uint8_t aSlaveAddress);
+    I2CSFPSlave(const I2CMasterNode* i2c_master, uint8_t i2c_device_address);
     virtual ~I2CSFPSlave();
     
     /**
@@ -56,7 +56,7 @@ public:
      * @brief      Read the raw SFP temperature
      *
      */
-    std::pair<double, double>  read_calibration_parameter_pair(uint32_t aCalibID) const;
+    std::pair<double, double>  read_calibration_parameter_pair(uint32_t calib_parameter_id) const;
 
     /**
      * @brief      Read the raw SFP temperature
@@ -164,18 +164,18 @@ public:
      * @brief      Read whether the SFP has seperate I2C addresses, or if a special I2C address swap is required. True = address swap required
      *
      */
-    bool read_i2cAddressSwapBit() const;
+    bool read_i2c_reg_addressSwapBit() const;
 
     /**
      * @brief     Switch on or off the SFP tx laser via the soft control bit
      *
      */
-    void switch_soft_tx_control_bit(bool aOn) const;
+    void switch_soft_tx_control_bit(bool turn_on) const;
 
     /**
      * @brief      Get SFP status
      */
-    std::string get_status(bool aPrint=false) const;
+    std::string get_status(bool print_out=false) const;
 
     /**
      * @brief      Get and fill SFP hardware data
@@ -194,8 +194,8 @@ public:
 class I2CSFPNode : public I2CMasterNode, public I2CSFPSlave {
     UHAL_DERIVEDNODE(I2CSFPNode)
 public:
-    I2CSFPNode(const uhal::Node& aNode);
-    I2CSFPNode(const I2CSFPNode& aOther);
+    I2CSFPNode(const uhal::Node& node);
+    I2CSFPNode(const I2CSFPNode& node);
     virtual ~I2CSFPNode();
 
 };

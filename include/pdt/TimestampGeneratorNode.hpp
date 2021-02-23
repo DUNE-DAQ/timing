@@ -31,20 +31,20 @@ namespace pdt {
 class TimestampGeneratorNode : public TimingNode {
     UHAL_DERIVEDNODE(TimestampGeneratorNode)
 public:
-    TimestampGeneratorNode(const uhal::Node& aNode);
+    TimestampGeneratorNode(const uhal::Node& node);
     virtual ~TimestampGeneratorNode();
     
     /**
      * @brief     Print the status of the timing node.
      */
-    std::string get_status(bool aPrint=false) const override;
+    std::string get_status(bool print_out=false) const override;
 
     /**
      * @brief      Read the current timestamp words.
      *
      * @return     { description_of_the_return_value }
      */
-    uhal::ValVector<uint32_t> read_raw_timestamp(bool aDispatch=true) const;
+    uhal::ValVector<uint32_t> read_raw_timestamp(bool dispatch=true) const;
 
     /**
      * @brief      Read the current timestamp words.
@@ -56,7 +56,7 @@ public:
     /**
      * @brief      Read the current timestamp words.
      */
-    void set_timestamp(uint64_t aTimestamp) const;
+    void set_timestamp(uint64_t timestamp) const;
 };
 
 

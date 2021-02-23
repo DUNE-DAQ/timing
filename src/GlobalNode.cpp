@@ -6,7 +6,7 @@ namespace pdt {
 UHAL_REGISTER_DERIVED_NODE(GlobalNode)
 
 //-----------------------------------------------------------------------------
-GlobalNode::GlobalNode(const uhal::Node& aNode) : TimingNode(aNode) {
+GlobalNode::GlobalNode(const uhal::Node& node) : TimingNode(node) {
 
 }
 //-----------------------------------------------------------------------------
@@ -61,11 +61,11 @@ void GlobalNode::lock_partition() const {
 
 
 //-----------------------------------------------------------------------------
-std::string GlobalNode::get_status(bool aPrint) const {
+std::string GlobalNode::get_status(bool print_out) const {
 	std::stringstream lStatus;
 	auto subnodes = read_sub_nodes(getNode("csr.stat"));
     lStatus << format_reg_table(subnodes, "Global state");
-    if (aPrint) std::cout << lStatus.str();
+    if (print_out) std::cout << lStatus.str();
     return lStatus.str();
 }
 //-----------------------------------------------------------------------------
@@ -73,7 +73,7 @@ std::string GlobalNode::get_status(bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 void
-GlobalNode::enable_upstream_endpoint(uint32_t aTimeout) {
+GlobalNode::enable_upstream_endpoint(uint32_t timeout) {
 	getNode("csr.ctrl.ep_en").write(0x0);
 	getClient().dispatch();
 	getNode("csr.ctrl.ep_en").write(0x1);
@@ -89,7 +89,7 @@ GlobalNode::enable_upstream_endpoint(uint32_t aTimeout) {
 	uhal::ValWord<uint32_t> lEptRdy;
 
 	// Wait for the endpoint to be happy
-	while (msSinceStart.count() < aTimeout) {
+	while (msSinceStart.count() < timeout) {
 		auto now = std::chrono::high_resolution_clock::now();
 		msSinceStart = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
 

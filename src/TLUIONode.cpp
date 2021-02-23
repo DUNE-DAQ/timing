@@ -6,9 +6,9 @@ namespace pdt {
 UHAL_REGISTER_DERIVED_NODE(TLUIONode)
 
 //-----------------------------------------------------------------------------
-TLUIONode::TLUIONode(const uhal::Node& aNode) :
-	IONode(aNode, "i2c", "UID_PROM", "i2c", "SI5345", {"PLL"}, {}),
-	mDACDevices({"DAC1", "DAC2"}) {
+TLUIONode::TLUIONode(const uhal::Node& node) :
+	IONode(node, "i2c", "UID_PROM", "i2c", "SI5345", {"PLL"}, {}),
+	m_dac_devices({"DAC1", "DAC2"}) {
 }
 //-----------------------------------------------------------------------------
 
@@ -21,12 +21,12 @@ TLUIONode::~TLUIONode() {
 
 //-----------------------------------------------------------------------------
 std::string
-TLUIONode::get_status(bool aPrint) const {
+TLUIONode::get_status(bool print_out) const {
 	auto subnodes = read_sub_nodes(getNode("csr.stat"));
 	std::stringstream lStatus;
 	lStatus << format_reg_table(subnodes, "TLU IO state");
 
-	if (aPrint) std::cout << lStatus.str();
+	if (print_out) std::cout << lStatus.str();
 	return lStatus.str();
 }
 //-----------------------------------------------------------------------------
@@ -34,7 +34,7 @@ TLUIONode::get_status(bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 void
-TLUIONode::reset(const std::string& aClockConfigFile) const {
+TLUIONode::reset(const std::string& clock_config_file) const {
 	// Soft reset
 	writeSoftResetRegister();
 	
@@ -51,12 +51,12 @@ TLUIONode::reset(const std::string& aClockConfigFile) const {
 
 	// enclustra i2c switch stuff
 	try {
-		getNode<I2CMasterNode>(mUIDI2CBus).get_slave("AX3_Switch").write_i2c(0x01, 0x7f);
+		getNode<I2CMasterNode>(m_uid_i2c_bus).get_slave("AX3_Switch").write_i2c(0x01, 0x7f);
 	} catch(...) {
 	}
 
 	// Find the right pll config file
-	std:: string lClockConfigFile = get_full_clock_config_file_path(aClockConfigFile);
+	std:: string lClockConfigFile = get_full_clock_config_file_path(clock_config_file);
 	ERS_INFO("PLL configuration file : " << lClockConfigFile);
 	
 	// Upload config file to PLL
@@ -67,8 +67,8 @@ TLUIONode::reset(const std::string& aClockConfigFile) const {
 	lSIChip->write_i2cArray(0x113, {0x9, 0x33});
 
 	// configure tlu io expanders
-	auto lIC6 = get_i2c_device<I2CExpanderSlave>(mUIDI2CBus, "Expander1");
-	auto lIC7 = get_i2c_device<I2CExpanderSlave>(mUIDI2CBus, "Expander2");
+	auto lIC6 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "Expander1");
+	auto lIC7 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "Expander2");
 
 	// Bank 0
 	lIC6->set_inversion(0, 0x00);
@@ -109,23 +109,23 @@ TLUIONode::reset(const std::string& aClockConfigFile) const {
 
 //-----------------------------------------------------------------------------
 void
-TLUIONode::configure_dac(uint32_t aDACId, uint32_t aDACValue, bool aInternalRef) const {
+TLUIONode::configure_dac(uint32_t dac_id, uint32_t dac_value, bool internal_ref) const {
 	std::string lDACDevice;
 	try {
-		lDACDevice = mDACDevices.at(aDACId);
+		lDACDevice = m_dac_devices.at(dac_id);
 	} catch(const std::out_of_range& e) {
-        throw InvalidDACId(ERS_HERE, getId(), format_reg_value(aDACId));
+        throw InvalidDACId(ERS_HERE, getId(), format_reg_value(dac_id));
 	}
-	auto lDAC = get_i2c_device<DACSlave>(mUIDI2CBus, lDACDevice);
-	lDAC->setInteralRef(aInternalRef);
-    lDAC->setDAC(7, aDACValue);
+	auto lDAC = get_i2c_device<DACSlave>(m_uid_i2c_bus, lDACDevice);
+	lDAC->set_interal_ref(internal_ref);
+    lDAC->set_dac(7, dac_value);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 std::string
-TLUIONode::get_sfp_status(uint32_t /*aSFPId*/, bool /*aPrint*/) const {
+TLUIONode::get_sfp_status(uint32_t /*sfp_id*/, bool /*print_out*/) const {
 	ERS_LOG("TLU does not support SFP I2C");
 	return "";
 }
@@ -134,7 +134,7 @@ TLUIONode::get_sfp_status(uint32_t /*aSFPId*/, bool /*aPrint*/) const {
 
 //-----------------------------------------------------------------------------
 void
-TLUIONode::switch_sfp_soft_tx_control_bit(uint32_t /*aSFPId*/, bool /*aOn*/) const {
+TLUIONode::switch_sfp_soft_tx_control_bit(uint32_t /*sfp_id*/, bool /*turn_on*/) const {
 	ERS_LOG("TLU does not support SFP I2C");
 }
 //-----------------------------------------------------------------------------

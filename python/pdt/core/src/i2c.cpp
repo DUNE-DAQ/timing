@@ -25,11 +25,11 @@ register_i2c(py::module& m) {
     .def(py::init<const uhal::Node&>())
     .def("get_i2c_clock_prescale", &pdt::I2CMasterNode::get_i2c_clock_prescale)
     .def("read_i2c", &pdt::I2CMasterNode::read_i2c)
-    .def("write_i2c", &pdt::I2CMasterNode::write_i2c, py::arg("aSlaveAddress"), py::arg("i2cAddress"), py::arg("aData"), py::arg("aSendStop") = true)
+    .def("write_i2c", &pdt::I2CMasterNode::write_i2c, py::arg("i2c_device_address"), py::arg("i2c_reg_address"), py::arg("data"), py::arg("send_stop") = true)
     .def("read_i2cArray", &pdt::I2CMasterNode::read_i2cArray)
-    .def("write_i2cArray", &pdt::I2CMasterNode::write_i2cArray, py::arg("aSlaveAddress"), py::arg("i2cAddress"), py::arg("aData"), py::arg("aSendStop") = true)
+    .def("write_i2cArray", &pdt::I2CMasterNode::write_i2cArray, py::arg("i2c_device_address"), py::arg("i2c_reg_address"), py::arg("data"), py::arg("send_stop") = true)
     .def("read_i2cPrimitive", &pdt::I2CMasterNode::read_i2cPrimitive)
-    .def("write_i2cPrimitive", &pdt::I2CMasterNode::write_i2cPrimitive, py::arg("aSlaveAddress"), py::arg("aData"), py::arg("aSendStop") = true)
+    .def("write_i2cPrimitive", &pdt::I2CMasterNode::write_i2cPrimitive, py::arg("i2c_device_address"), py::arg("data"), py::arg("send_stop") = true)
     .def("get_slaves", &pdt::I2CMasterNode::get_slaves)
     .def("get_slave", &pdt::I2CMasterNode::get_slave, py::return_value_policy::reference_internal)
     .def("get_slave_address", &pdt::I2CMasterNode::get_slave_address)
@@ -43,14 +43,14 @@ register_i2c(py::module& m) {
     .def("get_i2c_address", &pdt::I2CSlave::get_i2c_address)
     .def<uint8_t (pdt::I2CSlave::*)(uint32_t) const>("read_i2c", &pdt::I2CSlave::read_i2c)
     .def<uint8_t (pdt::I2CSlave::*)(uint32_t,uint32_t) const>("read_i2c", &pdt::I2CSlave::read_i2c)
-    .def<void (pdt::I2CSlave::*)(uint32_t,uint8_t,bool) const>("write_i2c", &pdt::I2CSlave::write_i2c, py::arg("i2cAddress"), py::arg("aData"), py::arg("aSendStop") = true)
-    .def<void (pdt::I2CSlave::*)(uint32_t,uint32_t,uint8_t,bool) const>("write_i2c", &pdt::I2CSlave::write_i2c, py::arg("aSlaveAddress"), py::arg("i2cAddress"), py::arg("aData"), py::arg("aSendStop") = true)
+    .def<void (pdt::I2CSlave::*)(uint32_t,uint8_t,bool) const>("write_i2c", &pdt::I2CSlave::write_i2c, py::arg("i2c_reg_address"), py::arg("data"), py::arg("send_stop") = true)
+    .def<void (pdt::I2CSlave::*)(uint32_t,uint32_t,uint8_t,bool) const>("write_i2c", &pdt::I2CSlave::write_i2c, py::arg("i2c_device_address"), py::arg("i2c_reg_address"), py::arg("data"), py::arg("send_stop") = true)
     .def<std::vector<uint8_t> (pdt::I2CSlave::*)(uint32_t,uint32_t) const>("read_i2cArray", &pdt::I2CSlave::read_i2cArray)
     .def<std::vector<uint8_t> (pdt::I2CSlave::*)(uint32_t,uint32_t,uint32_t) const>("read_i2cArray", &pdt::I2CSlave::read_i2cArray)
-    .def<void (pdt::I2CSlave::*)(uint32_t, std::vector<uint8_t>,bool) const>("write_i2cArray", &pdt::I2CSlave::write_i2cArray, py::arg("i2cAddress"), py::arg("aData"), py::arg("aSendStop") = true)
-    .def<void (pdt::I2CSlave::*)(uint32_t,uint32_t, std::vector<uint8_t>,bool) const>("write_i2cArray", &pdt::I2CSlave::write_i2cArray, py::arg("aSlaveAddress"), py::arg("i2cAddress"), py::arg("aData"), py::arg("aSendStop") = true)
+    .def<void (pdt::I2CSlave::*)(uint32_t, std::vector<uint8_t>,bool) const>("write_i2cArray", &pdt::I2CSlave::write_i2cArray, py::arg("i2c_reg_address"), py::arg("data"), py::arg("send_stop") = true)
+    .def<void (pdt::I2CSlave::*)(uint32_t,uint32_t, std::vector<uint8_t>,bool) const>("write_i2cArray", &pdt::I2CSlave::write_i2cArray, py::arg("i2c_device_address"), py::arg("i2c_reg_address"), py::arg("data"), py::arg("send_stop") = true)
     .def("read_i2cPrimitive", &pdt::I2CSlave::read_i2cPrimitive)
-    .def("write_i2cPrimitive", &pdt::I2CSlave::write_i2cPrimitive, py::arg("aData"), py::arg("aSendStop") = true)
+    .def("write_i2cPrimitive", &pdt::I2CSlave::write_i2cPrimitive, py::arg("data"), py::arg("send_stop") = true)
     .def("ping", &pdt::I2CSlave::ping)
     ;
 
@@ -95,8 +95,8 @@ register_i2c(py::module& m) {
   // Wrap DACSlave
   py::class_<pdt::DACSlave, pdt::I2CSlave> (m, "DACSlave")
     .def(py::init<const pdt::I2CMasterNode*, uint8_t>())
-    .def("setInteralRef", &pdt::DACSlave::setInteralRef)
-    .def("setDAC", &pdt::DACSlave::setDAC)
+    .def("set_interal_ref", &pdt::DACSlave::set_interal_ref)
+    .def("set_dac", &pdt::DACSlave::set_dac)
     ;
 
   // Wrap DACNode

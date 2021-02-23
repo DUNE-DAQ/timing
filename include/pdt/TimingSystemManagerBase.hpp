@@ -71,22 +71,22 @@ public:
     /**
      * @brief      Reset timing system partition
      */
-    virtual void resetPartition(uint32_t aPartID) const = 0;
+    virtual void resetPartition(uint32_t partition_id) const = 0;
 
     /**
      * @brief      Configure timing system partition
      */
-    virtual void configurePartition(uint32_t aPartID, uint32_t aTrigMask, bool aEnableSpillGate) const = 0;
+    virtual void configurePartition(uint32_t partition_id, uint32_t trigger_mask, bool enableSpillGate) const = 0;
 
     /**
      * @brief      Start timing system partition
      */
-    virtual void startPartition(uint32_t aPartID) const = 0;
+    virtual void startPartition(uint32_t partition_id) const = 0;
 
     /**
      * @brief      Stop timing system partition
      */
-    virtual void stopPartition(uint32_t aPartID) const = 0;
+    virtual void stopPartition(uint32_t partition_id) const = 0;
 
     /**
      * @brief      Read the current timestamp
@@ -100,14 +100,14 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    virtual uint64_t measureEndpointRTT(uint32_t aAddr) const = 0;
+    virtual uint64_t measure_endpoint_rtt(uint32_t address) const = 0;
 
     /**
      * @brief      Measure the endpoint round trip time.
      *
      * @return     { description_of_the_return_value }
      */
-    virtual uint64_t measureEndpointRTT(const ActiveEndpointConfig& aEptConfig) const = 0;
+    virtual uint64_t measure_endpoint_rtt(const ActiveEndpointConfig& ept_config) const = 0;
 
     /**
      * @brief      Measure the round trip time for endpoints.
@@ -117,7 +117,7 @@ public:
     /**
      * @brief      Adjust the endpoint delays.
      */
-    virtual void apply_endpoint_delays(uint32_t aMeasureRTT) const = 0;
+    virtual void apply_endpoint_delays(uint32_t measure_rtt) const = 0;
 
 };
 

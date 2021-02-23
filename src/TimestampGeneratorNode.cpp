@@ -6,7 +6,7 @@ namespace pdt {
 UHAL_REGISTER_DERIVED_NODE(TimestampGeneratorNode)
 
 //-----------------------------------------------------------------------------
-TimestampGeneratorNode::TimestampGeneratorNode(const uhal::Node& aNode) : TimingNode(aNode) {
+TimestampGeneratorNode::TimestampGeneratorNode(const uhal::Node& node) : TimingNode(node) {
 }
 //-----------------------------------------------------------------------------
 
@@ -19,10 +19,10 @@ TimestampGeneratorNode::~TimestampGeneratorNode() {
 
 //-----------------------------------------------------------------------------
 std::string 
-TimestampGeneratorNode::get_status(bool aPrint) const {
+TimestampGeneratorNode::get_status(bool print_out) const {
 	std::stringstream lStatus;
 	lStatus << "Timestamp: 0x" << std::hex << read_timestamp() << std::endl;
-	if (aPrint) std::cout << lStatus.str();
+	if (print_out) std::cout << lStatus.str();
 	return lStatus.str();
 }
 //-----------------------------------------------------------------------------
@@ -30,9 +30,9 @@ TimestampGeneratorNode::get_status(bool aPrint) const {
 
 //-----------------------------------------------------------------------------
 uhal::ValVector<uint32_t>
-TimestampGeneratorNode::read_raw_timestamp(bool aDispatch) const {
+TimestampGeneratorNode::read_raw_timestamp(bool dispatch) const {
 	auto lTimestamp = getNode("ctr.val").readBlock(2);
-	if (aDispatch) getClient().dispatch();
+	if (dispatch) getClient().dispatch();
     return lTimestamp;
 }
 //-----------------------------------------------------------------------------
@@ -48,10 +48,10 @@ TimestampGeneratorNode::read_timestamp() const {
 
 //-----------------------------------------------------------------------------
 void
-TimestampGeneratorNode::set_timestamp(uint64_t aTimestamp) const {
+TimestampGeneratorNode::set_timestamp(uint64_t timestamp) const {
 	// Take the timestamp and split it up
-	uint32_t lNowH = (aTimestamp >> 32) & ((1UL<<32)-1);
-    uint32_t lNowL = (aTimestamp >> 0) & ((1UL<<32)-1);
+	uint32_t lNowH = (timestamp >> 32) & ((1UL<<32)-1);
+    uint32_t lNowL = (timestamp >> 0) & ((1UL<<32)-1);
     getNode("ctr.set").writeBlock({lNowL, lNowH});
     getClient().dispatch();
 }

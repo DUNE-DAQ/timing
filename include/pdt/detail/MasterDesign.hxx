@@ -6,7 +6,7 @@ namespace dunedaq::pdt
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-MasterDesign<IO,MST>::MasterDesign(const uhal::Node& aNode) : TopDesign<IO>(aNode) {
+MasterDesign<IO,MST>::MasterDesign(const uhal::Node& node) : TopDesign<IO>(node) {
 }
 //-----------------------------------------------------------------------------
 
@@ -36,16 +36,16 @@ uint64_t MasterDesign<IO,MST>::read_master_timestamp() const {
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-uint32_t MasterDesign<IO,MST>::measureEndpointRTT(uint32_t aAddr, bool aControlSFP) const  {
-	return get_master_node().measureEndpointRTT(aAddr, aControlSFP);
+uint32_t MasterDesign<IO,MST>::measure_endpoint_rtt(uint32_t address, bool control_sfp) const  {
+	return get_master_node().measure_endpoint_rtt(address, control_sfp);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-void MasterDesign<IO,MST>::apply_endpoint_delay(uint32_t aAddr, uint32_t aCDel, uint32_t aFDel, uint32_t aPDel, bool aMeasureRTT, bool aControlSFP) const {
-	get_master_node().apply_endpoint_delay(aAddr, aCDel, aFDel, aPDel, aMeasureRTT, aControlSFP);
+void MasterDesign<IO,MST>::apply_endpoint_delay(uint32_t address, uint32_t coarse_delay, uint32_t fine_delay, uint32_t phase_delay, bool measure_rtt, bool control_sfp) const {
+	get_master_node().apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp);
 }
 //-----------------------------------------------------------------------------
 }

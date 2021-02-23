@@ -40,13 +40,13 @@ protected:
     virtual uhal::Node* clone() const;
 //
 public:
-    PDIMasterDesign(const uhal::Node& aNode);
+    PDIMasterDesign(const uhal::Node& node);
     virtual ~PDIMasterDesign();
 
     /**
      * @brief     Get status string, optionally print.
      */
-    std::string get_status(bool aPrint=false) const override;
+    std::string get_status(bool print_out=false) const override;
 
     /**
      * @brief      Prepare the timing master for data taking.

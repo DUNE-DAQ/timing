@@ -6,7 +6,7 @@ namespace pdt {
 UHAL_REGISTER_DERIVED_NODE(EndpointNode)
 
 //-----------------------------------------------------------------------------
-EndpointNode::EndpointNode(const uhal::Node& aNode) : TimingNode(aNode) {
+EndpointNode::EndpointNode(const uhal::Node& node) : TimingNode(node) {
 }
 //-----------------------------------------------------------------------------
 
@@ -62,7 +62,7 @@ EndpointNode::reset(uint32_t partition, uint32_t address) const {
 
 //-----------------------------------------------------------------------------
 std::string
-EndpointNode::get_status(bool aPrint) const {
+EndpointNode::get_status(bool print_out) const {
 	
 	std::stringstream lStatus;
 
@@ -96,7 +96,7 @@ EndpointNode::get_status(bool aPrint) const {
 	lStatus << format_reg_table(lEPState, "Endpoint state") << std::endl;
 	lStatus << format_reg_table(lEPCommandCounters, "Endpoint counters", {"Command", "Counter"}); 
 
-	if (aPrint) std::cout << lStatus.str();
+	if (print_out) std::cout << lStatus.str();
     return lStatus.str();       
 }
 //-----------------------------------------------------------------------------
@@ -124,7 +124,7 @@ EndpointNode::read_buffer_count() const {
 
 //-----------------------------------------------------------------------------
 uhal::ValVector< uint32_t >
-EndpointNode::read_data_buffer(bool aReadall) const {
+EndpointNode::read_data_buffer(bool read_all) const {
 	
 	auto lBufCount = getNode("buf.count").read();
 	getClient().dispatch();
@@ -135,7 +135,7 @@ EndpointNode::read_data_buffer(bool aReadall) const {
 	
 	ERS_INFO("Events available in readout buffer:     " << format_reg_value(lEventsToRead));
 
-	uint32_t lWordsToRead = aReadall ? lBufCount.value() : lEventsToRead * kEventSize;
+	uint32_t lWordsToRead = read_all ? lBufCount.value() : lEventsToRead * kEventSize;
 
 	ERS_INFO("Words to be read out in readout buffer: " << format_reg_value(lWordsToRead));
 	
@@ -153,10 +153,10 @@ EndpointNode::read_data_buffer(bool aReadall) const {
 
 //-----------------------------------------------------------------------------
 std::string
-EndpointNode::get_data_buffer_table(bool aReadall, bool aPrint) const {
+EndpointNode::get_data_buffer_table(bool read_all, bool print_out) const {
 
 	std::stringstream lTable;
-	auto lBufData = read_data_buffer(aReadall);
+	auto lBufData = read_data_buffer(read_all);
 
 	std::vector<std::pair<std::string, uint32_t>> lBufferTable;
 
@@ -168,7 +168,7 @@ EndpointNode::get_data_buffer_table(bool aReadall, bool aPrint) const {
 	}
 	lTable << format_reg_table(lBufferTable, "Endpoint buffer", {"Word","Data"});
 	
-	if (aPrint) std::cout << lTable.str();
+	if (print_out) std::cout << lTable.str();
 	return lTable.str();
 }
 //-----------------------------------------------------------------------------

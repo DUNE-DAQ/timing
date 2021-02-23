@@ -33,23 +33,23 @@ namespace pdt {
 class TimingNode : public uhal::Node {
     
 public:
-    TimingNode(const uhal::Node& aNode);
+    TimingNode(const uhal::Node& node);
     virtual ~TimingNode();
 
     /**
      * @brief     Get the status string of the timing node. Optionally print it
      */
-    virtual std::string get_status(bool aPrint=false) const = 0;
+    virtual std::string get_status(bool print_out=false) const = 0;
 
     /**
      * @brief     Read subnodes.
      */
-    std::map<std::string,uhal::ValWord<uint32_t>> read_sub_nodes(const uhal::Node& aNode, bool dispatch=true) const;
+    std::map<std::string,uhal::ValWord<uint32_t>> read_sub_nodes(const uhal::Node& node, bool dispatch=true) const;
 
     /**
      * @brief     Reset subnodes.
      */
-    void reset_sub_nodes(const uhal::Node& aNode, uint32_t aValue=0x0, bool dispatch=true) const;
+    void reset_sub_nodes(const uhal::Node& node, uint32_t aValue=0x0, bool dispatch=true) const;
 
 };
 

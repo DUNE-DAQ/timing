@@ -38,20 +38,20 @@ protected:
 	virtual uhal::Node* clone() const;
 //
 public:
-    EndpointDesign(const uhal::Node& aNode);
+    EndpointDesign(const uhal::Node& node);
     virtual ~EndpointDesign();
 	
 	/**
      * @brief     Get status string, optionally print.
      */
-    std::string get_status(bool aPrint=false) const override;
+    std::string get_status(bool print_out=false) const override;
 
     /**
      * @brief      Enable the specified endpoint node.
      *
      * @return     { description_of_the_return_value }
      */
-    void enable(uint32_t aEptId) const;
+    void enable(uint32_t endpoint_id) const;
 
 };
 

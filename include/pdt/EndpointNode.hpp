@@ -33,13 +33,13 @@ namespace pdt {
 class EndpointNode : public TimingNode {
     UHAL_DERIVEDNODE(EndpointNode)
 public:
-    EndpointNode(const uhal::Node& aNode);
+    EndpointNode(const uhal::Node& node);
     ~EndpointNode();
 
     /**
      * @brief     Print the status of the timing node.
      */
-    std::string get_status(bool aPrint=false) const override;
+    std::string get_status(bool print_out=false) const override;
 
     /**
      * @brief      Enable the endpoint
@@ -81,14 +81,14 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    uhal::ValVector< uint32_t > read_data_buffer(bool aReadall=false) const;
+    uhal::ValVector< uint32_t > read_data_buffer(bool read_all=false) const;
 
     /**
      * @brief      Print the contents of the endpoint data buffer.
      *
      * @return     { description_of_the_return_value }
      */
-    std::string get_data_buffer_table(bool aReadall=false, bool aPrint=false) const;
+    std::string get_data_buffer_table(bool read_all=false, bool print_out=false) const;
 
     /**
      * @brief      Read the endpoint clock frequency.
