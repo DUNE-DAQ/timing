@@ -77,7 +77,7 @@ IONode::get_board_revision() const {
 	
 	auto lUID = read_board_uid();
 	try {
-		return kBoardUIDRevisionMap.at(lUID);
+		return g_board_uid_revision_map.at(lUID);
 	} catch(const std::out_of_range& e) {
         throw UnknownBoardUID(ERS_HERE, getId(), format_reg_value(lUID), e);
 	}
@@ -98,13 +98,13 @@ IONode::get_hardware_info(bool print_out) const {
 
 	// TODO check map at exception
 	try {
-		lHardwareInfo.push_back(std::make_pair("Board type", kBoardTypeMap.at(lBoardType)));
+		lHardwareInfo.push_back(std::make_pair("Board type", g_board_type_map.at(lBoardType)));
 	} catch(const std::out_of_range& e) {
         throw MissingBoardTypeMapEntry(ERS_HERE, getId(), format_reg_value(lBoardType), e);
 	}
 
 	try {
-		lHardwareInfo.push_back(std::make_pair("Board revision", kBoardRevisionMap.at(lBoardRevision)));
+		lHardwareInfo.push_back(std::make_pair("Board revision", g_board_revision_map.at(lBoardRevision)));
 	} catch(const std::out_of_range& e) {
         throw MissingBoardRevisionMapEntry(ERS_HERE, getId(), format_reg_value(lBoardRevision), e);
 	}
@@ -112,13 +112,13 @@ IONode::get_hardware_info(bool print_out) const {
 	lHardwareInfo.push_back(std::make_pair("Board UID", format_reg_value(read_board_uid())));
 
 	try {
-		lHardwareInfo.push_back(std::make_pair("Carrier type", kCarrierTypeMap.at(lCarrierType)));
+		lHardwareInfo.push_back(std::make_pair("Carrier type", g_carrier_type_map.at(lCarrierType)));
 	} catch(const std::out_of_range& e) {
     	throw MissingCarrierTypeMapEntry(ERS_HERE, getId(), format_reg_value(lCarrierType), e);
 	}
 
 	try {
-		lHardwareInfo.push_back(std::make_pair("Design type", kDesignTypeMap.at(lDesignType)));
+		lHardwareInfo.push_back(std::make_pair("Design type", g_design_type_map.at(lDesignType)));
 	} catch(const std::out_of_range& e) {
         throw MissingDesignTypeMapEntry(ERS_HERE, getId(), format_reg_value(lDesignType), e);
 	}
@@ -148,19 +148,19 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
 		const DesignType lDesignType = convert_value_to_design_type(read_design_type());
 
 		try {
-			lClockConfigKey = kBoardRevisionMap.at(lBoardRevision) + "_";
+			lClockConfigKey = g_board_revision_map.at(lBoardRevision) + "_";
 		} catch(const std::out_of_range& e) {
         	throw MissingBoardRevisionMapEntry(ERS_HERE, getId(), format_reg_value(lBoardRevision), e);
 		}
 
 		try {
-			lClockConfigKey = lClockConfigKey + kCarrierTypeMap.at(lCarrierType) + "_";
+			lClockConfigKey = lClockConfigKey + g_carrier_type_map.at(lCarrierType) + "_";
 		} catch(const std::out_of_range& e) {
         	throw MissingCarrierTypeMapEntry(ERS_HERE, getId(), format_reg_value(lCarrierType), e);
 		}
 
 		try {
-			lClockConfigKey = lClockConfigKey + kDesignTypeMap.at(lDesignType);
+			lClockConfigKey = lClockConfigKey + g_design_type_map.at(lDesignType);
 		} catch(const std::out_of_range& e) {
         	throw MissingDesignTypeMapEntry(ERS_HERE, getId(), format_reg_value(lDesignType), e);
 		}
@@ -169,7 +169,7 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
 		if (mode >= 0) lClockConfigKey = lClockConfigKey + "_mode" + std::to_string(mode);
 
 		try {
-			lConfigFile = kClockConfigMap.at(lClockConfigKey);
+			lConfigFile = g_clock_config_map.at(lClockConfigKey);
 		} catch (const std::out_of_range& e) {
         	throw ClockConfigNotFound(ERS_HERE, getId(), lClockConfigKey, e);
 		}

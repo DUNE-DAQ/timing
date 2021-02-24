@@ -50,7 +50,6 @@ public:
      * @brief     Reset subnodes.
      */
     void reset_sub_nodes(const uhal::Node& node, uint32_t aValue=0x0, bool dispatch=true) const;
-
 };
 
 

@@ -79,4 +79,4 @@ public:
 } // namespace pdt
 } // namespace dunedaq
 
-#endif /* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SICHIPSLAVE_HPP_ */
+#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SICHIPSLAVE_HPP_ 

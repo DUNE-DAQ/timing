@@ -18,15 +18,15 @@ namespace pdt {
 
 typedef std::map<std::string, uint32_t> Snapshot;
 
-const uint32_t kSPSClockInHz = 50e6;
-const uint32_t kEventSize = 6;
-
 enum BoardType {kBoardFMC, kBoardSim, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardUnknown};
 enum CarrierType {kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed, kCarrierATFC, kCarrierUnknown};
 enum DesignType {kDesingMaster, kDesignOuroborosSim, kDesignOuroboros, kUnused, kDesignEndpoint, kDesingFanout, kDesingOverlord, kDesingEndpoBICRT, kDesignUnknown};
 enum BoardRevision {kFMCRev1, kFMCRev2, kFMCRev3, kPC059Rev1, kTLURev1, kSIMRev1};
 
-const std::map<BoardType, std::string> kBoardTypeMap = {
+const uint32_t g_dune_sp_clock_in_hz = 50e6;
+const uint32_t g_event_size = 6;
+
+const std::map<BoardType, std::string> g_board_type_map = {
     {kBoardFMC, "fmc"},
     {kBoardSim, "sim"},
     {kBoardPC059, "pc059"},
@@ -35,7 +35,7 @@ const std::map<BoardType, std::string> kBoardTypeMap = {
 };
 
 
-const std::map<CarrierType, std::string> kCarrierTypeMap = {
+const std::map<CarrierType, std::string> g_carrier_type_map = {
     {kCarrierEnclustraA35, "enclustra-a35"},
     {kCarrierKC705, "kc705"},
     {kCarrierMicrozed, "microzed"},
@@ -43,7 +43,7 @@ const std::map<CarrierType, std::string> kCarrierTypeMap = {
 
 };
 
-const std::map<DesignType, std::string> kDesignTypeMap = {
+const std::map<DesignType, std::string> g_design_type_map = {
     {kDesingMaster, "master"},
     {kDesignOuroboros, "ouroboros"},
     {kDesignOuroborosSim, "ouroboros-sim"},
@@ -53,7 +53,7 @@ const std::map<DesignType, std::string> kDesignTypeMap = {
     {kDesingEndpoBICRT, "endpoint-bi-crt"}
 };
 
-const std::map<BoardRevision, std::string> kBoardRevisionMap = {
+const std::map<BoardRevision, std::string> g_board_revision_map = {
     {kFMCRev1, "kFMCRev1"},
     {kFMCRev2, "kFMCRev2"},
     {kFMCRev3, "kFMCRev3"},
@@ -62,7 +62,7 @@ const std::map<BoardRevision, std::string> kBoardRevisionMap = {
     {kSIMRev1, "kSIMRev1"}
 };
 
-const std::map<uint64_t, BoardRevision> kBoardUIDRevisionMap = {
+const std::map<uint64_t, BoardRevision> g_board_uid_revision_map = {
     {0xd880395e720b, kFMCRev1},
     {0xd880395e501a, kFMCRev1},
     {0xd880395e50b8, kFMCRev1},
@@ -96,7 +96,7 @@ const std::map<uint64_t, BoardRevision> kBoardUIDRevisionMap = {
     {0x5410ecbb9426, kTLURev1}
 };
 
-const std::map<std::string, std::string> kClockConfigMap = {
+const std::map<std::string, std::string> g_clock_config_map = {
     {"kFMCRev1_enclustra-a35_endpoint", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
     {"kFMCRev2_enclustra-a35_endpoint", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
     {"kFMCRev3_enclustra-a35_endpoint", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
@@ -118,7 +118,7 @@ const std::map<std::string, std::string> kClockConfigMap = {
 
 };
 
-const std::map<uint32_t, std::string> kCommandMap = {
+const std::map<uint32_t, std::string> g_command_map = {
     {0x0, "TimeSync"},
     {0x1, "Echo"},
     {0x2, "SpillStart"},
@@ -136,9 +136,9 @@ const std::map<uint32_t, std::string> kCommandMap = {
     {0xe, "ExtFakeTrig"}
 };
 
-const uint32_t kCommandNumber = kCommandMap.size();
+const uint32_t g_command_number = g_command_map.size();
 
-const std::map<uint32_t, std::string> kEndpointStateMap = {
+const std::map<uint32_t, std::string> g_endpoint_state_map = {
     { 0x0, "Standing by (0x0)"                          } , // 0b0000 when W_RST, -- Starting state after reset
     { 0x1, "Waiting SFP for signal (0x1)"               } , // 0b0001 when W_SFP, -- Waiting for SFP LOS to go low
     { 0x2, "Waiting CDR lock (0x2)"                     } , // 0b0010 when W_CDR, -- Waiting for CDR lock

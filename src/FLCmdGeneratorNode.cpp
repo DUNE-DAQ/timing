@@ -46,7 +46,7 @@ FLCmdGeneratorNode::send_fl_cmd(uint32_t command, uint32_t channel, const Timest
     
     getNode("chan_ctrl.force").write(0x0);
     getClient().dispatch();
-    ERS_LOG("Command sent " << kCommandMap.at(command) << "(" << format_reg_value(command) << ") from generator " << format_reg_value(channel) << " @time 0x" << tstamp2int(lTStamp) << " " << format_timestamp(lTStamp));
+    ERS_LOG("Command sent " << g_command_map.at(command) << "(" << format_reg_value(command) << ") from generator " << format_reg_value(channel) << " @time 0x" << tstamp2int(lTStamp) << " " << format_timestamp(lTStamp));
 }
 //-----------------------------------------------------------------------------
 

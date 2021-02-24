@@ -101,8 +101,11 @@ uint32_t MasterMuxDesign<IO,MST>::measure_endpoint_rtt(uint32_t address, bool co
 		this->get_master_node().switch_endpoint_sfp(address, true);
 	}
 	
-	// set fanout rtt mux channel, and wait for fanout rtt ept to be in a good state
-	this->switch_sfp_mux_channel(sfp_mux, true);
+	// set fanout rtt mux channel, and do not wait for fanout rtt ept to be in a good state
+	this->switch_sfp_mux_channel(sfp_mux, false);
+
+	// sleep for a short time, otherwise the rtt endpoint will not get state to 0x8 in time
+	millisleep(200);
 		
 	// gets master rtt ept in a good state, and sends echo command (due to second argument endpoint sfp is not controlled in this call, already done above)
 	uint32_t lRTT = this->get_master_node().measure_endpoint_rtt(address, false);

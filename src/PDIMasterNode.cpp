@@ -239,7 +239,7 @@ PDIMasterNode::sync_timestamp() const {
     const uint64_t lOldTimestamp = read_timestamp();
     ERS_LOG("Old timestamp: " << format_reg_value(lOldTimestamp) << ", " << format_timestamp(lOldTimestamp));
     
-    const uint64_t lNow = get_seconds_since_epoch() * kSPSClockInHz;
+    const uint64_t lNow = get_seconds_since_epoch() * g_dune_sp_clock_in_hz;
     set_timestamp(lNow);
 
     const uint64_t lNewTimestamp = read_timestamp();

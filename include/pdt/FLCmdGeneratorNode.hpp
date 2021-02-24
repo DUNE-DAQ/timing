@@ -39,7 +39,7 @@ struct FakeTriggerConfig {
         // b) Division by a power of two set by n = 2 ^ rate_div_d (ranging from 2^0 -> 2^15)
         // c) 1-in-n prescaling set by n = rate_div_p
         
-        double div = ceil( log(kSPSClockInHz / (requested_rate * 256 * 256)) / log(2) );
+        double div = ceil( log(g_dune_sp_clock_in_hz / (requested_rate * 256 * 256)) / log(2) );
         if (div < 0) {
             divisor = 0;
         } else if (div > 15) {
@@ -48,13 +48,13 @@ struct FakeTriggerConfig {
             divisor = div;
         }
         
-        uint32_t ps = (uint32_t) ((kSPSClockInHz / (rate * 256 * (1 << divisor))) + 0.5);
+        uint32_t ps = (uint32_t) ((g_dune_sp_clock_in_hz / (rate * 256 * (1 << divisor))) + 0.5);
         if (ps  == 0 || ps > 256) {
             throw BadRequestedFakeTriggerRate(ERS_HERE, "FakeTriggerConfig", rate, ps);
         } else {
             prescale = ps;
         }
-        actual_rate = (double) kSPSClockInHz / (256 * prescale * (1 << divisor));
+        actual_rate = (double) g_dune_sp_clock_in_hz / (256 * prescale * (1 << divisor));
     }
 
     void print() const {

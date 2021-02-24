@@ -225,7 +225,7 @@ std::string format_counters_table(std::vector<T> aCounterNodes, std::vector<std:
   if (aCounterLabels.size()) {
     lCounterLabels = aCounterLabels;
   } else {
-    for (auto it=kCommandMap.begin(); it != kCommandMap.end(); ++it) lCounterLabels.push_back(it->second);
+    for (auto it=g_command_map.begin(); it != g_command_map.end(); ++it) lCounterLabels.push_back(it->second);
   }
   lCounterNumber = lCounterLabels.size();
 

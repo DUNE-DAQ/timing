@@ -185,7 +185,7 @@ get_seconds_since_epoch() {
 //-----------------------------------------------------------------------------
 std::string 
 format_timestamp(uint64_t rawTimestamp) {
-    std::time_t lSecFromEpoch = rawTimestamp / kSPSClockInHz;
+    std::time_t lSecFromEpoch = rawTimestamp / g_dune_sp_clock_in_hz;
 
     struct tm * lTime = localtime(&lSecFromEpoch);
     char lTimeBuffer[32];

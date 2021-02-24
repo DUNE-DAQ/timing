@@ -73,10 +73,10 @@ EndpointNode::get_status(bool print_out) const {
 	auto lEPBufferCount = getNode("buf.count").read();
 	auto lEPControl = read_sub_nodes(getNode("csr.ctrl"), false);
 	auto lEPState = read_sub_nodes(getNode("csr.stat"), false);
-	auto lEPCounters = getNode("ctrs").readBlock(kCommandNumber);
+	auto lEPCounters = getNode("ctrs").readBlock(g_command_number);
 	getClient().dispatch();
 
-	lEPSummary.push_back(std::make_pair("State", kEndpointStateMap.at(lEPState.find("ep_stat")->second.value())));
+	lEPSummary.push_back(std::make_pair("State", g_endpoint_state_map.at(lEPState.find("ep_stat")->second.value())));
 	lEPSummary.push_back(std::make_pair("Partition", std::to_string(lEPControl.find("tgrp")->second.value())));
 	lEPSummary.push_back(std::make_pair("Address", std::to_string(lEPControl.find("addr")->second.value())));
 	lEPSummary.push_back(std::make_pair("Timestamp", format_timestamp(lEPTimestamp)));
@@ -88,8 +88,8 @@ EndpointNode::get_status(bool print_out) const {
 
 	std::vector<std::pair<std::string, std::string> > lEPCommandCounters;
 
-	for (uint32_t i=0; i < kCommandNumber; ++i) {
-		lEPCommandCounters.push_back(std::make_pair(kCommandMap.at(i), std::to_string(lEPCounters[i])));	
+	for (uint32_t i=0; i < g_command_number; ++i) {
+		lEPCommandCounters.push_back(std::make_pair(g_command_map.at(i), std::to_string(lEPCounters[i])));	
 	}
 
 	lStatus << format_reg_table(lEPSummary, "Endpoint summary", {"", ""}) << std::endl;
@@ -131,11 +131,11 @@ EndpointNode::read_data_buffer(bool read_all) const {
 
 	ERS_INFO("Words available in readout buffer:      " << format_reg_value(lBufCount));
 
-	uint32_t lEventsToRead = lBufCount.value() / kEventSize;
+	uint32_t lEventsToRead = lBufCount.value() / g_event_size;
 	
 	ERS_INFO("Events available in readout buffer:     " << format_reg_value(lEventsToRead));
 
-	uint32_t lWordsToRead = read_all ? lBufCount.value() : lEventsToRead * kEventSize;
+	uint32_t lWordsToRead = read_all ? lBufCount.value() : lEventsToRead * g_event_size;
 
 	ERS_INFO("Words to be read out in readout buffer: " << format_reg_value(lWordsToRead));
 	
@@ -202,7 +202,7 @@ EndpointNode::get_info(timingmon::TimingEndpointMonitorData& mon_data) const {
 	auto buffer_count = getNode("buf.count").read();
 	auto endpoint_control = read_sub_nodes(getNode("csr.ctrl"), false);
 	auto endpoint_state = read_sub_nodes(getNode("csr.stat"), false);
-	auto counters = getNode("ctrs").readBlock(kCommandNumber);
+	auto counters = getNode("ctrs").readBlock(g_command_number);
 	getClient().dispatch();
 	
 	mon_data.state = endpoint_state.at("ep_stat").value();
@@ -221,8 +221,8 @@ EndpointNode::get_info(timingmon::TimingEndpointMonitorData& mon_data) const {
 	mon_data.coarse_delay = endpoint_state.at("cdelay").value();
 	mon_data.fine_delay = endpoint_state.at("fdelay").value();
 
-	//for (uint32_t i=0; i < kCommandNumber; ++i) {
-	//	counters.push_back(std::make_pair(kCommandMap.at(i), std::to_string(counters[i])));	
+	//for (uint32_t i=0; i < g_command_number; ++i) {
+	//	counters.push_back(std::make_pair(g_command_map.at(i), std::to_string(counters[i])));	
 	//}      
 }
 //-----------------------------------------------------------------------------

@@ -61,25 +61,25 @@ SIMIONode::get_hardware_info(bool print_out) const {
 
 	// TODO check map at exception
 	try {
-		lHardwareInfo.push_back(std::make_pair("Board type", kBoardTypeMap.at(lBoardType)));
+		lHardwareInfo.push_back(std::make_pair("Board type", g_board_type_map.at(lBoardType)));
 	} catch(const std::out_of_range& e) {
         throw MissingBoardTypeMapEntry(ERS_HERE, getId(), format_reg_value(lBoardType), e);
 	}
 
 	try {
-		lHardwareInfo.push_back(std::make_pair("Board revision", kBoardRevisionMap.at(lBoardRevision)));
+		lHardwareInfo.push_back(std::make_pair("Board revision", g_board_revision_map.at(lBoardRevision)));
 	} catch(const std::out_of_range& e) {
         throw MissingBoardRevisionMapEntry(ERS_HERE, getId(), format_reg_value(lBoardRevision), e);
 	}
 
 	try {
-		lHardwareInfo.push_back(std::make_pair("Carrier type", kCarrierTypeMap.at(lCarrierType)));
+		lHardwareInfo.push_back(std::make_pair("Carrier type", g_carrier_type_map.at(lCarrierType)));
 	} catch(const std::out_of_range& e) {
         throw MissingCarrierTypeMapEntry(ERS_HERE, getId(), format_reg_value(lCarrierType), e);
 	}
 
 	try {
-		lHardwareInfo.push_back(std::make_pair("Design type", kDesignTypeMap.at(lDesignType)));
+		lHardwareInfo.push_back(std::make_pair("Design type", g_design_type_map.at(lDesignType)));
 	} catch(const std::out_of_range& e) {
         throw MissingDesignTypeMapEntry(ERS_HERE, getId(), format_reg_value(lDesignType), e);
 	}
