@@ -26,7 +26,7 @@ TLUIONode::get_status(bool print_out) const {
 	std::stringstream lStatus;
 	lStatus << format_reg_table(subnodes, "TLU IO state");
 
-	if (print_out) std::cout << lStatus.str();
+	if (print_out) TLOG() << lStatus.str();
 	return lStatus.str();
 }
 //-----------------------------------------------------------------------------
@@ -57,7 +57,7 @@ TLUIONode::reset(const std::string& clock_config_file) const {
 
 	// Find the right pll config file
 	std:: string lClockConfigFile = get_full_clock_config_file_path(clock_config_file);
-	ERS_INFO("PLL configuration file : " << lClockConfigFile);
+	TLOG_DEBUG(0) << "PLL configuration file : " << lClockConfigFile;
 	
 	// Upload config file to PLL
 	configure_pll(lClockConfigFile);
@@ -96,13 +96,13 @@ TLUIONode::reset(const std::string& clock_config_file) const {
 	configure_dac(0, lBISignalThreshold);
 	configure_dac(1, lBISignalThreshold);
 
-	ERS_INFO("DAC1 and DAC2 set to " << std::hex << lBISignalThreshold);
+	TLOG_DEBUG(0) << "DAC1 and DAC2 set to " << std::hex << lBISignalThreshold;
 
 	getNode("csr.ctrl.rst_lock_mon").write(0x1);
 	getNode("csr.ctrl.rst_lock_mon").write(0x0);
 	getClient().dispatch();
 
-	ERS_INFO("Reset done");
+	TLOG() << "Reset done";
 }
 //-----------------------------------------------------------------------------
 
@@ -126,7 +126,7 @@ TLUIONode::configure_dac(uint32_t dac_id, uint32_t dac_value, bool internal_ref)
 //-----------------------------------------------------------------------------
 std::string
 TLUIONode::get_sfp_status(uint32_t /*sfp_id*/, bool /*print_out*/) const {
-	ERS_LOG("TLU does not support SFP I2C");
+	TLOG() << "TLU does not support SFP I2C";
 	return "";
 }
 //-----------------------------------------------------------------------------
@@ -135,7 +135,7 @@ TLUIONode::get_sfp_status(uint32_t /*sfp_id*/, bool /*print_out*/) const {
 //-----------------------------------------------------------------------------
 void
 TLUIONode::switch_sfp_soft_tx_control_bit(uint32_t /*sfp_id*/, bool /*turn_on*/) const {
-	ERS_LOG("TLU does not support SFP I2C");
+	TLOG() << "TLU does not support SFP I2C";
 }
 //-----------------------------------------------------------------------------
 

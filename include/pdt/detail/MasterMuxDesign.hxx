@@ -145,24 +145,24 @@ std::vector<uint32_t> MasterMuxDesign<IO,MST>::scan_sfp_mux() const {
     // TODO will this be right for every fanout board, need to check the IO board
     uint32_t lNumberOfMuxChannels = 8;
     for (uint32_t i=0; i < lNumberOfMuxChannels; ++i) {
-    	ERS_INFO("Scanning slot " << i);
+    	TLOG_DEBUG(0) << "Scanning slot " << i;
 
     	try {
     		this->switch_sfp_mux_channel(i, true);	
     	} catch(...) {
-    		ERS_INFO("Slot " << i << " not locked");
+    		TLOG_DEBUG(0) << "Slot " << i << " not locked";
     	}
     	// TODO catch right except
     	
-  		ERS_INFO("Slot " << i << " locked");
+  		TLOG_DEBUG(0) << "Slot " << i << " locked";
   		lLockedChannels.push_back(i);		
     }
     
 
     if (lLockedChannels.size()) {
-    	ERS_LOG("Slots locked: " << vec_fmt(lLockedChannels));
+    	TLOG() << "Slots locked: " << vec_fmt(lLockedChannels);
     } else {
-        ERS_LOG("No slots locked");
+        TLOG() << "No slots locked";
     }
     return lLockedChannels;
 }

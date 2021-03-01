@@ -15,7 +15,7 @@
 #include "pdt/I2CSlave.hpp"
 #include "pdt/I2CMasterNode.hpp"
 
-#include "ers/ers.h"
+#include "ers/Issue.hpp"
 
 namespace dunedaq {
 

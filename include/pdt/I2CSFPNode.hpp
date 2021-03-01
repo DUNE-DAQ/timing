@@ -18,7 +18,7 @@
 #include "pdt/timingmon/Structs.hpp"
 #include "TimingIssues.hpp"
 
-#include "ers/ers.h"
+#include "ers/Issue.hpp"
 
 #include <map>
 

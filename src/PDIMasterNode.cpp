@@ -102,18 +102,18 @@ PDIMasterNode::apply_endpoint_delay(uint32_t address, uint32_t coarse_delay, uin
         lGlobal.enable_upstream_endpoint();
         
         uint64_t lEndpointRTT = lEcho.send_echo_and_measure_delay();
-        ERS_LOG("Pre delay adjustment RTT:  " << format_reg_value(lEndpointRTT)); 
+        TLOG() << "Pre delay adjustment RTT:  " << format_reg_value(lEndpointRTT); 
     }
     
     vlCmdNode.apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay);
 
-    millisleep(100);
-
     if (measure_rtt) {
+        millisleep(100);
+
         lGlobal.enable_upstream_endpoint();
 
         uint64_t lEndpointRTT = lEcho.send_echo_and_measure_delay();
-        ERS_LOG("Post delay adjustment RTT: " << format_reg_value(lEndpointRTT));
+        TLOG() << "Post delay adjustment RTT: " << format_reg_value(lEndpointRTT);
 
         if (control_sfp) vlCmdNode.switch_endpoint_sfp(address, false);
     }
@@ -151,7 +151,7 @@ PDIMasterNode::enable_fake_trigger(uint32_t channel, double rate, bool poisson) 
     lFTConfig.print();
     std::stringstream trig_stream;
     trig_stream << "> Trigger rate for FakeTrig" << channel << " (" << std::showbase << std::hex << 0x8+channel << ") set to " << std::setprecision(3) << std::scientific << lFTConfig.actual_rate << " Hz";
-    ERS_INFO(trig_stream.str());
+    TLOG() << trig_stream.str();
 
     std::stringstream lTriggerModeStream;
     lTriggerModeStream << "> Trigger mode: ";
@@ -161,7 +161,7 @@ PDIMasterNode::enable_fake_trigger(uint32_t channel, double rate, bool poisson) 
     } else {
         lTriggerModeStream << "periodic";
     }
-    ERS_INFO(lTriggerModeStream.str());
+    TLOG() << lTriggerModeStream.str();
     getNode<FLCmdGeneratorNode>("master.scmd_gen").enable_fake_trigger(channel, lFTConfig.divisor, lFTConfig.prescale, poisson);
 }
 //-----------------------------------------------------------------------------
@@ -237,13 +237,13 @@ void
 PDIMasterNode::sync_timestamp() const {
 
     const uint64_t lOldTimestamp = read_timestamp();
-    ERS_LOG("Old timestamp: " << format_reg_value(lOldTimestamp) << ", " << format_timestamp(lOldTimestamp));
+    TLOG() << "Old timestamp: " << format_reg_value(lOldTimestamp) << ", " << format_timestamp(lOldTimestamp);
     
     const uint64_t lNow = get_seconds_since_epoch() * g_dune_sp_clock_in_hz;
     set_timestamp(lNow);
 
     const uint64_t lNewTimestamp = read_timestamp();
-    ERS_LOG("New timestamp: " << format_reg_value(lNewTimestamp) << ", " << format_timestamp(lNewTimestamp));
+    TLOG() << "New timestamp: " << format_reg_value(lNewTimestamp) << ", " << format_timestamp(lNewTimestamp);
 }
 //-----------------------------------------------------------------------------
 

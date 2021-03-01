@@ -14,7 +14,7 @@
 #include <boost/range/algorithm/copy.hpp>
 
 #include "pdt/TimingIssues.hpp"
-#include "ers/ers.h"
+#include "ers/ers.hpp"
 #include "pdt/toolbox.hpp"
 #include "pdt/I2CMasterNode.hpp"
 

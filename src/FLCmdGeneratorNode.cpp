@@ -46,7 +46,7 @@ FLCmdGeneratorNode::send_fl_cmd(uint32_t command, uint32_t channel, const Timest
     
     getNode("chan_ctrl.force").write(0x0);
     getClient().dispatch();
-    ERS_LOG("Command sent " << g_command_map.at(command) << "(" << format_reg_value(command) << ") from generator " << format_reg_value(channel) << " @time 0x" << tstamp2int(lTStamp) << " " << format_timestamp(lTStamp));
+    TLOG() << "Command sent " << g_command_map.at(command) << "(" << format_reg_value(command) << ") from generator " << format_reg_value(channel) << " @time 0x" << tstamp2int(lTStamp) << " " << format_timestamp(lTStamp);
 }
 //-----------------------------------------------------------------------------
 
@@ -74,7 +74,7 @@ FLCmdGeneratorNode::disable_fake_trigger(uint32_t channel) const {
     //Clear the internal trigger generator.
     getNode("sel").write(channel);
     reset_sub_nodes(getNode("chan_ctrl"));
-    ERS_LOG("Fake trigger generator " << format_reg_value(channel) << " configuration cleared");
+    TLOG() << "Fake trigger generator " << format_reg_value(channel) << " configuration cleared";
 }
 //------------------------------------------------------------------------------
 

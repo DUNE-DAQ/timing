@@ -95,7 +95,7 @@ void
 SIMIONode::reset(const std::string& /*clock_config_file*/) const {
 
 	writeSoftResetRegister();	
-	ERS_INFO("Reset done");
+	TLOG_DEBUG(0) << "Reset done";
 }
 //-----------------------------------------------------------------------------
 
@@ -103,7 +103,7 @@ SIMIONode::reset(const std::string& /*clock_config_file*/) const {
 //-----------------------------------------------------------------------------
 void
 SIMIONode::configure_pll(const std::string& /*clock_config_file*/) const {
-	ERS_INFO("Simulation does not support PLL config");
+	TLOG_DEBUG(0) << "Simulation does not support PLL config";
 }
 //-----------------------------------------------------------------------------
 
@@ -111,7 +111,7 @@ SIMIONode::configure_pll(const std::string& /*clock_config_file*/) const {
 //-----------------------------------------------------------------------------
 std::vector<double>
 SIMIONode::read_clock_frequencies() const {
-	ERS_INFO("Simulation does not support reading of freq");
+	TLOG_DEBUG(0) << "Simulation does not support reading of freq";
 	return {};
 }
 //-----------------------------------------------------------------------------
@@ -120,7 +120,7 @@ SIMIONode::read_clock_frequencies() const {
 //-----------------------------------------------------------------------------
 std::string
 SIMIONode::get_clock_frequencies_table(bool /*print_out*/) const {
-	ERS_INFO("Simulation does not support freq table");
+	TLOG_DEBUG(0) << "Simulation does not support freq table";
 	return "Simulation does not support freq table";
 }
 //-----------------------------------------------------------------------------
@@ -129,7 +129,7 @@ SIMIONode::get_clock_frequencies_table(bool /*print_out*/) const {
 //-----------------------------------------------------------------------------
 std::string
 SIMIONode::get_pll_status(bool /*print_out*/) const {
-	ERS_INFO("Simulation does not support PLL status");
+	TLOG_DEBUG(0) << "Simulation does not support PLL status";
 	return "Simulation does not support PLL status";
 }
 //-----------------------------------------------------------------------------
@@ -138,7 +138,7 @@ SIMIONode::get_pll_status(bool /*print_out*/) const {
 //-----------------------------------------------------------------------------
 std::string
 SIMIONode::get_sfp_status(uint32_t /*sfp_id*/, bool /*print_out*/) const {
-	ERS_INFO("Simulation does not support SFP I2C");
+	TLOG_DEBUG(0) << "Simulation does not support SFP I2C";
 	return "Simulation does not support SFP I2C";
 }
 //-----------------------------------------------------------------------------
@@ -146,7 +146,7 @@ SIMIONode::get_sfp_status(uint32_t /*sfp_id*/, bool /*print_out*/) const {
 //-----------------------------------------------------------------------------
 void
 SIMIONode::switch_sfp_soft_tx_control_bit(uint32_t /*sfp_id*/, bool /*turn_on*/) const {
-	ERS_INFO("Simulation does not support SFP I2C");
+	TLOG_DEBUG(0) << "Simulation does not support SFP I2C";
 }
 //-----------------------------------------------------------------------------
 

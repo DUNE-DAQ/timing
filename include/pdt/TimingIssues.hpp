@@ -8,7 +8,7 @@
 #ifndef TIMING_BOARD_SOFTWARE_SRC_TIMING_ISSUES_HPP_
 #define	TIMING_BOARD_SOFTWARE_SRC_TIMING_ISSUES_HPP_
 
-#include "ers/Issue.h"
+#include "ers/Issue.hpp"
 
 #include <string>
 

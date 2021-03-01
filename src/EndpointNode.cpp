@@ -129,18 +129,18 @@ EndpointNode::read_data_buffer(bool read_all) const {
 	auto lBufCount = getNode("buf.count").read();
 	getClient().dispatch();
 
-	ERS_INFO("Words available in readout buffer:      " << format_reg_value(lBufCount));
+	TLOG_DEBUG(0) << "Words available in readout buffer:      " << format_reg_value(lBufCount);
 
 	uint32_t lEventsToRead = lBufCount.value() / g_event_size;
 	
-	ERS_INFO("Events available in readout buffer:     " << format_reg_value(lEventsToRead));
+	TLOG_DEBUG(0) << "Events available in readout buffer:     " << format_reg_value(lEventsToRead);
 
 	uint32_t lWordsToRead = read_all ? lBufCount.value() : lEventsToRead * g_event_size;
 
-	ERS_INFO("Words to be read out in readout buffer: " << format_reg_value(lWordsToRead));
+	TLOG_DEBUG(0) << "Words to be read out in readout buffer: " << format_reg_value(lWordsToRead);
 	
 	if (!lWordsToRead) {
-		ERS_LOG("No words to be read out.");
+		TLOG() << "No words to be read out.";
 	}
 	
 	auto lBufData = getNode("buf.data").readBlock(lWordsToRead);

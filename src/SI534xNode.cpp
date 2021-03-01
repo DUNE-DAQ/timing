@@ -2,7 +2,7 @@
 
 // PDT headers
 #include "pdt/toolbox.hpp"
-#include "ers/ers.h"
+#include "ers/ers.hpp"
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/algorithm/string/predicate.hpp> 
@@ -80,7 +80,7 @@ SI534xSlave::seek_header( std::ifstream& file ) const {
         }
     }
     
-    ERS_DEBUG(0, "Found desing ID " << lDesignID);
+    TLOG_DEBUG(2) << "Found desing ID " << lDesignID;
 
     return lDesignID;
 }
@@ -149,7 +149,7 @@ SI534xSlave::read_config_section( std::ifstream& file, std::string tag ) const {
 
         std::stringstream debug_stream;
         debug_stream << std::showbase << std::hex << "Address: " <<  lAddress << lDummy << " Data: " << lData;
-        ERS_DEBUG(2, debug_stream.str());
+        TLOG_DEBUG(2) << debug_stream.str();
 
         lConfig.push_back(RegisterSetting_t(lAddress, lData));
     }
@@ -193,9 +193,9 @@ SI534xSlave::configure( const std::string& aPath ) const {
         lPostAmble.clear();
     }
 
-    ERS_DEBUG(0, "Preamble size = " << lPreamble.size());
-    ERS_DEBUG(0, "Registers size = " << lRegisters.size());
-    ERS_DEBUG(0, "PostAmble size = " << lPostAmble.size());
+    TLOG_DEBUG(2) << "Preamble size = " << lPreamble.size();
+    TLOG_DEBUG(2) << "Registers size = " << lRegisters.size();
+    TLOG_DEBUG(2) << "PostAmble size = " << lPostAmble.size();
 
     lFile.close();
 
@@ -236,11 +236,11 @@ SI534xSlave::upload_config( const std::vector<SI534xSlave::RegisterSetting_t>& c
         debug_stream   << std::showbase << std::hex 
                        << "Writing to "  << (uint32_t)lSetting.get<0>() 
                        << " data " << (uint32_t)lSetting.get<1>();
-        ERS_DEBUG(0, debug_stream.str());
+        TLOG_DEBUG(2) << debug_stream.str();
 
         uint32_t lMaxAttempts(2), lAttempt(0);
         while( lAttempt < lMaxAttempts ) {        
-            ERS_DEBUG(0, "Attempt " << lAttempt);
+            TLOG_DEBUG(2) << "Attempt " << lAttempt;
             if ( lAttempt > 0) {
                 ers::warning(SI534xRegWriteRetry(ERS_HERE, "SI534xSlave", format_reg_value((uint32_t)lSetting.get<0>()) ));
             }
@@ -256,7 +256,7 @@ SI534xSlave::upload_config( const std::vector<SI534xSlave::RegisterSetting_t>& c
 
         ++k;
         if ( (k % lNotifyEvery) == 0 ) {
-            ERS_DEBUG(0, (k/lNotifyEvery) * lNotifyPercent << "%");
+            TLOG_DEBUG(2) << (k/lNotifyEvery) * lNotifyPercent << "%";
         }
     }
 

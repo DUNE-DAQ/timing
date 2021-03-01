@@ -16,8 +16,7 @@
 #include "TimingIssues.hpp"
 #include "pdt/definitions.hpp"
 #include "pdt/toolbox.hpp"
-#include "ers/Issue.h"
-#include "ers/ers.h"
+#include "ers/Issue.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"

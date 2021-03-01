@@ -195,11 +195,11 @@ IONode::configure_pll(const std::string& clock_config_file) const {
 	auto pll = get_pll();
 
 	uint32_t lSIVersion = pll->read_device_version();
-	ERS_INFO("Configuring PLL        : SI" << format_reg_value(lSIVersion));
+	TLOG_DEBUG(0) << "Configuring PLL        : SI" << format_reg_value(lSIVersion);
 
 	pll->configure(clock_config_file);
 	
-	ERS_INFO("PLL configuration id   : " << pll->read_config_id());
+	TLOG_DEBUG(0) << "PLL configuration id   : " << pll->read_config_id();
 }
 //-----------------------------------------------------------------------------
 
@@ -292,7 +292,7 @@ IONode::writeSoftResetRegister() const {
 void
 IONode::soft_reset() const {
 	writeSoftResetRegister();
-	ERS_INFO("Soft reset done");
+	TLOG_DEBUG(0) << "Soft reset done";
 }
 //-----------------------------------------------------------------------------
 

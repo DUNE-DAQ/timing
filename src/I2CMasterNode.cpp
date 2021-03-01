@@ -13,7 +13,7 @@
 #include <boost/range/algorithm/copy.hpp>
 
 #include "pdt/TimingIssues.hpp"
-#include "ers/ers.h"
+#include "ers/ers.hpp"
 #include "pdt/toolbox.hpp"
 #include "pdt/I2CSlave.hpp"
 
@@ -371,7 +371,7 @@ I2CMasterNode::send_i2c_command_and_read_data( uint8_t command ) const  {
     assert( !(command & kWriteToSlaveCmd) );
 
     uint8_t lFullCmd = command | kReadFromSlaveCmd;
-    ERS_DEBUG(1, ">> sending read cmd  = " << format_reg_value((uint32_t)lFullCmd));
+    TLOG_DEBUG(2) << ">> sending read cmd  = " << format_reg_value((uint32_t)lFullCmd);
 
 
     // Force the read bit high and set them cmd bits
@@ -385,7 +385,7 @@ I2CMasterNode::send_i2c_command_and_read_data( uint8_t command ) const  {
     uhal::ValWord<uint32_t> lResult = getNode(kRxNode).read();
     getClient().dispatch();
 
-    ERS_DEBUG(1, "<< receive data      = " << format_reg_value((uint32_t)lResult));
+    TLOG_DEBUG(2) << "<< receive data      = " << format_reg_value((uint32_t)lResult);
 
     return (lResult & 0xff);
 }
@@ -402,7 +402,7 @@ I2CMasterNode::send_i2c_command_and_write_data( uint8_t command, uint8_t data ) 
     uint8_t lFullCmd = command | kWriteToSlaveCmd;
     std::stringstream debug_stream;
     debug_stream << ">> sending write cmd = " << std::showbase << std::hex << (uint32_t)lFullCmd << " data = " << std::showbase << std::hex << (uint32_t)data;
-    ERS_DEBUG(1, debug_stream.str());
+    TLOG_DEBUG(0) << debug_stream.str();
 
     // write the payload
     getNode(kTxNode).write( data );

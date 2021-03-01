@@ -26,7 +26,7 @@ FMCIONode::get_status(bool print_out) const {
 	auto subnodes = read_sub_nodes(getNode("csr.stat"));
 	lStatus << format_reg_table(subnodes, "FMC IO state");
 
-	if (print_out) std::cout << lStatus.str();
+	if (print_out) TLOG() << std::endl << lStatus.str();
     return lStatus.str();
 }
 //-----------------------------------------------------------------------------
@@ -57,7 +57,7 @@ FMCIONode::reset(const std::string& clock_config_file) const {
 
 	// Find the right pll config file
 	std:: string lClockConfigFile = get_full_clock_config_file_path(clock_config_file);
-	ERS_INFO("PLL configuration file : " << lClockConfigFile);
+	TLOG_DEBUG(0) << "PLL configuration file : " << lClockConfigFile;
 
 	// Upload config file to PLL
 	configure_pll(lClockConfigFile);
@@ -69,7 +69,7 @@ FMCIONode::reset(const std::string& clock_config_file) const {
 	getNode("csr.ctrl.rst_lock_mon").write(0x0);
 	getClient().dispatch();
 	
-	ERS_INFO("Reset done");
+	TLOG() << "Reset done";
 }
 //-----------------------------------------------------------------------------
 

@@ -329,13 +329,13 @@ I2CSFPSlave::get_status(bool print_out) const {
     
     // Does the SFP support DDM
     if (!read_ddm_support_bit()) {
-        ERS_LOG("DDM not available for SFP on I2C bus: " << get_master_id());
+        TLOG() << "DDM not available for SFP on I2C bus: " << get_master_id();
         lStatus << format_reg_table(lSFPInfo, "SFP status", {"", ""});
         if (print_out) std::cout << lStatus.str();
         return lStatus.str();
     } else {
         if (read_i2c_reg_addressSwapBit()) {
-            ERS_LOG("SFP DDM I2C address swap not supported. SFP on I2C bus: " << get_master_id());
+            TLOG() << "SFP DDM I2C address swap not supported. SFP on I2C bus: " << get_master_id();
             lStatus << format_reg_table(lSFPInfo, "SFP status", {"", ""});
             if (print_out) std::cout << lStatus.str();
             return lStatus.str();
@@ -397,12 +397,12 @@ I2CSFPSlave::get_info(timingmon::TimingSFPMonitorData& mon_data) const {
     
     // Does the SFP support DDM
     if (!this->read_ddm_support_bit()) {
-        ERS_LOG("DDM not available for SFP on I2C bus: " << get_master_id());
+        TLOG() << "DDM not available for SFP on I2C bus: " << get_master_id();
         mon_data.ddm_supported = 0;
         return;
     } else {
         if (this->read_i2c_reg_addressSwapBit()) {
-            ERS_LOG("SFP DDM I2C address swap not supported. SFP on I2C bus: " << get_master_id());
+            TLOG() << "SFP DDM I2C address swap not supported. SFP on I2C bus: " << get_master_id();
             return;
         }
     }

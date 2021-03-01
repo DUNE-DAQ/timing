@@ -133,6 +133,8 @@ local timingmon = {
 //
     timing_tlu_mon_data: s.record("TimingTLUMonitorData", 
     [
+        s.field("class_name", self.text_data, "TimingTLUMonitorData",
+                doc="Info class name"),
         s.field("cdr_lol", self.bool_data,
                 doc="CDR LOL flag"),
         s.field("cdr_los", self.bool_data, 0,
@@ -272,6 +274,8 @@ local timingmon = {
 
     timing_pdi_master_tlu_mon_data: s.record("TimingPDIMasterTLUMonitorData", 
     [
+        s.field("class_name", self.text_data, "TimingPDIMasterTLUMonitorData",
+                doc="Info class name"),
         s.field("hardware_data", self.timing_tlu_mon_data,
                 doc="TLU hardware monitor data"),
         s.field("firmware_data", self.timing_pdi_master_mon_data,
@@ -281,6 +285,8 @@ local timingmon = {
 
     timing_pdi_master_tlu_mon_data_debug: s.record("TimingPDIMasterTLUMonitorDataDebug", 
     [
+        s.field("class_name", self.text_data, "TimingPDIMasterTLUMonitorDataDebug",
+                doc="Info class name"),
         s.field("firmware_data", self.timing_pdi_master_mon_data,
                 doc="PD-I timing master firmware monitor data"),
         s.field("hardware_data", self.timing_tlu_mon_data_debug,
@@ -290,6 +296,8 @@ local timingmon = {
 
     timing_pdi_master_fmc_mon_data: s.record("TimingPDIMasterFMCMonitorData", 
     [
+        s.field("class_name", self.text_data, "TimingPDIMasterFMCMonitorData",
+                doc="Info class name"),
         s.field("hardware_data", self.timing_fmc_mon_data,
                 doc="FMC hardware monitor data"),
         s.field("firmware_data", self.timing_pdi_master_mon_data,
@@ -299,6 +307,8 @@ local timingmon = {
 
     timing_pdi_master_fmc_mon_data_debug: s.record("TimingPDIMasterFMCMonitorDataDebug", 
     [
+        s.field("class_name", self.text_data, "TimingPDIMasterFMCMonitorDataDebug",
+                doc="Info class name"),
         s.field("hardware_data", self.timing_fmc_mon_data_debug,
                 doc="FMC hardware monitor data"),
         s.field("firmware_data", self.timing_pdi_master_mon_data,
@@ -308,6 +318,8 @@ local timingmon = {
 
     timing_endpoint_fmc_mon_data: s.record("TimingEndpointFMCMonitorData", 
     [
+        s.field("class_name", self.text_data, "TimingEndpointFMCMonitorData",
+                 doc="Info class name"),
         s.field("hardware_data", self.timing_fmc_mon_data,
                 doc="FMC hardware monitor data"),
         s.field("firmware_data", self.timing_endpoint_mon_data,

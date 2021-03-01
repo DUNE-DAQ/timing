@@ -14,7 +14,7 @@
 
 #include "pdt/I2CSlave.hpp"
 
-#include "ers/ers.h"
+#include "ers/Issue.hpp"
 
 #include <map>
 

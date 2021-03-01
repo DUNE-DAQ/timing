@@ -5,7 +5,8 @@
 
 #include "TimingIssues.hpp"
 
-#include "ers/ers.h"
+#include "ers/Issue.hpp"
+#include "logging/Logging.hpp"
 
 // uHAL Headers
 #include <uhal/Node.hpp>

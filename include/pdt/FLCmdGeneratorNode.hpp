@@ -58,8 +58,8 @@ struct FakeTriggerConfig {
     }
 
     void print() const {
-        ERS_INFO("Requested rate, actual rate: " << requested_rate << ", " << actual_rate);
-        ERS_INFO("prescale, divisor: " << prescale << ", " << divisor);
+        TLOG() << "Requested rate, actual rate: " << requested_rate << ", " << actual_rate;
+        TLOG() << "prescale, divisor: " << prescale << ", " << divisor;
     }
 };
 

@@ -120,7 +120,8 @@ format_reg_value(T regValue, uint32_t base) {
   } else if (base == 10) {
     lValueStream << std::dec;
   } else {
-    ERS_LOG("Unsupported number base: " << base);
+    // TODO warning?
+    TLOG() << "Unsupported number base: " << base;
     lValueStream << std::dec;
   }
   lValueStream << regValue;
@@ -149,7 +150,7 @@ format_reg_value(uhal::ValWord<uint32_t> regValue, uint32_t base) {
         lValueStream << std::dec;
     } else {
         // TODO warning?
-        ERS_LOG("format_reg_value: unsupported number base: " << base);
+        TLOG() << "format_reg_value: unsupported number base: " << base;
         lValueStream << std::dec;
     }
     lValueStream << regValue.value();

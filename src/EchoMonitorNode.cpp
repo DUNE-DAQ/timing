@@ -53,7 +53,7 @@ EchoMonitorNode::send_echo_and_measure_delay(int64_t timeout) const {
 		lDone = getNode("csr.stat.rx_done").read();
         getClient().dispatch();
 		
-		ERS_DEBUG(0, "rx done: " << std::hex << lDone.value());
+		TLOG_DEBUG(0) << "rx done: " << std::hex << lDone.value();
 
 		if (lDone.value()) break; 
 	}
@@ -72,8 +72,8 @@ EchoMonitorNode::send_echo_and_measure_delay(int64_t timeout) const {
     uint64_t lTimeRx = ((uint64_t)lTimeRxH.value() << 32) + lTimeRxL.value();
     uint64_t lTimeTx = ((uint64_t)lTimeTxH.value() << 32) + lTimeTxL.value();
 
-    ERS_DEBUG(0, "tx ts: " << format_reg_value(lTimeTx));
-    ERS_DEBUG(0, "rx ts: " << format_reg_value(lTimeRx));
+    TLOG_DEBUG(0) << "tx ts: " << format_reg_value(lTimeTx);
+    TLOG_DEBUG(0) << "rx ts: " << format_reg_value(lTimeRx);
 
     return lTimeRx - lTimeTx;
 }

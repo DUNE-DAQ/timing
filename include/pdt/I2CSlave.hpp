@@ -14,7 +14,7 @@
 
 #include "TimingIssues.hpp"
 
-#include "ers/ers.h"
+#include "ers/Issue.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"

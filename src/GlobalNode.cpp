@@ -79,7 +79,7 @@ GlobalNode::enable_upstream_endpoint(uint32_t timeout) {
 	getNode("csr.ctrl.ep_en").write(0x1);
 	getClient().dispatch();
 
-	ERS_INFO("Upstream endpoint reset, waiting for lock");
+	TLOG() << "Upstream endpoint reset, waiting for lock";
 
 	auto start = std::chrono::high_resolution_clock::now();
 
@@ -101,7 +101,7 @@ GlobalNode::enable_upstream_endpoint(uint32_t timeout) {
         getClient().dispatch();
 
         if (lEptRdy.value()) {
-        	ERS_INFO("Endpoint locked: state= " << format_reg_value(lEptStat));
+        	TLOG() << "Endpoint locked: state= " << format_reg_value(lEptStat);
             return;
         }
 	}
@@ -109,7 +109,7 @@ GlobalNode::enable_upstream_endpoint(uint32_t timeout) {
 	if (!lEptRdy.value()) {
 		throw UpstreamEndpointFailedToLock(ERS_HERE, getId(), format_reg_value(lEptStat));
     } else {
-        ERS_INFO("Endpoint locked: state= " << format_reg_value(lEptStat));
+        TLOG() << "Endpoint locked: state= " << format_reg_value(lEptStat);
     }
 }
 //-----------------------------------------------------------------------------

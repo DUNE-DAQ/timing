@@ -2,7 +2,7 @@
 
 // PDT headers
 #include "pdt/toolbox.hpp"
-#include "ers/ers.h"
+#include "ers/ers.hpp"
 
 // #include <boost/tuple/tuple.hpp>
 
