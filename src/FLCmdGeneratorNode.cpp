@@ -103,7 +103,10 @@ FLCmdGeneratorNode::get_info(timingmon::TimingFLCmdCountersVector& mon_data) con
     auto rejected_counters = getNode("rctrs").readBlock(getNode("actrs").getSize());
     getClient().dispatch();
 
-    uint counters_number = getNode("actrs").getSize();
+    //uint counters_number = getNode("actrs").getSize();
+
+    // 5 cmd channels
+    uint counters_number = 5;
 
     for (uint i=0; i < counters_number; ++i) {
         timingmon::TimingFLCmdCounters fl_cmd_counters;

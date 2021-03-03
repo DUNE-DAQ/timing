@@ -59,7 +59,7 @@ EchoMonitorNode::send_echo_and_measure_delay(int64_t timeout) const {
 	}
 
 	if (!lDone.value()) {
-        throw EchoTimeout(ERS_HERE, getId(), timeout);
+        throw EchoTimeout(ERS_HERE, timeout);
 	}
 
 	auto lTimeRxL = getNode("csr.rx_l").read();

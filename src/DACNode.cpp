@@ -26,11 +26,11 @@ void
 DACSlave::set_dac(uint8_t channel, uint32_t code) const {
 
     if (channel>7) {
-        throw DACChannelOutOfRange(ERS_HERE, "DACSlave", std::to_string(channel));
+        throw DACChannelOutOfRange(ERS_HERE, std::to_string(channel));
     }
 
     if ( code > 0xffff ) {
-        throw DACValueOutOfRange(ERS_HERE, "DACSlave", std::to_string(code));
+        throw DACValueOutOfRange(ERS_HERE, std::to_string(code));
     }
 
     uint32_t lAddr = 0x18 + (channel & 0x7);

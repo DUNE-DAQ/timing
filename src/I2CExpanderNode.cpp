@@ -33,7 +33,7 @@ void
 I2CExpanderSlave::ensure_valid_bank_id( uint8_t bank_id ) const {
     if ( bank_id == 0 or bank_id == 1) return;
 
-    throw SFPExpanderBankIDError(ERS_HERE, "I2CExpanderSlave", std::to_string(bank_id));
+    throw SFPExpanderBankIDError(ERS_HERE, std::to_string(bank_id));
 }
 //-----------------------------------------------------------------------------
 

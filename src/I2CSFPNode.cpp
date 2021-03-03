@@ -21,7 +21,7 @@ I2CSFPSlave::~I2CSFPSlave( ) {
 void 
 I2CSFPSlave::sfp_reachable() const {
     if (!this->ping()) {
-        throw SFPUnreachable(ERS_HERE, "I2CSFPSlave", get_master_id());
+        throw SFPUnreachable(ERS_HERE, get_master_id());
     }
 }
 //-----------------------------------------------------------------------------
@@ -31,10 +31,10 @@ I2CSFPSlave::sfp_reachable() const {
 void 
 I2CSFPSlave::ddm_available() const {
     if (!read_ddm_support_bit()) {
-        throw SFPDDMUnsupported(ERS_HERE, "I2CSFPSlave", get_master_id());
+        throw SFPDDMUnsupported(ERS_HERE, get_master_id());
     } else {
         if (read_i2c_reg_addressSwapBit()) {
-            throw SFPDDMI2CAddressSwapUnsupported(ERS_HERE, "I2CSFPSlave", get_master_id());
+            throw SFPDDMI2CAddressSwapUnsupported(ERS_HERE, get_master_id());
         }
     }
 }
@@ -292,7 +292,7 @@ I2CSFPSlave::switch_soft_tx_control_bit(bool turn_on) const {
     ddm_available();
 
     if (!read_soft_tx_control_support_bit()) {
-        throw SoftTxLaserControlUnsupported(ERS_HERE, "I2CSFPSlave", get_master_id());
+        throw SoftTxLaserControlUnsupported(ERS_HERE, get_master_id());
     }
     
     // Get optional status/control bits

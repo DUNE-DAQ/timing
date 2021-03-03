@@ -50,7 +50,7 @@ struct FakeTriggerConfig {
         
         uint32_t ps = (uint32_t) ((g_dune_sp_clock_in_hz / (rate * 256 * (1 << divisor))) + 0.5);
         if (ps  == 0 || ps > 256) {
-            throw BadRequestedFakeTriggerRate(ERS_HERE, "FakeTriggerConfig", rate, ps);
+            throw BadRequestedFakeTriggerRate(ERS_HERE, rate, ps);
         } else {
             prescale = ps;
         }

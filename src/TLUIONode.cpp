@@ -114,7 +114,7 @@ TLUIONode::configure_dac(uint32_t dac_id, uint32_t dac_value, bool internal_ref)
 	try {
 		lDACDevice = m_dac_devices.at(dac_id);
 	} catch(const std::out_of_range& e) {
-        throw InvalidDACId(ERS_HERE, getId(), format_reg_value(dac_id));
+        throw InvalidDACId(ERS_HERE, format_reg_value(dac_id));
 	}
 	auto lDAC = get_i2c_device<DACSlave>(m_uid_i2c_bus, lDACDevice);
 	lDAC->set_interal_ref(internal_ref);

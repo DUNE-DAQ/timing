@@ -139,9 +139,9 @@ throw_if_not_file(const std::string& aPath) {
     // Check that the path exists and that it's not a directory
     fs::path cfgFile(aPath);
     if (!fs::exists(cfgFile)) {
-        throw FileNotFound(ERS_HERE, "toolbox", aPath);
+        throw FileNotFound(ERS_HERE, aPath);
     } else if (fs::is_directory(cfgFile)) {
-        throw FileIsDirectory(ERS_HERE, "toolbox", aPath);
+        throw FileIsDirectory(ERS_HERE, aPath);
     }
 
     //    return true;
@@ -240,7 +240,7 @@ BoardType
 convert_value_to_board_type(uint32_t aBoardType) {
     // not pleasnt, but works for now
     if (aBoardType > kBoardTLU) {
-        throw UnknownBoardType(ERS_HERE, "toolbox", format_reg_value(aBoardType));
+        throw UnknownBoardType(ERS_HERE, format_reg_value(aBoardType));
     } else {
         return static_cast<BoardType> (aBoardType);
     }
@@ -253,7 +253,7 @@ CarrierType
 convert_value_to_carrier_type(uint32_t aCarrierType) {
     // not pleasnt, but works for now
     if (aCarrierType > kCarrierATFC) {
-        throw UnknownCarrierType(ERS_HERE, "toolbox", format_reg_value(aCarrierType));
+        throw UnknownCarrierType(ERS_HERE, format_reg_value(aCarrierType));
     } else {
         return static_cast<CarrierType> (aCarrierType);
     }
@@ -266,7 +266,7 @@ DesignType
 convert_value_to_design_type(uint32_t aDesignType) {
     // not pleasnt, but works for now
     if (aDesignType > kDesingEndpoBICRT) {
-        throw UnknownDesignType(ERS_HERE, "toolbox", format_reg_value(aDesignType));
+        throw UnknownDesignType(ERS_HERE, format_reg_value(aDesignType));
     } else {
         return static_cast<DesignType> (aDesignType);
     }

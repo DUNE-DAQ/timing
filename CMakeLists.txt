@@ -10,6 +10,8 @@ find_package(logging REQUIRED)
 find_package(Boost 1.73.0 REQUIRED)
 find_package(pybind11 REQUIRED)
 
+#daq_codegen(*.jsonnet TEMPLATES Structs.hpp.j2 Nljs.hpp.j2 )
+
 ##############################################################################
 set(LIST_OF_UHAL_LIBS $ENV{UHAL_LIB}/libcactus_uhal_log.so $ENV{UHAL_LIB}/libcactus_uhal_uhal.so) # list of UHAL libs.
 

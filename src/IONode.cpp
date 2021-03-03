@@ -79,7 +79,7 @@ IONode::get_board_revision() const {
 	try {
 		return g_board_uid_revision_map.at(lUID);
 	} catch(const std::out_of_range& e) {
-        throw UnknownBoardUID(ERS_HERE, getId(), format_reg_value(lUID), e);
+        throw UnknownBoardUID(ERS_HERE, format_reg_value(lUID), e);
 	}
 }
 //-----------------------------------------------------------------------------
@@ -100,13 +100,13 @@ IONode::get_hardware_info(bool print_out) const {
 	try {
 		lHardwareInfo.push_back(std::make_pair("Board type", g_board_type_map.at(lBoardType)));
 	} catch(const std::out_of_range& e) {
-        throw MissingBoardTypeMapEntry(ERS_HERE, getId(), format_reg_value(lBoardType), e);
+        throw MissingBoardTypeMapEntry(ERS_HERE, format_reg_value(lBoardType), e);
 	}
 
 	try {
 		lHardwareInfo.push_back(std::make_pair("Board revision", g_board_revision_map.at(lBoardRevision)));
 	} catch(const std::out_of_range& e) {
-        throw MissingBoardRevisionMapEntry(ERS_HERE, getId(), format_reg_value(lBoardRevision), e);
+        throw MissingBoardRevisionMapEntry(ERS_HERE, format_reg_value(lBoardRevision), e);
 	}
 
 	lHardwareInfo.push_back(std::make_pair("Board UID", format_reg_value(read_board_uid())));
@@ -114,13 +114,13 @@ IONode::get_hardware_info(bool print_out) const {
 	try {
 		lHardwareInfo.push_back(std::make_pair("Carrier type", g_carrier_type_map.at(lCarrierType)));
 	} catch(const std::out_of_range& e) {
-    	throw MissingCarrierTypeMapEntry(ERS_HERE, getId(), format_reg_value(lCarrierType), e);
+    	throw MissingCarrierTypeMapEntry(ERS_HERE, format_reg_value(lCarrierType), e);
 	}
 
 	try {
 		lHardwareInfo.push_back(std::make_pair("Design type", g_design_type_map.at(lDesignType)));
 	} catch(const std::out_of_range& e) {
-        throw MissingDesignTypeMapEntry(ERS_HERE, getId(), format_reg_value(lDesignType), e);
+        throw MissingDesignTypeMapEntry(ERS_HERE, format_reg_value(lDesignType), e);
 	}
 	lInfo << format_reg_table(lHardwareInfo, "Hardware info", {"", ""});
 
@@ -150,19 +150,19 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
 		try {
 			lClockConfigKey = g_board_revision_map.at(lBoardRevision) + "_";
 		} catch(const std::out_of_range& e) {
-        	throw MissingBoardRevisionMapEntry(ERS_HERE, getId(), format_reg_value(lBoardRevision), e);
+        	throw MissingBoardRevisionMapEntry(ERS_HERE, format_reg_value(lBoardRevision), e);
 		}
 
 		try {
 			lClockConfigKey = lClockConfigKey + g_carrier_type_map.at(lCarrierType) + "_";
 		} catch(const std::out_of_range& e) {
-        	throw MissingCarrierTypeMapEntry(ERS_HERE, getId(), format_reg_value(lCarrierType), e);
+        	throw MissingCarrierTypeMapEntry(ERS_HERE, format_reg_value(lCarrierType), e);
 		}
 
 		try {
 			lClockConfigKey = lClockConfigKey + g_design_type_map.at(lDesignType);
 		} catch(const std::out_of_range& e) {
-        	throw MissingDesignTypeMapEntry(ERS_HERE, getId(), format_reg_value(lDesignType), e);
+        	throw MissingDesignTypeMapEntry(ERS_HERE, format_reg_value(lDesignType), e);
 		}
 
 		// modifier in case a different clock file is needed based on firmware configuration
@@ -171,7 +171,7 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
 		try {
 			lConfigFile = g_clock_config_map.at(lClockConfigKey);
 		} catch (const std::out_of_range& e) {
-        	throw ClockConfigNotFound(ERS_HERE, getId(), lClockConfigKey, e);
+        	throw ClockConfigNotFound(ERS_HERE, lClockConfigKey, e);
 		}
       	
       	return std::string(std::getenv("PDT_TESTS")) + "/etc/clock/" + lConfigFile;
@@ -305,7 +305,7 @@ IONode::get_sfp_status(uint32_t sfp_id, bool print_out) const {
 	try {
 		lSFPI2CBus = m_sfp_i2c_buses.at(sfp_id);
 	} catch(const std::out_of_range& e) {
-        throw InvalidSFPId(ERS_HERE, getId(), format_reg_value(sfp_id), e);
+        throw InvalidSFPId(ERS_HERE, format_reg_value(sfp_id), e);
 	}
 	auto sfp = get_i2c_device<I2CSFPSlave>(lSFPI2CBus, "SFP_EEProm");
 	lStatus << sfp->get_status();
@@ -322,7 +322,7 @@ IONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const {
 	try {
 		lSFPI2CBus = m_sfp_i2c_buses.at(sfp_id);
 	} catch(const std::out_of_range& e) {
-        throw InvalidSFPId(ERS_HERE, getId(), format_reg_value(sfp_id), e);
+        throw InvalidSFPId(ERS_HERE, format_reg_value(sfp_id), e);
 	}
 	auto sfp = get_i2c_device<I2CSFPSlave>(lSFPI2CBus, "SFP_EEProm");
 	sfp->switch_soft_tx_control_bit(turn_on);

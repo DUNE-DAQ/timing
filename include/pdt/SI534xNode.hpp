@@ -36,10 +36,10 @@ ERS_DECLARE_ISSUE(pdt,                                                          
                   " Failed to write Si53xx reg: " << reg << "with data: " << data, ///< Message
                   ((std::string)reg)((std::string)data)                            ///< Message parameters
 )
-ERS_DECLARE_ISSUE(pdt,                                     ///< Namespace
-                  SI534xRegWriteRetry,                     ///< Issue class name
-                  "Retry " << attempt << " for reg " << reg,      ///< Message
-                  ((std::string)attempt)((std::string)reg) ///< Message parameters
+ERS_DECLARE_ISSUE(pdt,                                       ///< Namespace
+                  SI534xRegWriteRetry,                       ///< Issue class name
+                  "Retry " << attempt << " for reg " << reg, ///< Message
+                  ((std::string)attempt)((std::string)reg)   ///< Message parameters
 )
 namespace pdt 
 {

@@ -139,7 +139,7 @@ PartitionNode::read_events( size_t number_of_events ) const {
     uint32_t lEventsToRead = ( number_of_events == 0 ? lEventsInBuffer : number_of_events);
 
     if (lEventsInBuffer < lEventsToRead ) {
-        throw EventReadError(ERS_HERE, getId(), number_of_events, lEventsInBuffer);
+        throw EventReadError(ERS_HERE, number_of_events, lEventsInBuffer);
     }  
 
     uhal::ValVector<uint32_t> lRawEvents = getNode("buf.data").readBlock(lEventsToRead * kWordsPerEvent);
@@ -194,7 +194,7 @@ PartitionNode::start( uint32_t timeout /*milliseconds*/ ) const {
 
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         if ( (end - start) > std::chrono::milliseconds(timeout) ) {
-            throw RunRequestTimeoutExpired(ERS_HERE, getId(), timeout);
+            throw RunRequestTimeoutExpired(ERS_HERE, timeout);
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
@@ -220,7 +220,7 @@ PartitionNode::stop( uint32_t timeout /*milliseconds*/ ) const {
 
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         if ( (end - start) > std::chrono::milliseconds(timeout) ) {
-            throw RunRequestTimeoutExpired(ERS_HERE, getId(), timeout);
+            throw RunRequestTimeoutExpired(ERS_HERE, timeout);
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));

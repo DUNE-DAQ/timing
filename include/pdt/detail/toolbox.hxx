@@ -212,7 +212,7 @@ std::string format_counters_table(std::vector<T> aCounterNodes, std::vector<std:
       lCounterNodeTitles.push_back("Counters");
     }
   } else if (aCounterNodes.size() != aCounterNodeTitles.size()) {
-    throw FormatCountersTableNodesTitlesMismatch(ERS_HERE, "format_counters_table");
+    throw FormatCountersTableNodesTitlesMismatch(ERS_HERE);
   } else {
     lCounterNodeTitles = aCounterNodeTitles;
   }

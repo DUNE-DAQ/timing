@@ -152,7 +152,7 @@ PC059IONode::get_sfp_status(uint32_t sfp_id, bool print_out) const {
 		lStatus << "Fanout SFP " << sfp_id-1 << ":" << std::endl;
 		lSFPBusId = 1;
 	} else {
-        throw InvalidSFPId(ERS_HERE, getId(), format_reg_value(sfp_id));
+        throw InvalidSFPId(ERS_HERE, format_reg_value(sfp_id));
 	}
 	auto sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(lSFPBusId), "SFP_EEProm");
 	
@@ -175,7 +175,7 @@ PC059IONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const
 		switch_sfp_i2c_mux_channel(sfp_id-1);
 		lSFPBusId = 1;
 	} else {
-        throw InvalidSFPId(ERS_HERE, getId(), format_reg_value(sfp_id));
+        throw InvalidSFPId(ERS_HERE, format_reg_value(sfp_id));
 	}
 	auto sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(lSFPBusId), "SFP_EEProm");
 	sfp->switch_soft_tx_control_bit(turn_on);

@@ -108,7 +108,7 @@ uint8_t
 I2CMasterNode::get_slave_address(const std::string& name) const {
     std::unordered_map<std::string, uint8_t>::const_iterator lIt = m_i2c_device_addresses.find(name);
     if ( lIt == m_i2c_device_addresses.end() ) {
-        throw I2CDeviceNotFound(ERS_HERE, getId(), getId(), name);
+        throw I2CDeviceNotFound(ERS_HERE, getId(), name);
     }
     return lIt->second;
 }
@@ -120,7 +120,7 @@ const I2CSlave&
 I2CMasterNode::get_slave(const std::string& name) const {
     std::unordered_map<std::string, I2CSlave*>::const_iterator lIt = m_i2c_devices.find(name);
     if ( lIt == m_i2c_devices.end() ) {
-        throw I2CDeviceNotFound(ERS_HERE, getId(), getId(), name);
+        throw I2CDeviceNotFound(ERS_HERE, getId(), name);
     }
     return *(lIt->second);
 }
@@ -448,7 +448,7 @@ void I2CMasterNode::wait_until_finished(bool aRequireAcknowledgement, bool aRequ
 
         if (arbitrationLost) {
             // This is an instant error at any time
-            throw I2CBusArbitrationLost(ERS_HERE, getId(), getId());
+            throw I2CBusArbitrationLost(ERS_HERE, getId());
         }
 
         if (!transferInProgress) {
@@ -466,15 +466,15 @@ void I2CMasterNode::wait_until_finished(bool aRequireAcknowledgement, bool aRequ
     // the bus operated as expected:
 
     if (lAttempt > lMaxRetry) {
-        throw I2CTransactionTimeout(ERS_HERE, getId(), getId());
+        throw I2CTransactionTimeout(ERS_HERE, getId());
     }
 
     if (aRequireAcknowledgement && !lReceivedAcknowledge) {
-        throw I2CNoAcknowledgeReceived(ERS_HERE, getId(), getId());
+        throw I2CNoAcknowledgeReceived(ERS_HERE, getId());
     }
 
     if (aRequireBusIdleAtEnd && lBusy) {
-        throw I2CTransferFinishedBusStillBusy(ERS_HERE, getId(), getId());
+        throw I2CTransferFinishedBusStillBusy(ERS_HERE, getId());
     }
 }
 

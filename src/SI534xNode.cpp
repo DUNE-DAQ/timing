@@ -76,7 +76,7 @@ SI534xSlave::seek_header( std::ifstream& file ) const {
         if ( lLine == "Address,Data" ) break;
 
         if ( file.eof() ) {
-            throw SI534xConfigError(ERS_HERE, "SI534xSlave", "Incomplete file: End of file detected while seeking the header.");
+            throw SI534xConfigError(ERS_HERE, "Incomplete file: End of file detected while seeking the header.");
         }
     }
     
@@ -130,7 +130,7 @@ SI534xSlave::read_config_section( std::ifstream& file, std::string tag ) const {
             if ( tag.empty() )
                 return lConfig;
             else
-                throw SI534xConfigError(ERS_HERE, "SI534xSlave", "Incomplete file: End of file detected before the end of "+tag+" section.");
+                throw SI534xConfigError(ERS_HERE, "Incomplete file: End of file detected before the end of "+tag+" section.");
         }
 
         // Stop if the line is empty
@@ -138,7 +138,7 @@ SI534xSlave::read_config_section( std::ifstream& file, std::string tag ) const {
 
         // If no sec
         if ( !lSectionFound and !tag.empty()) {
-            throw SI534xMissingConfigSectionError(ERS_HERE, "SI534xSlave", tag);
+            throw SI534xMissingConfigSectionError(ERS_HERE, tag);
         }
 
         uint32_t lAddress, lData;
@@ -217,7 +217,7 @@ SI534xSlave::configure( const std::string& aPath ) const {
     if ( lConfDesignID != lChipDesignID ) {
         std::ostringstream lMsg;
         lMsg << "Post-configuration check failed: Loaded design ID " << lChipDesignID << " does not match the configurationd design id " << lConfDesignID << std::endl;
-        throw SI534xConfigError(ERS_HERE, "SI534xSlave", lMsg.str());
+        throw SI534xConfigError(ERS_HERE, lMsg.str());
     }
 
 }
@@ -242,12 +242,12 @@ SI534xSlave::upload_config( const std::vector<SI534xSlave::RegisterSetting_t>& c
         while( lAttempt < lMaxAttempts ) {        
             TLOG_DEBUG(2) << "Attempt " << lAttempt;
             if ( lAttempt > 0) {
-                ers::warning(SI534xRegWriteRetry(ERS_HERE, "SI534xSlave", format_reg_value((uint32_t)lSetting.get<0>()) ));
+                ers::warning(SI534xRegWriteRetry(ERS_HERE, format_reg_value(lAttempt,10), format_reg_value((uint32_t)lSetting.get<0>()) ));
             }
             try {
               this->write_clock_register(lSetting.get<0>(), lSetting.get<1>());
             } catch( const std::exception& e) {
-                ers::error(SI534xRegWriteFailed(ERS_HERE, "SI534xSlave", format_reg_value((uint32_t)lSetting.get<0>()), format_reg_value((uint32_t)lSetting.get<1>()), e));
+                ers::error(SI534xRegWriteFailed(ERS_HERE, format_reg_value((uint32_t)lSetting.get<0>()), format_reg_value((uint32_t)lSetting.get<1>()), e));
                 ++lAttempt;
                 continue;
             }

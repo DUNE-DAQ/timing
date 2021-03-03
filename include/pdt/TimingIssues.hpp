@@ -17,17 +17,15 @@ namespace dunedaq {
 //PDTExceptionClass(MP7HelperException, "Exception class to handle MP7 specific exceptions")
 
 // Generic exceptions
-// PDTExceptionClass(ArgumentError,"Exception class to handle argument errors")
-//PDTExceptionClass(WrongFileExtension, "File has the wrong file-extension for the class trying to open it")
 ERS_DECLARE_ISSUE(pdt,                             ///< Namespace
                   FileNotFound,                    ///< Issue class name
                   file_path << " does not exist!", ///< Message
                   ((std::string)file_path)         ///< Message parameters
 )
-ERS_DECLARE_ISSUE(pdt,                                ///< Namespace
-                  CorruptedFile,                       ///< Issue class name
+ERS_DECLARE_ISSUE(pdt,                       ///< Namespace
+                  CorruptedFile,             ///< Issue class name
                   file_path << " corrupted", ///< Message
-                  ((std::string)file_path)               ///< Message parameters
+                  ((std::string)file_path)   ///< Message parameters
 )
 ERS_DECLARE_ISSUE_BASE(pdt,                                                             ///< Namespace
                        FileIsDirectory,                                                 ///< Issue class name
@@ -36,11 +34,6 @@ ERS_DECLARE_ISSUE_BASE(pdt,                                                     
                        ((std::string)file_path),                                           ///< Base class attributes
                        ERS_EMPTY                                                        ///< Attribute of this class
 )
-//PDTExceptionClass(CorruptedFile, "File was corrupted")
-//PDTExceptionClass(InvalidExtension, "Invalid extension")
-//PDTExceptionClass(InvalidConfigFile, "Exception class to handle invalid configuration files.")
-//PDTExceptionClass(UnmatchedRequirement, "Exception class to handle invalid unmatched configuration requirements.")
-//PDTExceptionClass(EntryNotFoundError, "Entry not found")
 
 // I2C related issues
 ERS_DECLARE_ISSUE(pdt,                                ///< Namespace
@@ -188,7 +181,7 @@ ERS_DECLARE_ISSUE(pdt,                                ///< Namespace
 )
 
 ERS_DECLARE_ISSUE(pdt,                                ///< Namespace
-                  SoftTxLaserControlUnsupported,    ///< Issue class name
+                  SoftTxLaserControlUnsupported,      ///< Issue class name
                   " SFP on I2C bus: " << bus_id << " does not support soft tx laser control", ///< Message
                   ((std::string)bus_id)               ///< Message parameters
 )
