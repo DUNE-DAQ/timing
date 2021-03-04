@@ -35,12 +35,9 @@ namespace pdt {
  */
 template <class IO, class MST>
 class FanoutDesign : public MasterMuxDesign<IO,MST> {
-// In leiu of UHAL_DERIVEDNODE
-protected:
-    virtual uhal::Node* clone() const;
-//
+
 public:
-    FanoutDesign(const uhal::Node& node);
+    explicit FanoutDesign(const uhal::Node& node);
     virtual ~FanoutDesign();
 
     /**
@@ -69,12 +66,17 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    virtual uint32_t measure_endpoint_rtt(uint32_t address, bool control_sfp, uint32_t sfp_mux) const override;
+    uint32_t measure_endpoint_rtt(uint32_t address, bool control_sfp, uint32_t sfp_mux) const override;
 
     /**
      * @brief      Apply delay to endpoint
      */
-    virtual void apply_endpoint_delay(uint32_t address, uint32_t coarse_delay, uint32_t fine_delay, uint32_t phase_delay, bool measure_rtt, bool control_sfp, uint32_t sfp_mux) const override;
+    void apply_endpoint_delay(uint32_t address, uint32_t coarse_delay, uint32_t fine_delay, uint32_t phase_delay, bool measure_rtt, bool control_sfp, uint32_t sfp_mux) const override;
+
+// In leiu of UHAL_DERIVEDNODE
+protected:
+    virtual uhal::Node* clone() const;
+//
 };
 
 } // namespace pdt

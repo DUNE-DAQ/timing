@@ -17,6 +17,8 @@
 
 #include "ers/Issue.hpp"
 
+#include <string>
+
 namespace dunedaq {
 
 ERS_DECLARE_ISSUE(pdt,                                      ///< Namespace
@@ -63,7 +65,7 @@ public:
 class DACNode : public I2CMasterNode, public DACSlave {
     UHAL_DERIVEDNODE(DACNode)
 public:
-    DACNode(const uhal::Node& node);
+    explicit DACNode(const uhal::Node& node);
     DACNode(const DACNode& node);
     virtual ~DACNode();
 
@@ -73,4 +75,4 @@ public:
 } // namespace pdt
 } // namespace dunedaq
 
-#endif /* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_DACNODE_HPP_ */
+#endif  // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_DACNODE_HPP_

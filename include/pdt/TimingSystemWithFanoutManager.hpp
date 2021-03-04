@@ -1,8 +1,11 @@
 /**
- * @file    TimingSystemWithFanoutManager.hpp
- * @author  Stoyan Trilov
- * @brief   Brief description
- * @date 
+ * @file TimingSystemManagerBase.hpp
+ *
+ * TimingSystemManagerBase is a class for timing system with fanout
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
  */
 
 #ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGSYSTEMWITHFANOUTMANAGER_HPP_
@@ -14,27 +17,16 @@
 #include "uhal/DerivedNode.hpp"
 
 #include <vector>
+#include <string>
 
 namespace dunedaq {
 namespace pdt {
-/*!
- * @class TimingSystemWithFanoutManager
- * @brief Brief
- *
- * Description
- * @author Stoyan Trilov
- * @date September 2020
- *
- */
 
 template <class MST_TOP, class EPT_TOP, class FAN_TOP>
 class TimingSystemWithFanoutManager : public TimingSystemManager<MST_TOP,EPT_TOP> {
-protected:
-    std::vector<std::string> fanoutHardwareNames;
-    std::vector<uhal::HwInterface> fanoutHardware;
 
 public:
-    TimingSystemWithFanoutManager(std::string cf);
+    explicit TimingSystemWithFanoutManager(std::string cf);
     virtual ~TimingSystemWithFanoutManager();
     
     /**
@@ -115,7 +107,9 @@ public:
      */
     uint64_t measure_endpoint_rtt(const ActiveEndpointConfig& ept_config) const override;
 
-
+protected:
+    std::vector<std::string> fanoutHardwareNames;
+    std::vector<uhal::HwInterface> fanoutHardware;
 };
 
 } // namespace pdt

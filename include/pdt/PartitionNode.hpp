@@ -22,6 +22,8 @@
 
 // C++ Headers
 #include <chrono>
+#include <string>
+#include <vector>
 
 namespace dunedaq {
 ERS_DECLARE_ISSUE(pdt,                                                                          
@@ -50,7 +52,7 @@ struct PartitionCounts {
 class PartitionNode : public TimingNode {
     UHAL_DERIVEDNODE(PartitionNode)
 public:
-    PartitionNode(const uhal::Node& node);
+    explicit PartitionNode(const uhal::Node& node);
     virtual ~PartitionNode();
 
     static const uint32_t kWordsPerEvent;

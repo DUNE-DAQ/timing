@@ -22,6 +22,8 @@
 
 // C++ Headers
 #include <chrono>
+#include <string>
+#include <vector>
 
 namespace dunedaq {
 namespace pdt {
@@ -32,8 +34,6 @@ namespace pdt {
 class TLUIONode : public IONode {
     UHAL_DERIVEDNODE(TLUIONode)
 
-protected:
-    const std::vector<std::string> m_dac_devices;
 public:
     TLUIONode(const uhal::Node& node);
     virtual ~TLUIONode();
@@ -61,7 +61,7 @@ public:
     /**
      * @brief      Control tx laser of on-board SFP softly (I2C command)
      */
-    virtual void switch_sfp_soft_tx_control_bit(uint32_t, bool) const override;
+    void switch_sfp_soft_tx_control_bit(uint32_t, bool) const override;
 
     /**
      * @brief      Fill hardware monitoring structure.
@@ -73,6 +73,8 @@ public:
      */
     void get_info(timingmon::TimingTLUMonitorDataDebug& mon_data) const;
 
+protected:
+    const std::vector<std::string> m_dac_devices;
 };
 
 } // namespace pdt

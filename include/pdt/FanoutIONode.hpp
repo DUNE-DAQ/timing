@@ -21,6 +21,8 @@
 
 // C++ Headers
 #include <chrono>
+#include <vector>
+#include <string>
 
 namespace dunedaq {
 namespace pdt {

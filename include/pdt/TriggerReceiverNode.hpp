@@ -18,6 +18,8 @@
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
+#include <string>
+
 namespace dunedaq {
 namespace pdt {
 
@@ -27,7 +29,7 @@ namespace pdt {
 class TriggerReceiverNode : public TimingNode {
     UHAL_DERIVEDNODE(TriggerReceiverNode)
 public:
-    TriggerReceiverNode(const uhal::Node& node);
+    explicit TriggerReceiverNode(const uhal::Node& node);
     virtual ~TriggerReceiverNode();
 
     /**

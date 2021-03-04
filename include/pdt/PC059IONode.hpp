@@ -21,6 +21,7 @@
 
 // C++ Headers
 #include <chrono>
+#include <string>
 
 namespace dunedaq {
 namespace pdt {
@@ -32,7 +33,7 @@ class PC059IONode : public FanoutIONode {
     UHAL_DERIVEDNODE(PC059IONode)
 
 public:
-    PC059IONode(const uhal::Node& node);
+    explicit PC059IONode(const uhal::Node& node);
     virtual ~PC059IONode();
 
     /**

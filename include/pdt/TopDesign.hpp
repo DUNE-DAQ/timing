@@ -34,7 +34,7 @@ namespace pdt {
 template <class IO>
 class TopDesign : public TimingNode {
 public:
-    TopDesign(const uhal::Node& node);
+    explicit TopDesign(const uhal::Node& node);
     virtual ~TopDesign();
 
     /**

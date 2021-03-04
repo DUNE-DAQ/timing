@@ -1,20 +1,21 @@
-/*
- * File:   exception.h
- * Author: ale
+/**
+ * @file TimingNode.hpp
  *
- * Created on August 21, 2013, 2:29 PM
+ * Timing ers issues.
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
  */
 
-#ifndef TIMING_BOARD_SOFTWARE_SRC_TIMING_ISSUES_HPP_
-#define	TIMING_BOARD_SOFTWARE_SRC_TIMING_ISSUES_HPP_
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGISSUES_HPP_
+#define	TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGISSUES_HPP_
 
 #include "ers/Issue.hpp"
 
 #include <string>
 
 namespace dunedaq {
-
-//PDTExceptionClass(MP7HelperException, "Exception class to handle MP7 specific exceptions")
 
 // Generic exceptions
 ERS_DECLARE_ISSUE(pdt,                             ///< Namespace
@@ -27,12 +28,12 @@ ERS_DECLARE_ISSUE(pdt,                       ///< Namespace
                   file_path << " corrupted", ///< Message
                   ((std::string)file_path)   ///< Message parameters
 )
-ERS_DECLARE_ISSUE_BASE(pdt,                                                             ///< Namespace
-                       FileIsDirectory,                                                 ///< Issue class name
-                       CorruptedFile,                                                   ///< Base class of the issue
+ERS_DECLARE_ISSUE_BASE(pdt,                            ///< Namespace
+                       FileIsDirectory,                ///< Issue class name
+                       CorruptedFile,                  ///< Base class of the issue
                        file_path << " is a directory", ///< Log Message from the issue
-                       ((std::string)file_path),                                           ///< Base class attributes
-                       ERS_EMPTY                                                        ///< Attribute of this class
+                       ((std::string)file_path),       ///< Base class attributes
+                       ERS_EMPTY                       ///< Attribute of this class
 )
 
 // I2C related issues
@@ -205,4 +206,4 @@ ERS_DECLARE_ISSUE(pdt,                                                          
 
 } // namespace dunedaq
 
-#endif // TIMING_BOARD_SOFTWARE_SRC_TIMING_ISSUES_HPP_
+#endif  // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGISSUES_HPP_

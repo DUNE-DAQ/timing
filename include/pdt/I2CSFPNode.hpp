@@ -21,6 +21,9 @@
 #include "ers/Issue.hpp"
 
 #include <map>
+#include <utility>
+#include <string>
+#include <vector>
 
 namespace dunedaq {
 namespace pdt {
@@ -33,8 +36,6 @@ namespace pdt {
  * @date       April 2018
  */
 class I2CSFPSlave : public I2CSlave {
-protected:
-    const std::vector<uint32_t> m_calibration_parameter_start_addresses;
 
 public:
     I2CSFPSlave(const I2CMasterNode* i2c_master, uint8_t i2c_device_address);
@@ -181,6 +182,9 @@ public:
      * @brief      Get and fill SFP hardware data
      */
     void get_info(timingmon::TimingSFPMonitorData& mon_data) const;
+
+protected:
+    const std::vector<uint32_t> m_calibration_parameter_start_addresses;
 };
 
 /**
@@ -194,7 +198,7 @@ public:
 class I2CSFPNode : public I2CMasterNode, public I2CSFPSlave {
     UHAL_DERIVEDNODE(I2CSFPNode)
 public:
-    I2CSFPNode(const uhal::Node& node);
+    explicit I2CSFPNode(const uhal::Node& node);
     I2CSFPNode(const I2CSFPNode& node);
     virtual ~I2CSFPNode();
 
@@ -203,4 +207,4 @@ public:
 } // namespace pdt
 } // namespace dunedaq
 
-#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SFPEXPANDERNODE_HPP_
+#endif  // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CSFPNODE_HPP_

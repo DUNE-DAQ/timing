@@ -23,6 +23,8 @@
 
 // C++ Headers
 #include <chrono>
+#include <string>
+#include <map>
 
 namespace dunedaq {
 namespace pdt {
@@ -32,7 +34,7 @@ namespace pdt {
 class TimingNode : public uhal::Node {
     
 public:
-    TimingNode(const uhal::Node& node);
+    explicit TimingNode(const uhal::Node& node);
     virtual ~TimingNode();
 
     /**

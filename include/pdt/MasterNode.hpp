@@ -36,7 +36,7 @@ namespace pdt {
  */
 class MasterNode : public TimingNode {
 public:
-    MasterNode(const uhal::Node& node);
+    explicit MasterNode(const uhal::Node& node);
     virtual ~MasterNode();
     
     /**

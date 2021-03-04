@@ -30,6 +30,9 @@
 
 // C++ Headers
 #include <chrono>
+#include <memory>
+#include <string>
+#include <vector>
 
 namespace dunedaq {
 namespace pdt {
@@ -38,19 +41,7 @@ namespace pdt {
  * @brief      Base class for timing IO nodes.
  */
 class IONode : public TimingNode {
-protected:
-    const std::string m_uid_i2c_bus;
-    const std::string m_uid_i2c_device;
-    const std::string m_pll_i2c_bus;
-    const std::string m_pll_i2c_device;
-    const std::vector<std::string> m_clock_names;
-    const std::vector<std::string> m_sfp_i2c_buses;
 
-
-    /**
-     * @brief      Write soft reset register.
-     */
-    virtual void writeSoftResetRegister() const;
 public:
     IONode(const uhal::Node& node, std::string uid_i2c_bus, std::string uid_i2c_device, std::string pll_i2c_bus, std::string pll_i2c_device, std::vector<std::string> clock_names, std::vector<std::string> sfp_i2c_buses);
     virtual ~IONode();
@@ -156,6 +147,19 @@ public:
      * @brief      Reset timing node.
      */
     virtual void reset(const std::string& clock_config_file="") const = 0;
+
+protected:
+    const std::string m_uid_i2c_bus;
+    const std::string m_uid_i2c_device;
+    const std::string m_pll_i2c_bus;
+    const std::string m_pll_i2c_device;
+    const std::vector<std::string> m_clock_names;
+    const std::vector<std::string> m_sfp_i2c_buses;
+
+    /**
+     * @brief      Write soft reset register.
+     */
+    virtual void writeSoftResetRegister() const;
 };
 
 } // namespace pdt

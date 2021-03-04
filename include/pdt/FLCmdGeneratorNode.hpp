@@ -20,6 +20,8 @@
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
+#include <string>
+
 namespace dunedaq {
 namespace pdt {
 
@@ -29,7 +31,7 @@ struct FakeTriggerConfig {
     uint32_t prescale;
     double actual_rate;
 
-    FakeTriggerConfig(double rate) : requested_rate(rate) {
+    explicit FakeTriggerConfig(double rate) : requested_rate(rate) {
         // Rate =  (50MHz / 2^(d+8)) / p where n in [0,15] and p in [1,256]
     
         // DIVIDER (int): Frequency divider.
@@ -69,7 +71,7 @@ struct FakeTriggerConfig {
 class FLCmdGeneratorNode : public TimingNode {
     UHAL_DERIVEDNODE(FLCmdGeneratorNode)
 public:
-    FLCmdGeneratorNode(const uhal::Node& node);
+    explicit FLCmdGeneratorNode(const uhal::Node& node);
     virtual ~FLCmdGeneratorNode();
 
     /**

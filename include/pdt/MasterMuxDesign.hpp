@@ -26,6 +26,7 @@
 #include <chrono>
 #include <string>
 #include <sstream>
+#include <vector>
 
 namespace dunedaq {
 namespace pdt {
@@ -35,12 +36,9 @@ namespace pdt {
  */
 template <class IO, class MST>
 class MasterMuxDesign : public MasterDesign<IO,MST> {
-// In leiu of UHAL_DERIVEDNODE
-protected:
-    virtual uhal::Node* clone() const;
-//
+
 public:
-    MasterMuxDesign(const uhal::Node& node);
+    explicit MasterMuxDesign(const uhal::Node& node);
     virtual ~MasterMuxDesign();
 
     /**
@@ -85,6 +83,11 @@ public:
      * @brief      Apply delay to endpoint
      */
     virtual std::vector<uint32_t> scan_sfp_mux() const;
+
+// In leiu of UHAL_DERIVEDNODE
+protected:
+    virtual uhal::Node* clone() const;
+//
 };
 
 } // namespace pdt

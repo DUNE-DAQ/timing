@@ -4,6 +4,15 @@
  * I2CSlave is a base class providing an interface
  * to I2C devices.
  *
+ * @class I2CSlave
+ * @brief Class to provide OpenCode I2C interface to a ipbus node
+ *
+ * The class is non copyable on purpose as the inheriting object
+ * must properly set the node pointer in the copy
+ * i2c access through an IPbus interface
+ * @author Kristian Harder, Alessandro Thea
+ * @date August 2013
+ *
  * This is part of the DUNE DAQ Software Suite, copyright 2020.
  * Licensing/copyright details are in the COPYING file that you should have
  * received with this code.
@@ -20,33 +29,20 @@
 #include "uhal/DerivedNode.hpp"
 
 #include <boost/core/noncopyable.hpp>
+
 #include <vector>
+#include <string>
 
 namespace dunedaq {
 namespace pdt {
 
 class I2CMasterNode;
 
-/*!
- * @class I2CSlave
- * @brief Class to provide OpenCode I2C interface to a ipbus node
- *
- * The class is non copyable on purpose as the inheriting object
- * must properly set the node pointer in the copy
- * i2c access through an IPbus interface
- * @author Kristian Harder, Alessandro Thea
- * @date August 2013
- *
- */
 class I2CSlave : boost::noncopyable {
-protected:
-    // Private constructor, accessible to I2CMaster
-    I2CSlave(const I2CMasterNode* i2c_master, uint8_t i2c_device_address);
+
 public:
 
     virtual ~I2CSlave();
-
-    ///
 
     uint8_t get_i2c_address() const {
         return m_i2c_device_address;
@@ -72,6 +68,10 @@ public:
     bool ping() const;
 
     std::string get_master_id() const;
+
+protected:
+    // Private constructor, accessible to I2CMaster
+    I2CSlave(const I2CMasterNode* i2c_master, uint8_t i2c_device_address);
 
 private:
     const I2CMasterNode* m_i2c_master;

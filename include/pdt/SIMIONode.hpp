@@ -21,6 +21,8 @@
 
 // C++ Headers
 #include <chrono>
+#include <string>
+#include <vector>
 
 namespace dunedaq {
 namespace pdt {
@@ -32,7 +34,7 @@ class SIMIONode : public IONode {
     UHAL_DERIVEDNODE(SIMIONode)
 
 public:
-    SIMIONode(const uhal::Node& node);
+    explicit SIMIONode(const uhal::Node& node);
     virtual ~SIMIONode();
     
     /**
@@ -92,11 +94,11 @@ public:
     /**
      * @brief      Control tx laser of on-board SFP softly (I2C command)
      */
-    virtual void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const override;
+    void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const override;
 
 };
 
 } // namespace pdt
 } // namespace dunedaq
 
-#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SIMIONode_HPP_
+#endif  // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SIMIONODE_HPP_

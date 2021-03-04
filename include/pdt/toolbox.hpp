@@ -1,3 +1,13 @@
+/**
+ * @file toolbox.hpp
+ *
+ * Timing utility functions
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
+
 #ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOOLBOX_HPP_
 #define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TOOLBOX_HPP_
 
@@ -26,6 +36,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <chrono>
+#include <vector>
 
 namespace dunedaq {
 namespace pdt {

@@ -9,13 +9,15 @@
  * received with this code.
  */
 
-#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SFPEXPANDERNODE_HPP_
-#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SFPEXPANDERNODE_HPP_
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CEXPANDERNODE_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CEXPANDERNODE_HPP_
 
 #include "pdt/I2CSlave.hpp"
 #include "pdt/I2CMasterNode.hpp"
 
 #include <map>
+#include <string>
+#include <vector>
 
 namespace dunedaq {
 ERS_DECLARE_ISSUE(pdt,
@@ -91,7 +93,7 @@ private:
 class I2CExpanderNode : public I2CMasterNode, public I2CExpanderSlave {
     UHAL_DERIVEDNODE(I2CExpanderNode)
 public:
-    I2CExpanderNode(const uhal::Node& node);
+    explicit I2CExpanderNode(const uhal::Node& node);
     I2CExpanderNode(const I2CExpanderNode& node);
     virtual ~I2CExpanderNode();
 
@@ -101,4 +103,4 @@ public:
 } // namespace pdt
 } // namespace dunedaq
 
-#endif /* TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SFPEXPANDERNODE_HPP_ */
+#endif  // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_I2CEXPANDERNODE_HPP_

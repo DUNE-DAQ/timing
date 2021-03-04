@@ -24,6 +24,7 @@
 
 // C++ Headers
 #include <chrono>
+#include <string>
 
 namespace dunedaq {
 namespace pdt {
@@ -34,7 +35,7 @@ namespace pdt {
 class PDIMasterNode : public MasterNode {
     UHAL_DERIVEDNODE(PDIMasterNode)
 public:
-    PDIMasterNode(const uhal::Node& node);
+    explicit PDIMasterNode(const uhal::Node& node);
     virtual ~PDIMasterNode();
     
     /**

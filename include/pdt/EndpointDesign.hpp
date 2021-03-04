@@ -33,12 +33,9 @@ namespace pdt {
  */
 template <class IO>
 class EndpointDesign : public TopDesign<IO> {
-// In leiu of UHAL_DERIVEDNODE
-protected:
-	virtual uhal::Node* clone() const;
-//
+
 public:
-    EndpointDesign(const uhal::Node& node);
+    explicit EndpointDesign(const uhal::Node& node);
     virtual ~EndpointDesign();
 	
 	/**
@@ -53,6 +50,10 @@ public:
      */
     void enable(uint32_t endpoint_id) const;
 
+// In leiu of UHAL_DERIVEDNODE
+protected:
+    virtual uhal::Node* clone() const;
+//
 };
 
 } // namespace pdt

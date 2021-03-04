@@ -21,6 +21,7 @@
 
 // C++ Headers
 #include <chrono>
+#include <string>
 
 namespace dunedaq {
 namespace pdt {
@@ -31,7 +32,7 @@ namespace pdt {
 class TimestampGeneratorNode : public TimingNode {
     UHAL_DERIVEDNODE(TimestampGeneratorNode)
 public:
-    TimestampGeneratorNode(const uhal::Node& node);
+    explicit TimestampGeneratorNode(const uhal::Node& node);
     virtual ~TimestampGeneratorNode();
     
     /**

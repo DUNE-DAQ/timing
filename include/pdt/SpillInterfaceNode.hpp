@@ -19,6 +19,8 @@
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
+#include <string>
+
 namespace dunedaq {
 namespace pdt {
 
@@ -28,7 +30,7 @@ namespace pdt {
 class SpillInterfaceNode : public TimingNode {
     UHAL_DERIVEDNODE(SpillInterfaceNode)
 public:
-    SpillInterfaceNode(const uhal::Node& node);
+    explicit SpillInterfaceNode(const uhal::Node& node);
     virtual ~SpillInterfaceNode();
 
     /**

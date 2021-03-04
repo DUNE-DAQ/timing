@@ -18,6 +18,8 @@
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
+#include <string>
+
 namespace dunedaq {
 namespace pdt {
 
@@ -27,7 +29,7 @@ namespace pdt {
 class EchoMonitorNode : public TimingNode {
     UHAL_DERIVEDNODE(EchoMonitorNode)
 public:
-    EchoMonitorNode(const uhal::Node& node);
+    explicit EchoMonitorNode(const uhal::Node& node);
     virtual ~EchoMonitorNode();
 
     /**

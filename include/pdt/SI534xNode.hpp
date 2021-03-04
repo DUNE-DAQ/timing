@@ -9,8 +9,8 @@
  * received with this code.
  */
 
-#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SI5345NODE_HPP_
-#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SI5345NODE_HPP_
+#ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SI534XNODE_HPP_
+#define TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SI534XNODE_HPP_
 
 #include "pdt/SIChipSlave.hpp"
 #include "pdt/I2CMasterNode.hpp"
@@ -19,6 +19,8 @@
 #include "ers/Issue.hpp"
 
 #include <map>
+#include <vector>
+#include <string>
 
 namespace dunedaq {
 ERS_DECLARE_ISSUE(pdt,                               ///< Namespace
@@ -84,7 +86,7 @@ private:
 class SI534xNode : public I2CMasterNode, public SI534xSlave {
     UHAL_DERIVEDNODE(SI534xNode)
 public:
-    SI534xNode(const uhal::Node& node);
+    explicit SI534xNode(const uhal::Node& node);
     SI534xNode(const SI534xNode& node);
     virtual ~SI534xNode();
 
@@ -94,4 +96,4 @@ public:
 } // namespace pdt
 } // namespace dunedaq
 
-#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SI5345NODE_HPP_ 
+#endif  // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_SI534XNODE_HPP_

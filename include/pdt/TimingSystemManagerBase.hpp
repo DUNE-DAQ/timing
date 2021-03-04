@@ -1,8 +1,11 @@
 /**
- * @file    TimingSystemManagerBase.hpp
- * @author  Stoyan Trilov
- * @brief   Brief description
- * @date 
+ * @file TimingSystemManagerBase.hpp
+ *
+ * TimingSystemManagerBase is a base class for timing manger classes
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
  */
 
 #ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGSYSTEMMANAGERBASE_HPP_
@@ -16,27 +19,16 @@
 #include "uhal/ConnectionManager.hpp"
 
 #include <vector>
+#include <map>
+#include <string>
 
 namespace dunedaq {
 namespace pdt {
 
 class TimingSystemManagerBase : boost::noncopyable {
-protected:
 
-    const std::string connectionsFile;
-    uhal::ConnectionManager* connectionManager;
-
-    std::vector<std::string> masterHardwareNames;
-    std::vector<std::string> endpointHardwareNames;
-
-    std::vector<uhal::HwInterface> masterHardware;
-    std::vector<uhal::HwInterface> endpointHardware;
-
-    std::map<std::string, ActiveEndpointConfig> mExpectedEndpoints;
-
-    uint32_t mMaxMeasuredRTT;
 public:
-    TimingSystemManagerBase(std::string cf);
+    explicit TimingSystemManagerBase(std::string cf);
     virtual ~TimingSystemManagerBase();
 
     /**
@@ -119,6 +111,20 @@ public:
      */
     virtual void apply_endpoint_delays(uint32_t measure_rtt) const = 0;
 
+protected:
+
+    const std::string connectionsFile;
+    uhal::ConnectionManager* connectionManager;
+
+    std::vector<std::string> masterHardwareNames;
+    std::vector<std::string> endpointHardwareNames;
+
+    std::vector<uhal::HwInterface> masterHardware;
+    std::vector<uhal::HwInterface> endpointHardware;
+
+    std::map<std::string, ActiveEndpointConfig> mExpectedEndpoints;
+
+    uint32_t mMaxMeasuredRTT;
 };
 
 } // namespace pdt

@@ -22,6 +22,7 @@
 
 // C++ Headers
 #include <chrono>
+#include <string>
 
 namespace dunedaq {
 namespace pdt {
@@ -33,7 +34,7 @@ class FMCIONode : public IONode {
     UHAL_DERIVEDNODE(FMCIONode)
 
 public:
-    FMCIONode(const uhal::Node& node);
+    explicit FMCIONode(const uhal::Node& node);
     virtual ~FMCIONode();
     
     /**

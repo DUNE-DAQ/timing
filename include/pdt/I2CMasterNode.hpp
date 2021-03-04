@@ -1,5 +1,14 @@
 /**
  * @file I2CMasterNode.hpp
+ * @class      I2CMasterNode
+ *
+ * @brief      OpenCode I2C interface to a ipbus node
+ * @author     Kristian Harder, Alessandro Thea
+ * @date       August 2013
+ *
+ * The class is non-copyable on purpose as the inheriting object
+ * must properly set the node pointer in the copy i2c access through
+ * an IPbus interface.
  *
  * I2CMasterNode is a class providing an interface
  * to the I2C master firmware block.
@@ -19,22 +28,15 @@
 #include "TimingIssues.hpp"
 #include "ers/Issue.hpp"
 
+#include <vector>
+#include <string>
+#include <unordered_map>
+
 namespace dunedaq {
 namespace pdt {
 
 class I2CSlave; 
 
-/*!
- * @class      I2CMasterNode
- *
- * @brief      OpenCode I2C interface to a ipbus node
- * @author     Kristian Harder, Alessandro Thea
- * @date       August 2013
- *
- *             The class is non-copyable on purpose as the inheriting object
- *             must properly set the node pointer in the copy i2c access through
- *             an IPbus interface
- */
 class I2CMasterNode : public uhal::Node {
     UHAL_DERIVEDNODE(I2CMasterNode)
 public:

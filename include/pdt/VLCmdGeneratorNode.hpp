@@ -18,6 +18,8 @@
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
+#include <string>
+
 namespace dunedaq {
 namespace pdt {
 
@@ -27,7 +29,7 @@ namespace pdt {
 class VLCmdGeneratorNode : public TimingNode {
     UHAL_DERIVEDNODE(VLCmdGeneratorNode)
 public:
-    VLCmdGeneratorNode(const uhal::Node& node);
+    explicit VLCmdGeneratorNode(const uhal::Node& node);
     virtual ~VLCmdGeneratorNode();
 
     /**

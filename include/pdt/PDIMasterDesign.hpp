@@ -35,12 +35,9 @@ namespace pdt {
  */
 template <class IO>
 class PDIMasterDesign : public MasterDesign<IO,PDIMasterNode> {
-// In leiu of UHAL_DERIVEDNODE
-protected:
-    virtual uhal::Node* clone() const;
-//
+
 public:
-    PDIMasterDesign(const uhal::Node& node);
+    explicit PDIMasterDesign(const uhal::Node& node);
     virtual ~PDIMasterDesign();
 
     /**
@@ -54,6 +51,10 @@ public:
      */
     void configure() const override;
 
+// In leiu of UHAL_DERIVEDNODE
+protected:
+    virtual uhal::Node* clone() const;
+//
 };
 
 } // namespace pdt

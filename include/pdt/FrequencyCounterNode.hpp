@@ -22,6 +22,8 @@
 // C++ Headers
 #include <chrono>
 #include <thread>
+#include <string>
+#include <vector>
 
 namespace dunedaq {
 namespace pdt {
@@ -32,7 +34,7 @@ namespace pdt {
 class FrequencyCounterNode : public TimingNode {
     UHAL_DERIVEDNODE(FrequencyCounterNode)
 public:
-    FrequencyCounterNode(const uhal::Node& node);
+    explicit FrequencyCounterNode(const uhal::Node& node);
     virtual ~FrequencyCounterNode();
 	
 	/**

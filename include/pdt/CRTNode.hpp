@@ -20,6 +20,7 @@
 
 // C++ Headers
 #include <chrono>
+#include <string>
 
 namespace dunedaq {
 namespace pdt {
@@ -30,7 +31,7 @@ namespace pdt {
 class CRTNode : public TimingNode {
     UHAL_DERIVEDNODE(CRTNode)
 public:
-    CRTNode(const uhal::Node& node);
+    explicit CRTNode(const uhal::Node& node);
     ~CRTNode();
 
     /**
@@ -64,4 +65,4 @@ public:
 } // namespace pdt
 } // namespace dunedaq
 
-#endif // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_CRTTNODE_HPP_
+#endif  // TIMING_BOARD_SOFTWARE_INCLUDE_PDT_CRTNODE_HPP_

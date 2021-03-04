@@ -1,20 +1,24 @@
 /**
- * @file    TimingSystemManager.hpp
- * @author  Stoyan Trilov
- * @brief   Brief description
- * @date 
+ * @file TimingSystemManagerBase.hpp
+ *
+ * TimingSystemManagerBase is a class for timing system without fanout
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
  */
 
 #ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGSYSTEMMANAGER_HPP_
 #define	TIMING_BOARD_SOFTWARE_INCLUDE_PDT_TIMINGSYSTEMMANAGER_HPP_
-
-#include <vector>
  
+#include "TimingIssues.hpp"
+#include "pdt/TimingSystemManagerBase.hpp"
+
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
-#include "TimingIssues.hpp"
-#include "pdt/TimingSystemManagerBase.hpp"
+#include <vector>
+#include <string>
 
 namespace dunedaq {
 namespace pdt {
@@ -31,7 +35,7 @@ namespace pdt {
 template <class MST_TOP, class EPT_TOP>
 class TimingSystemManager : public TimingSystemManagerBase {
 public:
-    TimingSystemManager(std::string cf);
+    explicit TimingSystemManager(std::string cf);
     virtual ~TimingSystemManager();
     
     /**

@@ -33,7 +33,7 @@ template <class IO, class MST>
 class MasterDesign : public TopDesign<IO> {
 
 public:
-    MasterDesign(const uhal::Node& node);
+    explicit MasterDesign(const uhal::Node& node);
     virtual ~MasterDesign();
 
     /**

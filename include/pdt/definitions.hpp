@@ -1,8 +1,11 @@
-/* 
- * File:   definitions.hpp
- * Author: ale
+/**
+ * @file definitions.hpp
  *
- * Created on November 16, 2014, 7:50 PM
+ * Timing definitions and types.
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
  */
 
 #ifndef TIMING_BOARD_SOFTWARE_INCLUDE_PDT_DEFINITIONS_HPP_

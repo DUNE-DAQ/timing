@@ -18,6 +18,8 @@
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
+#include <string>
+
 namespace dunedaq {
 namespace pdt {
 
@@ -27,7 +29,7 @@ namespace pdt {
 class GlobalNode : public TimingNode {
     UHAL_DERIVEDNODE(GlobalNode)
 public:
-    GlobalNode(const uhal::Node& node);
+    explicit GlobalNode(const uhal::Node& node);
     virtual ~GlobalNode();
 
     bool in_spill() const;
