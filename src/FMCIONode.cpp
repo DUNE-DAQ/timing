@@ -76,7 +76,7 @@ FMCIONode::reset(const std::string& clock_config_file) const {
 
 //-----------------------------------------------------------------------------
 void
-FMCIONode::get_info(timingmon::TimingFMCMonitorData& mon_data) const {
+FMCIONode::get_info(timinghardwareinfo::TimingFMCMonitorData& mon_data) const {
 
 	auto subnodes = read_sub_nodes(getNode("csr.stat"));
 
@@ -92,17 +92,7 @@ FMCIONode::get_info(timingmon::TimingFMCMonitorData& mon_data) const {
 
 //-----------------------------------------------------------------------------
 void
-FMCIONode::get_info(timingmon::TimingFMCMonitorDataDebug& mon_data) const {
-
-	// TODO, do something clever with function above?
-	auto subnodes = read_sub_nodes(getNode("csr.stat"));
-
-	mon_data.cdr_lol = subnodes.at("cdr_lol");
-	mon_data.cdr_los = subnodes.at("cdr_los");
-	mon_data.mmcm_ok = subnodes.at("mmcm_ok");
-	mon_data.mmcm_sticky = subnodes.at("mmcm_sticky");
-	mon_data.sfp_flt = subnodes.at("sfp_flt");
-	mon_data.sfp_los = subnodes.at("sfp_los");
+FMCIONode::get_info(timinghardwareinfo::TimingFMCMonitorDataDebug& mon_data) const {
 
 	this->get_pll()->get_info(mon_data.pll_mon_data);
 	auto sfp = this->get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");

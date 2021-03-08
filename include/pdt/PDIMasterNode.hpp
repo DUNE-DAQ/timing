@@ -17,7 +17,7 @@
 #include "pdt/SpillInterfaceNode.hpp"
 #include "pdt/TriggerReceiverNode.hpp"
 #include "pdt/FLCmdGeneratorNode.hpp"
-#include "pdt/timingmon/Structs.hpp"
+#include "pdt/timingfirmwareinfo/Structs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -125,7 +125,7 @@ public:
     /**
      * @brief     Fill the PD-I master monitoring structure.
      */
-    void get_info(timingmon::TimingPDIMasterMonitorData& mon_data) const;
+    void get_info(timingfirmwareinfo::TimingPDIMasterMonitorData& mon_data) const;
 };
 
 

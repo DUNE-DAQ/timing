@@ -16,7 +16,7 @@
 #include "pdt/TimingNode.hpp"
 #include "TimingIssues.hpp"
 #include "pdt/FrequencyCounterNode.hpp"
-#include "pdt/timingmon/Structs.hpp"
+#include "pdt/timingendpointinfo/Structs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -109,7 +109,7 @@ public:
      * @brief     Collect monitoring information for timing endpoint
      *
      */
-    void get_info(timingmon::TimingEndpointMonitorData& mon_data) const;
+    void get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const;
 };
 
 } // namespace pdt

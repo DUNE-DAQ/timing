@@ -287,7 +287,7 @@ PartitionNode::get_status(bool print_out) const {
 }
 //-----------------------------------------------------------------------------
 void
-PartitionNode::get_info(timingmon::TimingPartitionMonitorData& mon_data) const {
+PartitionNode::get_info(timingfirmwareinfo::TimingPartitionMonitorData& mon_data) const {
     auto lControls = read_sub_nodes(getNode("csr.ctrl"), false);
     auto lState = read_sub_nodes(getNode("csr.stat"), false);
 

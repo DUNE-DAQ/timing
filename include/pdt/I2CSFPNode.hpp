@@ -15,7 +15,7 @@
 #include "pdt/I2CSlave.hpp"
 #include "pdt/I2CMasterNode.hpp"
 #include "pdt/toolbox.hpp"
-#include "pdt/timingmon/Structs.hpp"
+#include "pdt/timinghardwareinfo/Structs.hpp"
 #include "TimingIssues.hpp"
 
 #include "ers/Issue.hpp"
@@ -181,7 +181,7 @@ public:
     /**
      * @brief      Get and fill SFP hardware data
      */
-    void get_info(timingmon::TimingSFPMonitorData& mon_data) const;
+    void get_info(timinghardwareinfo::TimingSFPMonitorData& mon_data) const;
 
 protected:
     const std::vector<uint32_t> m_calibration_parameter_start_addresses;

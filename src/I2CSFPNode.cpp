@@ -380,7 +380,7 @@ I2CSFPSlave::get_status(bool print_out) const {
 
 //-----------------------------------------------------------------------------
 void
-I2CSFPSlave::get_info(timingmon::TimingSFPMonitorData& mon_data) const {
+I2CSFPSlave::get_info(timinghardwareinfo::TimingSFPMonitorData& mon_data) const {
     sfp_reachable();
     
     // TODO ?

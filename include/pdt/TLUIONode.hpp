@@ -15,7 +15,7 @@
 // PDT Headers
 #include "pdt/IONode.hpp"
 #include "TimingIssues.hpp"
-#include "pdt/timingmon/Structs.hpp"
+#include "pdt/timinghardwareinfo/Structs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -66,12 +66,12 @@ public:
     /**
      * @brief      Fill hardware monitoring structure.
      */
-    void get_info(timingmon::TimingTLUMonitorData& mon_data) const;
+    void get_info(timinghardwareinfo::TimingTLUMonitorData& mon_data) const;
 
     /**
      * @brief      Fill extended hardware monitoring structure.
      */
-    void get_info(timingmon::TimingTLUMonitorDataDebug& mon_data) const;
+    void get_info(timinghardwareinfo::TimingTLUMonitorDataDebug& mon_data) const;
 
 protected:
     const std::vector<std::string> m_dac_devices;

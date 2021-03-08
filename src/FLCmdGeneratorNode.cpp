@@ -98,7 +98,7 @@ FLCmdGeneratorNode::get_cmd_counters_table(bool print_out) const {
 
 //-----------------------------------------------------------------------------
 void
-FLCmdGeneratorNode::get_info(timingmon::TimingFLCmdCountersVector& mon_data) const {
+FLCmdGeneratorNode::get_info(timingfirmwareinfo::TimingFLCmdCountersVector& mon_data) const {
     auto accepted_counters = getNode("actrs").readBlock(getNode("actrs").getSize());
     auto rejected_counters = getNode("rctrs").readBlock(getNode("actrs").getSize());
     getClient().dispatch();
@@ -109,7 +109,7 @@ FLCmdGeneratorNode::get_info(timingmon::TimingFLCmdCountersVector& mon_data) con
     uint counters_number = 5;
 
     for (uint i=0; i < counters_number; ++i) {
-        timingmon::TimingFLCmdCounters fl_cmd_counters;
+        timingfirmwareinfo::TimingFLCmdCounters fl_cmd_counters;
         fl_cmd_counters.accepted = accepted_counters.at(i);
         fl_cmd_counters.rejected = rejected_counters.at(i);
         mon_data.push_back(fl_cmd_counters);   

@@ -313,7 +313,7 @@ SI534xSlave::registers( ) const {
 
 //-----------------------------------------------------------------------------
 void
-SI534xSlave::get_info(timingmon::TimingPLLMonitorData& mon_data) const {
+SI534xSlave::get_info(timinghardwareinfo::TimingPLLMonitorData& mon_data) const {
 
     mon_data.config_id = this->read_config_id();
 

@@ -15,7 +15,7 @@
 // PDT Headers
 #include "pdt/TimingNode.hpp"
 #include "pdt/TimestampGeneratorNode.hpp"
-#include "pdt/timingmon/Structs.hpp"
+#include "pdt/timingfirmwareinfo/Structs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -102,7 +102,7 @@ public:
     /**
      * @brief     Fill the fixed length command counters monitoring structure.
      */
-    void get_info(timingmon::TimingFLCmdCountersVector& mon_data) const;
+    void get_info(timingfirmwareinfo::TimingFLCmdCountersVector& mon_data) const;
 };
 
 } // namespace pdt

@@ -195,7 +195,7 @@ EndpointNode::read_version() const {
 
 //-----------------------------------------------------------------------------
 void
-EndpointNode::get_info(timingmon::TimingEndpointMonitorData& mon_data) const {
+EndpointNode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const {
 	
 	auto timestamp = getNode("tstamp").readBlock(2);
 	auto event_counter = getNode("evtctr").read();

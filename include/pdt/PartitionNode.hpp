@@ -15,7 +15,7 @@
 // PDT Headers
 #include "TimingIssues.hpp"
 #include "pdt/TimingNode.hpp"
-#include "pdt/timingmon/Structs.hpp"
+#include "pdt/timingfirmwareinfo/Structs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -176,7 +176,7 @@ public:
     /**
      * @brief     Fill the partition monitoring structure.
      */
-    void get_info(timingmon::TimingPartitionMonitorData& mon_data) const;
+    void get_info(timingfirmwareinfo::TimingPartitionMonitorData& mon_data) const;
 
 };
 
