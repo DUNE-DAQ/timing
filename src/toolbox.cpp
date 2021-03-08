@@ -1,4 +1,4 @@
-#include "pdt/toolbox.hpp"
+#include "timing/toolbox.hpp"
 
 // C++ Headers
 #include <time.h>
@@ -19,12 +19,12 @@
 #include "uhal/ValMem.hpp"
 
 // PDT Headers
-#include "pdt/TimingIssues.hpp"
+#include "timing/TimingIssues.hpp"
 
 using namespace std;
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 //-----------------------------------------------------------------------------
 Snapshot
@@ -273,8 +273,8 @@ convert_value_to_design_type(uint32_t aDesignType) {
 }
 //-----------------------------------------------------------------------------
 
-template std::string pdt::vec_fmt<uint32_t>(const std::vector<uint32_t>& aVec);
-template std::string pdt::short_vec_fmt<uint32_t>(const std::vector<uint32_t>& aVec);
+template std::string timing::vec_fmt<uint32_t>(const std::vector<uint32_t>& aVec);
+template std::string timing::short_vec_fmt<uint32_t>(const std::vector<uint32_t>& aVec);
 
 //-----------------------------------------------------------------------------
 uint32_t locate(float xx[], unsigned long n, float x) {
@@ -308,5 +308,5 @@ uint32_t locate(float xx[], unsigned long n, float x) {
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

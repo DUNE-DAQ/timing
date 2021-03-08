@@ -1,7 +1,7 @@
-#include "pdt/SpillInterfaceNode.hpp"
+#include "timing/SpillInterfaceNode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 UHAL_REGISTER_DERIVED_NODE(SpillInterfaceNode)
 
@@ -83,5 +83,5 @@ SpillInterfaceNode::read_in_spill() const {
 }
 //------------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

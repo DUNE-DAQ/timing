@@ -1,10 +1,10 @@
-#include "pdt/PartitionNode.hpp"
+#include "timing/PartitionNode.hpp"
 
 #include <chrono>
 #include <thread>
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 UHAL_REGISTER_DERIVED_NODE(PartitionNode)
 
@@ -321,5 +321,5 @@ PartitionNode::get_info(timingfirmwareinfo::TimingPartitionMonitorData& mon_data
     //std::vector<uhal::ValVector<uint32_t>> lCountersContainer = {lAccCounters, lRejCounters};
 }
 //-----------------------------------------------------------------------------
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

@@ -1,7 +1,7 @@
-#include "pdt/TimestampGeneratorNode.hpp"
+#include "timing/TimestampGeneratorNode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 UHAL_REGISTER_DERIVED_NODE(TimestampGeneratorNode)
 
@@ -57,5 +57,5 @@ TimestampGeneratorNode::set_timestamp(uint64_t timestamp) const {
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

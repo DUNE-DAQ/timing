@@ -1,7 +1,7 @@
-#include "pdt/TriggerReceiverNode.hpp"
+#include "timing/TriggerReceiverNode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 UHAL_REGISTER_DERIVED_NODE(TriggerReceiverNode)
 
@@ -86,5 +86,5 @@ TriggerReceiverNode::disable_triggers() const {
 }
 //------------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

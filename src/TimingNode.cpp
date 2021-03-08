@@ -1,7 +1,7 @@
-#include "pdt/TimingNode.hpp"
+#include "timing/TimingNode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 //-----------------------------------------------------------------------------
 TimingNode::TimingNode(const uhal::Node& node) : uhal::Node(node) {
@@ -41,5 +41,5 @@ TimingNode::reset_sub_nodes(const uhal::Node& node, uint32_t aValue, bool dispat
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

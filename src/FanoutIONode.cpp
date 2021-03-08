@@ -1,7 +1,7 @@
-#include "pdt/FanoutIONode.hpp"
+#include "timing/FanoutIONode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 //-----------------------------------------------------------------------------
 FanoutIONode::FanoutIONode(const uhal::Node& node, std::string uid_i2c_bus, std::string uid_i2c_device, std::string pll_i2c_bus, std::string pll_i2c_device, std::vector<std::string> clock_names, std::vector<std::string> sfp_i2c_buses) :
@@ -15,5 +15,5 @@ FanoutIONode::~FanoutIONode() {
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

@@ -1,7 +1,7 @@
-#include "pdt/SI534xNode.hpp"
+#include "timing/SI534xNode.hpp"
 
 // PDT headers
-#include "pdt/toolbox.hpp"
+#include "timing/toolbox.hpp"
 #include "ers/ers.hpp"
 
 #include <boost/tuple/tuple.hpp>
@@ -14,7 +14,7 @@
 #include <sstream>
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 // uHAL Node registation
 UHAL_REGISTER_DERIVED_NODE(SI534xNode)
@@ -173,11 +173,11 @@ SI534xSlave::configure( const std::string& aPath ) const {
     std::ifstream::pos_type lHdrEnd = lFile.tellg();
 
     // auto lPreamble = this->read_config_section(lFile, "preamble");
-    // PDT_LOG(kDebug) << "Preamble size = " << lPreamble.size();
+    // TIMING_LOG(kDebug) << "Preamble size = " << lPreamble.size();
     // auto lRegisters = this->read_config_section(lFile, "registers");
-    // PDT_LOG(kDebug) << "Registers size = " << lRegisters.size();
+    // TIMING_LOG(kDebug) << "Registers size = " << lRegisters.size();
     // auto lPostAmble = this->read_config_section(lFile, "postamble");
-    // PDT_LOG(kDebug) << "PostAmble size = " << lPostAmble.size();
+    // TIMING_LOG(kDebug) << "PostAmble size = " << lPostAmble.size();
 
 
     std::vector<SI534xSlave::RegisterSetting_t> lPreamble, lRegisters, lPostAmble; 
@@ -201,7 +201,7 @@ SI534xSlave::configure( const std::string& aPath ) const {
 
     try {
         this->write_clock_register(0x1E, 0x2);
-    } catch ( pdt::I2CException& lExc ) {
+    } catch ( timing::I2CException& lExc ) {
         // Do nothing.
     }
 
@@ -367,5 +367,5 @@ SI534xNode::~SI534xNode() {
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

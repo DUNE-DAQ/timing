@@ -1,7 +1,7 @@
-#include "pdt/EchoMonitorNode.hpp"
+#include "timing/EchoMonitorNode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 UHAL_REGISTER_DERIVED_NODE(EchoMonitorNode)
 
@@ -79,5 +79,5 @@ EchoMonitorNode::send_echo_and_measure_delay(int64_t timeout) const {
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

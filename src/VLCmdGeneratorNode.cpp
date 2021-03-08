@@ -1,7 +1,7 @@
-#include "pdt/VLCmdGeneratorNode.hpp"
+#include "timing/VLCmdGeneratorNode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 UHAL_REGISTER_DERIVED_NODE(VLCmdGeneratorNode)
 
@@ -66,5 +66,5 @@ VLCmdGeneratorNode::apply_endpoint_delay(uint32_t address, uint32_t coarse_delay
 //-----------------------------------------------------------------------------
 
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

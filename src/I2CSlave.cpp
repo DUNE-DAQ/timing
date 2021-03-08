@@ -5,7 +5,7 @@
  * Created on August 29, 2014, 4:47 PM
  */
 
-#include "pdt/I2CSlave.hpp"
+#include "timing/I2CSlave.hpp"
 
 
 #include <boost/lexical_cast.hpp>
@@ -13,13 +13,13 @@
 #include <boost/range/adaptor/map.hpp>
 #include <boost/range/algorithm/copy.hpp>
 
-#include "pdt/TimingIssues.hpp"
+#include "timing/TimingIssues.hpp"
 #include "ers/ers.hpp"
-#include "pdt/toolbox.hpp"
-#include "pdt/I2CMasterNode.hpp"
+#include "timing/toolbox.hpp"
+#include "timing/I2CMasterNode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 
 //-----------------------------------------------------------------------------
@@ -132,5 +132,5 @@ I2CSlave::get_master_id() const {
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

@@ -5,20 +5,20 @@
  * Created on August 29, 2014, 4:47 PM
  */
 
-#include "pdt/I2CMasterNode.hpp"
+#include "timing/I2CMasterNode.hpp"
 
 
 #include <boost/lexical_cast.hpp>
 #include <boost/range/adaptor/map.hpp>
 #include <boost/range/algorithm/copy.hpp>
 
-#include "pdt/TimingIssues.hpp"
+#include "timing/TimingIssues.hpp"
 #include "ers/ers.hpp"
-#include "pdt/toolbox.hpp"
-#include "pdt/I2CSlave.hpp"
+#include "timing/toolbox.hpp"
+#include "timing/I2CSlave.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 UHAL_REGISTER_DERIVED_NODE(I2CMasterNode)
 
@@ -72,7 +72,7 @@ void I2CMasterNode::constructor() {
     const std::unordered_map<std::string, std::string>& lPars = this->getParameters();
     std::unordered_map<std::string, std::string>::const_iterator lIt;
     for ( lIt = lPars.begin(); lIt != lPars.end(); ++lIt ) {
-        uint32_t lSlaveAddr = (boost::lexical_cast< pdt::stoul<uint32_t> > (lIt->second) & 0x7f);
+        uint32_t lSlaveAddr = (boost::lexical_cast< timing::stoul<uint32_t> > (lIt->second) & 0x7f);
         m_i2c_device_addresses.insert(std::make_pair( lIt->first, lSlaveAddr  ) );
         m_i2c_devices.insert(std::make_pair( lIt->first, new I2CSlave( this, lSlaveAddr ) ) );
     }
@@ -283,8 +283,8 @@ I2CMasterNode::ping(uint8_t i2c_device_address) const {
         send_i2c_command_and_write_data(kStartCmd, (i2c_device_address << 1) | 0x01);
         send_i2c_command_and_read_data(kStopCmd | kAckCmd);
         return true;
-    } catch (const pdt::I2CException& lExc) {
-        // PDT_LOG(kError) << std::showbase << std::hex << (uint32_t)iAddr << "  " << lExc.what();
+    } catch (const timing::I2CException& lExc) {
+        // TIMING_LOG(kError) << std::showbase << std::hex << (uint32_t)iAddr << "  " << lExc.what();
         return false;
     }
 }
@@ -305,12 +305,12 @@ I2CMasterNode::scan() const {
         try {
             send_i2c_command_and_write_data(kStartCmd, (iAddr << 1) | 0x01);
             send_i2c_command_and_read_data(kStopCmd | kAckCmd);
-        } catch (const pdt::I2CException& lExc) {
-            // PDT_LOG(kError) << std::showbase << std::hex << (uint32_t)iAddr << "  " << lExc.what();
+        } catch (const timing::I2CException& lExc) {
+            // TIMING_LOG(kError) << std::showbase << std::hex << (uint32_t)iAddr << "  " << lExc.what();
             continue;
         }
         lAddrVector.push_back(iAddr);
-        // PDT_LOG(kNotice) << std::showbase << std::hex << (uint32_t)iAddr << " found";
+        // TIMING_LOG(kNotice) << std::showbase << std::hex << (uint32_t)iAddr << " found";
     }
 
     return lAddrVector;
@@ -478,5 +478,5 @@ void I2CMasterNode::wait_until_finished(bool aRequireAcknowledgement, bool aRequ
     }
 }
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

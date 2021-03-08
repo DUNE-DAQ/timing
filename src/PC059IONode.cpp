@@ -1,7 +1,7 @@
-#include "pdt/PC059IONode.hpp"
+#include "timing/PC059IONode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 UHAL_REGISTER_DERIVED_NODE(PC059IONode)
 
@@ -182,5 +182,5 @@ PC059IONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

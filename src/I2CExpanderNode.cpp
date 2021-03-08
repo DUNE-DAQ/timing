@@ -1,7 +1,7 @@
-#include "pdt/I2CExpanderNode.hpp"
+#include "timing/I2CExpanderNode.hpp"
 
 // PDT headers
-#include "pdt/toolbox.hpp"
+#include "timing/toolbox.hpp"
 #include "ers/ers.hpp"
 
 // #include <boost/tuple/tuple.hpp>
@@ -10,7 +10,7 @@
 // #include <sstream>
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 // uHAL Node registation
 UHAL_REGISTER_DERIVED_NODE(I2CExpanderNode)
@@ -114,5 +114,5 @@ I2CExpanderNode::~I2CExpanderNode() {
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

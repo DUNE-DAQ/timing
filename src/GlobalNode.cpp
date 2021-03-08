@@ -1,7 +1,7 @@
-#include "pdt/GlobalNode.hpp"
+#include "timing/GlobalNode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 UHAL_REGISTER_DERIVED_NODE(GlobalNode)
 
@@ -114,5 +114,5 @@ GlobalNode::enable_upstream_endpoint(uint32_t timeout) {
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

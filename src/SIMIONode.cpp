@@ -1,7 +1,7 @@
-#include "pdt/SIMIONode.hpp"
+#include "timing/SIMIONode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 UHAL_REGISTER_DERIVED_NODE(SIMIONode)
 
@@ -150,5 +150,5 @@ SIMIONode::switch_sfp_soft_tx_control_bit(uint32_t /*sfp_id*/, bool /*turn_on*/)
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

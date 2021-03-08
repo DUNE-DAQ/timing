@@ -1,7 +1,7 @@
-#include "pdt/PDIMasterNode.hpp"
+#include "timing/PDIMasterNode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 UHAL_REGISTER_DERIVED_NODE(PDIMasterNode)
 
@@ -271,5 +271,5 @@ PDIMasterNode::get_info(timingfirmwareinfo::TimingPDIMasterMonitorData& mon_data
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

@@ -1,7 +1,7 @@
-#include "pdt/CRTNode.hpp"
+#include "timing/CRTNode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 UHAL_REGISTER_DERIVED_NODE(CRTNode)
 
@@ -66,5 +66,5 @@ CRTNode::read_last_pulse_timestamp() const {
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

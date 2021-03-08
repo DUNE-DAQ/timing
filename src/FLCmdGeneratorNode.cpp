@@ -1,7 +1,7 @@
-#include "pdt/FLCmdGeneratorNode.hpp"
+#include "timing/FLCmdGeneratorNode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 UHAL_REGISTER_DERIVED_NODE(FLCmdGeneratorNode)
 
@@ -117,5 +117,5 @@ FLCmdGeneratorNode::get_info(timingfirmwareinfo::TimingFLCmdCountersVector& mon_
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

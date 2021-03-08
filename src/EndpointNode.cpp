@@ -1,7 +1,7 @@
-#include "pdt/EndpointNode.hpp"
+#include "timing/EndpointNode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 UHAL_REGISTER_DERIVED_NODE(EndpointNode)
 
@@ -226,5 +226,5 @@ EndpointNode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const {
 	//}      
 }
 //-----------------------------------------------------------------------------
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

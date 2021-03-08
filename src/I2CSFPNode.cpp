@@ -1,7 +1,7 @@
-#include "pdt/I2CSFPNode.hpp"
+#include "timing/I2CSFPNode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 //-----------------------------------------------------------------------------
 I2CSFPSlave::I2CSFPSlave( const I2CMasterNode* i2c_master, uint8_t address ) :
@@ -445,5 +445,5 @@ I2CSFPNode::~I2CSFPNode() {
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

@@ -1,10 +1,10 @@
-#include "pdt/EndpointDesign.hpp"
-#include "pdt/FanoutDesign.hpp"
-#include "pdt/PDIMasterDesign.hpp"
-#include "pdt/MasterMuxDesign.hpp"
+#include "timing/EndpointDesign.hpp"
+#include "timing/FanoutDesign.hpp"
+#include "timing/PDIMasterDesign.hpp"
+#include "timing/MasterMuxDesign.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 // In leiu of UHAL_REGISTER_DERIVED_NODE
 uhal::RegistrationHelper< EndpointDesign<FMCIONode> > EndpointDesign_FMCIONode_RegistrationHelper( "EndpointDesign<FMCIONode>" );
 
@@ -18,5 +18,5 @@ uhal::RegistrationHelper< PDIMasterDesign<FMCIONode> > PDIMasterDesign_FMCIONode
 
 uhal::RegistrationHelper< PDIMasterDesign<SIMIONode> > PDIMasterDesign_SIMIONode_RegistrationHelper( "PDIMasterDesign<SIMIONode>" );
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

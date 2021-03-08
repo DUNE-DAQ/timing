@@ -1,7 +1,7 @@
-#include "pdt/FrequencyCounterNode.hpp"
+#include "timing/FrequencyCounterNode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 UHAL_REGISTER_DERIVED_NODE(FrequencyCounterNode)
 
@@ -56,5 +56,5 @@ FrequencyCounterNode::measure_frequencies(uint8_t number_of_clocks) const {
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

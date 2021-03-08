@@ -1,7 +1,7 @@
-#include "pdt/DACNode.hpp"
+#include "timing/DACNode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 // uHAL Node registation
 UHAL_REGISTER_DERIVED_NODE(DACNode)
@@ -57,5 +57,5 @@ DACNode::~DACNode() {
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

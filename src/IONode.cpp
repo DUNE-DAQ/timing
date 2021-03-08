@@ -1,7 +1,7 @@
-#include "pdt/IONode.hpp"
+#include "timing/IONode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 //UHAL_REGISTER_DERIVED_NODE(IONode);
 
@@ -174,7 +174,7 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
         	throw ClockConfigNotFound(ERS_HERE, lClockConfigKey, e);
 		}
       	
-      	return std::string(std::getenv("PDT_TESTS")) + "/etc/clock/" + lConfigFile;
+      	return std::string(std::getenv("TIMING_TESTS")) + "/etc/clock/" + lConfigFile;
 	}
 	
 }
@@ -329,5 +329,5 @@ IONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const {
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

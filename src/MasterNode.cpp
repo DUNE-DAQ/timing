@@ -1,7 +1,7 @@
-#include "pdt/MasterNode.hpp"
+#include "timing/MasterNode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 //-----------------------------------------------------------------------------
 MasterNode::MasterNode(const uhal::Node& node) : TimingNode(node) {
@@ -50,5 +50,5 @@ MasterNode::apply_endpoint_delay(const ActiveEndpointConfig& ept_config, bool me
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

@@ -1,7 +1,7 @@
-#include "pdt/TimingSystemManagerBase.hpp"
+#include "timing/TimingSystemManagerBase.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 
 //-----------------------------------------------------------------------------
@@ -40,5 +40,5 @@ TimingSystemManagerBase::getNumberOfEndpoints() const {
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

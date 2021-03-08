@@ -1,7 +1,7 @@
-#include "pdt/FMCIONode.hpp"
+#include "timing/FMCIONode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 UHAL_REGISTER_DERIVED_NODE(FMCIONode)
 
@@ -100,5 +100,5 @@ FMCIONode::get_info(timinghardwareinfo::TimingFMCMonitorDataDebug& mon_data) con
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

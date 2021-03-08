@@ -1,7 +1,7 @@
-#include "pdt/SIChipSlave.hpp"
+#include "timing/SIChipSlave.hpp"
 
 // PDT headers
-#include "pdt/toolbox.hpp"
+#include "timing/toolbox.hpp"
 #include "ers/ers.hpp"
 
 #include <boost/tuple/tuple.hpp>
@@ -10,7 +10,7 @@
 #include <sstream>
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 //-----------------------------------------------------------------------------
 SIChipSlave::SIChipSlave( const I2CMasterNode* i2c_master, uint8_t address ) :
@@ -113,5 +113,5 @@ SIChipSlave::write_clock_register( uint16_t address, uint8_t data ) const {
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq

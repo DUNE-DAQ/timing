@@ -1,7 +1,7 @@
-#include "pdt/TLUIONode.hpp"
+#include "timing/TLUIONode.hpp"
 
 namespace dunedaq {
-namespace pdt {
+namespace timing {
 
 UHAL_REGISTER_DERIVED_NODE(TLUIONode)
 
@@ -166,5 +166,5 @@ TLUIONode::get_info(timinghardwareinfo::TimingTLUMonitorDataDebug& mon_data) con
 }
 //-----------------------------------------------------------------------------
 
-} // namespace pdt
+} // namespace timing
 } // namespace dunedaq
