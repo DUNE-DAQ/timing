@@ -14,9 +14,9 @@ namespace python {
 	extern void register_master(py::module &);
 	extern void register_top_designs(py::module &);
 
-PYBIND11_MODULE(core, m) {
+PYBIND11_MODULE(_core, m) {
 
-    m.doc() = "timing core pybind11 module"; // optional module docstring
+    m.doc() = "c++ implementation of timing core python module"; // optional module docstring
 
 	timing::python::register_i2c(m);
 	timing::python::register_partition(m);
