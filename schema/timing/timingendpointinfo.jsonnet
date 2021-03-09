@@ -26,6 +26,8 @@ local timingendpointinfo = {
 
     timing_endpoint_mon_data: s.record("TimingEndpointInfo", 
     [
+        s.field("class_name", self.text_data, "TimingEndpointInfo",
+                doc="Info class name"),
         s.field("state", self.uint,
                 doc="Endpoint state"),
         s.field("ready", self.bool_data, 0,

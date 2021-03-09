@@ -36,6 +36,12 @@ ERS_DECLARE_ISSUE_BASE(timing,                            ///< Namespace
                        ERS_EMPTY                       ///< Attribute of this class
 )
 
+ERS_DECLARE_ISSUE(timing,                       ///< Namespace
+                  EnvironmentVariableNotSet,  ///< Issue class name
+                  "Environment variable: " << env_var << " not set",      ///< Message
+                  ((std::string)env_var)      ///< Message parameters
+)
+
 // I2C related issues
 ERS_DECLARE_ISSUE(timing,                                ///< Namespace
                   I2CException,                       ///< Issue class name

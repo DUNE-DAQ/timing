@@ -78,6 +78,8 @@ local timingfirmwareinfo = {
 
     timing_pdi_master_mon_data: s.record("TimingPDIMasterMonitorData", 
     [
+        s.field("class_name", self.text_data, "TimingPDIMasterMonitorData",
+                doc="Info class name"),
         s.field("timestamp", self.l_uint,
                 doc="Timestamp"),
         s.field("spill_interface_enabled", self.bool_data, 0,

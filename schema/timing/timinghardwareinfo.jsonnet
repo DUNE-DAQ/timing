@@ -91,6 +91,8 @@ local timinghardwareinfo = {
 //
     timing_fmc_mon_data: s.record("TimingFMCMonitorData", 
     [
+        s.field("class_name", self.text_data, "TimingFMCMonitorData",
+                doc="Info class name"),
         s.field("cdr_lol", self.bool_data,
                 doc="CDR LOL flag"),
         s.field("cdr_los", self.bool_data, 0,
@@ -108,6 +110,8 @@ local timinghardwareinfo = {
 //
     timing_fmc_mon_data_debug: s.record("TimingFMCMonitorDataDebug", 
     [
+        s.field("class_name", self.text_data, "TimingFMCMonitorDataDebug",
+                doc="Info class name"),
         s.field("pll_mon_data", self.timing_pll_mon_data,
                 doc="PLL monitoring data"),
         s.field("sfp_mon_data", self.timing_sfp_mon_data,
@@ -144,7 +148,9 @@ local timinghardwareinfo = {
     doc="Timing TLU monitor data"),
 
     timing_tlu_mon_data_debug: s.record("TimingTLUMonitorDataDebug", 
-    [
+    [   
+        s.field("class_name", self.text_data, "TimingTLUMonitorDataDebug",
+                doc="Info class name"),
         s.field("pll_mon_data", self.timing_pll_mon_data,
                 doc="PLL monitoring data"),
     ], 

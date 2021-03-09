@@ -138,6 +138,7 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
 	if (clock_config_file.size()) {
 		// config file provided explicitly, no need for lookup
 		return clock_config_file;
+		TLOG_DEBUG(0) << "Override pll file: " << clock_config_file;
 	} else {
 
 		std::string lConfigFile;
@@ -168,13 +169,29 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
 		// modifier in case a different clock file is needed based on firmware configuration
 		if (mode >= 0) lClockConfigKey = lClockConfigKey + "_mode" + std::to_string(mode);
 
+		TLOG_DEBUG(0) << "Using pll config key: " << lClockConfigKey;
+
 		try {
 			lConfigFile = g_clock_config_map.at(lClockConfigKey);
 		} catch (const std::out_of_range& e) {
         	throw ClockConfigNotFound(ERS_HERE, lClockConfigKey, e);
 		}
       	
-      	return std::string(std::getenv("TIMING_TESTS")) + "/etc/clock/" + lConfigFile;
+      	TLOG_DEBUG(0) << "PLL config file: " << lConfigFile << " from key: " << lClockConfigKey;
+
+      	const char * env_var_char = std::getenv( "PDT_TESTS" );
+
+      	if (env_var_char == nullptr) {
+      	  throw EnvironmentVariableNotSet(ERS_HERE, "PDT_TESTS");
+      	}
+      	
+      	std::string env_var( env_var_char);
+
+      	std::string full_pll_config_file_path = env_var + "/etc/clock/" + lConfigFile;
+
+		TLOG_DEBUG(0) << "Full PLL config file path: " << full_pll_config_file_path;
+
+      	return full_pll_config_file_path;
 	}
 	
 }

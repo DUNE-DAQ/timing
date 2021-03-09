@@ -402,7 +402,7 @@ I2CMasterNode::send_i2c_command_and_write_data( uint8_t command, uint8_t data ) 
     uint8_t lFullCmd = command | kWriteToSlaveCmd;
     std::stringstream debug_stream;
     debug_stream << ">> sending write cmd = " << std::showbase << std::hex << (uint32_t)lFullCmd << " data = " << std::showbase << std::hex << (uint32_t)data;
-    TLOG_DEBUG(0) << debug_stream.str();
+    TLOG_DEBUG(2) << debug_stream.str();
 
     // write the payload
     getNode(kTxNode).write( data );
