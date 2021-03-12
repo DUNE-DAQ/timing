@@ -179,15 +179,15 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
       	
       	TLOG_DEBUG(0) << "PLL config file: " << lConfigFile << " from key: " << lClockConfigKey;
 
-      	const char * env_var_char = std::getenv( "PDT_TESTS" );
+      	const char * env_var_char = std::getenv( "TIMING_SHARE" );
 
       	if (env_var_char == nullptr) {
-      	  throw EnvironmentVariableNotSet(ERS_HERE, "PDT_TESTS");
+      	  throw EnvironmentVariableNotSet(ERS_HERE, "TIMING_SHARE");
       	}
       	
       	std::string env_var( env_var_char);
 
-      	std::string full_pll_config_file_path = env_var + "/etc/clock/" + lConfigFile;
+      	std::string full_pll_config_file_path = env_var + "/config/etc/clock/" + lConfigFile;
 
 		TLOG_DEBUG(0) << "Full PLL config file path: " << full_pll_config_file_path;
 

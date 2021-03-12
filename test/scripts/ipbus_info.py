@@ -14,7 +14,7 @@ def readMAC( device ):
 def getinfo():
 	uhal.setLogLevelTo(uhal.LogLevel.WARNING)
 	
-	cm = uhal.ConnectionManager('file://${PDT_TESTS}/etc/connections.xml')
+	cm = uhal.ConnectionManager('file://${TIMING_SHARE}/config/etc/connections.xml')
 
 	device = cm.getDevice('OVLD_TUN')
 

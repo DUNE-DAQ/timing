@@ -47,16 +47,16 @@ int main(int argc, char const *argv[])
 {
 	namespace fs = boost::filesystem;
 
-	const std::string kEnvVar("PDT_TESTS");
+	const std::string kEnvVar("TIMING_SHARE");
 	const char* lTestDir = nullptr;
 	if( (lTestDir = std::getenv(kEnvVar.c_str())) ) {
-        PDT_LOG(pdt::kNotice) << "Your PDT_TESTS is: " << lTestDir;
+        PDT_LOG(pdt::kNotice) << "Your TIMING_SHARE is: " << lTestDir;
    	} else {
    	    PDT_LOG(pdt::kError) << kEnvVar << " is not defined";
     	exit(-1);
 	}
 
-   	fs::path lConnections = fs::path(lTestDir) / "etc" / "connections.xml";
+   	fs::path lConnections = fs::path(lTestDir) / "config" / "etc" / "connections.xml";
 
 	pdt::throwIfNotFile(lConnections.string());
 
@@ -171,7 +171,7 @@ int main(int argc, char const *argv[])
     	exit(-1);
 	}
 
-    std::string aCfgPath = "${PDT_TESTS}/scripts/ouroboros/" + lClockConfig;
+    std::string aCfgPath = "${TIMING_SHARE}/scripts/ouroboros/" + lClockConfig;
 
     aCfgPath = pdt::shellExpandPath(aCfgPath);
 	PDT_LOG(pdt::kInfo) << "Loading clock configuration" << aCfgPath;

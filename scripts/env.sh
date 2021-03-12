@@ -37,8 +37,8 @@ if (( ${#missing_pypkg[@]} > 0 )); then
 fi
 unset missing_pypkg
 
-PDT_TESTS=$( readlink -f $(dirname $BASH_SOURCE)/../config/ )
-export PDT_TESTS
+TIMING_SHARE=$( readlink -f $(dirname $BASH_SOURCE)/../ )
+export TIMING_SHARE
 
 eval "$(_PDTBUTLER_COMPLETE=source pdtbutler)"
 

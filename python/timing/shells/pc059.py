@@ -180,7 +180,7 @@ class PC059Shell(BoardShell):
                 echo("PLL Clock configuration file: "+style(lClockConfigPath, fg='green') )
 
                 # Configure the clock chip
-                lFullClockConfigPath = expandvars(join('${PDT_TESTS}/etc/clock', lClockConfigPath))
+                lFullClockConfigPath = expandvars(join('${TIMING_SHARE}/config/etc/clock', lClockConfigPath))
 
             lSIChip.configure(lFullClockConfigPath)
             echo("SI3545 configuration id: {}".format(style(lSIChip.read_config_id(), fg='green')))

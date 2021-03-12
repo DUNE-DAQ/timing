@@ -41,7 +41,7 @@ from os.path import join, expandvars
 class PDTContext: pass
 
 
-DEFAULT_MAP = {'connections': '${PDT_TESTS}/etc/connections.xml'}
+DEFAULT_MAP = {'connections': '${TIMING_SHARE}/config/etc/connections.xml'}
 CONTEXT_SETTINGS = {
     'help_option_names': ['-h', '--help'],
     'default_map': DEFAULT_MAP,
