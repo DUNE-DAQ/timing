@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(timing VERSION 7.0.0)
+project(timing VERSION 5.3.0)
 
 find_package(daq-cmake REQUIRED)
 
@@ -20,7 +20,7 @@ daq_add_library(*.cpp LINK_LIBRARIES ers::ers logging::logging ${LIST_OF_UHAL_LI
 target_include_directories(${PROJECT_NAME} PUBLIC $ENV{UHAL_INC})
 
 ##############################################################################
-add_subdirectory(python)
+#add_subdirectory(python)
 
 ##############################################################################
 daq_install()
