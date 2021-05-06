@@ -18,8 +18,7 @@
 				<node id="ep_stat" mask="0xf0"/>
 				<node id="in_spill" mask="0x100"/>
 				<node id="in_run" mask="0x200"/>
-				<node id="cdelay" mask="0xfc00"/>
-				<node id="fdelay" mask="0xf0000"/>
+				<node id="sfp_tx_dis" mask="0x400"/>
 			</node>
 		</node>
 		<node id="tstamp" address="0x4" mode="block" size="0x2" fwinfo="endpoint;width=1"/>
@@ -28,7 +27,7 @@
 			<node id="data" address="0x0" size="0x400" mode="port"/>
 			<node id="count" address="0x1" mask="0xffff"/>
 		</node>		
-		<node id="freq" address="0xa" module="file://freq_ctr.xml"/>
+		<node id="freq" address="0xa" module="file://ipbus_freq_ctr.xml"/>
 		<node id="ctrs" address="0x10" mode="block" size="0x10" fwinfo="endpoint;width=4"/>
-		<node id="scmd_gen" address="0x40" module="file://scmd_gen.xml"/>
+		<node id="scmd_gen" address="0x40" module="file://pdts_scmd_gen.xml"/>
 </node>

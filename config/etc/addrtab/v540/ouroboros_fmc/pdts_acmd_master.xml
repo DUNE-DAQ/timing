@@ -1,4 +1,4 @@
-<node id="acmd_master" description="Async command source" fwinfo="endpoint" class="VLCmdGeneratorNode">
+<node id="pdts_acmd_master" description="Async command source" fwinfo="endpoint" class="VLCmdGeneratorNode">
 		<node id="csr" address="0x0" fwinfo="endpoint;width=1">
 			<node id="ctrl" address="0x0">
 				<node id="go" mask="0x1"/>

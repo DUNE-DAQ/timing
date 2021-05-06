@@ -1,4 +1,4 @@
-<node id="spill" description="Spill signal interface" fwinfo="endpoint" class="SpillInterfaceNode">
+<node id="pdts_spill_gate" description="Spill signal interface" fwinfo="endpoint" class="SpillInterfaceNode">
 		<node id="csr" address="0x0" fwinfo="endpoint;width=1">
 			<node id="ctrl" address="0x0">
 				<node id="en" mask="0x1"/>
