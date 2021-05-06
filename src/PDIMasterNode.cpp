@@ -21,9 +21,9 @@ PDIMasterNode::~PDIMasterNode() {
 std::string
 PDIMasterNode::get_status(bool print_out) const {
     std::stringstream lStatus;
-    auto lTStamp = getNode<TimestampGeneratorNode>("master.tstamp").read_raw_timestamp();
+    auto lTStamp = getNode<TimestampGeneratorNode>("tstamp").read_raw_timestamp();
     lStatus << "Timestamp: 0x" << std::hex << tstamp2int(lTStamp) << " -> " << format_timestamp(lTStamp) << std::endl << std::endl;
-    lStatus << getNode<FLCmdGeneratorNode>("master.scmd_gen").get_cmd_counters_table();
+    lStatus << getNode<FLCmdGeneratorNode>("scmd_gen").get_cmd_counters_table();
     if (print_out) std::cout << lStatus.str();
     return lStatus.str();
 }
@@ -33,7 +33,7 @@ PDIMasterNode::get_status(bool print_out) const {
 //-----------------------------------------------------------------------------
 void
 PDIMasterNode::switch_endpoint_sfp(uint32_t address, bool turn_on) const {
-    auto vlCmdNode = getNode<VLCmdGeneratorNode>("master.acmd");
+    auto vlCmdNode = getNode<VLCmdGeneratorNode>("acmd");
 
     // Switch off endpoint SFP tx
     vlCmdNode.switch_endpoint_sfp(address, turn_on);
@@ -44,7 +44,7 @@ PDIMasterNode::switch_endpoint_sfp(uint32_t address, bool turn_on) const {
 //-----------------------------------------------------------------------------
 void
 PDIMasterNode::enable_upstream_endpoint() const {
-    auto lGlobal = getNode<GlobalNode>("master.global");
+    auto lGlobal = getNode<GlobalNode>("global");
     lGlobal.enable_upstream_endpoint();
 }
 //-----------------------------------------------------------------------------
@@ -54,9 +54,9 @@ PDIMasterNode::enable_upstream_endpoint() const {
 uint32_t
 PDIMasterNode::measure_endpoint_rtt(uint32_t address, bool control_sfp) const {
 
-    auto vlCmdNode = getNode<VLCmdGeneratorNode>("master.acmd");
-    auto lGlobal = getNode<GlobalNode>("master.global");
-    auto lEcho = getNode<EchoMonitorNode>("master.echo");
+    auto vlCmdNode = getNode<VLCmdGeneratorNode>("acmd");
+    auto lGlobal = getNode<GlobalNode>("global");
+    auto lEcho = getNode<EchoMonitorNode>("echo");
 
     if (control_sfp) {
         // Switch off all TX SFPs
@@ -83,9 +83,9 @@ PDIMasterNode::measure_endpoint_rtt(uint32_t address, bool control_sfp) const {
 void
 PDIMasterNode::apply_endpoint_delay(uint32_t address, uint32_t coarse_delay, uint32_t fine_delay, uint32_t phase_delay, bool measure_rtt, bool control_sfp) const {
     
-    auto vlCmdNode = getNode<VLCmdGeneratorNode>("master.acmd");
-    auto lGlobal = getNode<GlobalNode>("master.global");
-    auto lEcho = getNode<EchoMonitorNode>("master.echo");
+    auto vlCmdNode = getNode<VLCmdGeneratorNode>("acmd");
+    auto lGlobal = getNode<GlobalNode>("global");
+    auto lEcho = getNode<EchoMonitorNode>("echo");
 
     if (measure_rtt) {
         
@@ -125,7 +125,7 @@ PDIMasterNode::apply_endpoint_delay(uint32_t address, uint32_t coarse_delay, uin
 void
 PDIMasterNode::send_fl_cmd(uint32_t command, uint32_t channel, uint32_t number_of_commands) const {
     for (uint32_t i=0; i < number_of_commands; i++) {
-        getNode<FLCmdGeneratorNode>("master.scmd_gen").send_fl_cmd(command, channel, getNode<TimestampGeneratorNode>("master.tstamp"));
+        getNode<FLCmdGeneratorNode>("scmd_gen").send_fl_cmd(command, channel, getNode<TimestampGeneratorNode>("tstamp"));
     }
 }
 //-----------------------------------------------------------------------------
@@ -162,7 +162,7 @@ PDIMasterNode::enable_fake_trigger(uint32_t channel, double rate, bool poisson) 
         lTriggerModeStream << "periodic";
     }
     TLOG() << lTriggerModeStream.str();
-    getNode<FLCmdGeneratorNode>("master.scmd_gen").enable_fake_trigger(channel, lFTConfig.divisor, lFTConfig.prescale, poisson);
+    getNode<FLCmdGeneratorNode>("scmd_gen").enable_fake_trigger(channel, lFTConfig.divisor, lFTConfig.prescale, poisson);
 }
 //-----------------------------------------------------------------------------
 
@@ -170,7 +170,7 @@ PDIMasterNode::enable_fake_trigger(uint32_t channel, double rate, bool poisson) 
 //-----------------------------------------------------------------------------
 void
 PDIMasterNode::disable_fake_trigger(uint32_t channel) const {
-    getNode<FLCmdGeneratorNode>("master.scmd_gen").disable_fake_trigger(channel);
+    getNode<FLCmdGeneratorNode>("scmd_gen").disable_fake_trigger(channel);
 }
 //------------------------------------------------------------------------------
 
@@ -178,7 +178,7 @@ PDIMasterNode::disable_fake_trigger(uint32_t channel) const {
 //-----------------------------------------------------------------------------
 void
 PDIMasterNode::enable_spill_interface() const {
-     getNode<SpillInterfaceNode>("master.spill").enable();
+     getNode<SpillInterfaceNode>("spill").enable();
 }
 //-----------------------------------------------------------------------------
 
@@ -186,7 +186,7 @@ PDIMasterNode::enable_spill_interface() const {
 //-----------------------------------------------------------------------------
 void
 PDIMasterNode::enable_fake_spills(uint32_t cycle_length, uint32_t spill_length) const {
-    getNode<SpillInterfaceNode>("master.spill").enable_fake_spills(cycle_length, spill_length);
+    getNode<SpillInterfaceNode>("spill").enable_fake_spills(cycle_length, spill_length);
 }
 //-----------------------------------------------------------------------------
 
@@ -194,43 +194,9 @@ PDIMasterNode::enable_fake_spills(uint32_t cycle_length, uint32_t spill_length) 
 //-----------------------------------------------------------------------------
 bool
 PDIMasterNode::read_in_spill() const {
-    return getNode<SpillInterfaceNode>("master.spill").read_in_spill();
+    return getNode<SpillInterfaceNode>("spill").read_in_spill();
 }
 //-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-void
-PDIMasterNode::reset_external_triggers_endpoint() const {
-    getNode<TriggerReceiverNode>("trig").reset();
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-void
-PDIMasterNode::enable_external_triggers() const {
-    getNode<TriggerReceiverNode>("trig").enable_triggers();
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-void
-PDIMasterNode::disable_external_triggers() const {
-    getNode<TriggerReceiverNode>("trig").disable_triggers();
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-const PartitionNode&
-PDIMasterNode::get_partition_node(uint32_t partition_id) const {
-    const std::string nodeName = "master.partition" + std::to_string(partition_id);
-    return getNode<PartitionNode>(nodeName);
-}
-//-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 void
@@ -250,17 +216,17 @@ PDIMasterNode::sync_timestamp() const {
 //-----------------------------------------------------------------------------
 void
 PDIMasterNode::get_info(timingfirmwareinfo::TimingPDIMasterMonitorData& mon_data) const {
-    auto lTStamp = getNode<TimestampGeneratorNode>("master.tstamp").read_raw_timestamp();
+    auto lTStamp = getNode<TimestampGeneratorNode>("tstamp").read_raw_timestamp();
     mon_data.timestamp = tstamp2int(lTStamp);
 
-    auto spill_interface_enabled = getNode("master.spill.csr.ctrl.en").read();
-    auto trig_interface_enabled = getNode("trig.csr.ctrl.ep_en").read();
+    auto spill_interface_enabled = getNode("spill.csr.ctrl.en").read();
+    //auto trig_interface_enabled = getNode("trig.csr.ctrl.ep_en").read();
     getClient().dispatch();
 
     mon_data.spill_interface_enabled = spill_interface_enabled.value();
-    mon_data.trig_interface_enabled = trig_interface_enabled.value();
+    //mon_data.trig_interface_enabled = trig_interface_enabled.value();
 
-    getNode<FLCmdGeneratorNode>("master.scmd_gen").get_info(mon_data.command_counters);
+    getNode<FLCmdGeneratorNode>("scmd_gen").get_info(mon_data.command_counters);
 
     for (uint i=0; i < 4; ++i) {
         timingfirmwareinfo::TimingPartitionMonitorData partition_data;

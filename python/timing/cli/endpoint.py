@@ -3,7 +3,7 @@ import click
 import collections
 
 from . import toolbox
-from . import definitions as defs
+import timing.common.definitions as defs
 from timing.common.definitions import kLibrarySupportedBoards
 
 from click import echo, style, secho

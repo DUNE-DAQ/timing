@@ -2,6 +2,7 @@
 #include <pybind11/stl.h>
 
 #include "timing/PDIMasterNode.hpp"
+#include "timing/TriggerReceiverNode.hpp"
 
 namespace py = pybind11;
 

@@ -18,7 +18,7 @@ MasterNode::~MasterNode() {
 //-----------------------------------------------------------------------------
 uint64_t
 MasterNode::read_timestamp() const {
-	return getNode<TimestampGeneratorNode>("master.tstamp").read_timestamp();
+	return getNode<TimestampGeneratorNode>("tstamp").read_timestamp();
 }
 //-----------------------------------------------------------------------------
 
@@ -26,7 +26,7 @@ MasterNode::read_timestamp() const {
 //-----------------------------------------------------------------------------
 void
 MasterNode::set_timestamp(uint64_t timestamp) const {
-	getNode<TimestampGeneratorNode>("master.tstamp").set_timestamp(timestamp);
+	getNode<TimestampGeneratorNode>("tstamp").set_timestamp(timestamp);
 }
 //-----------------------------------------------------------------------------
 

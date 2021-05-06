@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import re
 
-from . import definitions as defs
+import timing.common.definitions as defs
 import click
 import time
 

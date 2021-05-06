@@ -24,7 +24,7 @@ kMasterFWMajorRequired = 5
 
 from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
-from timing.common.definitions import kDesingMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesingFanout
+from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord
 from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
 from timing.common.definitions import kLibrarySupportedBoards
 # ------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ def master(obj, device):
         
     echo('Created device ' + click.style(lDevice.id(), fg='blue'))
 
-    lMaster = lDevice.getNode('master_top.master')
+    lMaster = lDevice.getNode('master')
 
     lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
     lVersion = lMaster.getNode('global.version').read()
@@ -79,8 +79,6 @@ def master(obj, device):
     obj.mDevice = lDevice
     obj.mTopDesign = lDevice.getNode('')
     obj.mMaster = lMaster
-    obj.mMasterTop = lDevice.getNode('master_top')
-    obj.mExtTrig = lDevice.getNode('master_top.trig')
     
     obj.mGenerics = { k:v.value() for k,v in lGenerics.items()}
     obj.mVersion = lVersion.value()
@@ -96,8 +94,8 @@ def master(obj, device):
 @click.pass_obj
 def synctime(obj):
 
-    lMasterTop = obj.mMasterTop
-    echo(lMasterTop.get_status())
+    lMaster = obj.mMaster
+    echo(lMaster.get_status())
 # ------------------------------------------------------------------------------
 
 
@@ -106,8 +104,8 @@ def synctime(obj):
 @click.pass_obj
 def synctime(obj):
 
-    lMasterTop = obj.mMasterTop
-    lMasterTop.sync_timestamp()
+    lMaster = obj.mMaster
+    lMaster.sync_timestamp()
 # ------------------------------------------------------------------------------
 
 
@@ -142,7 +140,6 @@ def partstatus(obj, watch, period):
 
     # lDevice = obj.mDevice
     lMaster = obj.mMaster
-    lMasterTop = obj.mMasterTop
     lPartNode = obj.mPartitionNode
 
     lTStampNode = lMaster.getNode('tstamp.ctr.val')
@@ -154,7 +151,7 @@ def partstatus(obj, watch, period):
         echo( "-- " + style("Master state", fg='green') + "---")
         echo()
         
-        echo(lMasterTop.get_status())
+        echo(lMaster.get_status())
 
         echo()
 
@@ -335,8 +332,8 @@ def sendcmd(obj, cmd, chan, n):
     Inject a single command.
     '''
 
-    lMasterTop = obj.mMasterTop
-    lMasterTop.send_fl_cmd(defs.kCommandIDs[cmd],chan,n)
+    lMaster = obj.mMaster
+    lMaster.send_fl_cmd(defs.kCommandIDs[cmd],chan,n)
 # ------------------------------------------------------------------------------
 
 
@@ -383,8 +380,8 @@ def faketriggen(obj, chan, rate, poisson):
     # b) Division by a power of two set by n = 2 ^ rate_div_d (ranging from 2^0 -> 2^15)
     # c) 1-in-n prescaling set by n = rate_div_p
 
-    lMasterTop = obj.mMasterTop
-    lMasterTop.enable_fake_trigger(chan,rate,poisson)
+    lMaster = obj.mMaster
+    lMaster.enable_fake_trigger(chan,rate,poisson)
 # ------------------------------------------------------------------------------
 
 
@@ -396,8 +393,8 @@ def faketrigclear(obj, chan):
     '''
     Clear the internal trigger generator.
     '''
-    lMasterTop = obj.mMasterTop
-    lMasterTop.disable_fake_trigger(chan)
+    lMaster = obj.mMaster
+    lMaster.disable_fake_trigger(chan)
     secho( "Fake triggers disabled; chan: {}".format(chan), fg='green')
 # ------------------------------------------------------------------------------
 
@@ -411,8 +408,8 @@ def spillenable(obj):
     \b
     Enables the internal spill generator.
     '''
-    lMasterTop = obj.mMasterTop
-    lMasterTop.enable_spill_interface()
+    lMaster = obj.mMaster
+    lMaster.enable_spill_interface()
     secho( "Spill interface enabled", fg='green')
 # ------------------------------------------------------------------------------
 
@@ -433,8 +430,8 @@ def fakespillgen(obj):
     \b
     FREQ
     '''
-    lMasterTop = obj.mMasterTop
-    lMasterTop.enable_fake_spills()
+    lMaster = obj.mMaster
+    lMaster.enable_fake_spills()
     secho( "Fake spills enabled", fg='green')
 
 # ------------------------------------------------------------------------------

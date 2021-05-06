@@ -1,7 +1,7 @@
 /**
- * @file PDIMasterDesign.hpp
+ * @file OuroborosDesign.hpp
  *
- * PDIMasterDesign is a class providing an interface
+ * OuroborosDesign is a class providing an interface
  * to the PD-I master design firmware block.
  *
  * This is part of the DUNE DAQ Software Suite, copyright 2020.
@@ -9,14 +9,16 @@
  * received with this code.
  */
 
-#ifndef TIMING_INCLUDE_TIMING_PDIMASTERDESIGN_HPP_
-#define TIMING_INCLUDE_TIMING_PDIMASTERDESIGN_HPP_
+#ifndef TIMING_INCLUDE_TIMING_OUROBOROSDESIGN_HPP_
+#define TIMING_INCLUDE_TIMING_OUROBOROSDESIGN_HPP_
 
 // PDT Headers
 #include "timing/MasterDesign.hpp"
+#include "timing/EndpointDesign.hpp"
 #include "timing/TLUIONode.hpp"
 #include "timing/FMCIONode.hpp"
 #include "timing/PDIMasterNode.hpp"
+#include "timing/TriggerReceiverNode.hpp"
 #include "timing/SIMIONode.hpp"
 
 // uHal Headers
@@ -34,11 +36,11 @@ namespace timing {
  * @brief      Class for PDI timing master design (known as overlord).
  */
 template <class IO>
-class PDIMasterDesign : public MasterDesign<IO,PDIMasterNode> {
+class OuroborosDesign : public MasterDesign<IO,PDIMasterNode>, public EndpointDesign<IO> {
 
 public:
-    explicit PDIMasterDesign(const uhal::Node& node);
-    virtual ~PDIMasterDesign();
+    explicit OuroborosDesign(const uhal::Node& node);
+    virtual ~OuroborosDesign();
 
     /**
      * @brief     Get status string, optionally print.
@@ -51,6 +53,7 @@ public:
      */
     void configure() const override;
 
+
 // In leiu of UHAL_DERIVEDNODE
 protected:
     virtual uhal::Node* clone() const;
@@ -60,6 +63,6 @@ protected:
 } // namespace timing
 } // namespace dunedaq
 
-#include "timing/detail/PDIMasterDesign.hxx"
+#include "timing/detail/OuroborosDesign.hxx"
 
-#endif // TIMING_INCLUDE_TIMING_PDIMASTERDESIGN_HPP_
+#endif // TIMING_INCLUDE_TIMING_OUROBOROSDESIGN_HPP_

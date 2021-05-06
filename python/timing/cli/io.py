@@ -18,7 +18,7 @@ from timing.core import SI534xSlave, I2CExpanderSlave, DACSlave
 
 from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
-from timing.common.definitions import kDesingMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesingFanout
+from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignChronos, kDesignBoreas
 from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
 from timing.common.definitions import kLibrarySupportedBoards
 
@@ -72,6 +72,12 @@ kUIDRevisionMap = {
     0xd88039d9248e: kPC059Rev1,
     0xd88039d98ae9: kPC059Rev1,
     0xd88039d92498: kPC059Rev1,
+    0x5410ecbba408: kTLURev1,
+    0x5410ecbb9426: kTLURev1,
+    #0x801f12f5ce48: kFIBRev1},
+    #0x801f12f5e9ae: kFIBRev1,
+    0x49162b65025:  kFMCRev3,
+    0x49162b62948:  kFMCRev3,
 }
 
 # ------------------------------------------------------------------------------
@@ -154,7 +160,7 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
             lIO.soft_reset()
             return
         
-        if lDesignType == kDesingFanout:
+        if lDesignType == kDesignFanout:
             
             if fanout == 0:
                 secho("Fanout mode enabled", fg='green')

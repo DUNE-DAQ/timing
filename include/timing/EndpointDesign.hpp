@@ -32,7 +32,7 @@ namespace timing {
  * @brief      Base class for timing endpoint design nodes.
  */
 template <class IO>
-class EndpointDesign : public TopDesign<IO> {
+class EndpointDesign : virtual public TopDesign<IO> {
 
 public:
     explicit EndpointDesign(const uhal::Node& node);

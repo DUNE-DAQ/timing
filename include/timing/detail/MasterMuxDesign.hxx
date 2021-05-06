@@ -16,7 +16,7 @@ uhal::Node* MasterMuxDesign<IO,MST>::clone() const {
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-MasterMuxDesign<IO,MST>::MasterMuxDesign(const uhal::Node& node) : MasterDesign<IO,MST>(node) {
+MasterMuxDesign<IO,MST>::MasterMuxDesign(const uhal::Node& node) : TopDesign<IO>(node), MasterDesign<IO,MST>(node) {
 }
 //-----------------------------------------------------------------------------
 
@@ -56,10 +56,6 @@ void MasterMuxDesign<IO,MST>::configure() const {
 
 		// Enable spill interface
 		this->get_master_node().enable_spill_interface();
-
-		// Trigger interface configuration
-		this->get_master_node().reset_external_triggers_endpoint();
-		this->get_master_node().enable_external_triggers();
 	}
 }
 //-----------------------------------------------------------------------------

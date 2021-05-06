@@ -7,9 +7,10 @@
 
 #include "timing/PDIMasterNode.hpp"
 
-#include "timing/PDIMasterDesign.hpp"
+#include "timing/OverlordDesign.hpp"
 #include "timing/FanoutDesign.hpp"
 #include "timing/MasterMuxDesign.hpp"
+#include "timing/BoreasDesign.hpp"
 
 namespace py = pybind11;
 
@@ -20,18 +21,39 @@ namespace python {
 void
 register_top_designs(py::module& m) {
 
-      // PD-I master design
-      py::class_<timing::PDIMasterDesign<TLUIONode>, uhal::Node> (m, "PDIMasterDesign<TLUIONode>")
-      .def("get_status", &timing::PDIMasterDesign<TLUIONode>::get_status)
-      .def("apply_endpoint_delay", &timing::PDIMasterDesign<TLUIONode>::apply_endpoint_delay)
-      .def("measure_endpoint_rtt", &timing::PDIMasterDesign<TLUIONode>::measure_endpoint_rtt)
+      // Overlord on TLU
+      py::class_<timing::OverlordDesign<TLUIONode>, uhal::Node> (m, "OverlordDesign<TLUIONode>")
+      .def("get_status", &timing::OverlordDesign<TLUIONode>::get_status)
+      .def("apply_endpoint_delay", &timing::OverlordDesign<TLUIONode>::apply_endpoint_delay)
+      .def("measure_endpoint_rtt", &timing::OverlordDesign<TLUIONode>::measure_endpoint_rtt)
       ;
 
-      // PD-I master design on fmc
-      py::class_<timing::PDIMasterDesign<FMCIONode>, uhal::Node> (m, "PDIMasterDesign<FMCIONode>")
-      .def("get_status", &timing::PDIMasterDesign<FMCIONode>::get_status)
-      .def("apply_endpoint_delay", &timing::PDIMasterDesign<FMCIONode>::apply_endpoint_delay)
-      .def("measure_endpoint_rtt", &timing::PDIMasterDesign<FMCIONode>::measure_endpoint_rtt)
+      // Overlord on FMC
+      py::class_<timing::OverlordDesign<FMCIONode>, uhal::Node> (m, "OverlordDesign<FMCIONode>")
+      .def("get_status", &timing::OverlordDesign<FMCIONode>::get_status)
+      .def("apply_endpoint_delay", &timing::OverlordDesign<FMCIONode>::apply_endpoint_delay)
+      .def("measure_endpoint_rtt", &timing::OverlordDesign<FMCIONode>::measure_endpoint_rtt)
+      ;
+
+      // Boreas on FMC
+      py::class_<timing::BoreasDesign<FMCIONode>, uhal::Node> (m, "BoreasDesign<FMCIONode>")
+      .def("get_status", &timing::BoreasDesign<FMCIONode>::get_status)
+      .def("apply_endpoint_delay", &timing::BoreasDesign<FMCIONode>::apply_endpoint_delay)
+      .def("measure_endpoint_rtt", &timing::BoreasDesign<FMCIONode>::measure_endpoint_rtt)
+      ;
+
+      // Boreas on TLU
+      py::class_<timing::BoreasDesign<TLUIONode>, uhal::Node> (m, "BoreasDesign<TLUIONode>")
+      .def("get_status", &timing::BoreasDesign<TLUIONode>::get_status)
+      .def("apply_endpoint_delay", &timing::BoreasDesign<TLUIONode>::apply_endpoint_delay)
+      .def("measure_endpoint_rtt", &timing::BoreasDesign<TLUIONode>::measure_endpoint_rtt)
+      ;
+
+      // Boreas on sim
+      py::class_<timing::BoreasDesign<SIMIONode>, uhal::Node> (m, "BoreasDesign<SIMIONode>")
+      .def("get_status", &timing::BoreasDesign<SIMIONode>::get_status)
+      .def("apply_endpoint_delay", &timing::BoreasDesign<SIMIONode>::apply_endpoint_delay)
+      .def("measure_endpoint_rtt", &timing::BoreasDesign<SIMIONode>::measure_endpoint_rtt)
       ;
 
       // PD-I fanout design

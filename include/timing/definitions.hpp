@@ -23,11 +23,12 @@ typedef std::map<std::string, uint32_t> Snapshot;
 
 enum BoardType {kBoardFMC, kBoardSim, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardUnknown};
 enum CarrierType {kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed, kCarrierATFC, kCarrierUnknown};
-enum DesignType {kDesingMaster, kDesignOuroborosSim, kDesignOuroboros, kUnused, kDesignEndpoint, kDesingFanout, kDesingOverlord, kDesingEndpoBICRT, kDesignUnknown};
+enum DesignType {kDesignMaster, kDesignOuroborosSim, kDesignOuroboros, kUnused, kDesignEndpoint, kDesignFanout, kDesignOverlord, kDesignEndpoBICRT, kDesignChronos, kDesignBoreas, kDesignUnknown};
 enum BoardRevision {kFMCRev1, kFMCRev2, kFMCRev3, kPC059Rev1, kTLURev1, kSIMRev1};
 
 const uint32_t g_dune_sp_clock_in_hz = 50e6;
 const uint32_t g_event_size = 6;
+const uint32_t g_hsi_event_size = 5;
 
 const std::map<BoardType, std::string> g_board_type_map = {
     {kBoardFMC, "fmc"},
@@ -47,13 +48,15 @@ const std::map<CarrierType, std::string> g_carrier_type_map = {
 };
 
 const std::map<DesignType, std::string> g_design_type_map = {
-    {kDesingMaster, "master"},
+    {kDesignMaster, "master"},
     {kDesignOuroboros, "ouroboros"},
     {kDesignOuroborosSim, "ouroboros-sim"},
     {kDesignEndpoint, "endpoint"},
-    {kDesingFanout, "fanout"},
-    {kDesingOverlord, "overlord"},
-    {kDesingEndpoBICRT, "endpoint-bi-crt"}
+    {kDesignFanout, "fanout"},
+    {kDesignOverlord, "overlord"},
+    {kDesignEndpoBICRT, "endpoint-bi-crt"},
+    {kDesignChronos, "chronos"},
+    {kDesignBoreas, "boreas"},
 };
 
 const std::map<BoardRevision, std::string> g_board_revision_map = {
@@ -96,7 +99,12 @@ const std::map<uint64_t, BoardRevision> g_board_uid_revision_map = {
     {0xd88039d98ae9, kPC059Rev1},
     {0xd88039d92498, kPC059Rev1},
     {0x5410ecbba408, kTLURev1},
-    {0x5410ecbb9426, kTLURev1}
+    {0x5410ecbb9426, kTLURev1},
+    //{0x801f12f5ce48, kFIBRev1},
+    //{0x801f12f5e9ae, kFIBRev1},
+    {0x49162b65025,  kFMCRev3},
+    {0x49162b62948,  kFMCRev3},
+    {0x49162b675ea,  kFMCRev3},
 };
 
 const std::map<std::string, std::string> g_clock_config_map = {
