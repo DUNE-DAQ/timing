@@ -64,7 +64,12 @@ def master(obj, device):
     lPatch = (lVersion >> 0) & 0xff
     
     if lBoardInfo['board_type'].value() in kLibrarySupportedBoards:
-        echo(lDevice.getNode('io').get_hardware_info())
+        try:
+            echo(lDevice.getNode('io').get_hardware_info())
+        except:
+            secho("Failed to retrieve hardware information I2C issue? Initial board reset needed?", fg='yellow')
+            e = sys.exc_info()[0]
+            secho("Error: {}".format(e), fg='red')
 
     echo("Master FW rev: {}, partitions: {}, channels: {}".format(
         style(hex(lVersion), fg='cyan'),

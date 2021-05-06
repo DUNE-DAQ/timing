@@ -21,18 +21,8 @@ HSINode::~HSINode() {
 void
 HSINode::enable(uint32_t partition, uint32_t address) const {
 	getNode("csr.ctrl.tgrp").write(partition);
-
-	if (address) {
-		//getNode("csr.ctrl.int_addr").write(0x1);
-		getNode("csr.ctrl.addr").write(address);
-	} else {
-		//getNode("csr.ctrl.int_addr").write(0x0);
-	}
-
-	//getNode("csr.ctrl.ctr_rst").write(0x1);
-	//getNode("csr.ctrl.ctr_rst").write(0x0);
+	getNode("csr.ctrl.addr").write(address);
 	getNode("csr.ctrl.ep_en").write(0x1);
-	//getNode("csr.ctrl.buf_en").write(0x1);
 	getClient().dispatch();
 }
 //-----------------------------------------------------------------------------
@@ -42,7 +32,6 @@ HSINode::enable(uint32_t partition, uint32_t address) const {
 void
 HSINode::disable() const {
 	getNode("csr.ctrl.ep_en").write(0x0);
-    //getNode("csr.ctrl.buf_en").write(0x0);
     getClient().dispatch();
 }
 //-----------------------------------------------------------------------------
@@ -51,10 +40,7 @@ HSINode::disable() const {
 //-----------------------------------------------------------------------------
 void
 HSINode::reset(uint32_t partition, uint32_t address) const {
-
-	getNode("csr.ctrl.ep_en").write(0x0);
-	//getNode("csr.ctrl.buf_en").write(0x0);
-	
+	getNode("csr.ctrl.ep_en").write(0x0);	
 	enable(partition, address);
 }
 //-----------------------------------------------------------------------------
@@ -66,15 +52,12 @@ HSINode::get_status(bool print_out) const {
 	
 	std::stringstream lStatus;
 
-	std::vector<std::pair<std::string, std::string> > lEPSummary;
+	std::vector<std::pair<std::string, std::string> > ept_summary;
 	std::vector<std::pair<std::string, std::string> > hsi_summary;
 
 	//auto lEPTimestamp = getNode("tstamp").readBlock(2);
-	//auto lEPEventCounter = getNode("evtctr").read();
-	//auto lEPBufferCount = getNode("buf.count").read();
-	auto lEPControl = read_sub_nodes(getNode("csr.ctrl"), false);
-	auto lEPState = read_sub_nodes(getNode("csr.stat"), false);
-	//auto lEPCounters = getNode("ctrs").readBlock(g_command_number);
+	auto ept_control = read_sub_nodes(getNode("csr.ctrl"), false);
+	auto ept_state = read_sub_nodes(getNode("csr.stat"), false);
 	
 	auto hsi_control = read_sub_nodes(getNode("hsi.csr.ctrl"), false);
 	auto hsi_state = read_sub_nodes(getNode("hsi.csr.stat"), false);
@@ -87,53 +70,28 @@ HSINode::get_status(bool print_out) const {
 
 	getClient().dispatch();
 
-	lEPSummary.push_back(std::make_pair("Enabled", std::to_string(lEPControl.find("ep_en")->second.value())));
-	lEPSummary.push_back(std::make_pair("State", g_endpoint_state_map.at(lEPState.find("ep_stat")->second.value())));
-	lEPSummary.push_back(std::make_pair("Partition", std::to_string(lEPControl.find("tgrp")->second.value())));
-	lEPSummary.push_back(std::make_pair("Address", std::to_string(lEPControl.find("addr")->second.value())));
-	//lEPSummary.push_back(std::make_pair("Timestamp", format_timestamp(lEPTimestamp)));
-	//lEPSummary.push_back(std::make_pair("Timestamp (hex)", format_reg_value(tstamp2int(lEPTimestamp))));
-	//lEPSummary.push_back(std::make_pair("EventCounter", std::to_string(lEPEventCounter.value())));
-	//std::string lBufferStatusString = !lEPState.find("buf_err")->second.value() ? "OK" : "Error";
-	//lEPSummary.push_back(std::make_pair("Buffer status", lBufferStatusString));
-	//lEPSummary.push_back(std::make_pair("Buffer occupancy", std::to_string(lEPBufferCount.value())));
+	ept_summary.push_back(std::make_pair("Enabled", format_reg_value(ept_control.find("ep_en")->second.value(),16)));
+	ept_summary.push_back(std::make_pair("Partition", format_reg_value(ept_control.find("tgrp")->second.value(),16)));
+	ept_summary.push_back(std::make_pair("Address", format_reg_value(ept_control.find("addr")->second.value(),16)));
+	ept_summary.push_back(std::make_pair("State", g_endpoint_state_map.at(ept_state.find("ep_stat")->second.value())));
 
-	//std::vector<std::pair<std::string, std::string> > lEPCommandCounters;
-
-	//for (uint32_t i=0; i < g_command_number; ++i) {
-	//	lEPCommandCounters.push_back(std::make_pair(g_command_map.at(i), std::to_string(lEPCounters[i])));	
-	//}
-
-	hsi_summary.push_back(std::make_pair("Buffer occupancy", std::to_string(hsi_buffer_count.value())));
-	hsi_summary.push_back(std::make_pair("re_mask", std::to_string(hsi_re_mask.value())));
-	hsi_summary.push_back(std::make_pair("fe_mask", std::to_string(hsi_fe_mask.value())));
-	hsi_summary.push_back(std::make_pair("inv_mask", std::to_string(hsi_inv_mask.value())));
+	hsi_summary.push_back(std::make_pair("Source", format_reg_value(hsi_control.find("src")->second.value(),16)));
+	hsi_summary.push_back(std::make_pair("Enabled", format_reg_value(hsi_control.find("en")->second.value(),16)));
+	hsi_summary.push_back(std::make_pair("Rising edge mask", format_reg_value(hsi_re_mask.value(),16)));
+	hsi_summary.push_back(std::make_pair("Falling edge mask", format_reg_value(hsi_fe_mask.value(),16)));
+	hsi_summary.push_back(std::make_pair("Invert mask", format_reg_value(hsi_inv_mask.value(), 16)));
+	hsi_summary.push_back(std::make_pair("Buffer enabled", format_reg_value(hsi_control.find("buf_en")->second.value(), 16)));
+	hsi_summary.push_back(std::make_pair("Buffer error", format_reg_value(hsi_state.find("buf_err")->second.value(), 16)));
+	hsi_summary.push_back(std::make_pair("Buffer warning", format_reg_value(hsi_state.find("buf_warn")->second.value(), 16)));
+	hsi_summary.push_back(std::make_pair("Buffer occupancy", to_string(hsi_buffer_count.value())));
 	
-	lStatus << format_reg_table(lEPSummary, "Endpoint summary", {"", ""}) << std::endl;
-	lStatus << format_reg_table(lEPState, "Endpoint state") << std::endl;
-	
-	lStatus << format_reg_table(hsi_control, "HSI control") << std::endl;
-	lStatus << format_reg_table(hsi_state, "HSI state") << std::endl;
-
+	lStatus << format_reg_table(ept_summary, "Endpoint summary", {"", ""}) << std::endl;
 	lStatus << format_reg_table(hsi_summary, "HSI summary", {"", ""}) << std::endl;
-
-	//lStatus << format_reg_table(lEPCommandCounters, "Endpoint counters", {"Command", "Counter"}); 
 
 	if (print_out) std::cout << lStatus.str();
     return lStatus.str();       
 }
 //-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-//uint64_t
-//HSINode::read_timestamp() const {
-//	auto lTimestamp = getNode("tstamp").readBlock(2);
-//	getClient().dispatch();
-//    return tstamp2int(lTimestamp);
-//}
-//-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 uint32_t
@@ -198,25 +156,6 @@ HSINode::get_data_buffer_table(bool read_all, bool print_out) const {
 
 
 //-----------------------------------------------------------------------------
-//double
-//HSINode::read_clock_frequency() const {
-//	std::vector<double> lFrequencies = getNode<FrequencyCounterNode>("freq").measure_frequencies(1);
-//	return lFrequencies.at(0);
-//}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-//uint32_t
-//HSINode::read_version() const {
-//	auto lBufCount = getNode("version").read();
-//	getClient().dispatch();
-//	return lBufCount.value();
-//}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
 //void
 //HSINode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const {
 //	
@@ -251,15 +190,19 @@ HSINode::get_data_buffer_table(bool read_all, bool print_out) const {
 //-----------------------------------------------------------------------------
 
 void
-HSINode::start_hsi(uint32_t src, uint32_t re_mask, uint32_t fe_mask, uint32_t inv_mask, bool dispatch) const {
+HSINode::configure_hsi(uint32_t src, uint32_t re_mask, uint32_t fe_mask, uint32_t inv_mask, bool dispatch) const {
 
 	getNode("hsi.csr.ctrl.src").write(src);
 	getNode("hsi.csr.re_mask").write(re_mask);
 	getNode("hsi.csr.fe_mask").write(fe_mask);
 	getNode("hsi.csr.inv_mask").write(inv_mask);
 
-	getNode("hsi.csr.ctrl.en").write(0x1);
+	if (dispatch) getClient().dispatch();
+}
 
+void
+HSINode::start_hsi(bool dispatch) const {
+	getNode("hsi.csr.ctrl.en").write(0x1);
 	if (dispatch) getClient().dispatch();
 }
 
@@ -291,14 +234,12 @@ HSINode::read_buffer_warning() const {
 	return buf_warning.value();
 }
 
-
 bool
 HSINode::read_buffer_error() const {
 	auto buf_error = getNode("hsi.csr.stat.buf_err").read();
 	getClient().dispatch();
 	return buf_error.value();
 }
-
 
 } // namespace timing
 } // namespace dunedaq

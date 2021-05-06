@@ -33,17 +33,18 @@ def hsi(obj, device):
         lDevice.setTimeoutPeriod(obj.mTimeout)
 
     
-    echo('Created hsi device')
-    echo(list(lDevice.getNodes()))
-    echo(lDevice.id())
-    echo(lDevice.uri())
+    echo('Created HSI device')
 
     lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
     lDevice.dispatch()
 
     if lBoardInfo['board_type'].value() in kLibrarySupportedBoards:
-        echo(lDevice.getNode('io').get_hardware_info())
-    # Ensure that target endpoint exists
+        try:
+            echo(lDevice.getNode('io').get_hardware_info())
+        except:
+            secho("Failed to retrieve hardware information I2C issue? Initial board reset needed?", fg='yellow')
+            e = sys.exc_info()[0]
+            secho("Error: {}".format(e), fg='red')
 
     obj.mDevice = lDevice
     obj.mHSIEndpoint = lDevice.getNode('endpoint0')
@@ -53,7 +54,8 @@ def hsi(obj, device):
 # ------------------------------------------------------------------------------
 @hsi.command('status')
 @click.pass_obj
-def status(obj):
+@click.pass_context
+def status(ctx, obj):
     '''
     Print the status of CRT endpoint wrapper block.
     '''
@@ -64,14 +66,15 @@ def status(obj):
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-@hsi.command('enable')
+@hsi.command('enable', short_help="Configure the HSI endpoint for running")
+@click.pass_obj
+@click.pass_context
 @click.argument('action', default='on', type=click.Choice(['on', 'off', 'reset']))
 @click.option('--partition', '-p', type=click.IntRange(0,4), help='Partition', default=0)
 @click.option('--address', '-a', type=toolbox.IntRange(0x0,0x100), help='Address', default=0)
-@click.pass_obj
-def enable(obj, action, partition, address):
+def enable(ctx, obj, action, partition, address):
     '''
-    Activate timing endpoint wrapper block.
+    Activate the timing endpoint in the hsi wrapper block.
     '''
 
     lDevice = obj.mDevice
@@ -85,36 +88,78 @@ def enable(obj, action, partition, address):
         lHSIEpt.reset(partition, address)
         lHSIEpt.reset_hsi()
 
-    #time.sleep(0.1)
-    #ctx.invoke(status)
+    time.sleep(0.1)
+    ctx.invoke(status)
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-@hsi.command('configure', short_help="Configure the HSI endpoint for running")
-@click.option('--src', '-s', type=click.IntRange(0x0,0x1), help='Partition', default=0)
-@click.option('--re-mask', '-r', type=click.IntRange(0,0xffffffff), help='Partition', default=0)
-@click.option('--fe-mask', '-f', type=click.IntRange(0,0xffffffff), help='Partition', default=0)
-@click.option('--inv-mask', '-i', type=click.IntRange(0,0xffffffff), help='Partition', default=0)
+@hsi.command('configure', short_help="Configure the HSI block for running")
 @click.pass_obj
-def configure(obj, src, re_mask, fe_mask, inv_mask):
+@click.pass_context
+@click.option('--src', '-s', type=click.IntRange(0x0,0x1), help='Source of HSI data,; 0: hardware; 1: timestamp (emulation mode)', default=0)
+@click.option('--re-mask', '-r', type=click.IntRange(0,0xffffffff), help='Rising edge mask', default=0)
+@click.option('--fe-mask', '-f', type=click.IntRange(0,0xffffffff), help='Falling edge mask', default=0)
+@click.option('--inv-mask', '-i', type=click.IntRange(0,0xffffffff), help='Invert mask', default=0)
+def configure(ctx, obj, src, re_mask, fe_mask, inv_mask):
     '''
-    Activate timing endpoint wrapper block.
+    Configure the hsi in the hsi wrapper block.
     '''
 
     lDevice = obj.mDevice
     lHSIEpt = obj.mHSIEndpoint
 
     lHSIEpt.reset_hsi()
-    lHSIEpt.start_hsi(src, re_mask, fe_mask, inv_mask)
-    #lHSIEpt.enable(part,defs.kCommandIDs[pulsecmd])
-    #secho("HSI endpoint configured; partition: {}; cmd: {}".format(part, pulsecmd), fg='green')
+    lHSIEpt.configure_hsi(src, re_mask, fe_mask, inv_mask)
+    lHSIEpt.start_hsi()
+    secho("HSI configured (and started)", fg='green')
+
+    time.sleep(0.1)
+    ctx.invoke(status)
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@hsi.command('start', short_help='Start the hsi triggering and the writing events into buffer.')
+@click.pass_obj
+@click.pass_context
+def readback(ctx, obj):
+    '''
+    Read the content of the endpoint master readout buffer.
+    '''
+    lDevice = obj.mDevice
+    lHSIEpt = obj.mHSIEndpoint
+
+    lHSIEpt.start_hsi()
+    secho("HSI start", fg='green')
+
+    time.sleep(0.1)
+    ctx.invoke(status)
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-@hsi.command('readback', short_help='Read the content of the endpoint master readout buffer.')
+@hsi.command('stop', short_help='Stop the hsi triggering and the writing events into buffer.')
 @click.pass_obj
+@click.pass_context
+def readback(ctx, obj):
+    '''
+    Read the content of the endpoint master readout buffer.
+    '''
+    lDevice = obj.mDevice
+    lHSIEpt = obj.mHSIEndpoint
+
+    lHSIEpt.stop_hsi()
+    secho("HSI stop", fg='green')
+
+    time.sleep(0.1)
+    ctx.invoke(status)
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@hsi.command('readback', short_help='Read the content of the hsi readout buffer.')
+@click.pass_obj
+@click.pass_context
 @click.option('--all/--events', ' /-a', 'readall', default=False, help="Buffer readout mode.\n- events: only completed events are readout.\n- all: the content of the buffer is fully read-out.")
-def readback(obj, readall):
+def readback(ctx, obj, readall):
     '''
     Read the content of the endpoint master readout buffer.
     '''

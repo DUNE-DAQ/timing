@@ -64,13 +64,6 @@ public:
     void reset(uint32_t partition=0, uint32_t address=0) const override;
 
     /**
-     * @brief      Read the current timestamp word.
-     *
-     * @return     { description_of_the_return_value }
-     */
-    //uint64_t read_timestamp() const override;
-
-    /**
      * @brief      Read the number of words in the data buffer.
      *
      * @return     { description_of_the_return_value }
@@ -92,38 +85,54 @@ public:
     std::string get_data_buffer_table(bool read_all=false, bool print_out=false) const override;
 
     /**
-     * @brief      Read the endpoint clock frequency.
-     *
-     * @return     { description_of_the_return_value }
-     */
-    //double read_clock_frequency() const override;
-
-    /**
-     * @brief      Read the endpoint wrapper version
-     *
-     * @return     { description_of_the_return_value }
-     */
-    //uint32_t read_version() const override;
-
-    /**
      * @brief     Collect monitoring information for timing endpoint
      *
      */
     //void get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const override;
 
     /**
-     * @brief     Collect monitoring information for timing endpoint
+     * @brief     Configure HSI triggering
      *
      */
-    void start_hsi(uint32_t src, uint32_t re_mask, uint32_t fe_mask, uint32_t inv_mask, bool dispatch=true) const;
+    void configure_hsi(uint32_t src, uint32_t re_mask, uint32_t fe_mask, uint32_t inv_mask, bool dispatch=true) const;
 
+    /**
+     * @brief     Start HSI triggering
+     *
+     */
+    void start_hsi(bool dispatch=true) const;
+
+    /**
+     * @brief     Stop HSI triggering
+     *
+     */
     void stop_hsi(bool dispatch=true) const;
 
+    /**
+     * @brief     Reset HSI
+     *
+     */
     void reset_hsi(bool dispatch=true) const;
 
+    /**
+     * @brief     Read butffer warning flag
+     *
+     */
     bool read_buffer_warning() const;
 
+    /**
+     * @brief     Read butffer error flag
+     *
+     */
     bool read_buffer_error() const;
+
+// Hide methods which do not apply at the moment
+private:
+
+    using EndpointNode::read_version;
+    using EndpointNode::read_clock_frequency;
+    using EndpointNode::read_timestamp;
+
 };
 
 } // namespace timing
