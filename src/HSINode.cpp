@@ -247,5 +247,20 @@ HSINode::read_buffer_error() const {
 	return buf_error.value();
 }
 
+uint32_t
+HSINode::read_buffer_state() const {
+
+	auto buf_state = read_sub_nodes(getNode("hsi.csr.stat"), false);
+	auto hsi_buffer_count = getNode("hsi.buf.count").read();
+	getClient().dispatch();
+
+	uint8_t buffer_error = static_cast<uint8_t> (buf_state.find("buf_err")->second.value());
+	uint8_t buffer_warning = static_cast<uint8_t> (buf_state.find("buf_warn")->second.value());
+
+	uint32_t buffer_state = buffer_error | (buffer_warning << 1);
+	buffer_state = buffer_state | static_cast<uint32_t>(hsi_buffer_count.value()) << 0x10;
+	return buffer_state;
+}
+
 } // namespace timing
 } // namespace dunedaq

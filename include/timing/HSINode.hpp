@@ -126,6 +126,13 @@ public:
      */
     bool read_buffer_error() const;
 
+    /**
+     * @brief     Read butffer error/warning/word count
+     *
+     */
+    uint32_t read_buffer_state() const;
+
+
 // Hide methods which do not apply at the moment
 private:
 
