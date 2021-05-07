@@ -210,6 +210,11 @@ ERS_DECLARE_ISSUE(timing,                                                       
                   ((std::string)ept_state)                                               ///< Message parameters
 )
 
+ERS_DECLARE_ISSUE(timing,
+                  HSIBufferIssue, 
+                  "HSI buffer in state: " << buffer_state, 
+                  ((std::string)buffer_state))
+
 } // namespace dunedaq
 
 #endif  // TIMING_INCLUDE_TIMING_TIMINGISSUES_HPP_
