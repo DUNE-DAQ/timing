@@ -26,6 +26,7 @@ register_top_designs(py::module& m) {
       .def("get_status", &timing::OverlordDesign<TLUIONode>::get_status)
       .def("apply_endpoint_delay", &timing::OverlordDesign<TLUIONode>::apply_endpoint_delay)
       .def("measure_endpoint_rtt", &timing::OverlordDesign<TLUIONode>::measure_endpoint_rtt)
+      .def("get_external_triggers_endpoint_node", &timing::OverlordDesign<TLUIONode>::get_external_triggers_endpoint_node)
       ;
 
       // Overlord on FMC
@@ -33,6 +34,7 @@ register_top_designs(py::module& m) {
       .def("get_status", &timing::OverlordDesign<FMCIONode>::get_status)
       .def("apply_endpoint_delay", &timing::OverlordDesign<FMCIONode>::apply_endpoint_delay)
       .def("measure_endpoint_rtt", &timing::OverlordDesign<FMCIONode>::measure_endpoint_rtt)
+      .def("get_external_triggers_endpoint_node", &timing::OverlordDesign<FMCIONode>::get_external_triggers_endpoint_node)
       ;
 
       // Boreas on FMC

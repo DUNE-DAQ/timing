@@ -90,6 +90,10 @@ def master(obj, device):
     obj.mBoardType = lBoardInfo['board_type'].value()
     obj.mCarrierType = lBoardInfo['carrier_type'].value()
     obj.mDesignType = lBoardInfo['design_type'].value()
+
+    # only overlord has ext trig ept
+    if obj.mDesignType == kDesignOverlord:
+        obj.mExtTrig = obj.mTopDesign.get_external_triggers_endpoint_node()
     
 # ------------------------------------------------------------------------------
 

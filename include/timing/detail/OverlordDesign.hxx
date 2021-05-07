@@ -33,6 +33,7 @@ std::string OverlordDesign<IO>::get_status(bool print_out) const {
 	std::stringstream lStatus;
 	lStatus << this->get_io_node().get_pll_status();
 	lStatus << this->get_master_node().get_status();
+	lStatus << this->get_external_triggers_endpoint_node().get_status();
 	if (print_out) std::cout << lStatus.str();
 	return lStatus.str();
 }
@@ -61,8 +62,16 @@ void OverlordDesign<IO>::configure() const {
 
 //-----------------------------------------------------------------------------
 template<class IO>
+const TriggerReceiverNode& OverlordDesign<IO>::get_external_triggers_endpoint_node() const {
+	return uhal::Node::getNode<TriggerReceiverNode>("trig_rx");
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class IO>
 void OverlordDesign<IO>::reset_external_triggers_endpoint() const {
-    //this->getNode<timing::TriggerReceiverNode>("trig").reset();
+    this->get_external_triggers_endpoint_node().reset();
 }
 //-----------------------------------------------------------------------------
 
@@ -70,7 +79,7 @@ void OverlordDesign<IO>::reset_external_triggers_endpoint() const {
 //-----------------------------------------------------------------------------
 template<class IO>
 void OverlordDesign<IO>::enable_external_triggers() const {
-    //uhal::getNode<TriggerReceiverNode>("trig").enable_triggers();
+    this->get_external_triggers_endpoint_node().enable_triggers();
 }
 //-----------------------------------------------------------------------------
 
@@ -78,7 +87,7 @@ void OverlordDesign<IO>::enable_external_triggers() const {
 //-----------------------------------------------------------------------------
 template<class IO>
 void OverlordDesign<IO>::disable_external_triggers() const {
-    //uhal::getNode<TriggerReceiverNode>("trig").disable_triggers();
+    this->get_external_triggers_endpoint_node().disable_triggers();
 }
 //-----------------------------------------------------------------------------
 

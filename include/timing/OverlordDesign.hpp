@@ -23,6 +23,7 @@
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
+#include "uhal/Node.hpp"
 
 // C++ Headers
 #include <chrono>
@@ -52,6 +53,11 @@ public:
      *
      */
     void configure() const override;
+
+    /**
+     * @brief     Reset trigger rx endpoint
+     */
+    const TriggerReceiverNode& get_external_triggers_endpoint_node() const;
 
     /**
      * @brief     Reset trigger rx endpoint
