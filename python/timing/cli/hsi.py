@@ -166,5 +166,5 @@ def readback(ctx, obj, readall):
     lDevice = obj.mDevice
     lHSIEpt = obj.mHSIEndpoint
     
-    echo(lHSIEpt.get_data_buffer_table(readall))
+    echo(lHSIEpt.get_data_buffer_table(readall,False))
 # ------------------------------------------------------------------------------

@@ -75,7 +75,7 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
-    uhal::ValVector< uint32_t > read_data_buffer(bool read_all=false) const override;
+    uhal::ValVector< uint32_t > read_data_buffer(bool read_all=false, bool fail_on_error=false) const;
 
     /**
      * @brief      Print the contents of the endpoint data buffer.

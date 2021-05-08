@@ -105,24 +105,36 @@ HSINode::read_buffer_count() const {
 
 //-----------------------------------------------------------------------------
 uhal::ValVector< uint32_t >
-HSINode::read_data_buffer(bool read_all) const {
+HSINode::read_data_buffer(bool read_all, bool fail_on_error) const {
 	
-	auto lBufCount = getNode("hsi.buf.count").read();
-	getClient().dispatch();
-
-	TLOG_DEBUG(2) << "Words available in readout buffer:      " << format_reg_value(lBufCount);
+	uint32_t buffer_state = read_buffer_state();
+	
+	uint16_t n_hsi_words = buffer_state >> 0x10;
 
 	uhal::ValVector< uint32_t > buffer_data;
-	
-	if (lBufCount.value() > 1024) {
-		ers::error(HSIBufferIssue(ERS_HERE, "OVERFLOW"));
-		return buffer_data;
+
+	if (buffer_state & 0x1) {
+		ers::error(HSIBufferIssue(ERS_HERE, "ERROR"));
+		if (fail_on_error) return buffer_data;
 	}
-	uint32_t lEventsToRead = lBufCount.value() / g_hsi_event_size;
+
+	if (buffer_state & 0x2) {
+		ers::warning(HSIBufferIssue(ERS_HERE, "WARNING"));
+	}
+
+     // this is bad
+	if (n_hsi_words > 1024) {
+		ers::error(HSIBufferIssue(ERS_HERE, "OVERFLOW"));
+		if (fail_on_error) return buffer_data;
+	}
+
+	TLOG_DEBUG(2) << "Words available in readout buffer:      " << format_reg_value(n_hsi_words);
+	
+	uint32_t lEventsToRead = n_hsi_words / g_hsi_event_size;
 	
 	TLOG_DEBUG(2) << "Events available in readout buffer:     " << format_reg_value(lEventsToRead);
 
-	uint32_t lWordsToRead = read_all ? lBufCount.value() : lEventsToRead * g_hsi_event_size;
+	uint32_t lWordsToRead = read_all ? n_hsi_words : lEventsToRead * g_hsi_event_size;
 
 	TLOG_DEBUG(2) << "Words to be read out in readout buffer: " << format_reg_value(lWordsToRead);
 	
