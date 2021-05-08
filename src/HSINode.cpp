@@ -111,24 +111,25 @@ HSINode::read_data_buffer(bool read_all, bool fail_on_error) const {
 	
 	uint16_t n_hsi_words = buffer_state >> 0x10;
 
+	TLOG_DEBUG(2) << "Words available in readout buffer:      " << format_reg_value(n_hsi_words);
+
 	uhal::ValVector< uint32_t > buffer_data;
+
+	if (buffer_state & 0x2) {
+		ers::warning(HSIBufferIssue(ERS_HERE, "WARNING"));
+	}
 
 	if (buffer_state & 0x1) {
 		ers::error(HSIBufferIssue(ERS_HERE, "ERROR"));
 		if (fail_on_error) return buffer_data;
 	}
 
-	if (buffer_state & 0x2) {
-		ers::warning(HSIBufferIssue(ERS_HERE, "WARNING"));
-	}
-
      // this is bad
 	if (n_hsi_words > 1024) {
 		ers::error(HSIBufferIssue(ERS_HERE, "OVERFLOW"));
 		if (fail_on_error) return buffer_data;
+		n_hsi_words = 1024;
 	}
-
-	TLOG_DEBUG(2) << "Words available in readout buffer:      " << format_reg_value(n_hsi_words);
 	
 	uint32_t lEventsToRead = n_hsi_words / g_hsi_event_size;
 	
