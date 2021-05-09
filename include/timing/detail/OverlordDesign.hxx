@@ -91,4 +91,15 @@ void OverlordDesign<IO>::disable_external_triggers() const {
 }
 //-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
+template<class IO>
+template <class T>
+void OverlordDesign<IO>::get_info(T& data) const {
+	this->get_master_node().get_info(data.firmware_data);
+	this->get_io_node().get_info(data.hardware_data);
+}
+//-----------------------------------------------------------------------------
+
+
 }

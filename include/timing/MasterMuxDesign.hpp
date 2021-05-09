@@ -57,6 +57,9 @@ public:
      */
     void reset(const std::string& clock_config_file="") const override;
 
+    template <class T>
+    void get_info(T& data) const;
+
     /**
      * @brief     Switch the SFP mux channel
      */
@@ -83,6 +86,7 @@ public:
      * @brief     Scan SFP for alive timing transmitters
      */
     virtual std::vector<uint32_t> scan_sfp_mux() const;
+
 
 // In leiu of UHAL_DERIVEDNODE
 protected:

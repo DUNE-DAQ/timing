@@ -43,12 +43,8 @@ public:
      */
     std::string get_status(bool print_out=false) const override;
 
-    /**
-     * @brief      Enable the specified endpoint node.
-     *
-     * @return     { description_of_the_return_value }
-     */
-    void enable(uint32_t endpoint_id) const;
+    template <class T>
+    void get_info(T& data) const;
 
 // In leiu of UHAL_DERIVEDNODE
 protected:

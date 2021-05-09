@@ -163,4 +163,13 @@ std::vector<uint32_t> MasterMuxDesign<IO,MST>::scan_sfp_mux() const {
     return lLockedChannels;
 }
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+template<class IO, class MST>
+template <class T>
+void MasterMuxDesign<IO,MST>::get_info(T& data) const {
+	this->get_master_node().get_info(data.firmware_data);
+	this->get_io_node().get_info(data.hardware_data);
+}
+//-----------------------------------------------------------------------------
 }

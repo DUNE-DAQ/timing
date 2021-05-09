@@ -45,6 +45,9 @@ public:
      */
     std::string get_status(bool print_out=false) const override;
     
+    template <class T>
+    void get_info(T& data) const;
+        
     /**
      * @brief      Prepare the timing fanout for data taking.
      *

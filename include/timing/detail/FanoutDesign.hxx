@@ -112,4 +112,13 @@ void FanoutDesign<IO,MST>::apply_endpoint_delay(uint32_t address, uint32_t coars
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+template<class IO, class MST>
+template <class T>
+void FanoutDesign<IO,MST>::get_info(T& data) const {
+	this->get_master_node().get_info(data.firmware_data);
+	this->get_io_node().get_info(data.hardware_data);
+}
+//-----------------------------------------------------------------------------
+
 }

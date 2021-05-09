@@ -226,5 +226,6 @@ EndpointNode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const {
 	//}      
 }
 //-----------------------------------------------------------------------------
+
 } // namespace timing
 } // namespace dunedaq

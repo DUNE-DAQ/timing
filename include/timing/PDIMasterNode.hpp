@@ -16,7 +16,9 @@
 #include "timing/MasterNode.hpp"
 #include "timing/SpillInterfaceNode.hpp"
 #include "timing/FLCmdGeneratorNode.hpp"
+
 #include "timing/timingfirmwareinfo/Structs.hpp"
+#include "timing/timingfirmwareinfo/Nljs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"

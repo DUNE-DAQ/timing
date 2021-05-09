@@ -53,6 +53,9 @@ public:
      */
     void configure() const override;
 
+    template <class T>
+    void get_info(T& data) const;
+
 
 // In leiu of UHAL_DERIVEDNODE
 protected:

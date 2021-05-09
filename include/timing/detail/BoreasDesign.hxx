@@ -33,6 +33,7 @@ std::string BoreasDesign<IO>::get_status(bool print_out) const {
 	std::stringstream lStatus;
 	lStatus << this->get_io_node().get_pll_status();
 	lStatus << this->get_master_node().get_status();
+	lStatus << this->get_hsi_node().get_status();
 	if (print_out) std::cout << lStatus.str();
 	return lStatus.str();
 }
@@ -55,4 +56,13 @@ void BoreasDesign<IO>::configure() const {
 //-----------------------------------------------------------------------------
 
 
+//-----------------------------------------------------------------------------
+template<class IO>
+template <class T>
+void BoreasDesign<IO>::get_info(T& data) const {
+	this->get_master_node().get_info(data.firmware_data);
+	this->get_io_node().get_info(data.hardware_data);
+	//TODO also gather hsi info
+}
+//-----------------------------------------------------------------------------
 }

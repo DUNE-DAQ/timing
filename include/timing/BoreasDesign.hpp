@@ -49,6 +49,9 @@ public:
      */
     void configure() const override;
 
+    template <class T>
+    void get_info(T& data) const;
+    
     /**
      * @brief      Get the HSI node.
      *

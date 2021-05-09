@@ -37,7 +37,9 @@
   <connection id="EPT_0"             uri="ipbusudp-2.0://192.168.200.16:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/endpoint_fmc/top.xml" />
   <connection id="EPT_1"             uri="ipbusudp-2.0://192.168.200.17:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/endpoint_fmc/top.xml" />
 
-  <connection id="HSI_0"             uri="ipbusudp-2.0://192.168.200.16:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/boreas_fmc/top_fmc.xml" />
+  <connection id="BOREAS_FMC"        uri="ipbusudp-2.0://192.168.200.16:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/boreas_fmc/top_fmc.xml" />
+  
+  <connection id="BOREAS_TLU"        uri="ipbusudp-2.0://192.168.200.64:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/boreas_tlu/top_tlu.xml" />
 
   <connection id="SIM"                   uri="ipbusudp-2.0://192.168.201.16:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/ouroboros_sim/top_sim.xml" />
   <connection id="SIM_UDP"               uri="ipbusudp-2.0://localhost:50010" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/ouroboros_sim/top_sim.xml" />

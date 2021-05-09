@@ -16,10 +16,14 @@
 #include "timing/TimingNode.hpp"
 #include "TimingIssues.hpp"
 #include "timing/FrequencyCounterNode.hpp"
+
 #include "timing/timingendpointinfo/Structs.hpp"
+#include "timing/timingendpointinfo/Nljs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
+
+#include <nlohmann/json.hpp>
 
 // C++ Headers
 #include <chrono>
