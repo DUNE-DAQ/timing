@@ -105,11 +105,13 @@ HSINode::read_buffer_count() const {
 
 //-----------------------------------------------------------------------------
 uhal::ValVector< uint32_t >
-HSINode::read_data_buffer(bool read_all, bool fail_on_error) const {
+HSINode::read_data_buffer(uint16_t& n_words, bool read_all, bool fail_on_error) const {
 	
 	uint32_t buffer_state = read_buffer_state();
 	
 	uint16_t n_hsi_words = buffer_state >> 0x10;
+	
+	n_words=n_hsi_words;
 
 	TLOG_DEBUG(2) << "Words available in readout buffer:      " << format_reg_value(n_hsi_words);
 
@@ -150,6 +152,13 @@ HSINode::read_data_buffer(bool read_all, bool fail_on_error) const {
 }
 //-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
+uhal::ValVector< uint32_t >
+HSINode::read_data_buffer(bool read_all, bool fail_on_error) const {
+	uint16_t words;
+	return read_data_buffer(words, read_all, fail_on_error);
+}
 
 //-----------------------------------------------------------------------------
 std::string

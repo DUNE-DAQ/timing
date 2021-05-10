@@ -75,6 +75,7 @@ public:
      *
      * @return     { description_of_the_return_value }
      */
+    uhal::ValVector< uint32_t > read_data_buffer(uint16_t& n_words, bool read_all=false, bool fail_on_error=false) const;
     uhal::ValVector< uint32_t > read_data_buffer(bool read_all=false, bool fail_on_error=false) const;
 
     /**
