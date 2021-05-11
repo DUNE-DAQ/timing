@@ -2,7 +2,7 @@
  * @file OuroborosDesign.hpp
  *
  * OuroborosDesign is a class providing an interface
- * to the PD-I master design firmware block.
+ * to the Ouroboros firmware design.
  *
  * This is part of the DUNE DAQ Software Suite, copyright 2020.
  * Licensing/copyright details are in the COPYING file that you should have

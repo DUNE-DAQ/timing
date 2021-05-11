@@ -2,7 +2,7 @@
  * @file OuroborosMuxDesign.hpp
  *
  * OuroborosMuxDesign is a class providing an interface
- * to the PD-I master design firmware block.
+ * to the Ouroboros firmware design on a board with MUX.
  *
  * This is part of the DUNE DAQ Software Suite, copyright 2020.
  * Licensing/copyright details are in the COPYING file that you should have
