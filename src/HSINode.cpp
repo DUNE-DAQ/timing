@@ -182,41 +182,7 @@ HSINode::get_data_buffer_table(bool read_all, bool print_out) const {
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
-//void
-//HSINode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const {
-//	
-//	auto timestamp = getNode("tstamp").readBlock(2);
-//	auto event_counter = getNode("evtctr").read();
-//	auto buffer_count = getNode("buf.count").read();
-//	auto endpoint_control = read_sub_nodes(getNode("csr.ctrl"), false);
-//	auto endpoint_state = read_sub_nodes(getNode("csr.stat"), false);
-//	auto counters = getNode("ctrs").readBlock(g_command_number);
-//	getClient().dispatch();
-//	
-//	mon_data.state = endpoint_state.at("ep_stat").value();
-//	mon_data.ready = endpoint_state.at("ep_rdy").value();
-//	mon_data.partition = endpoint_control.at("tgrp").value();
-//	mon_data.address = endpoint_control.at("addr").value();
-//	mon_data.timestamp = tstamp2int(timestamp);
-//	mon_data.in_run = endpoint_state.at("in_run").value();
-//	mon_data.in_spill = endpoint_state.at("in_spill").value();
-//	mon_data.buffer_warning = endpoint_state.at("buf_warn").value();
-//	mon_data.buffer_error = endpoint_state.at("buf_err").value();
-//	mon_data.buffer_occupancy = buffer_count.value();
-//	mon_data.event_counter = event_counter.value();
-//    mon_data.reset_out = endpoint_state.at("ep_rsto").value();
-//	mon_data.sfp_tx_disable = endpoint_state.at("sfp_tx_dis").value();
-//	mon_data.coarse_delay = endpoint_state.at("cdelay").value();
-//	mon_data.fine_delay = endpoint_state.at("fdelay").value();
-//
-//	//for (uint32_t i=0; i < g_command_number; ++i) {
-//	//	counters.push_back(std::make_pair(g_command_map.at(i), std::to_string(counters[i])));	
-//	//}      
-//}
-//-----------------------------------------------------------------------------
-
 void
 HSINode::configure_hsi(uint32_t src, uint32_t re_mask, uint32_t fe_mask, uint32_t inv_mask, bool dispatch) const {
 
@@ -227,19 +193,25 @@ HSINode::configure_hsi(uint32_t src, uint32_t re_mask, uint32_t fe_mask, uint32_
 
 	if (dispatch) getClient().dispatch();
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void
 HSINode::start_hsi(bool dispatch) const {
 	getNode("hsi.csr.ctrl.en").write(0x1);
 	if (dispatch) getClient().dispatch();
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void
 HSINode::stop_hsi(bool dispatch) const {
 	getNode("hsi.csr.ctrl.en").write(0x0);
 	if (dispatch) getClient().dispatch();
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void
 HSINode::reset_hsi(bool dispatch) const {
 	getNode("hsi.csr.ctrl.en").write(0x0);
@@ -254,21 +226,27 @@ HSINode::reset_hsi(bool dispatch) const {
 
 	if (dispatch) getClient().dispatch();
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 bool
 HSINode::read_buffer_warning() const {
 	auto buf_warning = getNode("hsi.csr.stat.buf_warn").read();
 	getClient().dispatch();
 	return buf_warning.value();
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 bool
 HSINode::read_buffer_error() const {
 	auto buf_error = getNode("hsi.csr.stat.buf_err").read();
 	getClient().dispatch();
 	return buf_error.value();
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 uint32_t
 HSINode::read_buffer_state() const {
 
@@ -283,6 +261,41 @@ HSINode::read_buffer_state() const {
 	buffer_state = buffer_state | static_cast<uint32_t>(hsi_buffer_count.value()) << 0x10;
 	return buffer_state;
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+void
+HSINode::get_info(timingfirmwareinfo::HSIFirmwareMonitorData& mon_data) const {
+
+	auto ept_control = read_sub_nodes(getNode("csr.ctrl"), false);
+	auto ept_state = read_sub_nodes(getNode("csr.stat"), false);
+	
+	auto hsi_control = read_sub_nodes(getNode("hsi.csr.ctrl"), false);
+	auto hsi_state = read_sub_nodes(getNode("hsi.csr.stat"), false);
+
+	auto hsi_buffer_count = getNode("hsi.buf.count").read();
+
+	auto hsi_re_mask = getNode("hsi.csr.re_mask").read();
+	auto hsi_fe_mask = getNode("hsi.csr.fe_mask").read();
+	auto hsi_inv_mask = getNode("hsi.csr.inv_mask").read();
+
+	getClient().dispatch();
+
+	mon_data.source = hsi_control.find("src")->second.value();
+	mon_data.re_mask = hsi_re_mask.value();
+	mon_data.fe_mask = hsi_fe_mask.value();
+    mon_data.inv_mask = hsi_inv_mask.value();
+    mon_data.buffer_enabled = hsi_control.find("buf_en")->second.value();
+    mon_data.buffer_error = hsi_state.find("buf_err")->second.value();
+    mon_data.buffer_warning = hsi_state.find("buf_warn")->second.value();
+    mon_data.buffer_occupancy = hsi_buffer_count.value();
+    mon_data.enabled = hsi_control.find("en")->second.value();
+     
+	mon_data.endpoint_enabled = ept_control.find("ep_en")->second.value();
+	mon_data.endpoint_address = ept_control.find("addr")->second.value();
+	mon_data.endpoint_partition = ept_control.find("tgrp")->second.value();
+	mon_data.endpoint_state = ept_state.find("ep_stat")->second.value();
+}
+//-----------------------------------------------------------------------------
 } // namespace timing
 } // namespace dunedaq

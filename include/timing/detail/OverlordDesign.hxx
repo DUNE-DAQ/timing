@@ -96,8 +96,12 @@ void OverlordDesign<IO>::disable_external_triggers() const {
 template<class IO>
 template <class T>
 void OverlordDesign<IO>::get_info(T& data) const {
-	this->get_master_node().get_info(data.firmware_data);
+	this->get_master_node().get_info(data.master_data);
 	this->get_io_node().get_info(data.hardware_data);
+
+	//TODO full trix info
+	auto trig_interface_enabled = uhal::Node::getNode("trig_rx.csr.ctrl.ext_trig_en").read();
+    data.trig_interface_enabled = trig_interface_enabled.value();
 }
 //-----------------------------------------------------------------------------
 

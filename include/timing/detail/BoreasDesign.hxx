@@ -60,9 +60,9 @@ void BoreasDesign<IO>::configure() const {
 template<class IO>
 template <class T>
 void BoreasDesign<IO>::get_info(T& data) const {
-	this->get_master_node().get_info(data.firmware_data);
+	this->get_master_node().get_info(data.master_data);
 	this->get_io_node().get_info(data.hardware_data);
-	//TODO also gather hsi info
+	this->get_hsi_node().get_info(data.hsi_data);
 }
 //-----------------------------------------------------------------------------
 }

@@ -47,7 +47,7 @@ std::string EndpointDesign<IO>::get_status(bool print_out) const {
 template<class IO>
 template <class T>
 void EndpointDesign<IO>::get_info(T& data) const {
-	this->get_endpoint_node(0).get_info(data.firmware_data);
+	this->get_endpoint_node(0).get_info(data.endpoint_data);
 	this->get_io_node().get_info(data.hardware_data);
 }
 //-----------------------------------------------------------------------------

@@ -16,7 +16,9 @@
 #include "timing/EndpointNode.hpp"
 #include "TimingIssues.hpp"
 #include "timing/FrequencyCounterNode.hpp"
-#include "timing/timingendpointinfo/Structs.hpp"
+
+#include "timing/timingfirmwareinfo/Structs.hpp"
+#include "timing/timingfirmwareinfo/Nljs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -86,12 +88,6 @@ public:
     std::string get_data_buffer_table(bool read_all=false, bool print_out=false) const override;
 
     /**
-     * @brief     Collect monitoring information for timing endpoint
-     *
-     */
-    //void get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const override;
-
-    /**
      * @brief     Configure HSI triggering
      *
      */
@@ -133,7 +129,11 @@ public:
      */
     uint32_t read_buffer_state() const;
 
-
+    /**
+     * @brief     Collect monitoring information for timing endpoint
+     *
+     */
+    void get_info(timingfirmwareinfo::HSIFirmwareMonitorData& mon_data) const;
 // Hide methods which do not apply at the moment
 private:
 

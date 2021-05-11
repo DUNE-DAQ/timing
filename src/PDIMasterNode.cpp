@@ -215,16 +215,14 @@ PDIMasterNode::sync_timestamp() const {
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::get_info(timingfirmwareinfo::TimingPDIMasterMonitorData& mon_data) const {
+PDIMasterNode::get_info(timingfirmwareinfo::PDIMasterMonitorData& mon_data) const {
     auto lTStamp = getNode<TimestampGeneratorNode>("tstamp").read_raw_timestamp();
     mon_data.timestamp = tstamp2int(lTStamp);
 
     auto spill_interface_enabled = getNode("spill.csr.ctrl.en").read();
-    //auto trig_interface_enabled = getNode("trig.csr.ctrl.ep_en").read();
     getClient().dispatch();
 
     mon_data.spill_interface_enabled = spill_interface_enabled.value();
-    //mon_data.trig_interface_enabled = trig_interface_enabled.value();
 
     getNode<FLCmdGeneratorNode>("scmd_gen").get_info(mon_data.command_counters);
 

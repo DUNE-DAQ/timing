@@ -106,7 +106,7 @@ public:
     /**
      * @brief     Fill the PD-I master monitoring structure.
      */
-    void get_info(timingfirmwareinfo::TimingPDIMasterMonitorData& mon_data) const;
+    void get_info(timingfirmwareinfo::PDIMasterMonitorData& mon_data) const;
 };
 
 
