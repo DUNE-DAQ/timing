@@ -6,6 +6,9 @@ include(CMakeFindDependencyMacro)
 find_dependency(ers)
 find_dependency(Boost COMPONENTS unit_test_framework program_options)
 find_dependency(TRACE)
+find_dependency(logging)
+find_dependency(pybind11)
+find_dependency(nlohmann_json REQUIRED)
 
 # Figure out whether or not this dependency is an installed package or
 # in repo form
