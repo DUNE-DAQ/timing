@@ -35,6 +35,10 @@ def endpoint(obj, device, ids):
         lDevice.setTimeoutPeriod(obj.mTimeout)
 
     echo('Created endpoint device ' + style(lDevice.id(), fg='blue'))
+    
+    lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
+    lDevice.dispatch()
+
     if lBoardInfo['board_type'].value() in kLibrarySupportedBoards:
         try:
             echo(lDevice.getNode('io').get_hardware_info())
