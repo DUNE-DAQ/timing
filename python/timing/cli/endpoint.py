@@ -1,4 +1,5 @@
 import click
+import sys
 
 import collections
 
@@ -9,7 +10,6 @@ from timing.common.definitions import kLibrarySupportedBoards
 from click import echo, style, secho
 from .click_texttable import Texttable
 import time
-
 
 # ------------------------------------------------------------------------------
 #    ____        __          _      __ 
