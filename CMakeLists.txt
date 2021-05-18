@@ -21,7 +21,8 @@ daq_add_library(*.cpp LINK_LIBRARIES ers::ers logging::logging nlohmann_json::nl
 target_include_directories(${PROJECT_NAME} PUBLIC $ENV{UHAL_INC})
 
 ##############################################################################
-add_subdirectory(python)
+daq_add_python_library(*.cpp LINK_LIBRARIES ${PROJECT_NAME})
+
 
 ##############################################################################
 daq_install()
