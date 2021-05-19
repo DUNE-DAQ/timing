@@ -90,8 +90,8 @@ def measuredelay(ctx, obj, addr, mux):
 @click.pass_obj
 def toggletx(obj, addr, on):
 
-    lMasterTop = obj.mMasterTop
-    lMasterTop.switch_endpoint_sfp(addr, on)
+    lMaster = obj.mMaster
+    lMaster.switch_endpoint_sfp(addr, on)
 # ------------------------------------------------------------------------------
 
 
@@ -120,7 +120,7 @@ def switchnlock(obj, mux):
     lDevice = obj.mDevice
     lTopDesign = obj.mTopDesign
     lBoardType = obj.mBoardType
-    lMasterTop = obj.mMasterTop
+    lMaster = obj.mMaster
     
     # or a different type of fanout board
     if lBoardType == kBoardPC059:
@@ -129,5 +129,5 @@ def switchnlock(obj, mux):
         else:
             raise RuntimeError('PC059 board: please supply an SFP mux channel')
     else:
-        lMasterTop.enable_upstream_endpoint()
+        lMaster.enable_upstream_endpoint()
 # ------------------------------------------------------------------------------
