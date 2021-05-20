@@ -108,30 +108,29 @@ const std::map<uint64_t, BoardRevision> g_board_uid_revision_map = {
 };
 
 const std::map<std::string, std::string> g_clock_config_map = {
-    {"kFMCRev1_enclustra-a35_endpoint", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
-    {"kFMCRev2_enclustra-a35_endpoint", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
-    {"kFMCRev3_enclustra-a35_endpoint", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
+    {"kFMCRev1_enclustra-a35_endpoint", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt"},
+    {"kFMCRev2_enclustra-a35_endpoint", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt"},
+    {"kFMCRev3_enclustra-a35_endpoint", "devel/Si5394-053endptr_62-5MHz_4kHz-Registers.txt"},
     
     {"kFMCRev1_enclustra-a35_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt"},
     {"kFMCRev2_enclustra-a35_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt"},
     {"kFMCRev3_enclustra-a35_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt"},
     
-    {"kFMCRev1_enclustra-a35_ouroboros", "SI5344/PDTS0000.txt"},
-    {"kFMCRev2_enclustra-a35_ouroboros", "SI5344/PDTS0003.txt"},
-    {"kFMCRev3_enclustra-a35_ouroboros", "SI5344/PDTS0003.txt"},
+    {"kFMCRev1_enclustra-a35_ouroboros", "devel/Si5344-053master_312.5_mhz-Registers.txt"},
+    {"kFMCRev2_enclustra-a35_ouroboros", "devel/Si5344-053master_312.5_mhz-Registers.txt"},
+    {"kFMCRev3_enclustra-a35_ouroboros", "devel/Si5394-RevA-94mst625-Registers.txt"},
 
-    {"kFMCRev1_enclustra-a35_boreas", "SI5344/PDTS0000.txt"},
-    {"kFMCRev2_enclustra-a35_boreas", "SI5344/PDTS0003.txt"},
-    {"kFMCRev3_enclustra-a35_boreas", "SI5344/PDTS0003.txt"},
+    {"kFMCRev1_enclustra-a35_boreas", "devel/Si5344-053master_312.5_mhz-Registers.txt"},
+    {"kFMCRev2_enclustra-a35_boreas", "devel/Si5344-053master_312.5_mhz-Registers.txt"},
+    {"kFMCRev3_enclustra-a35_boreas", "devel/Si5394-RevA-94mst625-Registers.txt"},
     
-    {"kTLURev1_enclustra-a35_overlord", "wr/TLU_EXTCLK_10MHZ_NOZDM.txt"},
-    {"kTLURev1_enclustra-a35_boreas",   "wr/TLU_EXTCLK_10MHZ_NOZDM.txt"},
+    {"kTLURev1_enclustra-a35_overlord", "devel/DUNE_TLU-DUNTLU09-Registers_62.5_mhz.txt"},
+    {"kTLURev1_enclustra-a35_boreas",   "devel/DUNE_TLU-DUNTLU09-Registers_62.5_mhz.txt"},
     
-    {"kPC059Rev1_enclustra-a35_fanout_mode0", "wr/FANOUT_PLL_WIDEBW_SFPIN.txt"}, // fanout mode
-    {"kPC059Rev1_enclustra-a35_fanout_mode1", "devel/PDTS_PC059_FANOUT.txt"},    // stand-alone mode
+    {"kPC059Rev1_enclustra-a35_fanout_mode0", "devel/pc059_sfp_in_312_mhz-059_0s62-Registers.txt"},     // fanout mode, assuming sfp is the upstream input
+    {"kPC059Rev1_enclustra-a35_fanout_mode1", "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt"}, // stand-alone mode
 
-    {"kPC059Rev1_enclustra-a35_ouroboros", "SI5345/PDTS0005.txt"}
-
+    {"kPC059Rev1_enclustra-a35_ouroboros", "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt"}
 };
 
 const std::map<uint32_t, std::string> g_command_map = {
@@ -155,18 +154,18 @@ const std::map<uint32_t, std::string> g_command_map = {
 const uint32_t g_command_number = g_command_map.size();
 
 const std::map<uint32_t, std::string> g_endpoint_state_map = {
-    { 0x0, "Standing by (0x0)"                          } , // 0b0000 when W_RST, -- Starting state after reset
-    { 0x1, "Waiting SFP for signal (0x1)"               } , // 0b0001 when W_SFP, -- Waiting for SFP LOS to go low
-    { 0x2, "Waiting CDR lock (0x2)"                     } , // 0b0010 when W_CDR, -- Waiting for CDR lock
-    { 0x3, "Waiting for good frequency check (0x3)"     } , // 0b0011 when W_FREQ, -- Waiting for good frequency check
-    { 0x4, "Waiting for comma alignment (0x4)"          } , // 0b0100 when W_ALIGN, -- Waiting for comma alignment           , stable 50MHz phase
-    { 0x5, "Waiting for 8b10 decoder good packet (0x5)" } , // 0b0101 when W_LOCK, -- Waiting for 8b10 decoder good packet
-    { 0x6, "Waiting for phase adjustment command (0x6)" } , // 0b0110 when W_PHASE, -- Waiting for phase adjustment command
-    { 0x7, "Waiting for time stamp initialisation (0x7)"} , // 0b0111 when W_RDY, -- Waiting for time stamp initialisation
-    { 0x8, "Ready (0x8)"                                } , // 0b1000 when RUN, -- Good to go
-    { 0xc, "Error in Rx (0xc)"                          } , // 0b1100 when ERR_R, -- Error in rx
-    { 0xd, "Error in time stamp check (0xd)"            } , // 0b1101 when ERR_T; -- Error in time stamp check
-    { 0xe, "Error in physical layer after lock (0xe)"   } , // 0b1110 when ERR_P; -- Physical layer error after lock
+    { 0x0, "Standing by (0x0)"                              } , // 0b0000 when W_RST, -- Starting state after reset
+    { 0x1, "Waiting for SFP signal (0x1)"                   } , // 0b0001 when W_LINK, -- Waiting for SFP LOS to go low
+    { 0x2, "Waiting for good frequency check (0x2)"         } , // 0b0010 when W_FREQ, -- Waiting for good frequency check
+    { 0x3, "Waiting for phase adjustment to complete (0x3)" } , // 0b0011 when W_ADJUST, -- Waiting for phase adjustment to complete
+    { 0x4, "Waiting for comma alignment (0x4)"              } , // 0b0100 when W_ALIGN, -- Waiting for comma alignment, stable 62.5 (50) MHz phase
+    { 0x5, "Waiting for 8b10 decoder good packet (0x5)"     } , // 0b0101 when W_LOCK, -- Waiting for 8b10 decoder good packet
+    { 0x6, "Waiting for phase adjustment command (0x6)"     } , // 0b0110 when W_PHASE, -- Waiting for phase adjustment command
+    { 0x7, "Waiting for time stamp initialisation (0x7)"    } , // 0b0111 when W_RDY, -- Waiting for time stamp initialisation
+    { 0x8, "Ready (0x8)"                                    } , // 0b1000 when RUN, -- Good to go
+    { 0xc, "Error in Rx (0xc)"                              } , // 0b1100 when ERR_R, -- Error in rx
+    { 0xd, "Error in time stamp check (0xd)"                } , // 0b1101 when ERR_T; -- Error in time stamp check
+    { 0xe, "Error in physical layer after lock (0xe)"       } , // 0b1110 when ERR_P; -- Physical layer error after lock
 };
 
 
