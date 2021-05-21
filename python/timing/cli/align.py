@@ -11,7 +11,7 @@ import timing.common.definitions as defs
 from click import echo, style, secho
 from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
-from timing.common.definitions import kDesingMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesingFanout
+from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout
 from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
 from timing.common.definitions import kLibrarySupportedBoards
 
@@ -90,8 +90,8 @@ def measuredelay(ctx, obj, addr, mux):
 @click.pass_obj
 def toggletx(obj, addr, on):
 
-    lMasterTop = obj.mMasterTop
-    lMasterTop.switch_endpoint_sfp(addr, on)
+    lMaster = obj.mMaster
+    lMaster.switch_endpoint_sfp(addr, on)
 # ------------------------------------------------------------------------------
 
 
@@ -120,7 +120,7 @@ def switchnlock(obj, mux):
     lDevice = obj.mDevice
     lTopDesign = obj.mTopDesign
     lBoardType = obj.mBoardType
-    lMasterTop = obj.mMasterTop
+    lMaster = obj.mMaster
     
     # or a different type of fanout board
     if lBoardType == kBoardPC059:
@@ -129,5 +129,5 @@ def switchnlock(obj, mux):
         else:
             raise RuntimeError('PC059 board: please supply an SFP mux channel')
     else:
-        lMasterTop.enable_upstream_endpoint()
+        lMaster.enable_upstream_endpoint()
 # ------------------------------------------------------------------------------

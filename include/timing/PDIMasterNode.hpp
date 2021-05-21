@@ -15,9 +15,10 @@
 // PDT Headers
 #include "timing/MasterNode.hpp"
 #include "timing/SpillInterfaceNode.hpp"
-#include "timing/TriggerReceiverNode.hpp"
 #include "timing/FLCmdGeneratorNode.hpp"
+
 #include "timing/timingfirmwareinfo/Structs.hpp"
+#include "timing/timingfirmwareinfo/Nljs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -97,26 +98,6 @@ public:
      */
     bool read_in_spill() const;
 
-    /**
-     * @brief     Reset trigger rx endpoint
-     */
-    void reset_external_triggers_endpoint() const;
-
-    /**
-     * @brief     Enable external triggers
-     */
-    void enable_external_triggers() const;
-
-    /**
-     * @brief     Disable external triggers
-     */
-    void disable_external_triggers() const;
-
-     /**
-     * @brief     Retrieve partition node
-     */
-    const PartitionNode& get_partition_node(uint32_t partition_id) const;
-
      /**
      * @brief     Set timestamp to current machine time
      */
@@ -125,7 +106,7 @@ public:
     /**
      * @brief     Fill the PD-I master monitoring structure.
      */
-    void get_info(timingfirmwareinfo::TimingPDIMasterMonitorData& mon_data) const;
+    void get_info(timingfirmwareinfo::PDIMasterMonitorData& mon_data) const;
 };
 
 

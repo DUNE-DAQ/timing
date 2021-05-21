@@ -21,7 +21,7 @@ MasterDesign<IO,MST>::~MasterDesign() {
 //-----------------------------------------------------------------------------
 template< class IO, class MST>
 const MST& MasterDesign<IO,MST>::get_master_node() const {
-	return uhal::Node::getNode<MST>("master_top");
+	return uhal::Node::getNode<MST>("master");
 }
 //-----------------------------------------------------------------------------
 

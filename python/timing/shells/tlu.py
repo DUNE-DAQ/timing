@@ -11,7 +11,7 @@ from os.path import join, expandvars, basename
 from click import echo, style, secho
 from timing.common.definitions import kBoardTLU, kBoardSim
 # from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
-from timing.common.definitions import kDesingFanout
+from timing.common.definitions import kDesignFanout
 from timing.core import I2CSlave, SI534xSlave, I2CExpanderSlave, DACSlave
 
 

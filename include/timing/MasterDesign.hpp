@@ -30,7 +30,7 @@ namespace timing {
  * @brief      Base class for timing master designs.
  */
 template <class IO, class MST>
-class MasterDesign : public TopDesign<IO> {
+class MasterDesign : virtual public TopDesign<IO> {
 
 public:
     explicit MasterDesign(const uhal::Node& node);

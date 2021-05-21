@@ -57,6 +57,9 @@ public:
      */
     void reset(const std::string& clock_config_file="") const override;
 
+    template <class T>
+    void get_info(T& data) const;
+
     /**
      * @brief     Switch the SFP mux channel
      */
@@ -80,9 +83,10 @@ public:
     virtual void apply_endpoint_delay(uint32_t address, uint32_t coarse_delay, uint32_t fine_delay, uint32_t phase_delay, bool measure_rtt, bool control_sfp, uint32_t sfp_mux) const;
 
     /**
-     * @brief      Apply delay to endpoint
+     * @brief     Scan SFP for alive timing transmitters
      */
     virtual std::vector<uint32_t> scan_sfp_mux() const;
+
 
 // In leiu of UHAL_DERIVEDNODE
 protected:

@@ -16,7 +16,7 @@ uhal::Node* FanoutDesign<IO,MST>::clone() const {
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-FanoutDesign<IO,MST>::FanoutDesign(const uhal::Node& node) : MasterMuxDesign<IO,MST>(node) {
+FanoutDesign<IO,MST>::FanoutDesign(const uhal::Node& node) : TopDesign<IO>(node), MasterMuxDesign<IO,MST>(node) {
 }
 //-----------------------------------------------------------------------------
 
@@ -56,10 +56,6 @@ void FanoutDesign<IO,MST>::configure() const {
 
 		// Enable spill interface
 		this->get_master_node().enable_spill_interface();
-
-		// Trigger interface configuration
-		this->get_master_node().reset_external_triggers_endpoint();
-		this->get_master_node().enable_external_triggers();
 	}
 }
 //-----------------------------------------------------------------------------
@@ -113,6 +109,15 @@ void FanoutDesign<IO,MST>::apply_endpoint_delay(uint32_t address, uint32_t coars
         throw UnsupportedFunction(ERS_HERE, lMsg.str());
 	}
 	MasterMuxDesign<IO,MST>::apply_endpoint_delay(address,coarse_delay,fine_delay,phase_delay,measure_rtt,control_sfp,sfp_mux);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+template<class IO, class MST>
+template <class T>
+void FanoutDesign<IO,MST>::get_info(T& data) const {
+	this->get_master_node().get_info(data.firmware_data);
+	this->get_io_node().get_info(data.hardware_data);
 }
 //-----------------------------------------------------------------------------
 

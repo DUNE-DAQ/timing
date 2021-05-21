@@ -13,7 +13,7 @@ from timing.core import SI534xSlave, I2CExpanderSlave, DACSlave
 
 from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
-from timing.common.definitions import kDesingOverlord, kDesingMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesingFanout
+from timing.common.definitions import kDesignOverlord, kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout
 from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
 
 from os.path import join, expandvars, basename
@@ -221,7 +221,7 @@ class MasterShell(object):
 
 # ------------------------------------------------------------------------------
 
-ShellFactory.registerBoard(kDesingOverlord, MasterShell)
+ShellFactory.registerBoard(kDesignOverlord, MasterShell)
 
 # ------------------------------------------------------------------------------
 

@@ -24,6 +24,12 @@ local timinghardwareinfo = {
     double_val: s.number("DoubleValue", "f8", 
         doc="A double"),
 
+    timing_device_data: s.any("TimingDeviceData", 
+                    doc="Generic structure for timing hw device data"),
+
+    timing_device_data_vector: s.sequence("TimingDeviceDataVector", self.timing_device_data,
+            doc="A vector of timing device data"),
+
     // hardware monitor structures
     timing_pll_mon_data: s.record("TimingPLLMonitorData", 
    	[
@@ -155,6 +161,18 @@ local timinghardwareinfo = {
                 doc="PLL monitoring data"),
     ], 
     doc="Extended timing TLU monitor data"),
+
+    timing_devices_data: s.record("TimingDevicesData",
+    [
+        s.field("class_name", self.text_data, "TimingDevicesData",
+                doc="Info class name"),
+        s.field("collector", self.text_data, "Collector",
+                doc="Name of module collecting the data"),
+        s.field("device_data", self.timing_device_data_vector, "TimingDeviceData",
+                doc="Sequence of timing device data")
+    ],
+    doc="Contained to hold all gathered timing device data"),
+
 };
 
 // Output a topologically sorted array.

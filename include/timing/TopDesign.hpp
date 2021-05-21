@@ -20,6 +20,8 @@
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
+#include <nlohmann/json.hpp>
+
 // C++ Headers
 #include <chrono>
 #include <string>
@@ -72,6 +74,9 @@ public:
      * @return     { description_of_the_return_value }
      */
     virtual uint32_t get_number_of_endpoint_nodes() const;
+
+    template <class T>
+    void get_info(T& data) const {}
 };
 
 } // namespace timing

@@ -16,7 +16,7 @@ uhal::Node* MasterMuxDesign<IO,MST>::clone() const {
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-MasterMuxDesign<IO,MST>::MasterMuxDesign(const uhal::Node& node) : MasterDesign<IO,MST>(node) {
+MasterMuxDesign<IO,MST>::MasterMuxDesign(const uhal::Node& node) : TopDesign<IO>(node), MasterDesign<IO,MST>(node) {
 }
 //-----------------------------------------------------------------------------
 
@@ -56,10 +56,6 @@ void MasterMuxDesign<IO,MST>::configure() const {
 
 		// Enable spill interface
 		this->get_master_node().enable_spill_interface();
-
-		// Trigger interface configuration
-		this->get_master_node().reset_external_triggers_endpoint();
-		this->get_master_node().enable_external_triggers();
 	}
 }
 //-----------------------------------------------------------------------------
@@ -165,6 +161,15 @@ std::vector<uint32_t> MasterMuxDesign<IO,MST>::scan_sfp_mux() const {
         TLOG() << "No slots locked";
     }
     return lLockedChannels;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+template<class IO, class MST>
+template <class T>
+void MasterMuxDesign<IO,MST>::get_info(T& data) const {
+	this->get_master_node().get_info(data.master_data);
+	this->get_io_node().get_info(data.hardware_data);
 }
 //-----------------------------------------------------------------------------
 }

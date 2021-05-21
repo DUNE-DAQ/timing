@@ -265,7 +265,7 @@ convert_value_to_carrier_type(uint32_t aCarrierType) {
 DesignType
 convert_value_to_design_type(uint32_t aDesignType) {
     // not pleasnt, but works for now
-    if (aDesignType > kDesingEndpoBICRT) {
+    if (aDesignType > kDesignBoreas) {
         throw UnknownDesignType(ERS_HERE, format_reg_value(aDesignType));
     } else {
         return static_cast<DesignType> (aDesignType);
