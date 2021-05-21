@@ -13,8 +13,8 @@
 #define TIMING_INCLUDE_TIMING_TLUIONODE_HPP_
 
 // PDT Headers
-#include "timing/IONode.hpp"
 #include "TimingIssues.hpp"
+#include "timing/IONode.hpp"
 #include "timing/timinghardwareinfo/Structs.hpp"
 
 // uHal Headers
@@ -31,50 +31,51 @@ namespace timing {
 /**
  * @brief      Class for the TLU board.
  */
-class TLUIONode : public IONode {
-    UHAL_DERIVEDNODE(TLUIONode)
+class TLUIONode : public IONode
+{
+  UHAL_DERIVEDNODE(TLUIONode)
 
 public:
-    TLUIONode(const uhal::Node& node);
-    virtual ~TLUIONode();
+  explicit TLUIONode(const uhal::Node& node);
+  virtual ~TLUIONode();
 
-    /**
-     * @brief     Print the status of the timing node.
-     */
-    std::string get_status(bool print_out=false) const;
-    
-    /**
-     * @brief      Reset timing node.
-     */
-    void reset(const std::string& clock_config_file="") const override;
+  /**
+   * @brief     Print the status of the timing node.
+   */
+  std::string get_status(bool print_out = false) const;
 
-    /**
-     * @brief      Configure on-board DAC
-     */
-    void configure_dac(uint32_t dac_id, uint32_t dac_value, bool internal_ref=false) const;
+  /**
+   * @brief      Reset timing node.
+   */
+  void reset(const std::string& clock_config_file = "") const override;
 
-    /**
-     * @brief      Print status of on-board SFP 
-     */
-    std::string get_sfp_status(uint32_t sfp_id, bool print_out=false) const override;
+  /**
+   * @brief      Configure on-board DAC
+   */
+  void configure_dac(uint32_t dac_id, uint32_t dac_value, bool internal_ref = false) const; // NOLINT(build/unsigned)
 
-    /**
-     * @brief      Control tx laser of on-board SFP softly (I2C command)
-     */
-    void switch_sfp_soft_tx_control_bit(uint32_t, bool) const override;
+  /**
+   * @brief      Print status of on-board SFP
+   */
+  std::string get_sfp_status(uint32_t sfp_id, bool print_out = false) const override; // NOLINT(build/unsigned)
 
-    /**
-     * @brief      Fill hardware monitoring structure.
-     */
-    void get_info(timinghardwareinfo::TimingTLUMonitorData& mon_data) const;
+  /**
+   * @brief      Control tx laser of on-board SFP softly (I2C command)
+   */
+  void switch_sfp_soft_tx_control_bit(uint32_t, bool) const override; // NOLINT(build/unsigned)
 
-    /**
-     * @brief      Fill extended hardware monitoring structure.
-     */
-    void get_info(timinghardwareinfo::TimingTLUMonitorDataDebug& mon_data) const;
+  /**
+   * @brief      Fill hardware monitoring structure.
+   */
+  void get_info(timinghardwareinfo::TimingTLUMonitorData& mon_data) const;
+
+  /**
+   * @brief      Fill extended hardware monitoring structure.
+   */
+  void get_info(timinghardwareinfo::TimingTLUMonitorDataDebug& mon_data) const;
 
 protected:
-    const std::vector<std::string> m_dac_devices;
+  const std::vector<std::string> m_dac_devices;
 };
 
 } // namespace timing

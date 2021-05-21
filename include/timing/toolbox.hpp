@@ -22,53 +22,62 @@
 #include <uhal/Node.hpp>
 
 // Boost Headers
+#include <boost/format.hpp>
+#include <boost/format/group.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_signed.hpp>
 #include <boost/type_traits/is_unsigned.hpp>
 #include <boost/unordered_map.hpp>
-#include <boost/format.hpp>
-#include <boost/format/group.hpp>
 
 // C++ Headers
-#include <string>
-#include <istream>
-#include <iomanip>
-#include <stdint.h>
-#include <stdlib.h>
 #include <chrono>
+#include <cstdint>
+#include <cstdlib>
+#include <iomanip>
+#include <istream>
+#include <string>
 #include <vector>
 
 namespace dunedaq {
 namespace timing {
 
 // Wrappers to be used by lexical_cast
-template < typename T > struct stol;
-template < typename T > struct stoul;
+template<typename T>
+struct stol;
+template<typename T>
+struct stoul;
 
-template < typename T >
-std::string to_string(const T&);
+template<typename T>
+std::string
+to_string(const T&);
 
-template < typename M >
-bool map_value_comparator( typename M::value_type &p1, typename M::value_type &p2);
+template<typename M>
+bool
+map_value_comparator(typename M::value_type& p1, typename M::value_type& p2);
 
-template< typename T>
-std::vector<T> sanitize( const std::vector<T>& vec ); 
+template<typename T>
+std::vector<T>
+sanitize(const std::vector<T>& vec);
 
-template< typename T, typename U>
-T safe_enum_cast(const U& value, const std::vector<T>& valid);
+template<typename T, typename U>
+T
+safe_enum_cast(const U& value, const std::vector<T>& valid);
 
 //! Walk & read the node structure.
-Snapshot snapshot(const uhal::Node& node);
+Snapshot
+snapshot(const uhal::Node& node);
 
 //! Walk & read the sub-nodes whose IDs match this regex.
-Snapshot snapshot(const uhal::Node& node, const std::string& aRegex);
+Snapshot
+snapshot(const uhal::Node& node, const std::string& aRegex);
 
 /**
  * Sleeps for a given number of milliseconds
  *
  * @param      aTimeInMilliseconds  Number of milliseconds to sleep
  */
-void millisleep(const double& aTimeInMilliseconds);
+void
+millisleep(const double& aTimeInMilliseconds);
 
 /**
  * Formats a std::string in printf fashion
@@ -78,28 +87,32 @@ void millisleep(const double& aTimeInMilliseconds);
  *
  * @return     A formatted string
  */
-std::string strprintf(const char* aFmt, ...);
+std::string
+strprintf(const char* aFmt, ...); // NOLINT
 
 /**
  * Expand the path
  * @param aPath path to expand
  * @return vector of expanded paths
  */
-std::vector<std::string> shell_expand_paths(const std::string& aPath);
+std::vector<std::string>
+shell_expand_paths(const std::string& aPath);
 
 /**
  * Performs variable subsitutition on path
  * @param aPath: Path to expand
  * @return Expanded path
  */
-std::string shellExpandPath(const std::string& aPath);
+std::string
+shellExpandPath(const std::string& aPath);
 
 /**
- * Checks that the input path corresponds to an existing filesystem item which 
+ * Checks that the input path corresponds to an existing filesystem item which
  * is a file
  * @param aPath: Path to file
  */
-void throw_if_not_file(const std::string& aPath);
+void
+throw_if_not_file(const std::string& aPath);
 
 /**
  * @brief      Converts a vector of strings in a delimiter-separated string.
@@ -112,78 +125,94 @@ void throw_if_not_file(const std::string& aPath);
  * @return     { description_of_the_return_value }
  */
 template<typename C>
-std::string join(const C& aStrings, const std::string& aDelimiter = " ");
+std::string
+join(const C& aStrings, const std::string& aDelimiter = " ");
 
 /**
  * Expand the path
  * @param aPath path to expand
  * @return vector of expanded paths
  */
-uint8_t dec_rng(uint8_t word, uint8_t ibit, uint8_t nbits=1);
+uint8_t                                                 // NOLINT(build/unsigned)
+dec_rng(uint8_t word, uint8_t ibit, uint8_t nbits = 1); // NOLINT(build/unsigned)
 
 /**
  * ""
- * @return 
+ * @return
  */
-uint64_t tstamp2int(uhal::ValVector< uint32_t > rawTimestamp);
+uint64_t                                            // NOLINT(build/unsigned)
+tstamp2int(uhal::ValVector<uint32_t> rawTimestamp); // NOLINT(build/unsigned)
 
 /**
  * Format reg-value
- * @return 
+ * @return
  */
-template <class T>
-std::string format_reg_value(T regValue, uint32_t base=16);
+template<class T>
+std::string
+format_reg_value(T regValue, uint32_t base = 16); // NOLINT(build/unsigned)
 
 /**
  * @brief     Format reg-value table
- * @return 
+ * @return
  */
 template<class T>
-std::string format_reg_table(T data, std::string title="", std::vector<std::string> headers={"Register", "Value"});
+std::string
+format_reg_table(T data, std::string title = "", std::vector<std::string> headers = { "Register", "Value" });
 
 /**
  * ""
- * @return 
+ * @return
  */
-int64_t get_seconds_since_epoch();
+int64_t
+get_seconds_since_epoch();
 
 /**
  * ""
- * @return 
+ * @return
  */
-std::string format_timestamp(uhal::ValVector< uint32_t > rawTimestamp);
+std::string
+format_timestamp(uhal::ValVector<uint32_t> rawTimestamp); // NOLINT(build/unsigned)
 
 /**
  * ""
- * @return 
+ * @return
  */
-std::string format_timestamp(uint64_t rawTimestamp);
-
+std::string
+format_timestamp(uint64_t rawTimestamp); // NOLINT(build/unsigned)
 
 /**
  * @brief     Format reg-value table
- * @return 
+ * @return
  */
 template<class T>
-std::string format_counters_table(std::vector<T> aCounters, std::vector<std::string> aCounterNodeTitles={}, std::string aTableTitle="", std::vector<std::string> aCounterLabels={}, std::string aCounterLabelsHeader="Cmd");
+std::string
+format_counters_table(std::vector<T> aCounters,
+                      std::vector<std::string> aCounterNodeTitles = {},
+                      std::string aTableTitle = "",
+                      std::vector<std::string> aCounterLabels = {},
+                      std::string aCounterLabelsHeader = "Cmd");
 
 /**
  * ""
- * @return 
+ * @return
  */
-double convert_bits_to_float(uint64_t aBits, bool aIsDoublePrecision=false);
+double
+convert_bits_to_float(uint64_t aBits, bool aIsDoublePrecision = false); // NOLINT(build/unsigned)
 
-
-BoardType convert_value_to_board_type(uint32_t aBoardType);
-CarrierType convert_value_to_carrier_type(uint32_t aCarrierType);
-DesignType convert_value_to_design_type(uint32_t aDesignType);
+BoardType
+convert_value_to_board_type(uint32_t aBoardType); // NOLINT(build/unsigned)
+CarrierType
+convert_value_to_carrier_type(uint32_t aCarrierType); // NOLINT(build/unsigned)
+DesignType
+convert_value_to_design_type(uint32_t aDesignType); // NOLINT(build/unsigned)
 
 template<typename T>
-std::string vec_fmt(const std::vector<T>& aVec);
+std::string
+vec_fmt(const std::vector<T>& aVec);
 
 template<typename T>
-std::string short_vec_fmt(const std::vector<T>& aVec);
-
+std::string
+short_vec_fmt(const std::vector<T>& aVec);
 
 } // namespace timing
 } // namespace dunedaq
@@ -191,4 +220,3 @@ std::string short_vec_fmt(const std::vector<T>& aVec);
 #include "detail/toolbox.hxx"
 
 #endif // TIMING_INCLUDE_TIMING_TOOLBOX_HPP_
-

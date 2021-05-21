@@ -19,9 +19,7 @@
 #include <map>
 
 namespace dunedaq {
-namespace timing 
-{
-
+namespace timing {
 
 /**
  * @class      SIChipSlave
@@ -30,53 +28,52 @@ namespace timing
  * @author     Alessandro Thea
  * @date       May 2018
  */
-class SIChipSlave : public I2CSlave {
+class SIChipSlave : public I2CSlave
+{
 public:
-    SIChipSlave(const I2CMasterNode* i2c_master, uint8_t i2c_device_address);
-    virtual ~SIChipSlave();
+  SIChipSlave(const I2CMasterNode* i2c_master, uint8_t i2c_device_address); // NOLINT(build/unsigned)
+  virtual ~SIChipSlave();
 
-    /**
-     * @brief      Reads the current page.
-     *
-     * @return     { description_of_the_return_value }
-     */
-    uint8_t read_page() const;
-    
-    /**
-     * @brief      { function_description }
-     *
-     * @param[in]  page  A page
-     */
-    void switch_page(uint8_t page) const;
+  /**
+   * @brief      Reads the current page.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  uint8_t read_page() const; // NOLINT(build/unsigned)
 
-    /**
-     * @brief      Reads a device version.
-     *
-     * @return     { description_of_the_return_value }
-     */
-    uint32_t read_device_version() const;
+  /**
+   * @brief      { function_description }
+   *
+   * @param[in]  page  A page
+   */
+  void switch_page(uint8_t page) const; // NOLINT(build/unsigned)
 
-    /**
-     * @brief      Reads a clock register.
-     *
-     * @param[in]  address  A address
-     *
-     * @return     { description_of_the_return_value }
-     */
-    uint8_t read_clock_register( uint16_t address ) const;
+  /**
+   * @brief      Reads a device version.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  uint32_t read_device_version() const; // NOLINT(build/unsigned)
 
-    /**
-     * @brief      Writes a clock register.
-     *
-     * @param[in]  address  A address
-     * @param[in]  data  A data
-     */
-    void write_clock_register( uint16_t address, uint8_t data) const;
+  /**
+   * @brief      Reads a clock register.
+   *
+   * @param[in]  address  A address
+   *
+   * @return     { description_of_the_return_value }
+   */
+  uint8_t read_clock_register(uint16_t address) const; // NOLINT(build/unsigned)
 
-
+  /**
+   * @brief      Writes a clock register.
+   *
+   * @param[in]  address  A address
+   * @param[in]  data  A data
+   */
+  void write_clock_register(uint16_t address, uint8_t data) const; // NOLINT(build/unsigned)
 };
 
 } // namespace timing
 } // namespace dunedaq
 
-#endif // TIMING_INCLUDE_TIMING_SICHIPSLAVE_HPP_ 
+#endif // TIMING_INCLUDE_TIMING_SICHIPSLAVE_HPP_

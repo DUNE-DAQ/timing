@@ -13,9 +13,9 @@
 #define TIMING_INCLUDE_TIMING_TOPDESIGN_HPP_
 
 // PDT Headers
-#include "timing/TimingNode.hpp"
-#include "timing/EndpointNode.hpp"
 #include "TimingIssues.hpp"
+#include "timing/EndpointNode.hpp"
+#include "timing/TimingNode.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -24,8 +24,8 @@
 
 // C++ Headers
 #include <chrono>
-#include <string>
 #include <sstream>
+#include <string>
 
 namespace dunedaq {
 namespace timing {
@@ -33,50 +33,52 @@ namespace timing {
 /**
  * @brief      Base class for timing top design nodes.
  */
-template <class IO>
-class TopDesign : public TimingNode {
+template<class IO>
+class TopDesign : public TimingNode
+{
 public:
-    explicit TopDesign(const uhal::Node& node);
-    virtual ~TopDesign();
+  explicit TopDesign(const uhal::Node& node);
+  virtual ~TopDesign();
 
-    /**
-     * @brief      Reset timing node.
-     */
-    virtual void soft_reset() const;
+  /**
+   * @brief      Reset timing node.
+   */
+  virtual void soft_reset() const;
 
-    /**
-     * @brief      Reset timing node.
-     */
-    virtual void reset(const std::string& clock_config_file="") const;
-    
-    /**
-     * @brief      Return the timing IO node.
-     *
-     * @return     { description_of_the_return_value }
-     */
-    virtual const IO& get_io_node() const;
+  /**
+   * @brief      Reset timing node.
+   */
+  virtual void reset(const std::string& clock_config_file = "") const;
 
-    /**
-     * @brief      Return the timing endpoint node.
-     *
-     * @return     { description_of_the_return_value }
-     */
-    virtual const EndpointNode& get_endpoint_node(uint32_t ept_id) const;
+  /**
+   * @brief      Return the timing IO node.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  virtual const IO& get_io_node() const;
 
-    /**
-     * @brief      Print hardware information
-     */
-    virtual std::string get_hardware_info(bool print_out=false) const;
+  /**
+   * @brief      Return the timing endpoint node.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  virtual const EndpointNode& get_endpoint_node(uint32_t ept_id) const; // NOLINT(build/unsigned)
 
-    /**
-     * @brief      Return the timing endpoint node.
-     *
-     * @return     { description_of_the_return_value }
-     */
-    virtual uint32_t get_number_of_endpoint_nodes() const;
+  /**
+   * @brief      Print hardware information
+   */
+  virtual std::string get_hardware_info(bool print_out = false) const;
 
-    template <class T>
-    void get_info(T& data) const {}
+  /**
+   * @brief      Return the timing endpoint node.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  virtual uint32_t get_number_of_endpoint_nodes() const; // NOLINT(build/unsigned)
+
+  template<class T>
+  void get_info(T& data) const
+  {}
 };
 
 } // namespace timing

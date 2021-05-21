@@ -26,23 +26,24 @@ namespace timing {
 /**
  * @brief      Class for master global node.
  */
-class EchoMonitorNode : public TimingNode {
-    UHAL_DERIVEDNODE(EchoMonitorNode)
+class EchoMonitorNode : public TimingNode
+{
+  UHAL_DERIVEDNODE(EchoMonitorNode)
 public:
-    explicit EchoMonitorNode(const uhal::Node& node);
-    virtual ~EchoMonitorNode();
+  explicit EchoMonitorNode(const uhal::Node& node);
+  virtual ~EchoMonitorNode();
 
-    /**
-     * @brief      Send echo and measure the round-trip time between master and endpoint
-     *
-     * @return     { description_of_the_return_value }
-     */
-    uint64_t send_echo_and_measure_delay(int64_t timeout=500) const;
+  /**
+   * @brief      Send echo and measure the round-trip time between master and endpoint
+   *
+   * @return     { description_of_the_return_value }
+   */
+  uint64_t send_echo_and_measure_delay(int64_t timeout = 500) const; // NOLINT(build/unsigned)
 
-    /**
-     * @brief     Get status string, optionally print.
-     */
-    std::string get_status(bool print_out=false) const override;
+  /**
+   * @brief     Get status string, optionally print.
+   */
+  std::string get_status(bool print_out = false) const override;
 };
 
 } // namespace timing

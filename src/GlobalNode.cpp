@@ -1,4 +1,16 @@
+/**
+ * @file GlobalNode.cpp
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
+
 #include "timing/GlobalNode.hpp"
+
+#include "logging/Logging.hpp"
+
+#include <string>
 
 namespace dunedaq {
 namespace timing {
@@ -6,111 +18,113 @@ namespace timing {
 UHAL_REGISTER_DERIVED_NODE(GlobalNode)
 
 //-----------------------------------------------------------------------------
-GlobalNode::GlobalNode(const uhal::Node& node) : TimingNode(node) {
-
-}
+GlobalNode::GlobalNode(const uhal::Node& node)
+  : TimingNode(node)
+{}
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
-GlobalNode::~GlobalNode() {
-
-}
+GlobalNode::~GlobalNode() {}
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
-bool GlobalNode::in_spill() const {
-    return false;
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-bool GlobalNode::tx_error() const {
-    return false;
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-uint32_t GlobalNode::readTimeStamp() const {
-    return 0;
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-uint32_t GlobalNode::read_spill_counter() const {
-    return 0;
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-void GlobalNode::select_partition() const {
-
+bool
+GlobalNode::in_spill() const
+{
+  return false;
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GlobalNode::lock_partition() const {
-
+bool
+GlobalNode::tx_error() const
+{
+  return false;
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
-std::string GlobalNode::get_status(bool print_out) const {
-	std::stringstream lStatus;
-	auto subnodes = read_sub_nodes(getNode("csr.stat"));
-    lStatus << format_reg_table(subnodes, "Global state");
-    if (print_out) std::cout << lStatus.str();
-    return lStatus.str();
+uint32_t // NOLINT(build/unsigned)
+GlobalNode::readTimeStamp() const
+{
+  return 0;
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+uint32_t // NOLINT(build/unsigned)
+GlobalNode::read_spill_counter() const
+{
+  return 0;
+}
+//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void
-GlobalNode::enable_upstream_endpoint(uint32_t timeout) {
-	getNode("csr.ctrl.ep_en").write(0x0);
-	getClient().dispatch();
-	getNode("csr.ctrl.ep_en").write(0x1);
-	getClient().dispatch();
+GlobalNode::select_partition() const
+{}
+//-----------------------------------------------------------------------------
 
-	TLOG() << "Upstream endpoint reset, waiting for lock";
+//-----------------------------------------------------------------------------
+void
+GlobalNode::lock_partition() const
+{}
+//-----------------------------------------------------------------------------
 
-	auto start = std::chrono::high_resolution_clock::now();
+//-----------------------------------------------------------------------------
+std::string
+GlobalNode::get_status(bool print_out) const
+{
+  std::stringstream lStatus;
+  auto subnodes = read_sub_nodes(getNode("csr.stat"));
+  lStatus << format_reg_table(subnodes, "Global state");
+  if (print_out)
+    TLOG() << lStatus.str();
+  return lStatus.str();
+}
+//-----------------------------------------------------------------------------
 
-	std::chrono::milliseconds msSinceStart(0);
+//-----------------------------------------------------------------------------
+void
+GlobalNode::enable_upstream_endpoint(uint32_t timeout) // NOLINT(build/unsigned)
+{
+  getNode("csr.ctrl.ep_en").write(0x0);
+  getClient().dispatch();
+  getNode("csr.ctrl.ep_en").write(0x1);
+  getClient().dispatch();
 
-	uhal::ValWord<uint32_t> lEptStat;
-	uhal::ValWord<uint32_t> lEptRdy;
+  TLOG() << "Upstream endpoint reset, waiting for lock";
 
-	// Wait for the endpoint to be happy
-	while (msSinceStart.count() < timeout) {
-		auto now = std::chrono::high_resolution_clock::now();
-		msSinceStart = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
+  auto start = std::chrono::high_resolution_clock::now();
 
-		millisleep(100);
-		
-		lEptStat = getNode("csr.stat.ep_stat").read();
-		lEptRdy = getNode("csr.stat.ep_rdy").read();
-        
-        getClient().dispatch();
+  std::chrono::milliseconds msSinceStart(0);
 
-        if (lEptRdy.value()) {
-        	TLOG() << "Endpoint locked: state= " << format_reg_value(lEptStat);
-            return;
-        }
-	}
-	
-	if (!lEptRdy.value()) {
-		throw UpstreamEndpointFailedToLock(ERS_HERE, format_reg_value(lEptStat));
-    } else {
-        TLOG() << "Endpoint locked: state= " << format_reg_value(lEptStat);
+  uhal::ValWord<uint32_t> lEptStat; // NOLINT(build/unsigned)
+  uhal::ValWord<uint32_t> lEptRdy;  // NOLINT(build/unsigned)
+
+  // Wait for the endpoint to be happy
+  while (msSinceStart.count() < timeout) {
+    auto now = std::chrono::high_resolution_clock::now();
+    msSinceStart = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
+
+    millisleep(100);
+
+    lEptStat = getNode("csr.stat.ep_stat").read();
+    lEptRdy = getNode("csr.stat.ep_rdy").read();
+
+    getClient().dispatch();
+
+    if (lEptRdy.value()) {
+      TLOG() << "Endpoint locked: state= " << format_reg_value(lEptStat);
+      return;
     }
+  }
+
+  if (!lEptRdy.value()) {
+    throw UpstreamEndpointFailedToLock(ERS_HERE, format_reg_value(lEptStat));
+  } else {
+    TLOG() << "Endpoint locked: state= " << format_reg_value(lEptStat);
+  }
 }
 //-----------------------------------------------------------------------------
 

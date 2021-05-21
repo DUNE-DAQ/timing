@@ -13,16 +13,16 @@
 #define TIMING_INCLUDE_TIMING_FREQUENCYCOUNTERNODE_HPP_
 
 // PDT Headers
-#include "timing/TimingNode.hpp"
 #include "TimingIssues.hpp"
+#include "timing/TimingNode.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
 // C++ Headers
 #include <chrono>
-#include <thread>
 #include <string>
+#include <thread>
 #include <vector>
 
 namespace dunedaq {
@@ -31,24 +31,24 @@ namespace timing {
 /**
  * @brief      Base class for timing IO nodes.
  */
-class FrequencyCounterNode : public TimingNode {
-    UHAL_DERIVEDNODE(FrequencyCounterNode)
+class FrequencyCounterNode : public TimingNode
+{
+  UHAL_DERIVEDNODE(FrequencyCounterNode)
 public:
-    explicit FrequencyCounterNode(const uhal::Node& node);
-    virtual ~FrequencyCounterNode();
-	
-	/**
-     * @brief     Get status string, optionally print.
-     */
-    std::string get_status(bool print_out=false) const override;//TODO something here
+  explicit FrequencyCounterNode(const uhal::Node& node);
+  virtual ~FrequencyCounterNode();
 
-    /**
-     * @brief     Measure clock frequencies.
-     *
-     * @return     { description_of_the_return_value }
-     */
-    std::vector<double> measure_frequencies(uint8_t number_of_clocks) const;
+  /**
+   * @brief     Get status string, optionally print.
+   */
+  std::string get_status(bool print_out = false) const override;
 
+  /**
+   * @brief     Measure clock frequencies.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  std::vector<double> measure_frequencies(uint8_t number_of_clocks) const; // NOLINT(build/unsigned)
 };
 
 } // namespace timing

@@ -13,17 +13,17 @@
 #define TIMING_INCLUDE_TIMING_BOREASDESIGN_HPP_
 
 // Timing Headers
+#include "timing/HSINode.hpp"
 #include "timing/MasterDesign.hpp"
 #include "timing/PDIMasterNode.hpp"
-#include "timing/HSINode.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
 // C++ Headers
 #include <chrono>
-#include <string>
 #include <sstream>
+#include <string>
 
 namespace dunedaq {
 namespace timing {
@@ -31,40 +31,39 @@ namespace timing {
 /**
  * @brief      Class for timing master with integrated HSI designs.
  */
-template <class IO>
-class BoreasDesign : public MasterDesign<IO,PDIMasterNode> {
+template<class IO>
+class BoreasDesign : public MasterDesign<IO, PDIMasterNode>
+{
 
 public:
-    explicit BoreasDesign(const uhal::Node& node);
-    virtual ~BoreasDesign();
+  explicit BoreasDesign(const uhal::Node& node);
+  virtual ~BoreasDesign();
 
-    /**
-     * @brief     Get status string, optionally print.
-     */
-    std::string get_status(bool print_out=false) const override;
+  /**
+   * @brief     Get status string, optionally print.
+   */
+  std::string get_status(bool print_out = false) const override;
 
-    /**
-     * @brief      Prepare the timing master for data taking.
-     *
-     */
-    void configure() const override;
+  /**
+   * @brief      Prepare the timing master for data taking.
+   *
+   */
+  void configure() const override;
 
-    template <class T>
-    void get_info(T& data) const;
-    
-    /**
-     * @brief      Get the HSI node.
-     *
-     * @return     { description_of_the_return_value }
-     */
-    virtual const HSINode& get_hsi_node() const {
-        return uhal::Node::getNode<HSINode>("endpoint0");
-    }
-    
-    // In leiu of UHAL_DERIVEDNODE
+  template<class T>
+  void get_info(T& data) const;
+
+  /**
+   * @brief      Get the HSI node.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  virtual const HSINode& get_hsi_node() const { return uhal::Node::getNode<HSINode>("endpoint0"); }
+
+  // In leiu of UHAL_DERIVEDNODE
 protected:
-    virtual uhal::Node* clone() const;
-//
+  virtual uhal::Node* clone() const;
+  //
 };
 
 } // namespace timing

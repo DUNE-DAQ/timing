@@ -12,8 +12,8 @@
 #ifndef TIMING_INCLUDE_TIMING_CRTNODE_HPP_
 #define TIMING_INCLUDE_TIMING_CRTNODE_HPP_
 
-#include "timing/TimingNode.hpp"
 #include "TimingIssues.hpp"
+#include "timing/TimingNode.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -28,41 +28,41 @@ namespace timing {
 /**
  * @brief      Base class for timing IO nodes.
  */
-class CRTNode : public TimingNode {
-    UHAL_DERIVEDNODE(CRTNode)
+class CRTNode : public TimingNode
+{
+  UHAL_DERIVEDNODE(CRTNode)
 public:
-    explicit CRTNode(const uhal::Node& node);
-    ~CRTNode();
+  explicit CRTNode(const uhal::Node& node);
+  ~CRTNode();
 
-    /**
-     * @brief     Get status string, optionally print.
-     */
-    std::string get_status(bool print_out=false) const override;
+  /**
+   * @brief     Get status string, optionally print.
+   */
+  std::string get_status(bool print_out = false) const override;
 
-    /**
-     * @brief      Enable the crt endpoint
-     *
-     * @return     { description_of_the_return_value }
-     */
-    void enable(uint32_t partition, uint32_t command) const;
+  /**
+   * @brief      Enable the crt endpoint
+   *
+   * @return     { description_of_the_return_value }
+   */
+  void enable(uint32_t partition, uint32_t command) const; // NOLINT(build/unsigned)
 
-    /**
-     * @brief      Disable the crt endpoint
-     *
-     * @return     { description_of_the_return_value }
-     */
-    void disable() const;
+  /**
+   * @brief      Disable the crt endpoint
+   *
+   * @return     { description_of_the_return_value }
+   */
+  void disable() const;
 
-    /**
-     * @brief      Read the timestamp of the last pulse.
-     *
-     * @return     { description_of_the_return_value }
-     */
-    uint64_t read_last_pulse_timestamp() const;
-
+  /**
+   * @brief      Read the timestamp of the last pulse.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  uint64_t read_last_pulse_timestamp() const; // NOLINT(build/unsigned)
 };
 
 } // namespace timing
 } // namespace dunedaq
 
-#endif  // TIMING_INCLUDE_TIMING_CRTNODE_HPP_
+#endif // TIMING_INCLUDE_TIMING_CRTNODE_HPP_

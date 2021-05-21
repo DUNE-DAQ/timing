@@ -1,75 +1,80 @@
 #ifndef TIMING_INCLUDE_TIMING_TOPDESIGN_HXX_
 #define TIMING_INCLUDE_TIMING_TOPDESIGN_HXX_
 
-#include <string>
 #include <sstream>
+#include <string>
 
-namespace dunedaq::timing
+namespace dunedaq::timing {
+
+//-----------------------------------------------------------------------------
+template<class IO>
+TopDesign<IO>::TopDesign(const uhal::Node& node)
+  : TimingNode(node)
+{}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+template<class IO>
+TopDesign<IO>::~TopDesign()
+{}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+template<class IO>
+void
+TopDesign<IO>::soft_reset() const
 {
-
-
-//-----------------------------------------------------------------------------
-template< class IO>
-TopDesign<IO>::TopDesign(const uhal::Node& node) : TimingNode(node) {
+  get_io_node().soft_reset();
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
-template< class IO>
-TopDesign<IO>::~TopDesign() {
+template<class IO>
+void
+TopDesign<IO>::reset(const std::string& clock_config_file) const
+{
+  get_io_node().reset(clock_config_file);
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
-template< class IO>
-void TopDesign<IO>::soft_reset() const {
-	get_io_node().soft_reset();
+template<class IO>
+const IO&
+TopDesign<IO>::get_io_node() const
+{
+  return uhal::Node::getNode<IO>("io");
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
-template< class IO>
-void TopDesign<IO>::reset(const std::string& clock_config_file) const {
-	get_io_node().reset(clock_config_file);
+template<class IO>
+const EndpointNode&
+TopDesign<IO>::get_endpoint_node(uint32_t ept_id) const
+{
+  const std::string nodeName = "endpoint" + std::to_string(ept_id);
+  return uhal::Node::getNode<EndpointNode>(nodeName);
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
-template< class IO>
-const IO& TopDesign<IO>::get_io_node() const {
-	return uhal::Node::getNode<IO>("io");
+template<class IO>
+std::string
+TopDesign<IO>::get_hardware_info(bool print_out) const
+{
+  auto lInfo = get_io_node().get_hardware_info();
+  if (print_out)
+    std::cout << lInfo;
+  return lInfo;
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
-template< class IO>
-const EndpointNode& TopDesign<IO>::get_endpoint_node(uint32_t ept_id) const {
-	const std::string nodeName = "endpoint" + std::to_string(ept_id);
-	return uhal::Node::getNode<EndpointNode>(nodeName);
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-template< class IO>
-std::string TopDesign<IO>::get_hardware_info(bool print_out) const {
-	auto lInfo = get_io_node().get_hardware_info();
-	if (print_out) std::cout << lInfo;
-	return lInfo;
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-template< class IO>
-uint32_t TopDesign<IO>::get_number_of_endpoint_nodes() const {
-	std::string lRegexString = "endpoint[0-9]+";
-	return uhal::Node::getNodes(lRegexString).size();
+template<class IO>
+uint32_t
+TopDesign<IO>::get_number_of_endpoint_nodes() const
+{
+  std::string lRegexString = "endpoint[0-9]+";
+  return uhal::Node::getNodes(lRegexString).size();
 }
 //-----------------------------------------------------------------------------
 }

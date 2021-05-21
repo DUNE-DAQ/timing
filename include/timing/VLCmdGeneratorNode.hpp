@@ -26,26 +26,30 @@ namespace timing {
 /**
  * @brief      Class for master global node.
  */
-class VLCmdGeneratorNode : public TimingNode {
-    UHAL_DERIVEDNODE(VLCmdGeneratorNode)
+class VLCmdGeneratorNode : public TimingNode
+{
+  UHAL_DERIVEDNODE(VLCmdGeneratorNode)
 public:
-    explicit VLCmdGeneratorNode(const uhal::Node& node);
-    virtual ~VLCmdGeneratorNode();
+  explicit VLCmdGeneratorNode(const uhal::Node& node);
+  virtual ~VLCmdGeneratorNode();
 
-    /**
-     * @brief     Print the status of the timing node.
-     */
-    std::string get_status(bool print_out=false) const override;
-    
-    /**
-     * @brief     Control the endpoint sfp tx laser.
-     */
-    void switch_endpoint_sfp(uint32_t address, bool enable=false) const;
+  /**
+   * @brief     Print the status of the timing node.
+   */
+  std::string get_status(bool print_out = false) const override;
 
-    /**
-     * @brief     Adjust endpoint delay.
-     */
-    void apply_endpoint_delay(uint32_t address, uint32_t coarse_delay, uint32_t fine_delay, uint32_t phase_delay) const;
+  /**
+   * @brief     Control the endpoint sfp tx laser.
+   */
+  void switch_endpoint_sfp(uint32_t address, bool enable = false) const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief     Adjust endpoint delay.
+   */
+  void apply_endpoint_delay(uint32_t address,            // NOLINT(build/unsigned)
+                            uint32_t coarse_delay,       // NOLINT(build/unsigned)
+                            uint32_t fine_delay,         // NOLINT(build/unsigned)
+                            uint32_t phase_delay) const; // NOLINT(build/unsigned)
 };
 
 } // namespace timing
