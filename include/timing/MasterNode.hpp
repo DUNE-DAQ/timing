@@ -13,14 +13,14 @@
 #define TIMING_INCLUDE_TIMING_MASTERNODE_HPP_
 
 // PDT Headers
-#include "timing/TimingNode.hpp"
 #include "TimingIssues.hpp"
-#include "timing/TimestampGeneratorNode.hpp"
-#include "timing/VLCmdGeneratorNode.hpp"
-#include "timing/GlobalNode.hpp"
 #include "timing/EchoMonitorNode.hpp"
 #include "timing/FLCmdGeneratorNode.hpp"
+#include "timing/GlobalNode.hpp"
 #include "timing/PartitionNode.hpp"
+#include "timing/TimestampGeneratorNode.hpp"
+#include "timing/TimingNode.hpp"
+#include "timing/VLCmdGeneratorNode.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -34,63 +34,70 @@ namespace timing {
 /**
  * @brief      Base class for timing IO nodes.
  */
-class MasterNode : public TimingNode {
+class MasterNode : public TimingNode
+{
 public:
-    explicit MasterNode(const uhal::Node& node);
-    virtual ~MasterNode();
-    
-    /**
-     * @brief      Read the current timestamp word.
-     *
-     * @return     { description_of_the_return_value }
-     */
-    virtual uint64_t read_timestamp() const;
+  explicit MasterNode(const uhal::Node& node);
+  virtual ~MasterNode();
 
-    /**
-     * @brief      Set the timestamp to current time.
-     */
-    virtual void set_timestamp(uint64_t timestamp) const;
+  /**
+   * @brief      Read the current timestamp word.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  virtual uint64_t read_timestamp() const; // NOLINT(build/unsigned)
 
-    /**
-     * @brief     Control the tx line of endpoint sfp
-     */
-    virtual void switch_endpoint_sfp(uint32_t address, bool turn_on) const = 0;
+  /**
+   * @brief      Set the timestamp to current time.
+   */
+  virtual void set_timestamp(uint64_t timestamp) const; // NOLINT(build/unsigned)
 
-    /**
-     * @brief     Enable RTT endpoint
-     */
-    virtual void enable_upstream_endpoint() const = 0;
+  /**
+   * @brief     Control the tx line of endpoint sfp
+   */
+  virtual void switch_endpoint_sfp(uint32_t address, bool turn_on) const = 0; // NOLINT(build/unsigned)
 
-    /**
-     * @brief      Measure the endpoint round trip time.
-     *
-     * @return     { description_of_the_return_value }
-     */
-    virtual uint32_t measure_endpoint_rtt(uint32_t address, bool control_sfp=true) const = 0;
-    
-    /**
-     * @brief     Apply delay to endpoint
-     */
-    virtual void apply_endpoint_delay(uint32_t address, uint32_t coarse_delay, uint32_t fine_delay, uint32_t phase_delay, bool measure_rtt=false, bool control_sfp=true) const = 0;
+  /**
+   * @brief     Enable RTT endpoint
+   */
+  virtual void enable_upstream_endpoint() const = 0;
 
-    /**
-     * @brief     Apply delay to endpoint
-     */
-    virtual void apply_endpoint_delay(const ActiveEndpointConfig& ept_config, bool measure_rtt=false) const;
+  /**
+   * @brief      Measure the endpoint round trip time.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  virtual uint32_t measure_endpoint_rtt(uint32_t address, bool control_sfp = true) const = 0; // NOLINT(build/unsigned)
 
-    /**
-     * @brief     Send a fixed length command
-     */
-    virtual void send_fl_cmd(uint32_t command, uint32_t channel, uint32_t number_of_commands=1) const = 0;
+  /**
+   * @brief     Apply delay to endpoint
+   */
+  virtual void apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned)
+                                    uint32_t coarse_delay, // NOLINT(build/unsigned)
+                                    uint32_t fine_delay,   // NOLINT(build/unsigned)
+                                    uint32_t phase_delay,  // NOLINT(build/unsigned)
+                                    bool measure_rtt = false,
+                                    bool control_sfp = true) const = 0;
 
-    /**
-     * @brief      Get partition node
-     *
-     * @return     { description_of_the_return_value }
-     */
-    virtual const PartitionNode& get_partition_node(uint32_t partition_id) const;
+  /**
+   * @brief     Apply delay to endpoint
+   */
+  virtual void apply_endpoint_delay(const ActiveEndpointConfig& ept_config, bool measure_rtt = false) const;
+
+  /**
+   * @brief     Send a fixed length command
+   */
+  virtual void send_fl_cmd(uint32_t command,                           // NOLINT(build/unsigned)
+                           uint32_t channel,                           // NOLINT(build/unsigned)
+                           uint32_t number_of_commands = 1) const = 0; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Get partition node
+   *
+   * @return     { description_of_the_return_value }
+   */
+  virtual const PartitionNode& get_partition_node(uint32_t partition_id) const; // NOLINT(build/unsigned)
 };
-
 
 } // namespace timing
 } // namespace dunedaq

@@ -24,8 +24,8 @@
 
 // C++ Headers
 #include <chrono>
-#include <string>
 #include <sstream>
+#include <string>
 #include <vector>
 
 namespace dunedaq {
@@ -34,64 +34,72 @@ namespace timing {
 /**
  * @brief      Class for timing fanout designs.
  */
-template <class IO, class MST>
-class MasterMuxDesign : public MasterDesign<IO,MST> {
+template<class IO, class MST>
+class MasterMuxDesign : public MasterDesign<IO, MST>
+{
 
 public:
-    explicit MasterMuxDesign(const uhal::Node& node);
-    virtual ~MasterMuxDesign();
+  explicit MasterMuxDesign(const uhal::Node& node);
+  virtual ~MasterMuxDesign();
 
-    /**
-     * @brief     Get status string, optionally print.
-     */
-    std::string get_status(bool print_out=false) const override;
-    
-    /**
-     * @brief      Prepare the timing fanout for data taking.
-     *
-     */
-    void configure() const override;
+  /**
+   * @brief     Get status string, optionally print.
+   */
+  std::string get_status(bool print_out = false) const override;
 
-    /**
-     * @brief      Reset timing fanout node.
-     */
-    void reset(const std::string& clock_config_file="") const override;
+  /**
+   * @brief      Prepare the timing fanout for data taking.
+   *
+   */
+  void configure() const override;
 
-    template <class T>
-    void get_info(T& data) const;
+  /**
+   * @brief      Reset timing fanout node.
+   */
+  void reset(const std::string& clock_config_file = "") const override;
 
-    /**
-     * @brief     Switch the SFP mux channel
-     */
-    virtual void switch_sfp_mux_channel(uint32_t sfp_id, bool wait_for_rtt_ept_lock) const;
+  template<class T>
+  void get_info(T& data) const;
 
-    /**
-     * @brief     Read the active SFP mux channel
-     */
-    virtual uint32_t read_active_sfp_mux_channel() const;
+  /**
+   * @brief     Switch the SFP mux channel
+   */
+  virtual void switch_sfp_mux_channel(uint32_t sfp_id, bool wait_for_rtt_ept_lock) const; // NOLINT(build/unsigned)
 
-    /**
-     * @brief      Measure the endpoint round trip time.
-     *
-     * @return     { description_of_the_return_value }
-     */
-    virtual uint32_t measure_endpoint_rtt(uint32_t address, bool control_sfp, uint32_t sfp_mux) const;
+  /**
+   * @brief     Read the active SFP mux channel
+   */
+  virtual uint32_t read_active_sfp_mux_channel() const; // NOLINT(build/unsigned)
 
-    /**
-     * @brief      Apply delay to endpoint
-     */
-    virtual void apply_endpoint_delay(uint32_t address, uint32_t coarse_delay, uint32_t fine_delay, uint32_t phase_delay, bool measure_rtt, bool control_sfp, uint32_t sfp_mux) const;
+  /**
+   * @brief      Measure the endpoint round trip time.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  virtual uint32_t measure_endpoint_rtt(uint32_t address, // NOLINT(build/unsigned)
+                                        bool control_sfp,
+                                        uint32_t sfp_mux) const; // NOLINT(build/unsigned)
 
-    /**
-     * @brief     Scan SFP for alive timing transmitters
-     */
-    virtual std::vector<uint32_t> scan_sfp_mux() const;
+  /**
+   * @brief      Apply delay to endpoint
+   */
+  virtual void apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned)
+                                    uint32_t coarse_delay, // NOLINT(build/unsigned)
+                                    uint32_t fine_delay,   // NOLINT(build/unsigned)
+                                    uint32_t phase_delay,  // NOLINT(build/unsigned)
+                                    bool measure_rtt,
+                                    bool control_sfp,
+                                    uint32_t sfp_mux) const; // NOLINT(build/unsigned)
 
+  /**
+   * @brief     Scan SFP for alive timing transmitters
+   */
+  virtual std::vector<uint32_t> scan_sfp_mux() const; // NOLINT(build/unsigned)
 
-// In leiu of UHAL_DERIVEDNODE
+  // In leiu of UHAL_DERIVEDNODE
 protected:
-    virtual uhal::Node* clone() const;
-//
+  virtual uhal::Node* clone() const;
+  //
 };
 
 } // namespace timing

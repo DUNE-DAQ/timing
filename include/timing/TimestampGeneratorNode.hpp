@@ -13,8 +13,8 @@
 #define TIMING_INCLUDE_TIMING_TIMESTAMPGENERATORNODE_HPP_
 
 // PDT Headers
-#include "timing/TimingNode.hpp"
 #include "TimingIssues.hpp"
+#include "timing/TimingNode.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -29,37 +29,37 @@ namespace timing {
 /**
  * @brief      Class for timestamp generator node.
  */
-class TimestampGeneratorNode : public TimingNode {
-    UHAL_DERIVEDNODE(TimestampGeneratorNode)
+class TimestampGeneratorNode : public TimingNode
+{
+  UHAL_DERIVEDNODE(TimestampGeneratorNode)
 public:
-    explicit TimestampGeneratorNode(const uhal::Node& node);
-    virtual ~TimestampGeneratorNode();
-    
-    /**
-     * @brief     Print the status of the timing node.
-     */
-    std::string get_status(bool print_out=false) const override;
+  explicit TimestampGeneratorNode(const uhal::Node& node);
+  virtual ~TimestampGeneratorNode();
 
-    /**
-     * @brief      Read the current timestamp words.
-     *
-     * @return     { description_of_the_return_value }
-     */
-    uhal::ValVector<uint32_t> read_raw_timestamp(bool dispatch=true) const;
+  /**
+   * @brief     Print the status of the timing node.
+   */
+  std::string get_status(bool print_out = false) const override;
 
-    /**
-     * @brief      Read the current timestamp words.
-     *
-     * @return     { description_of_the_return_value }
-     */
-    uint64_t read_timestamp() const;
+  /**
+   * @brief      Read the current timestamp words.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  uhal::ValVector<uint32_t> read_raw_timestamp(bool dispatch = true) const; // NOLINT(build/unsigned)
 
-    /**
-     * @brief      Read the current timestamp words.
-     */
-    void set_timestamp(uint64_t timestamp) const;
+  /**
+   * @brief      Read the current timestamp words.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  uint64_t read_timestamp() const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Read the current timestamp words.
+   */
+  void set_timestamp(uint64_t timestamp) const; // NOLINT(build/unsigned)
 };
-
 
 } // namespace timing
 } // namespace dunedaq

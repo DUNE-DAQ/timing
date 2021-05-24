@@ -26,42 +26,42 @@ namespace timing {
 /**
  * @brief      Class for master global node.
  */
-class TriggerReceiverNode : public TimingNode {
-    UHAL_DERIVEDNODE(TriggerReceiverNode)
+class TriggerReceiverNode : public TimingNode
+{
+  UHAL_DERIVEDNODE(TriggerReceiverNode)
 public:
-    explicit TriggerReceiverNode(const uhal::Node& node);
-    virtual ~TriggerReceiverNode();
+  explicit TriggerReceiverNode(const uhal::Node& node);
+  virtual ~TriggerReceiverNode();
 
-    /**
-     * @brief     Print the status of the timing node.
-     */
-    std::string get_status(bool print_out=false) const override;
-    
-    /**
-     * @brief     Enable trigger rx endpoint
-     */
-    void enable() const;
+  /**
+   * @brief     Print the status of the timing node.
+   */
+  std::string get_status(bool print_out = false) const override;
 
-    /**
-     * @brief     Disable trigger rx endpoint
-     */
-    void disable() const;
+  /**
+   * @brief     Enable trigger rx endpoint
+   */
+  void enable() const;
 
-    /**
-     * @brief     Reset trigger rx endpoint
-     */
-    void reset() const;
+  /**
+   * @brief     Disable trigger rx endpoint
+   */
+  void disable() const;
 
-    /**
-     * @brief     Enable external triggers
-     */
-    void enable_triggers() const;
+  /**
+   * @brief     Reset trigger rx endpoint
+   */
+  void reset() const;
 
-    /**
-     * @brief     Disable external triggers
-     */
-    void disable_triggers() const;
+  /**
+   * @brief     Enable external triggers
+   */
+  void enable_triggers() const;
 
+  /**
+   * @brief     Disable external triggers
+   */
+  void disable_triggers() const;
 };
 
 } // namespace timing

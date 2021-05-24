@@ -13,8 +13,8 @@
 #define TIMING_INCLUDE_TIMING_SPILLINTERFACENODE_HPP_
 
 // PDT Headers
-#include "timing/TimingNode.hpp"
 #include "timing/TimestampGeneratorNode.hpp"
+#include "timing/TimingNode.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -27,37 +27,37 @@ namespace timing {
 /**
  * @brief      Class for master global node.
  */
-class SpillInterfaceNode : public TimingNode {
-    UHAL_DERIVEDNODE(SpillInterfaceNode)
+class SpillInterfaceNode : public TimingNode
+{
+  UHAL_DERIVEDNODE(SpillInterfaceNode)
 public:
-    explicit SpillInterfaceNode(const uhal::Node& node);
-    virtual ~SpillInterfaceNode();
+  explicit SpillInterfaceNode(const uhal::Node& node);
+  virtual ~SpillInterfaceNode();
 
-    /**
-     * @brief     Print the status of the timing node.
-     */
-    std::string get_status(bool print_out=false) const override;
-    
-    /**
-     * @brief     Enable spill interface
-     */
-    void enable() const;
+  /**
+   * @brief     Print the status of the timing node.
+   */
+  std::string get_status(bool print_out = false) const override;
 
-    /**
-     * @brief     Disable interface
-     */
-    void disable() const;
+  /**
+   * @brief     Enable spill interface
+   */
+  void enable() const;
 
-    /**
-     * @brief     Configure and enable fake spill generator
-     */
-    void enable_fake_spills(uint32_t cycle_length=16, uint32_t spill_length=8) const;
+  /**
+   * @brief     Disable interface
+   */
+  void disable() const;
 
-    /**
-     * @brief     Read whether we are in spill or not
-     */
-    bool read_in_spill() const;
+  /**
+   * @brief     Configure and enable fake spill generator
+   */
+  void enable_fake_spills(uint32_t cycle_length = 16, uint32_t spill_length = 8) const; // NOLINT(build/unsigned)
 
+  /**
+   * @brief     Read whether we are in spill or not
+   */
+  bool read_in_spill() const;
 };
 
 } // namespace timing

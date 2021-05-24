@@ -13,8 +13,8 @@
 #define TIMING_INCLUDE_TIMING_FMCIONODE_HPP_
 
 // PDT Headers
-#include "timing/IONode.hpp"
 #include "TimingIssues.hpp"
+#include "timing/IONode.hpp"
 #include "timing/timinghardwareinfo/Structs.hpp"
 
 // uHal Headers
@@ -30,33 +30,33 @@ namespace timing {
 /**
  * @brief      Class for the timing FMC board.
  */
-class FMCIONode : public IONode {
-    UHAL_DERIVEDNODE(FMCIONode)
+class FMCIONode : public IONode
+{
+  UHAL_DERIVEDNODE(FMCIONode)
 
 public:
-    explicit FMCIONode(const uhal::Node& node);
-    virtual ~FMCIONode();
-    
-    /**
-     * @brief     Get status string, optionally print.
-     */
-    std::string get_status(bool print_out=false) const override;
+  explicit FMCIONode(const uhal::Node& node);
+  virtual ~FMCIONode();
 
-    /**
-     * @brief      Reset timing node.
-     */
-    void reset(const std::string& clock_config_file="") const override;
+  /**
+   * @brief     Get status string, optionally print.
+   */
+  std::string get_status(bool print_out = false) const override;
 
-    /**
-     * @brief      Fill hardware monitoring structure.
-     */
-    void get_info(timinghardwareinfo::TimingFMCMonitorData& mon_data) const;
+  /**
+   * @brief      Reset timing node.
+   */
+  void reset(const std::string& clock_config_file = "") const override;
 
-    /**
-     * @brief      Fill hardware monitoring structure.
-     */
-    void get_info(timinghardwareinfo::TimingFMCMonitorDataDebug& mon_data) const;
+  /**
+   * @brief      Fill hardware monitoring structure.
+   */
+  void get_info(timinghardwareinfo::TimingFMCMonitorData& mon_data) const;
 
+  /**
+   * @brief      Fill hardware monitoring structure.
+   */
+  void get_info(timinghardwareinfo::TimingFMCMonitorDataDebug& mon_data) const;
 };
 
 } // namespace timing
