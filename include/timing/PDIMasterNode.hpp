@@ -17,8 +17,8 @@
 #include "timing/MasterNode.hpp"
 #include "timing/SpillInterfaceNode.hpp"
 
-#include "timing/timingfirmwareinfo/Nljs.hpp"
-#include "timing/timingfirmwareinfo/Structs.hpp"
+#include "timing/timingfirmwareinfo/InfoNljs.hpp"
+#include "timing/timingfirmwareinfo/InfoStructs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"

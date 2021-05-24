@@ -15,7 +15,7 @@
 #include "TimingIssues.hpp"
 #include "timing/I2CMasterNode.hpp"
 #include "timing/I2CSlave.hpp"
-#include "timing/timinghardwareinfo/Structs.hpp"
+#include "timing/timinghardwareinfo/InfoStructs.hpp"
 #include "timing/toolbox.hpp"
 
 #include "ers/Issue.hpp"

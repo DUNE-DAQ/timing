@@ -80,8 +80,6 @@ local timingfirmwareinfo = {
 
     pdi_master_fw_mon_data: s.record("PDIMasterMonitorData", 
     [
-        s.field("class_name", self.text_data, "PDIMasterMonitorData",
-                doc="Info class name"),
         s.field("timestamp", self.l_uint,
                 doc="Timestamp"),
         s.field("command_counters", self.timing_fl_cmd_counters_vector,
@@ -95,8 +93,6 @@ local timingfirmwareinfo = {
 
     overlord_tlu_mon_data: s.record("OverlordTLUMonitorData", 
     [
-        s.field("class_name", self.text_data, "OverlordTLUMonitorData",
-                doc="Info class name"),
         s.field("time_gathered", self.l_int, 0,
                 doc="When was the data actually gathered"),
 
@@ -113,8 +109,6 @@ local timingfirmwareinfo = {
 
     overlord_tlu_mon_data_debug: s.record("OverlordTLUMonitorDataDebug", 
     [
-        s.field("class_name", self.text_data, "OverlordTLUMonitorDataDebug",
-                doc="Info class name"),
         s.field("time_gathered", self.l_int, 0,
                 doc="When was the data actually gathered"),
 
@@ -130,8 +124,6 @@ local timingfirmwareinfo = {
 
     overlord_fmc_mon_data: s.record("OverlordFMCMonitorData", 
     [
-        s.field("class_name", self.text_data, "OverlordFMCMonitorData",
-                doc="Info class name"),
         s.field("time_gathered", self.l_int, 0,
                 doc="When was the data actually gathered"),
 
@@ -147,8 +139,6 @@ local timingfirmwareinfo = {
 
     overlord_fmc_mon_data_debug: s.record("OverlordFMCMonitorDataDebug", 
     [
-        s.field("class_name", self.text_data, "OverlordFMCMonitorDataDebug",
-                doc="Info class name"),
         s.field("time_gathered", self.l_int, 0,
                 doc="When was the data actually gathered"),
 
@@ -167,9 +157,6 @@ local timingfirmwareinfo = {
 
     hsi_fw_mon_data: s.record("HSIFirmwareMonitorData", 
     [
-        s.field("class_name", self.text_data, "HSIFirmwareMonitorData",
-                doc="Info class name"),
-        
         s.field("source", self.uint,
                 doc="Source of HSI data"),
         
@@ -212,8 +199,6 @@ local timingfirmwareinfo = {
 
     boreas_tlu_mon_data: s.record("BoreasTLUMonitorData", 
     [
-        s.field("class_name", self.text_data, "BoreasTLUMonitorData",
-                doc="Info class name"),
         s.field("time_gathered", self.l_int, 0,
                 doc="When was the data actually gathered"),
 
@@ -229,8 +214,6 @@ local timingfirmwareinfo = {
 
     boreas_tlu_mon_data_debug: s.record("BoreasTLUMonitorDataDebug", 
     [
-        s.field("class_name", self.text_data, "BoreasTLUMonitorData",
-                doc="Info class name"),
         s.field("time_gathered", self.l_int, 0,
                 doc="When was the data actually gathered"),
 
@@ -246,8 +229,6 @@ local timingfirmwareinfo = {
 
     boreas_fmc_mon_data: s.record("BoreasFMCMonitorData", 
     [
-        s.field("class_name", self.text_data, "BoreasFMCMonitorData",
-                doc="Info class name"),
         s.field("time_gathered", self.l_int, 0,
                 doc="When was the data actually gathered"),
 
@@ -262,8 +243,6 @@ local timingfirmwareinfo = {
 
     boreas_fmc_mon_data_debug: s.record("BoreasFMCMonitorDataDebug", 
     [
-        s.field("class_name", self.text_data, "BoreasFMCMonitorDataDebug",
-                doc="Info class name"),
         s.field("time_gathered", self.l_int, 0,
                 doc="When was the data actually gathered"),
 
@@ -280,8 +259,6 @@ local timingfirmwareinfo = {
     // Endpoint design
     timing_endpoint_fmc_mon_data: s.record("TimingEndpointFMCMonitorData", 
     [
-        s.field("class_name", self.text_data, "TimingEndpointFMCMonitorData",
-                 doc="Info class name"),
         s.field("time_gathered", self.l_int, 0,
                 doc="When was the data actually gathered"),
 
@@ -293,8 +270,6 @@ local timingfirmwareinfo = {
 
     timing_endpoint_fmc_mon_data_debug: s.record("TimingEndpointFMCMonitorDataDebug", 
     [
-        s.field("class_name", self.text_data, "TimingEndpointFMCMonitorDataDebug",
-                 doc="Info class name"),
         s.field("time_gathered", self.l_int, 0,
                 doc="When was the data actually gathered"),
 
@@ -303,6 +278,22 @@ local timingfirmwareinfo = {
         s.field("endpoint_data", teih.dunedaq.timing.timingendpointinfo.TimingEndpointInfo,
                 doc="Timing endpoint firmware monitor data"),
     ], doc="Timing endpoint monitor data"),
+
+    
+    timing_device_data: s.any("TimingDeviceData", 
+                    doc="Generic structure for timing hw device data"),
+
+    timing_device_data_vector: s.sequence("TimingDeviceDataVector", self.timing_device_data,
+            doc="A vector of timing device data"),
+
+    timing_devices_data: s.record("TimingDevicesData",
+    [
+        s.field("collector", self.text_data, "Collector",
+                doc="Name of module collecting the data"),
+        s.field("device_data", self.timing_device_data_vector,
+                doc="Sequence of timing device data")
+    ],
+    doc="Contained to hold all gathered timing device data"),
 };
 
 // Output a topologically sorted array.

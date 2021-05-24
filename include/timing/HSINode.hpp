@@ -17,8 +17,8 @@
 #include "timing/EndpointNode.hpp"
 #include "timing/FrequencyCounterNode.hpp"
 
-#include "timing/timingfirmwareinfo/Nljs.hpp"
-#include "timing/timingfirmwareinfo/Structs.hpp"
+#include "timing/timingfirmwareinfo/InfoNljs.hpp"
+#include "timing/timingfirmwareinfo/InfoStructs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
