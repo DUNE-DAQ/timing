@@ -26,19 +26,22 @@ The memory layout of the various firmware blocks which make up a firmware is cap
 ### Class hierarchy
 The interface for reading and writing registers of hierarchal firmware blocks or `nodes` is provided by the `IPBus` class, `uhal::Node`. Most `timing` C++ classes inherit from `uhal::Node`, via the common base class `timing::TimingNode`. The class hierarchy of `timing` can be seen in the `UML` diagram below.
 
+![timing C++ classes](./timing_class_diagram.png)
+
 ## Python interface
 The C++ interface described above will be used by DUNE DAQ modules, written in C++, to control and monitor timing hardware. These DUNE DAQ modules can be found in the package, [`timinglibs`](https://github.com/DUNE-DAQ/timinglibs/). The interface provided by `timing` can also be used in a debug and development contexts, where python bindings allow exactly the same C++ code to be used in production or debug environments.
 ### Bindings
 The python binding is done using the library `pybind11`. The source files in the directory `pybindsrc`, expose the relevant C++ code via the sub-module `core`, which belongs to the package top level python module, `timing`. 
 ### CLI
-To enhance the usability of the python bound C++ code, a command line interface (`CLI`) has been built using the `click` python package. The `CLI` is centred around five main command groups, where each command groups targets a particular firmware blocks or functionalityies. These are listed below.
-* `io` : commands for interacting with the firmware block responsible for controlling the `IO` board, e.g. `PLL`, `SFP`s, `CDR`. 
+To enhance the usability of the python bound C++ code, a command line interface (`CLI`) has been built using the `click` python package. The `CLI` is centred around five main command groups, where each command groups targets a particular firmware blocks or functionalities. These are listed below.
+* `io` : commands for interacting with the firmware block responsible for controlling the `IO` board, e.g. `SFP`s, `CDR` and `PLL` `IC`s. 
 * `mst` : commands for manituplating the firmware blocks providing the `timing master` functionality
 * `ept` : commands for manituplating the firmware blocks providing the `timing endpoint` functionality
 * `hsi` : commands for manituplating the firmware blocks providing the `HSI` functionality
 * `crt` : commands for manituplating the firmware blocks providing the `CRT endpoint` functionality
 * `debug` : commands for various debug operations targeting hardware and firmware
+
 The `CLI` is invoked through the executable python script, `pdtbutler`, located in the `scripts` directory.
+
 ## Operational monitoring
-### Schema
-### get_info()
+A portion of the firmware interface classes implement a `get_info` method. The method takes as an arugment, a reference to a data structure, which it fills with its particular operational monitoring information. Several of these operational monitoring structures are combined together into one super-structure, which holds all the relevant information, e.g. hardware *and* firmware, about a particular timing device. The data structures are defined by schema, written in the language of `jsonnet`. These schema are turned into C++ `struct`s using the [`daq_codegen` `cmake` function](https://dune-daq-sw.readthedocs.io/en/latest/packages/daq-cmake/#daq_codegen).
