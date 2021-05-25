@@ -33,7 +33,7 @@ The C++ interface described above will be used by DUNE DAQ modules, written in C
 ### Bindings
 The python binding is done using the library `pybind11`. The source files in the directory `pybindsrc`, expose the relevant C++ code via the sub-module `core`, which belongs to the package top level python module, `timing`. 
 ### CLI
-To enhance the usability of the python bound C++ code, a command line interface (`CLI`) has been built using the `click` python package. The `CLI` is centred around five main command groups, where each command groups targets a particular firmware blocks or functionalities. These are listed below.
+To enhance the usability of the python bound C++ code, a command line interface (`CLI`) has been built using the `click` python package. The `CLI` is centred around command groups, where each command group targets a particular set of firmware blocks or functionalities. These command groups are listed below.
 * `io` : commands for interacting with the firmware block responsible for controlling the `IO` board, e.g. `SFP`s, `CDR` and `PLL` `IC`s. 
 * `mst` : commands for manituplating the firmware blocks providing the `timing master` functionality
 * `ept` : commands for manituplating the firmware blocks providing the `timing endpoint` functionality
