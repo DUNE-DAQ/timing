@@ -39,7 +39,6 @@ namespace timing {
 template<class IO>
 class OverlordDesign
   : public MasterDesign<IO, PDIMasterNode>
-  , public EndpointDesign<IO>
 {
 
 public:

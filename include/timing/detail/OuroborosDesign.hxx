@@ -18,7 +18,6 @@ template<class IO>
 OuroborosDesign<IO>::OuroborosDesign(const uhal::Node& node)
   : TopDesign<IO>(node)
   , MasterDesign<IO, PDIMasterNode>(node)
-  , EndpointDesign<IO>(node)
 {}
 //-----------------------------------------------------------------------------
 

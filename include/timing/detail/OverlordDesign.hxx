@@ -18,7 +18,6 @@ template<class IO>
 OverlordDesign<IO>::OverlordDesign(const uhal::Node& node)
   : TopDesign<IO>(node)
   , MasterDesign<IO, PDIMasterNode>(node)
-  , EndpointDesign<IO>(node)
 {}
 //-----------------------------------------------------------------------------
 

@@ -163,7 +163,7 @@ SI534xSlave::read_config_section(std::ifstream& file, std::string tag) const
 
     std::stringstream debug_stream;
     debug_stream << std::showbase << std::hex << "Address: " << lAddress << lDummy << " Data: " << lData;
-    TLOG_DEBUG(2) << debug_stream.str();
+    TLOG_DEBUG(3) << debug_stream.str();
 
     lConfig.push_back(RegisterSetting_t(lAddress, lData));
   }
@@ -207,9 +207,9 @@ SI534xSlave::configure(const std::string& aPath) const
     lPostAmble.clear();
   }
 
-  TLOG_DEBUG(2) << "Preamble size = " << lPreamble.size();
-  TLOG_DEBUG(2) << "Registers size = " << lRegisters.size();
-  TLOG_DEBUG(2) << "PostAmble size = " << lPostAmble.size();
+  TLOG_DEBUG(3) << "Preamble size = " << lPreamble.size();
+  TLOG_DEBUG(3) << "Registers size = " << lRegisters.size();
+  TLOG_DEBUG(3) << "PostAmble size = " << lPostAmble.size();
 
   lFile.close();
 
@@ -249,11 +249,11 @@ SI534xSlave::upload_config(const std::vector<SI534xSlave::RegisterSetting_t>& co
     std::stringstream debug_stream;
     debug_stream << std::showbase << std::hex << "Writing to " << (uint32_t)lSetting.get<0>() // NOLINT(build/unsigned)
                  << " data " << (uint32_t)lSetting.get<1>();                                  // NOLINT(build/unsigned)
-    TLOG_DEBUG(2) << debug_stream.str();
+    TLOG_DEBUG(3) << debug_stream.str();
 
     uint32_t lMaxAttempts(2), lAttempt(0); // NOLINT(build/unsigned)
     while (lAttempt < lMaxAttempts) {
-      TLOG_DEBUG(2) << "Attempt " << lAttempt;
+      TLOG_DEBUG(3) << "Attempt " << lAttempt;
       if (lAttempt > 0) {
         ers::warning(SI534xRegWriteRetry(ERS_HERE,
                                          format_reg_value(lAttempt, 10),
@@ -274,7 +274,7 @@ SI534xSlave::upload_config(const std::vector<SI534xSlave::RegisterSetting_t>& co
 
     ++k;
     if ((k % lNotifyEvery) == 0) {
-      TLOG_DEBUG(2) << (k / lNotifyEvery) * lNotifyPercent << "%";
+      TLOG_DEBUG(3) << (k / lNotifyEvery) * lNotifyPercent << "%";
     }
   }
 }
