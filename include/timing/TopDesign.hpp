@@ -58,24 +58,13 @@ public:
   virtual const IO& get_io_node() const;
 
   /**
-   * @brief      Return the timing endpoint node.
-   *
-   * @return     { description_of_the_return_value }
-   */
-  virtual const EndpointNode& get_endpoint_node(uint32_t ept_id) const; // NOLINT(build/unsigned)
-
-  /**
    * @brief      Print hardware information
    */
   virtual std::string get_hardware_info(bool print_out = false) const;
 
   /**
-   * @brief      Return the timing endpoint node.
-   *
-   * @return     { description_of_the_return_value }
+   * @brief      Collect operational monitoring information
    */
-  virtual uint32_t get_number_of_endpoint_nodes() const; // NOLINT(build/unsigned)
-
   template<class T>
   void get_info(T& data) const
   {}
