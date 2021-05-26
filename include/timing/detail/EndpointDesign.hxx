@@ -46,26 +46,6 @@ EndpointDesign<IO>::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 template<class IO>
-const EndpointNode&
-EndpointDesign<IO>::get_endpoint_node(uint32_t ept_id) const
-{
-  const std::string nodeName = "endpoint" + std::to_string(ept_id);
-  return uhal::Node::getNode<EndpointNode>(nodeName);
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-template<class IO>
-uint32_t
-EndpointDesign<IO>::get_number_of_endpoint_nodes() const
-{
-  std::string lRegexString = "endpoint[0-9]+";
-  return uhal::Node::getNodes(lRegexString).size();
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-template<class IO>
 template<class T>
 void
 EndpointDesign<IO>::get_info(T& data) const

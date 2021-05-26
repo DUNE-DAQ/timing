@@ -45,20 +45,6 @@ public:
   std::string get_status(bool print_out = false) const override;
 
   /**
-   * @brief      Return the timing endpoint node.
-   *
-   * @return     { description_of_the_return_value }
-   */
-  virtual const EndpointNode& get_endpoint_node(uint32_t ept_id) const; // NOLINT(build/unsigned)
-
-  /**
-   * @brief      Return the timing endpoint node.
-   *
-   * @return     { description_of_the_return_value }
-   */
-  virtual uint32_t get_number_of_endpoint_nodes() const; // NOLINT(build/unsigned)
-
-  /**
    * @brief      Collect operational monitoring information
    */
   template<class T>
