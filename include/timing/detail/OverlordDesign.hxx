@@ -110,6 +110,7 @@ OverlordDesign<IO>::get_info(T& data) const
 
   // TODO full trix info
   auto trig_interface_enabled = uhal::Node::getNode("trig_rx.csr.ctrl.ext_trig_en").read();
+  uhal::Node::getClient().dispatch();
   data.trig_interface_enabled = trig_interface_enabled.value();
 }
 //-----------------------------------------------------------------------------
