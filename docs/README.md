@@ -35,10 +35,10 @@ The python binding is done using the library `pybind11`. The source files in the
 ### CLI
 To enhance the usability of the python bound C++ code, a command line interface (`CLI`) has been built using the `click` python package. The `CLI` is centred around command groups, where each command group targets a particular set of firmware blocks or functionalities. These command groups are listed below.
 * `io` : commands for interacting with the firmware block responsible for controlling the `IO` board, e.g. `SFP`s, `CDR` and `PLL` `IC`s. 
-* `mst` : commands for manituplating the firmware blocks providing the `timing master` functionality
-* `ept` : commands for manituplating the firmware blocks providing the `timing endpoint` functionality
-* `hsi` : commands for manituplating the firmware blocks providing the `HSI` functionality
-* `crt` : commands for manituplating the firmware blocks providing the `CRT endpoint` functionality
+* `mst` : commands for manipulating the firmware blocks providing the `timing master` functionality
+* `ept` : commands for manipulating the firmware blocks providing the `timing endpoint` functionality
+* `hsi` : commands for manipulating the firmware blocks providing the `HSI` functionality
+* `crt` : commands for manipulating the firmware blocks providing the `CRT endpoint` functionality
 * `debug` : commands for various debug operations targeting hardware and firmware
 
 The `CLI` is invoked through the executable python script, `pdtbutler`, located in the `scripts` directory.
