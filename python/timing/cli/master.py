@@ -295,7 +295,7 @@ def readback(obj, readall, keep):
 
         echo ( "Words available in readout buffer: "+hex(lBufCount))
 
-        lWordsToRead = int(lBufCount) if readall else (int(lBufCount) / defs.kEventSize)*defs.kEventSize
+        lWordsToRead = int(lBufCount) if readall else int(lBufCount // defs.kEventSize)*defs.kEventSize
 
         # if lWordsToRead == 0:
             # echo("Nothing to read, goodbye!")
