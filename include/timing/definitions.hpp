@@ -145,9 +145,17 @@ const std::map<std::string, std::string> g_clock_config_map = {
   { "kFMCRev2_enclustra-a35_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
   { "kFMCRev3_enclustra-a35_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
 
+  { "kFMCRev1_enclustra-a35_chronos", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
+  { "kFMCRev2_enclustra-a35_chronos", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
+  { "kFMCRev3_enclustra-a35_chronos", "devel/Si5394-053endptr_62-5MHz_4kHz-Registers.txt" },
+
   { "kFMCRev1_enclustra-a35_ouroboros", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
   { "kFMCRev2_enclustra-a35_ouroboros", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
   { "kFMCRev3_enclustra-a35_ouroboros", "devel/Si5394-RevA-94mst625-Registers.txt" },
+
+  { "kFMCRev1_enclustra-a35_overlord", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
+  { "kFMCRev2_enclustra-a35_overlord", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
+  { "kFMCRev3_enclustra-a35_overlord", "devel/Si5394-RevA-94mst625-Registers.txt" },
 
   { "kFMCRev1_enclustra-a35_boreas", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
   { "kFMCRev2_enclustra-a35_boreas", "devel/Si5344-053master_312.5_mhz-Registers.txt" },

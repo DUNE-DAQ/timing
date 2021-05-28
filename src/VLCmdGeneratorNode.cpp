@@ -62,7 +62,7 @@ VLCmdGeneratorNode::apply_endpoint_delay(uint32_t address,           // NOLINT(b
                                          uint32_t phase_delay) const // NOLINT(build/unsigned)
 {
   reset_sub_nodes(getNode("csr.ctrl"), false);
-  getNode("csr.ctrl.tx_en").write(0x1);
+  getNode("csr.ctrl.tx_en").write(0x0);
   getNode("csr.ctrl.addr").write(address);
   getNode("csr.ctrl.cdel").write(coarse_delay);
   getNode("csr.ctrl.fdel").write(fine_delay);
