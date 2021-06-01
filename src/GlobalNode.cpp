@@ -122,7 +122,7 @@ GlobalNode::enable_upstream_endpoint(uint32_t timeout) // NOLINT(build/unsigned)
     }
   }
 
-  if (!lEptRdy.value()) {
+  if (!lEptRdy.value() || lEptStat.value() != 0x8) {
     throw UpstreamEndpointFailedToLock(ERS_HERE, format_reg_value(lEptStat));
   } else {
     TLOG_DEBUG(1) << "Endpoint locked: state= " << format_reg_value(lEptStat);
