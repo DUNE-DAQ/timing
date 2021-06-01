@@ -98,14 +98,16 @@ GlobalNode::enableUpstreamEndpoint(uint32_t aTimeout) {
 		lEptRdy = getNode("csr.stat.ep_rdy").read();
         
         getClient().dispatch();
+		
+		PDT_LOG(kNotice) << "ept state: 0x" << std::hex << lEptStat.value() << " ept ready: 0x" << lEptRdy.value();
 
-        if (lEptRdy.value()) {
+        if (lEptRdy.value() && lEptStat.value() == 0x8) {
         	PDT_LOG(kNotice) << "Endpoint locked: state= " << formatRegValue(lEptStat.value());
             return true;
         }
 	}
 	
-	if (!lEptRdy.value()) {
+	if (!lEptRdy.value() || lEptStat.value() != 0x8) {
 		PDT_LOG(kError) << "Failed to bring up the RTT endpoint. Current state: 0x" << std::hex << lEptStat.value();
 		return false;
     } else {

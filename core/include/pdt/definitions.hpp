@@ -99,8 +99,9 @@ const std::map<uint64_t, BoardRevision> kBoardUIDRevisionMap = {
     {0x5410ecbba408, kTLURev1},
     {0x801f12f5ce48, kFIBRev1},
     {0x801f12f5e9ae, kFIBRev1},
-    {0x49162b65025,  kFMCRev3}
-
+    {0x49162b65025,  kFMCRev3},
+    {0x49162b62948,  kFMCRev3},
+    {0x49162b675ea,  kFMCRev3},
 };
 
 const std::map<std::string, std::string> kClockConfigMap = {
