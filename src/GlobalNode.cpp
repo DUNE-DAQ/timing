@@ -114,8 +114,10 @@ GlobalNode::enable_upstream_endpoint(uint32_t timeout) // NOLINT(build/unsigned)
 
     getClient().dispatch();
 
-    if (lEptRdy.value()) {
-      TLOG() << "Endpoint locked: state= " << format_reg_value(lEptStat);
+    TLOG_DEBUG(1) << "ept state: " << std::hex << lEptStat.value() << " ept ready: " << lEptRdy.value();
+
+    if (lEptRdy.value() && lEptStat.value() == 0x8) {
+      TLOG_DEBUG(1) << "Endpoint locked: state= " << format_reg_value(lEptStat);
       return;
     }
   }
@@ -123,7 +125,7 @@ GlobalNode::enable_upstream_endpoint(uint32_t timeout) // NOLINT(build/unsigned)
   if (!lEptRdy.value()) {
     throw UpstreamEndpointFailedToLock(ERS_HERE, format_reg_value(lEptStat));
   } else {
-    TLOG() << "Endpoint locked: state= " << format_reg_value(lEptStat);
+    TLOG_DEBUG(1) << "Endpoint locked: state= " << format_reg_value(lEptStat);
   }
 }
 //-----------------------------------------------------------------------------
