@@ -166,7 +166,7 @@ protected:
   /**
    * @brief      Write soft reset register.
    */
-  virtual void writeSoftResetRegister() const;
+  virtual void write_soft_reset_register() const;
 };
 
 } // namespace timing

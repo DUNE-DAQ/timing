@@ -45,7 +45,7 @@ void
 TLUIONode::reset(const std::string& clock_config_file) const
 {
   // Soft reset
-  writeSoftResetRegister();
+  write_soft_reset_register();
 
   millisleep(1000);
 

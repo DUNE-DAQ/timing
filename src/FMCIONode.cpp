@@ -45,7 +45,7 @@ void
 FMCIONode::reset(const std::string& clock_config_file) const
 {
 
-  writeSoftResetRegister();
+  write_soft_reset_register();
 
   millisleep(1000);
 

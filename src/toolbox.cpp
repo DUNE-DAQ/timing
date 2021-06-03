@@ -256,7 +256,7 @@ BoardType
 convert_value_to_board_type(uint32_t aBoardType) // NOLINT(build/unsigned)
 {
   // not pleasnt, but works for now
-  if (aBoardType > kBoardTLU) {
+  if (aBoardType > kBoardFIB) {
     throw UnknownBoardType(ERS_HERE, format_reg_value(aBoardType));
   } else {
     return static_cast<BoardType>(aBoardType);
@@ -269,7 +269,7 @@ CarrierType
 convert_value_to_carrier_type(uint32_t aCarrierType) // NOLINT(build/unsigned)
 {
   // not pleasnt, but works for now
-  if (aCarrierType > kCarrierATFC) {
+  if (aCarrierType > kCarrierAFC) {
     throw UnknownCarrierType(ERS_HERE, format_reg_value(aCarrierType));
   } else {
     return static_cast<CarrierType>(aCarrierType);

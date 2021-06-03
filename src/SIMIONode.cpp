@@ -109,7 +109,7 @@ void
 SIMIONode::reset(const std::string& /*clock_config_file*/) const
 {
 
-  writeSoftResetRegister();
+  write_soft_reset_register();
   TLOG_DEBUG(0) << "Reset done";
 }
 //-----------------------------------------------------------------------------
