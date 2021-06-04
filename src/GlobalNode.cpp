@@ -111,10 +111,11 @@ GlobalNode::enable_upstream_endpoint(uint32_t timeout) // NOLINT(build/unsigned)
 
     lEptStat = getNode("csr.stat.ep_stat").read();
     lEptRdy = getNode("csr.stat.ep_rdy").read();
-
+    auto ept_edge = getNone("csr.stat.ep_edge").read();
+    auto ept_fdel = getNone("csr.stat.ep_fdel").read();
     getClient().dispatch();
 
-    TLOG_DEBUG(1) << "ept state: " << std::hex << lEptStat.value() << " ept ready: " << lEptRdy.value();
+    TLOG_DEBUG(1) << "ept state: 0x" << std::hex << lEptStat.value() << " ept ready: 0x" << lEptRdy.value() << " ept edge: 0x" << ept_edge.value() << " ept fdel: 0x" << ept_fdel.value();
 
     if (lEptRdy.value() && lEptStat.value() == 0x8) {
       TLOG_DEBUG(1) << "Endpoint locked: state= " << format_reg_value(lEptStat);
