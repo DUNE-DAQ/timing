@@ -26,6 +26,9 @@ uhal::RegistrationHelper<EndpointDesign<FMCIONode>> EndpointDesign_FMCIONode_Reg
 uhal::RegistrationHelper<FanoutDesign<PC059IONode, PDIMasterNode>>
   FanoutDesign_PC059IONode_PDIMasterNode_RegistrationHelper("FanoutDesign<PC059IONode,PDIMasterNode>");
 
+uhal::RegistrationHelper<FanoutDesign<FIBIONode, PDIMasterNode>>
+  FanoutDesign_FIBIONode_PDIMasterNode_RegistrationHelper("FanoutDesign<FIBIONode,PDIMasterNode>");
+
 // Ouroboros (master with endpoint)
 uhal::RegistrationHelper<OuroborosDesign<SIMIONode>> OuroborosDesign_SIMIONode_RegistrationHelper(
   "OuroborosDesign<SIMIONode>");
@@ -33,6 +36,8 @@ uhal::RegistrationHelper<OuroborosDesign<FMCIONode>> OuroborosDesign_FMCIONode_R
   "OuroborosDesign<FMCIONode>");
 uhal::RegistrationHelper<OuroborosMuxDesign<PC059IONode>> OuroborosMuxDesign_PC059IONode_RegistrationHelper(
   "OuroborosMuxDesign<PC059IONode>");
+uhal::RegistrationHelper<OuroborosMuxDesign<FIBIONode>> OuroborosMuxDesign_FIBIONode_RegistrationHelper(
+  "OuroborosMuxDesign<FIBIONode>");
 
 // Overlord (master with trigger message receiver)
 uhal::RegistrationHelper<OverlordDesign<TLUIONode>> OverlordDesign_TLUIONode_RegistrationHelper(

@@ -9,12 +9,13 @@
 #include "timing/FMCIONode.hpp"
 #include "timing/PC059IONode.hpp"
 #include "timing/TLUIONode.hpp"
+#include "timing/FIBIONode.hpp"
 
 #include "timing/PDIMasterNode.hpp"
 
 #include "timing/BoreasDesign.hpp"
 #include "timing/FanoutDesign.hpp"
-#include "timing/MasterMuxDesign.hpp"
+#include "timing/OuroborosMuxDesign.hpp"
 #include "timing/OverlordDesign.hpp"
 
 #include <pybind11/pybind11.h>
@@ -64,20 +65,35 @@ register_top_designs(py::module& m)
     .def("apply_endpoint_delay", &timing::BoreasDesign<SIMIONode>::apply_endpoint_delay)
     .def("measure_endpoint_rtt", &timing::BoreasDesign<SIMIONode>::measure_endpoint_rtt);
 
-  // PD-I fanout design
+  // PD-I fanout design on pc059
   py::class_<timing::FanoutDesign<PC059IONode, PDIMasterNode>, uhal::Node>(m, "FanoutDesign<PC059IONode,PDIMasterNode>")
     .def("switch_sfp_mux_channel", &timing::FanoutDesign<PC059IONode, PDIMasterNode>::switch_sfp_mux_channel)
     .def("apply_endpoint_delay", &timing::FanoutDesign<PC059IONode, PDIMasterNode>::apply_endpoint_delay)
     .def("measure_endpoint_rtt", &timing::FanoutDesign<PC059IONode, PDIMasterNode>::measure_endpoint_rtt)
     .def("scan_sfp_mux", &timing::FanoutDesign<PC059IONode, PDIMasterNode>::scan_sfp_mux);
 
+  // PD-I fanout design on fib
+  py::class_<timing::FanoutDesign<FIBIONode, PDIMasterNode>, uhal::Node>(m, "FanoutDesign<FIBIONode,PDIMasterNode>")
+    .def("switch_sfp_mux_channel", &timing::FanoutDesign<FIBIONode, PDIMasterNode>::switch_sfp_mux_channel)
+    .def("apply_endpoint_delay", &timing::FanoutDesign<FIBIONode, PDIMasterNode>::apply_endpoint_delay)
+    .def("measure_endpoint_rtt", &timing::FanoutDesign<FIBIONode, PDIMasterNode>::measure_endpoint_rtt)
+    .def("scan_sfp_mux", &timing::FanoutDesign<FIBIONode, PDIMasterNode>::scan_sfp_mux);
+
   // PD-I ouroboros design on pc059
-  py::class_<timing::MasterMuxDesign<PC059IONode, PDIMasterNode>, uhal::Node>(
-    m, "MasterMuxDesign<PC059IONode,PDIMasterNode>")
-    .def("switch_sfp_mux_channel", &timing::MasterMuxDesign<PC059IONode, PDIMasterNode>::switch_sfp_mux_channel)
-    .def("apply_endpoint_delay", &timing::MasterMuxDesign<PC059IONode, PDIMasterNode>::apply_endpoint_delay)
-    .def("measure_endpoint_rtt", &timing::MasterMuxDesign<PC059IONode, PDIMasterNode>::measure_endpoint_rtt)
-    .def("scan_sfp_mux", &timing::MasterMuxDesign<PC059IONode, PDIMasterNode>::scan_sfp_mux);
+  py::class_<timing::OuroborosMuxDesign<PC059IONode>, uhal::Node>(
+    m, "OuroborosMuxDesign<PC059IONode>")
+    .def("switch_sfp_mux_channel", &timing::OuroborosMuxDesign<PC059IONode>::switch_sfp_mux_channel)
+    .def("apply_endpoint_delay", &timing::OuroborosMuxDesign<PC059IONode>::apply_endpoint_delay)
+    .def("measure_endpoint_rtt", &timing::OuroborosMuxDesign<PC059IONode>::measure_endpoint_rtt)
+    .def("scan_sfp_mux", &timing::OuroborosMuxDesign<PC059IONode>::scan_sfp_mux);
+
+  // PD-I ouroboros design on fib
+  py::class_<timing::OuroborosMuxDesign<FIBIONode>, uhal::Node>(
+    m, "OuroborosMuxDesign<FIBIONode>")
+    .def("switch_sfp_mux_channel", &timing::OuroborosMuxDesign<FIBIONode>::switch_sfp_mux_channel)
+    .def("apply_endpoint_delay", &timing::OuroborosMuxDesign<FIBIONode>::apply_endpoint_delay)
+    .def("measure_endpoint_rtt", &timing::OuroborosMuxDesign<FIBIONode>::measure_endpoint_rtt)
+    .def("scan_sfp_mux", &timing::OuroborosMuxDesign<FIBIONode>::scan_sfp_mux);
 }
 
 } // namespace python

@@ -15,6 +15,7 @@
 // PDT Headers
 #include "timing/MasterMuxDesign.hpp"
 #include "timing/PC059IONode.hpp"
+#include "timing/FIBIONode.hpp"
 #include "timing/PDIMasterNode.hpp"
 
 #include "TimingIssues.hpp"

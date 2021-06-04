@@ -14,11 +14,10 @@
 
 // PDT Headers
 #include "timing/EndpointDesign.hpp"
-#include "timing/FMCIONode.hpp"
 #include "timing/MasterMuxDesign.hpp"
 #include "timing/PDIMasterNode.hpp"
-#include "timing/SIMIONode.hpp"
-#include "timing/TLUIONode.hpp"
+#include "timing/FIBIONode.hpp"
+#include "timing/PC059IONode.hpp"
 #include "timing/TriggerReceiverNode.hpp"
 
 // uHal Headers

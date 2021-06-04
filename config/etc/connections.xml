@@ -45,5 +45,11 @@
   <connection id="SIM_UDP"              uri="ipbusudp-2.0://localhost:50010" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/ouroboros_sim/top_sim.xml" />
   <connection id="PROD_MASTER_ICEBERG"  uri="ipbusudp-2.0://192.168.121.10:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/overlord_tlu/top_tlu.xml" />
 
+  <connection id="OURO_FIB_ENC"         uri="ipbusudp-2.0://192.168.200.16:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/ouroboros_fib/top_fib.xml" />
+  <connection id="OURO_FIB_AFC"         uri="ipbusudp-2.0://192.168.121.100:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/ouroboros_fib/top_fib.xml" />
+  
+  <connection id="FAN_FIB_AFC"          uri="ipbusudp-2.0://192.168.121.100:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/fanout_fib/top_fib.xml" />
+
+
 </connections>
     
