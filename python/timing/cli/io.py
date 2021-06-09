@@ -16,7 +16,7 @@ from click import echo, style, secho
 from os.path import join, expandvars, basename
 from timing.core import SI534xSlave, I2CExpanderSlave, DACSlave
 
-from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
+from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignChronos, kDesignBoreas
 from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
@@ -237,7 +237,7 @@ def clkstatus(ctx, obj, verbose):
     ctx.invoke(status)
 
     if lBoardType in [kBoardPC059, kBoardFIB]:
-        mux_fib = lIO.readActiveSFPMUXChannel()
+        mux_fib = lIO.read_active_sfp_mux_channel()
         secho("Active sfp mux {} ".format(mux_fib))
 
     echo()

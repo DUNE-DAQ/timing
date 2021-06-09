@@ -175,7 +175,9 @@ const std::map<std::string, std::string> g_clock_config_map = {
   { "kPC059Rev1_enclustra-a35_fanout_mode1",
     "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" }, // stand-alone mode
 
-  { "kPC059Rev1_enclustra-a35_ouroboros", "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" }
+  { "kPC059Rev1_enclustra-a35_ouroboros", "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" },
+
+  { "kFIBRev1_enclustra-a35_ouroboros", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" },
 };
 
 // NOLINTNEXTLINE(build/unsigned)

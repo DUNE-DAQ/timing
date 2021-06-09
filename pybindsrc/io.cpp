@@ -9,6 +9,7 @@
 #include "timing/FMCIONode.hpp"
 #include "timing/IONode.hpp"
 #include "timing/PC059IONode.hpp"
+#include "timing/FIBIONode.hpp"
 #include "timing/SIMIONode.hpp"
 #include "timing/TLUIONode.hpp"
 
@@ -55,6 +56,22 @@ register_io(py::module& m)
     .def("switch_sfp_soft_tx_control_bit", &timing::PC059IONode::switch_sfp_soft_tx_control_bit)
     .def("switch_sfp_mux_channel", &timing::PC059IONode::switch_sfp_mux_channel)
     .def("read_active_sfp_mux_channel", &timing::PC059IONode::read_active_sfp_mux_channel);
+
+    py::class_<timing::FIBIONode, timing::IONode, uhal::Node>(m, "FIBIONode")
+    .def(py::init<const uhal::Node&>())
+    .def<void (timing::FIBIONode::*)(const std::string&) const>(
+      "reset", &timing::FIBIONode::reset, py::arg("clock_config_file") = "")
+    .def<void (timing::FIBIONode::*)(int32_t, const std::string&) const>(
+      "reset", &timing::FIBIONode::reset, py::arg("fanout_mode"), py::arg("clock_config_file") = "")
+    .def("soft_reset", &timing::FIBIONode::soft_reset)
+    .def("get_clock_frequencies_table", &timing::FIBIONode::get_clock_frequencies_table, py::arg("print_out") = false)
+    .def("get_status", &timing::FIBIONode::get_status, py::arg("print_out") = false)
+    .def("get_pll_status", &timing::FIBIONode::get_pll_status, py::arg("print_out") = false)
+    .def("get_hardware_info", &timing::FIBIONode::get_hardware_info, py::arg("print_out") = false)
+    .def("get_sfp_status", &timing::FIBIONode::get_sfp_status, py::arg("sfp_id"), py::arg("print_out") = false)
+    .def("switch_sfp_soft_tx_control_bit", &timing::FIBIONode::switch_sfp_soft_tx_control_bit)
+    .def("switch_sfp_mux_channel", &timing::FIBIONode::switch_sfp_mux_channel)
+    .def("read_active_sfp_mux_channel", &timing::FIBIONode::read_active_sfp_mux_channel);
 
   py::class_<timing::TLUIONode, timing::IONode, uhal::Node>(m, "TLUIONode")
     .def(py::init<const uhal::Node&>())

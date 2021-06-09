@@ -7,7 +7,7 @@ UHAL_REGISTER_DERIVED_NODE(FIBIONode)
 
 //-----------------------------------------------------------------------------
 FIBIONode::FIBIONode(const uhal::Node& aNode) :
-	FanoutIONode(aNode, "i2c", "FMC_UID_PROM", "i2c", "SI5345", {"PLL", "CDR"}, {"usfp_i2c", "i2c"}) {
+	FanoutIONode(aNode, "i2c", "UID_PROM", "i2c", "SI5345", {"PLL", "CDR"}, {"i2c_sfp0", "i2c_sfp1", "i2c_sfp2", "i2c_sfp3", "i2c_sfp4", "i2c_sfp5", "i2c_sfp6", "i2c_sfp7"}) {
 }
 //-----------------------------------------------------------------------------
 

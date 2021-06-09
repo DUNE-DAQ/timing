@@ -19,7 +19,7 @@
 		    <node id="carrier_type" mask="0xff00"/>
 		    <node id="design_type" mask="0xff"/>
 		</node>
-		<node id="i2c_main" address="0x08" module="file://opencores_i2c.xml" class="I2CMasterNode" parameters=""/>
+		<node id="i2c" address="0x08" module="file://opencores_i2c.xml" class="I2CMasterNode" parameters="UID_PROM=0x50;SI5345=0x68;Expander1=0x74;Expander2=0x75;AX3_Switch=0x21"/>
 		<node id="i2c_sfp0" address="0x10" module="file://opencores_i2c.xml" class="I2CMasterNode" parameters="SFP_EEProm=0x50;SFP_Diag=0x51"/>
 		<node id="i2c_sfp1" address="0x18" module="file://opencores_i2c.xml" class="I2CMasterNode" parameters="SFP_EEProm=0x50;SFP_Diag=0x51"/>
 		<node id="i2c_sfp2" address="0x20" module="file://opencores_i2c.xml" class="I2CMasterNode" parameters="SFP_EEProm=0x50;SFP_Diag=0x51"/>
@@ -28,6 +28,6 @@
 		<node id="i2c_sfp5" address="0x38" module="file://opencores_i2c.xml" class="I2CMasterNode" parameters="SFP_EEProm=0x50;SFP_Diag=0x51"/>
 		<node id="i2c_sfp6" address="0x40" module="file://opencores_i2c.xml" class="I2CMasterNode" parameters="SFP_EEProm=0x50;SFP_Diag=0x51"/>
 		<node id="i2c_sfp7" address="0x48" module="file://opencores_i2c.xml" class="I2CMasterNode" parameters="SFP_EEProm=0x50;SFP_Diag=0x51"/>
-		<node id="freq" address="0x50" module="file://ipbus_freq_ctr.xml"/>
+		<node id="freq" address="0x50" module="file://ipbus_freq_ctr.xml" class="FrequencyCounterNode"/>
 </node>
 
