@@ -171,7 +171,7 @@ def reset(ctx, obj, soft, fanout, forcepllcfg, sfpmuxsel):
             lIO.reset(fanout, lPLLConfigFilePath)
             lDevice.getNode('switch.csr.ctrl.master_src').write(fanout)
             
-            lIO.switchSFPMUXChannel(sfpmuxsel)           
+            lIO.switch_sfp_mux_channel(sfpmuxsel)           
             secho("Active sfp mux " + hex(sfpmuxsel), fg='cyan')
         else:
             lIO.reset(lPLLConfigFilePath)            
