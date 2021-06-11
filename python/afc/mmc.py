@@ -99,8 +99,11 @@ def configureGPIOPortOverIPMI(ipmi_connection, port, mode, pin, value=-1):
             if value < 0:
                 return
             else:
-                cmd_result[2] == value
-                return
+                if cmd_result[2] == value:
+                    return
+                else:
+                    echo ("error configured pin state {}, does not match requested {}".format(cmd_result[2], value))
+                    cmd_attempts += 1
         else:
-            read_attempts += 1
+            cmd_attempts += 1
 # ------------------------------------------------------------------------------
