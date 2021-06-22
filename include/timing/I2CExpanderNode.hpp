@@ -70,6 +70,15 @@ public:
    */
   void set_outputs(uint8_t bank_id, uint32_t output_values) const; // NOLINT(build/unsigned)
 
+  /**
+   * @brief      Reads output values
+   *
+   * @param[in]  aBankId  A bank identifier
+   *
+   * @return     { description_of_the_return_value }
+   */
+  uint8_t read_outputs_config( uint8_t bank_id ) const;
+
   std::vector<uint32_t> debug() const; // NOLINT(build/unsigned)
 
 private:

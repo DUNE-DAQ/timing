@@ -16,7 +16,7 @@ from click import echo, style, secho
 from os.path import join, expandvars, basename
 from timing.core import SI534xSlave, I2CExpanderSlave, DACSlave
 
-from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
+from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignChronos, kDesignBoreas
 from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
@@ -124,10 +124,11 @@ def io(obj, device):
 @io.command('reset', short_help="Perform a hard reset on the timing master.")
 @click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
 @click.option('--fanout-mode', 'fanout', type=click.IntRange(0, 1), default=0, help='Configures the board in fanout mode (pc059 only)')
+@click.option('--sfp-mux-sel', 'sfpmuxsel', type=toolbox.IntRange(0x0,0x7), default=0, help='Configures the sfp cdr mux on the fib')
 @click.option('--force-pll-cfg', 'forcepllcfg', type=click.Path(exists=True))
 @click.pass_obj
 @click.pass_context
-def reset(ctx, obj, soft, fanout, forcepllcfg):
+def reset(ctx, obj, soft, fanout, forcepllcfg, sfpmuxsel):
     '''
     Perform a hard reset on the timing master, including
 
@@ -164,10 +165,14 @@ def reset(ctx, obj, soft, fanout, forcepllcfg):
             
             if fanout == 0:
                 secho("Fanout mode enabled", fg='green')
-            
+            else:
+                secho("local master: standalone mode", fg='green')
+
             lIO.reset(fanout, lPLLConfigFilePath)
             lDevice.getNode('switch.csr.ctrl.master_src').write(fanout)
-            lDevice.dispatch()
+            
+            lIO.switch_sfp_mux_channel(sfpmuxsel)           
+            secho("Active sfp mux " + hex(sfpmuxsel), fg='cyan')
         else:
             lIO.reset(lPLLConfigFilePath)            
     
@@ -225,10 +230,15 @@ def status(ctx, obj, verbose):
 def clkstatus(ctx, obj, verbose):
 
     lDevice = obj.mDevice
+    lDesignType = obj.mDesignType
     lIO = lDevice.getNode('io')
     lBoardType = obj.mBoardType
     
     ctx.invoke(status)
+
+    if lBoardType in [kBoardPC059, kBoardFIB]:
+        mux_fib = lIO.read_active_sfp_mux_channel()
+        secho("Active sfp mux {} ".format(mux_fib))
 
     echo()
     ctx.invoke(freq)
@@ -287,11 +297,13 @@ def sfpstatus(ctx, obj, sfp_id):
         else:
             if lBoardType == kBoardFMC or lBoardType == kBoardTLU:
                 echo(lIO.get_sfp_status(0))
-            elif ( lBoardType == kBoardPC059 ):
-                for i in range(9):
+            elif lBoardType in [ kBoardPC059, kBoardFIB ]:
+                # PC059 sfp id 0 is upstream sfp
+                lSFPIDRange = 9 if lBoardType == kBoardPC059 else 8
+                for i in range(lSFPIDRange):
                     try:
                         echo(lIO.get_sfp_status(i))
-                        echo()
+                        #echo()
                     except:
                         pass
 

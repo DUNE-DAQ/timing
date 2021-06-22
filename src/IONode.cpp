@@ -320,7 +320,7 @@ IONode::get_pll_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-IONode::writeSoftResetRegister() const
+IONode::write_soft_reset_register() const
 {
   getNode("csr.ctrl.soft_rst").write(0x1);
   getClient().dispatch();
@@ -331,7 +331,7 @@ IONode::writeSoftResetRegister() const
 void
 IONode::soft_reset() const
 {
-  writeSoftResetRegister();
+  write_soft_reset_register();
   TLOG_DEBUG(0) << "Soft reset done";
 }
 //-----------------------------------------------------------------------------

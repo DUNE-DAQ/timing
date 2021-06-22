@@ -1,0 +1,70 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+
+# Python imports
+import click
+import click_didyoumean
+import time
+import collections
+import traceback
+from io import StringIO
+
+# import operator
+import sys
+import os
+import struct
+
+# PDT imports
+import afc
+from afc import crossbar
+from afc import mmc
+
+# 
+from click import echo, style, secho
+from os.path import join, expandvars
+
+class AFCContext: pass
+
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+
+# ------------------------------------------------------------------------------
+@click.group(
+    cls=click_didyoumean.DYMGroup,
+    context_settings=CONTEXT_SETTINGS,
+)
+@click.pass_context
+@click.option('--mch-ip-adr','mch_ip_adr', required=False, type=str, default="192.168.121.99", help='IP address of MCH of uTCA crate hosting the AMC')
+@click.option('--amc-slot', 'amc_slot', required=True, type=click.IntRange(1, 12), help='Trigger mask (in hex).')
+def cli(ctx, mch_ip_adr, amc_slot):
+    ctx.obj.mch_ip_adr=mch_ip_adr
+    ctx.obj.amc_slot=amc_slot
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+if __name__ == '__main__':
+    cli.add_command(crossbar.crossbar)
+    cli.add_command(mmc.mmc)
+
+    try:
+        cli(obj=AFCContext())
+    except Exception as e:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        lFirstFrame = traceback.extract_tb(exc_tb)[-1]
+
+        secho("ERROR ('{}' exception): '{}'\n\nFile \"{}\", line {}, in {}\n   {}".format(exc_type.__name__, e, lFirstFrame[0], lFirstFrame[1], lFirstFrame[2], lFirstFrame[3] ),fg='red')
+        
+        "File \"{}\", line {}, in {}"
+        # secho("{}".format(),fg='red')
+        # print(lFirstFrame)
+        # ipdb.set_trace()
+        # fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        # 'Error: exception of type {} throw'
+        # print(e, exc_type.__name__, fname, exc_tb.tb_lineno)
+        lExc = StringIO.StringIO()
+        traceback.print_exc(file=lExc)
+        print ("Exception in user code:")
+        print ('-'*60)
+        secho(lExc.getvalue(), fg='red')
+        print ('-'*60)
+# ------------------------------------------------------------------------------

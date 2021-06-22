@@ -28,6 +28,7 @@ enum BoardType
   kBoardPC059,
   kBoardMicrozed,
   kBoardTLU,
+  kBoardFIB,
   kBoardUnknown
 };
 enum CarrierType
@@ -36,6 +37,7 @@ enum CarrierType
   kCarrierKC705,
   kCarrierMicrozed,
   kCarrierATFC,
+  kCarrierAFC,
   kCarrierUnknown
 };
 enum DesignType
@@ -59,7 +61,8 @@ enum BoardRevision
   kFMCRev3,
   kPC059Rev1,
   kTLURev1,
-  kSIMRev1
+  kSIMRev1,
+  kFIBRev1,
 };
 
 const uint32_t g_dune_sp_clock_in_hz = 50e6; // NOLINT(build/unsigned)
@@ -70,12 +73,14 @@ const std::map<BoardType, std::string> g_board_type_map = { { kBoardFMC, "fmc" }
                                                             { kBoardSim, "sim" },
                                                             { kBoardPC059, "pc059" },
                                                             { kBoardMicrozed, "microzed" },
-                                                            { kBoardTLU, "tlu" } };
+                                                            { kBoardTLU, "tlu" },
+                                                            { kBoardFIB, "fib" }, };
 
 const std::map<CarrierType, std::string> g_carrier_type_map = { { kCarrierEnclustraA35, "enclustra-a35" },
                                                                 { kCarrierKC705, "kc705" },
                                                                 { kCarrierMicrozed, "microzed" },
-                                                                { kCarrierATFC, "atfc" }
+                                                                { kCarrierATFC, "atfc" },
+                                                                { kCarrierAFC, "afc" },
 
 };
 
@@ -93,7 +98,8 @@ const std::map<DesignType, std::string> g_design_type_map = {
 
 const std::map<BoardRevision, std::string> g_board_revision_map = {
   { kFMCRev1, "kFMCRev1" },     { kFMCRev2, "kFMCRev2" }, { kFMCRev3, "kFMCRev3" },
-  { kPC059Rev1, "kPC059Rev1" }, { kTLURev1, "kTLURev1" }, { kSIMRev1, "kSIMRev1" }
+  { kPC059Rev1, "kPC059Rev1" }, { kTLURev1, "kTLURev1" }, { kSIMRev1, "kSIMRev1" },
+  { kFIBRev1, "kFIBRev1" },
 };
 
 // NOLINTNEXTLINE(build/unsigned)
@@ -129,8 +135,8 @@ const std::map<uint64_t, BoardRevision> g_board_uid_revision_map = {
   { 0xd88039d92498, kPC059Rev1 },
   { 0x5410ecbba408, kTLURev1 },
   { 0x5410ecbb9426, kTLURev1 },
-  //{0x801f12f5ce48, kFIBRev1},
-  //{0x801f12f5e9ae, kFIBRev1},
+  { 0x801f12f5ce48, kFIBRev1 },
+  { 0x801f12f5e9ae, kFIBRev1 },
   { 0x49162b65025, kFMCRev3 },
   { 0x49162b62948, kFMCRev3 },
   { 0x49162b675ea, kFMCRev3 },
@@ -169,7 +175,15 @@ const std::map<std::string, std::string> g_clock_config_map = {
   { "kPC059Rev1_enclustra-a35_fanout_mode1",
     "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" }, // stand-alone mode
 
-  { "kPC059Rev1_enclustra-a35_ouroboros", "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" }
+  { "kFIBRev1_afc_fanout_mode0",
+    "devel/Si5395-RevA-FIB_fanout-65_FA_31-Registers.txt" }, // fanout mode, data and clock from backplane
+  { "kFIBRev1_afc_fanout_mode1",
+    "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" }, // stand-alone mode
+
+  { "kPC059Rev1_enclustra-a35_ouroboros", "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" },
+
+  { "kFIBRev1_enclustra-a35_ouroboros", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" },
+  { "kFIBRev1_afc_ouroboros", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" },
 };
 
 // NOLINTNEXTLINE(build/unsigned)

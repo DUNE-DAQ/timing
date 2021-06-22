@@ -47,7 +47,7 @@ PC059IONode::reset(int32_t fanout_mode, const std::string& clock_config_file) co
 {
 
   // Soft reset
-  writeSoftResetRegister();
+  write_soft_reset_register();
 
   millisleep(1000);
 
