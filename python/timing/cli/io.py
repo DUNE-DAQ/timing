@@ -105,10 +105,11 @@ def io(obj, device):
     lDevice.dispatch()
 
 
-    echo("Design '{}' on board '{}' on carrier '{}'".format(
+    echo("Design '{}' on board '{}' on carrier '{}' with frequency {} MHz".format(
         style(kDesignNameMap[lBoardInfo['design_type'].value()], fg='blue'),
         style(kBoardNamelMap[lBoardInfo['board_type'].value()], fg='blue'),
-        style(kCarrierNamelMap[lBoardInfo['carrier_type'].value()], fg='blue')
+        style(kCarrierNamelMap[lBoardInfo['carrier_type'].value()], fg='blue'),
+        style(str(lBoardInfo['clock_frequency'].value()/1e6), fg='blue')
     ))
 
     obj.mDevice = lDevice

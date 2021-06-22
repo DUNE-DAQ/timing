@@ -76,6 +76,16 @@ IONode::read_design_type() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+uint32_t // NOLINT(build/unsigned)
+IONode::read_firmware_frequency() const
+{
+  uhal::ValWord<uint32_t> firmware_frequency = getNode("config.clock_frequency").read(); // NOLINT(build/unsigned)
+  getClient().dispatch();
+  return firmware_frequency.value();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 uint64_t // NOLINT(build/unsigned)
 IONode::read_board_uid() const
 {
@@ -114,6 +124,7 @@ IONode::get_hardware_info(bool print_out) const
   const BoardRevision lBoardRevision = get_board_revision();
   const CarrierType lCarrierType = convert_value_to_carrier_type(read_carrier_type());
   const DesignType lDesignType = convert_value_to_design_type(read_design_type());
+  const double firmware_frequency = read_firmware_frequency()/1e6;
 
   std::vector<std::pair<std::string, std::string>> lHardwareInfo;
 
@@ -143,6 +154,9 @@ IONode::get_hardware_info(bool print_out) const
   } catch (const std::out_of_range& e) {
     throw MissingDesignTypeMapEntry(ERS_HERE, format_reg_value(lDesignType), e);
   }
+
+  lHardwareInfo.push_back(std::make_pair("Firmware frequency [MHz]", std::to_string(firmware_frequency)));
+
   lInfo << format_reg_table(lHardwareInfo, "Hardware info", { "", "" });
 
   if (print_out)
@@ -168,6 +182,7 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
     const BoardRevision lBoardRevision = get_board_revision();
     const CarrierType lCarrierType = convert_value_to_carrier_type(read_carrier_type());
     const DesignType lDesignType = convert_value_to_design_type(read_design_type());
+    const uint32_t firmware_frequency = read_firmware_frequency();    
 
     try {
       lClockConfigKey = g_board_revision_map.at(lBoardRevision) + "_";
@@ -190,6 +205,13 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
     // modifier in case a different clock file is needed based on firmware configuration
     if (mode >= 0)
       lClockConfigKey = lClockConfigKey + "_mode" + std::to_string(mode);
+
+    // 50 MHz firmware clock frequency modifier, otherwise assume 62.5 MHz
+    if (firmware_frequency == 50e6) {
+      lClockConfigKey = lClockConfigKey + "_50_mhz";
+    } else if (firmware_frequency != 62.5e6) {
+      throw UnknownFirmwareClockFrequency(ERS_HERE, firmware_frequency);
+    }
 
     TLOG_DEBUG(0) << "Using pll config key: " << lClockConfigKey;
 

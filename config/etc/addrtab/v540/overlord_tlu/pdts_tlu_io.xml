@@ -19,13 +19,14 @@
 					<node id="cdr_los" mask="0x800"/>
 				</node>
 		</node>
-		<node id="config" address="0x2" description="board/firmware config" fwinfo="endpoint;width=0">
+		<node id="config" address="0x2" description="board/firmware config" fwinfo="endpoint;width=1">
 		    <node id="board_type" mask="0xff0000"/>
 		    <node id="carrier_type" mask="0xff00"/>
 		    <node id="design_type" mask="0xff"/>
+		    <node id="clock_frequency" address="0x1" mask="0xffffffff"/>
 		</node>
 		<node id="i2c" address="0x08" module="file://opencores_i2c.xml" class="I2CMasterNode" 
 		      parameters="AX3_Switch=0x21;UID_PROM=0x50;SI5345=0x68;Expander1=0x74;Expander2=0x75;DAC1=0x13;DAC2=0x1f"
 		/>
-		<node id="freq" address="0x20" module="file://ipbus_freq_ctr.xml" class="FrequencyCounterNode"/>
+		<node id="freq" address="0x20" module="file://ipbus_freq_ctr.xml"/>
 </node>

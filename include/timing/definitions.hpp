@@ -143,6 +143,7 @@ const std::map<uint64_t, BoardRevision> g_board_uid_revision_map = {
 };
 
 const std::map<std::string, std::string> g_clock_config_map = {
+  // 62.5 MHz mappings
   { "kFMCRev1_enclustra-a35_endpoint", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
   { "kFMCRev2_enclustra-a35_endpoint", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
   { "kFMCRev3_enclustra-a35_endpoint", "devel/Si5394-053endptr_62-5MHz_4kHz-Registers.txt" },
@@ -184,6 +185,30 @@ const std::map<std::string, std::string> g_clock_config_map = {
 
   { "kFIBRev1_enclustra-a35_ouroboros", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" },
   { "kFIBRev1_afc_ouroboros", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" },
+
+  // 50 MHz mappings
+  { "kFMCRev1_enclustra-a35_endpoint_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
+  { "kFMCRev2_enclustra-a35_endpoint_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
+  { "kFMCRev3_enclustra-a35_endpoint_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
+
+  { "kFMCRev1_enclustra-a35_endpoint-bi-crt_50_mhz", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
+  { "kFMCRev2_enclustra-a35_endpoint-bi-crt_50_mhz", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
+  { "kFMCRev3_enclustra-a35_endpoint-bi-crt_50_mhz", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
+
+  { "kFMCRev1_enclustra-a35_chronos_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
+  { "kFMCRev2_enclustra-a35_chronos_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
+  { "kFMCRev3_enclustra-a35_chronos_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
+
+  { "kFMCRev1_enclustra-a35_ouroboros_50_mhz", "SI5344/PDTS0000.txt" },
+  { "kFMCRev2_enclustra-a35_ouroboros_50_mhz", "SI5344/PDTS0003.txt" },
+  { "kFMCRev3_enclustra-a35_ouroboros_50_mhz", "SI5344/PDTS0003.txt" },
+  
+  { "kPC059Rev1_enclustra-a35_ouroboros_50_mhz", "SI5345/PDTS0005.txt" },
+
+  { "kTLURev1_enclustra-a35_overlord_50_mhz", "wr/TLU_EXTCLK_10MHZ_NOZDM.txt" },
+    
+  { "kPC059Rev1_enclustra-a35_fanout_mode0_50_mhz", "wr/FANOUT_PLL_WIDEBW_SFPIN.txt" }, // fanout mode
+  { "kPC059Rev1_enclustra-a35_fanout_mode1_50_mhz", "devel/PDTS_PC059_FANOUT.txt" },    // stand-alone mode
 };
 
 // NOLINTNEXTLINE(build/unsigned)

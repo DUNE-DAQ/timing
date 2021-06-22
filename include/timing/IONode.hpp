@@ -75,6 +75,13 @@ public:
   virtual uint32_t read_design_type() const; // NOLINT(build/unsigned)
 
   /**
+   * @brief      Read the word identifying the frequency [units of Hz] of the firmware in the FPGA.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  virtual uint32_t read_firmware_frequency() const; // NOLINT(build/unsigned)
+
+  /**
    * @brief      Read the word containing the timing board UID.
    *
    * @return     { description_of_the_return_value }
