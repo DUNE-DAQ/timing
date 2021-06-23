@@ -140,6 +140,7 @@ const std::map<uint64_t, BoardRevision> g_board_uid_revision_map = {
   { 0x49162b65025, kFMCRev3 },
   { 0x49162b62948, kFMCRev3 },
   { 0x49162b675ea, kFMCRev3 },
+  { 0x49162b645cd, kFMCRev3 },
 };
 
 const std::map<std::string, std::string> g_clock_config_map = {
