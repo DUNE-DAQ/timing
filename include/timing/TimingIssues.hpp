@@ -119,6 +119,12 @@ ERS_DECLARE_ISSUE(timing,                                               ///< Nam
                   ((std::string)board_uid)                              ///< Message parameters
 )
 
+ERS_DECLARE_ISSUE(timing,                                                              ///< Namespace
+                  UnknownFirmwareClockFrequency,                                       ///< Issue class name
+                  frequency << " Hz is not a known timing firmwaare clock frequency!", ///< Message
+                  ((std::uint32_t)frequency)                                           ///< Message parameters
+)
+
 ERS_DECLARE_ISSUE(timing,                                              ///< Namespace
                   MissingBoardTypeMapEntry,                            ///< Issue class name
                   " Board type not in board type map: " << board_type, ///< Message
@@ -217,6 +223,7 @@ ERS_DECLARE_ISSUE(timing,                                                       
 )
 
 ERS_DECLARE_ISSUE(timing, HSIBufferIssue, "HSI buffer in state: " << buffer_state, ((std::string)buffer_state))
+
 
 } // namespace dunedaq
 

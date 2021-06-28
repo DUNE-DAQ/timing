@@ -14,10 +14,11 @@
 					<node id="pll_sticky" mask="0x8"/>
 				</node>
 		</node>
-		<node id="config" address="0x2" description="board/firmware config" fwinfo="endpoint;width=0">
+		<node id="config" address="0x2" description="board/firmware config" fwinfo="endpoint;width=1">
 		    <node id="board_type" mask="0xff0000"/>
 		    <node id="carrier_type" mask="0xff00"/>
 		    <node id="design_type" mask="0xff"/>
+		    <node id="clock_frequency" address="0x1" mask="0xffffffff"/>
 		</node>
 		<node id="i2c" address="0x08" module="file://opencores_i2c.xml" class="I2CMasterNode" parameters="UID_PROM=0x50;SI5345=0x68;Expander1=0x74;Expander2=0x75;AX3_Switch=0x21"/>
 		<node id="i2c_sfp0" address="0x10" module="file://opencores_i2c.xml" class="I2CMasterNode" parameters="SFP_EEProm=0x50;SFP_Diag=0x51"/>
