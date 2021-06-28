@@ -132,8 +132,13 @@ template<class T>
 void
 FanoutDesign<IO, MST>::get_info(T& data) const
 {
-  this->get_master_node().get_info(data.firmware_data);
+  this->get_master_node().get_info(data.master_data);
   this->get_io_node().get_info(data.hardware_data);
+
+  auto fanout_mode = uhal::Node::getNode("switch.csr.ctrl.master_src").read();
+  uhal::Node::getClient().dispatch();
+
+  data.fanout_mode = fanout_mode.value();
 }
 //-----------------------------------------------------------------------------
 

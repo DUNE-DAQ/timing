@@ -397,6 +397,8 @@ I2CSFPSlave::get_status(bool print_out) const
 void
 I2CSFPSlave::get_info(timinghardwareinfo::TimingSFPMonitorData& mon_data) const
 {
+  mon_data.data_valid = false;
+
   sfp_reachable();
 
   // TODO ?
@@ -414,9 +416,10 @@ I2CSFPSlave::get_info(timinghardwareinfo::TimingSFPMonitorData& mon_data) const
   // Does the SFP support DDM
   if (!this->read_ddm_support_bit()) {
     TLOG() << "DDM not available for SFP on I2C bus: " << get_master_id();
-    mon_data.ddm_supported = 0;
+    mon_data.ddm_supported = false;
     return;
   } else {
+    mon_data.ddm_supported = true;
     if (this->read_i2c_reg_addressSwapBit()) {
       TLOG() << "SFP DDM I2C address swap not supported. SFP on I2C bus: " << get_master_id();
       return;
@@ -438,6 +441,8 @@ I2CSFPSlave::get_info(timinghardwareinfo::TimingSFPMonitorData& mon_data) const
   mon_data.tx_disable_sw = this->read_soft_tx_control_state();
 
   mon_data.tx_disable_hw = this->read_tx_disable_pin_state();
+
+  mon_data.data_valid = true;
 }
 //-----------------------------------------------------------------------------
 
