@@ -31,16 +31,26 @@ template<class IO>
 std::string
 EndpointDesign<IO>::get_status(bool print_out) const
 {
-  std::stringstream lStatus;
-  lStatus << this->get_io_node().get_pll_status();
-  uint32_t lNumberOfEndpointNodes = EndpointDesign<IO>::get_number_of_endpoint_nodes();
-  for (uint32_t i = 0; i < lNumberOfEndpointNodes; ++i) {
-    lStatus << "Endpoint node " << i << " status" << std::endl;
-    lStatus << this->get_endpoint_node(i).get_status();
+  std::stringstream status;
+  status << this->get_io_node().get_pll_status();
+  uint32_t number_of_endpoint_nodes = EndpointDesign<IO>::get_number_of_endpoint_nodes();
+  for (uint32_t i = 0; i < number_of_endpoint_nodes; ++i) {
+    status << "Endpoint node " << i << " status" << std::endl;
+    status << this->get_endpoint_node(i).get_status();
   }
   if (print_out)
-    std::cout << lStatus.str();
-  return lStatus.str();
+    TLOG() << status.str();
+  return status.str();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+template<class IO>
+void
+EndpointDesign<IO>::configure() const
+{
+  // Hard resets
+  this->reset();
 }
 //-----------------------------------------------------------------------------
 

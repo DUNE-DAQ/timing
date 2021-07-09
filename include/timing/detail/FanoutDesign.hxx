@@ -32,13 +32,13 @@ template<class IO, class MST>
 std::string
 FanoutDesign<IO, MST>::get_status(bool print_out) const
 {
-  std::stringstream lStatus;
-  lStatus << this->get_io_node().get_pll_status();
-  lStatus << this->get_master_node().get_status();
+  std::stringstream status;
+  status << this->get_io_node().get_pll_status();
+  status << this->get_master_node().get_status();
   // TODO fanout specific status
   if (print_out)
-    std::cout << lStatus.str();
-  return lStatus.str();
+    TLOG() << status.str();
+  return status.str();
 }
 //-----------------------------------------------------------------------------
 
@@ -48,12 +48,12 @@ void
 FanoutDesign<IO, MST>::configure() const
 {
   // fanout mode hard-coded, to be passed in as parameter in future
-  uint32_t lFanoutMode = 0;
+  uint32_t fanout_mode = 0;
 
   // Hard reset
-  this->reset(lFanoutMode);
+  this->reset(fanout_mode);
 
-  if (!lFanoutMode) {
+  if (!fanout_mode) {
     // Set timestamp to current time
     this->get_master_node().sync_timestamp();
 
@@ -88,14 +88,14 @@ template<class IO, class MST>
 uint32_t
 FanoutDesign<IO, MST>::measure_endpoint_rtt(uint32_t address, bool control_sfp, uint32_t sfp_mux) const
 {
-  auto lFanoutMode = uhal::Node::getNode("switch.csr.ctrl.master_src").read();
+  auto fanout_mode = uhal::Node::getNode("switch.csr.ctrl.master_src").read();
   uhal::Node::getClient().dispatch();
 
-  if (!lFanoutMode.value()) {
-    std::ostringstream lMsg;
-    lMsg << " Fanout unit " << uhal::Node::getId()
+  if (!fanout_mode.value()) {
+    std::ostringstream message;
+    message << " Fanout unit " << uhal::Node::getId()
          << " is in fanout mode. Measure endpoint RTT should be called from master device.";
-    throw UnsupportedFunction(ERS_HERE, lMsg.str());
+    throw UnsupportedFunction(ERS_HERE, message.str());
   }
   return MasterMuxDesign<IO, MST>::measure_endpoint_rtt(address, control_sfp, sfp_mux);
 }
@@ -112,14 +112,14 @@ FanoutDesign<IO, MST>::apply_endpoint_delay(uint32_t address,
                                             bool control_sfp,
                                             uint32_t sfp_mux) const
 {
-  auto lFanoutMode = uhal::Node::getNode("switch.csr.ctrl.master_src").read();
+  auto fanout_mode = uhal::Node::getNode("switch.csr.ctrl.master_src").read();
   uhal::Node::getClient().dispatch();
 
-  if (!lFanoutMode.value()) {
-    std::ostringstream lMsg;
-    lMsg << "Fanout unit " << uhal::Node::getId()
+  if (!fanout_mode.value()) {
+    std::ostringstream message;
+    message << "Fanout unit " << uhal::Node::getId()
          << " is in fanout mode. Apply endpoint delay should be called from master device.";
-    throw UnsupportedFunction(ERS_HERE, lMsg.str());
+    throw UnsupportedFunction(ERS_HERE, message.str());
   }
   MasterMuxDesign<IO, MST>::apply_endpoint_delay(
     address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp, sfp_mux);
