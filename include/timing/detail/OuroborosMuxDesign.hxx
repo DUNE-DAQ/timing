@@ -67,7 +67,7 @@ OuroborosMuxDesign<IO>::get_info(T& data) const
 {
   this->get_master_node().get_info(data.master_data);
   this->get_io_node().get_info(data.hardware_data);
-  // this->get_endpoint_node(0).get_info(data);
+  this->get_endpoint_node(0).get_info(data.endpoint_data);
 }
 //-----------------------------------------------------------------------------
 

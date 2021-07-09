@@ -194,5 +194,55 @@ PC059IONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+void
+PC059IONode::get_info(timinghardwareinfo::TimingPC059MonitorData& mon_data) const
+{
+  auto subnodes = read_sub_nodes(getNode("csr.stat"));
+
+  mon_data.cdr_lol = subnodes.at("cdr_lol").value();
+  mon_data.cdr_los = subnodes.at("cdr_los").value();
+  
+  mon_data.mmcm_ok = subnodes.at("mmcm_ok").value();
+  mon_data.mmcm_sticky = subnodes.at("mmcm_sticky").value();
+  
+  mon_data.pll_lol = subnodes.at("pll_lol").value();
+  mon_data.pll_ok = subnodes.at("pll_ok").value();
+  mon_data.pll_sticky = subnodes.at("pll_sticky").value();
+  
+  mon_data.sfp_los = subnodes.at("sfp_los").value();
+
+  mon_data.ucdr_lol = subnodes.at("ucdr_lol").value();
+  mon_data.ucdr_los = subnodes.at("ucdr_los").value();
+
+  mon_data.usfp_flt = subnodes.at("usfp_flt").value();
+  mon_data.usfp_los = subnodes.at("usfp_los").value();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+PC059IONode::get_info(timinghardwareinfo::TimingPC059MonitorDataDebug& mon_data) const
+{
+
+  this->get_pll()->get_info(mon_data.pll_mon_data);
+  
+  mon_data.sfps_mon_data = std::vector<timinghardwareinfo::TimingSFPMonitorData> (9);
+  auto upstream_sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
+  upstream_sfp->get_info(mon_data.sfps_mon_data.at(0));
+
+  for (uint sfp_id=0; sfp_id < 8; ++sfp_id) {
+    TLOG_DEBUG(0) << "checking sfp: " << sfp_id;
+    switch_sfp_i2c_mux_channel(sfp_id);
+    auto sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(1), "SFP_EEProm");
+    try {
+      sfp->get_info(mon_data.sfps_mon_data.at(sfp_id+1));
+    } catch (timing::SFPUnreachable& e) {
+      ers::error(e);
+    }
+  }
+}
+//-----------------------------------------------------------------------------
+
 } // namespace timing
 } // namespace dunedaq

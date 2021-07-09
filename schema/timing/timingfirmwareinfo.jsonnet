@@ -255,6 +255,59 @@ local timingfirmwareinfo = {
                 doc="HSI monitor data"),
     ], doc="Boreas on FMC monitor data with extended hardware data"),
 
+    // Fanout designs
+    fanout_pc059_mon_data: s.record("FanoutPC059MonitorData", 
+    [
+        s.field("time_gathered", self.l_int, 0,
+                doc="When was the data actually gathered"),
+
+        s.field("hardware_data", thih.dunedaq.timing.timinghardwareinfo.TimingPC059MonitorData,
+                doc="PC059 hardware monitor data"),
+        s.field("master_data", self.pdi_master_fw_mon_data,
+                doc="PD-I timing master firmware monitor data"),
+        
+        s.field("fanout_mode", self.bool_data, 0,
+                doc="Fanout or standalone mode, 0-fanout, 1-standalone"),
+    ], doc="Fanout on PC059 monitor data"),
+
+    fanout_pc059_mon_data_debug: s.record("FanoutPC059MonitorDataDebug", 
+    [
+        s.field("time_gathered", self.l_int, 0,
+                doc="When was the data actually gathered"),
+
+        s.field("hardware_data", thih.dunedaq.timing.timinghardwareinfo.TimingPC059MonitorDataDebug,
+                doc="PC059 hardware monitor data"),
+        s.field("master_data", self.pdi_master_fw_mon_data,
+                doc="PD-I timing master firmware monitor data"),
+        
+        s.field("fanout_mode", self.bool_data, 0,
+                doc="Fanout or standalone mode, 0-fanout, 1-standalone"),
+    ], doc="Fanout on PC059 monitor data with extended hardware data"),
+
+    // Ouroboros designs
+    ouroboros_pc059_mon_data: s.record("OuroborosPC059MonitorData", 
+    [
+        s.field("time_gathered", self.l_int, 0,
+                doc="When was the data actually gathered"),
+        s.field("hardware_data", thih.dunedaq.timing.timinghardwareinfo.TimingPC059MonitorData,
+                doc="PC059 hardware monitor data"),
+        s.field("master_data", self.pdi_master_fw_mon_data,
+                doc="PD-I timing master firmware monitor data"),
+        s.field("endpoint_data", teih.dunedaq.timing.timingendpointinfo.TimingEndpointInfo,
+                doc="Timing endpoint firmware monitor data"),
+    ], doc="Ourobors on PC059 monitor data"),
+
+    ouroboros_pc059_mon_data_debug: s.record("OuroborosPC059MonitorDataDebug", 
+    [
+        s.field("time_gathered", self.l_int, 0,
+                doc="When was the data actually gathered"),
+        s.field("hardware_data", thih.dunedaq.timing.timinghardwareinfo.TimingPC059MonitorDataDebug,
+                doc="PC059 hardware monitor data"),
+        s.field("master_data", self.pdi_master_fw_mon_data,
+                doc="PD-I timing master firmware monitor data"),
+        s.field("endpoint_data", teih.dunedaq.timing.timingendpointinfo.TimingEndpointInfo,
+                doc="Timing endpoint firmware monitor data"),
+    ], doc="Ourobors on PC059 monitor data with extended hardware data"),
 
     // Endpoint design
     timing_endpoint_fmc_mon_data: s.record("TimingEndpointFMCMonitorData", 
