@@ -88,10 +88,10 @@ PartitionNode::enable_triggers(bool enable) const
 uint32_t // NOLINT(build/unsigned)
 PartitionNode::read_trigger_mask() const
 {
-  uhal::ValWord<uint32_t> lMask = getNode("csr.ctrl.trig_mask").read(); // NOLINT(build/unsigned)
+  uhal::ValWord<uint32_t> mask = getNode("csr.ctrl.trig_mask").read(); // NOLINT(build/unsigned)
   getClient().dispatch();
 
-  return lMask;
+  return mask;
 }
 //-----------------------------------------------------------------------------
 
@@ -99,10 +99,10 @@ PartitionNode::read_trigger_mask() const
 uint32_t // NOLINT(build/unsigned)
 PartitionNode::read_buffer_word_count() const
 {
-  uhal::ValWord<uint32_t> lWords = getNode("buf.count").read(); // NOLINT(build/unsigned)
+  uhal::ValWord<uint32_t> words = getNode("buf.count").read(); // NOLINT(build/unsigned)
   getClient().dispatch();
 
-  return lWords;
+  return words;
 }
 //-----------------------------------------------------------------------------
 
@@ -118,10 +118,10 @@ PartitionNode::num_events_in_buffer() const
 bool
 PartitionNode::read_rob_warning_overflow() const
 {
-  uhal::ValWord<uint32_t> lWord = getNode("csr.stat.buf_warn").read(); // NOLINT(build/unsigned)
+  uhal::ValWord<uint32_t> word = getNode("csr.stat.buf_warn").read(); // NOLINT(build/unsigned)
   getClient().dispatch();
 
-  return lWord.value();
+  return word.value();
 }
 //-----------------------------------------------------------------------------
 
@@ -129,10 +129,10 @@ PartitionNode::read_rob_warning_overflow() const
 bool
 PartitionNode::read_rob_error() const
 {
-  uhal::ValWord<uint32_t> lWord = getNode("csr.stat.buf_err").read(); // NOLINT(build/unsigned)
+  uhal::ValWord<uint32_t> word = getNode("csr.stat.buf_err").read(); // NOLINT(build/unsigned)
   getClient().dispatch();
 
-  return lWord.value();
+  return word.value();
 }
 //-----------------------------------------------------------------------------
 
@@ -141,19 +141,19 @@ std::vector<uint32_t> // NOLINT(build/unsigned)
 PartitionNode::read_events(size_t number_of_events) const
 {
 
-  uint32_t lEventsInBuffer = num_events_in_buffer(); // NOLINT(build/unsigned)
+  uint32_t events_in_buffer = num_events_in_buffer(); // NOLINT(build/unsigned)
 
-  uint32_t lEventsToRead = (number_of_events == 0 ? lEventsInBuffer : number_of_events); // NOLINT(build/unsigned)
+  uint32_t events_to_read = (number_of_events == 0 ? events_in_buffer : number_of_events); // NOLINT(build/unsigned)
 
-  if (lEventsInBuffer < lEventsToRead) {
-    throw EventReadError(ERS_HERE, number_of_events, lEventsInBuffer);
+  if (events_in_buffer < events_to_read) {
+    throw EventReadError(ERS_HERE, number_of_events, events_in_buffer);
   }
 
-  uhal::ValVector<uint32_t> lRawEvents = // NOLINT(build/unsigned)
-    getNode("buf.data").readBlock(lEventsToRead * kWordsPerEvent);
+  uhal::ValVector<uint32_t> raw_events = // NOLINT(build/unsigned)
+    getNode("buf.data").readBlock(events_to_read * kWordsPerEvent);
   getClient().dispatch();
 
-  return lRawEvents.value();
+  return raw_events.value();
 }
 //-----------------------------------------------------------------------------
 
@@ -242,14 +242,14 @@ PartitionCounts
 PartitionNode::read_command_counts() const
 {
 
-  const uhal::Node& lAccCtrs = getNode("actrs");
-  const uhal::Node& lRejCtrs = getNode("rctrs");
+  const uhal::Node& accepted_counters = getNode("actrs");
+  const uhal::Node& rejected_counters = getNode("rctrs");
 
-  uhal::ValVector<uint32_t> lAccepted = lAccCtrs.readBlock(lAccCtrs.getSize()); // NOLINT(build/unsigned)
-  uhal::ValVector<uint32_t> lRejected = lRejCtrs.readBlock(lRejCtrs.getSize()); // NOLINT(build/unsigned)
+  uhal::ValVector<uint32_t> accepted = accepted_counters.readBlock(accepted_counters.getSize()); // NOLINT(build/unsigned)
+  uhal::ValVector<uint32_t> rejected = rejected_counters.readBlock(rejected_counters.getSize()); // NOLINT(build/unsigned)
   getClient().dispatch();
 
-  return { lAccepted.value(), lRejected.value() };
+  return { accepted.value(), rejected.value() };
 }
 //-----------------------------------------------------------------------------
 
@@ -257,72 +257,72 @@ PartitionNode::read_command_counts() const
 std::string
 PartitionNode::get_status(bool print_out) const
 {
-  std::stringstream lStatus;
+  std::stringstream status;
 
-  auto lControls = read_sub_nodes(getNode("csr.ctrl"), false);
-  auto lState = read_sub_nodes(getNode("csr.stat"), false);
+  auto controls = read_sub_nodes(getNode("csr.ctrl"), false);
+  auto state = read_sub_nodes(getNode("csr.stat"), false);
 
-  auto lEventCtr = getNode("evtctr").read();
-  auto lBufCount = getNode("buf.count").read();
-
-  auto lAccCounters = getNode("actrs").readBlock(getNode("actrs").getSize());
-  auto lRejCounters = getNode("rctrs").readBlock(getNode("actrs").getSize());
-
-  getClient().dispatch();
-
-  std::string lPartID = getId();
-  std::string lPartNum = lPartID.substr(lPartID.find("partition") + 9);
-
-  lStatus << "=> Partition " << lPartNum << std::endl;
-  lStatus << std::endl;
-
-  lStatus << format_reg_table(lControls, "Controls") << std::endl;
-  lStatus << format_reg_table(lState, "State") << std::endl;
-
-  lStatus << "Event Counter: " << lEventCtr.value() << std::endl;
-  std::string lBufferStatusString = !lState.find("buf_err")->second.value() ? "OK" : "Error";
-  lStatus << "Buffer status: " << lBufferStatusString << std::endl;
-  lStatus << "Buffer occupancy: " << lBufCount.value() << std::endl;
-
-  lStatus << std::endl;
-
-  std::vector<uhal::ValVector<uint32_t>> lCountersContainer = { lAccCounters, lRejCounters }; // NOLINT(build/unsigned)
-
-  lStatus << format_counters_table(lCountersContainer, { "Accept counters", "Reject counters" });
-
-  if (print_out)
-    TLOG() << lStatus.str();
-  return lStatus.str();
-}
-//-----------------------------------------------------------------------------
-void
-PartitionNode::get_info(timingfirmwareinfo::TimingPartitionMonitorData& mon_data) const
-{
-  auto lControls = read_sub_nodes(getNode("csr.ctrl"), false);
-  auto lState = read_sub_nodes(getNode("csr.stat"), false);
-
-  auto lEventCtr = getNode("evtctr").read();
-  auto lBufCount = getNode("buf.count").read();
+  auto event_counter = getNode("evtctr").read();
+  auto buffer_count = getNode("buf.count").read();
 
   auto accepted_counters = getNode("actrs").readBlock(getNode("actrs").getSize());
   auto rejected_counters = getNode("rctrs").readBlock(getNode("actrs").getSize());
 
   getClient().dispatch();
 
-  mon_data.enabled = lControls.at("part_en").value();
-  mon_data.spill_interface_enabled = lControls.at("spill_gate_en").value();
-  mon_data.trig_enabled = lControls.at("trig_en").value();
-  mon_data.trig_mask = lControls.at("trig_mask").value();
-  mon_data.rate_ctrl_enabled = lControls.at("rate_ctrl_en").value();
-  mon_data.frag_mask = lControls.at("frag_mask").value();
-  mon_data.buffer_enabled = lControls.at("buf_en").value();
+  std::string partition_id = getId();
+  std::string partition_number = partition_id.substr(partition_id.find("partition") + 9);
 
-  mon_data.in_run = lState.at("in_run").value();
-  mon_data.in_spill = lState.at("in_spill").value();
+  status << "=> Partition " << partition_number << std::endl;
+  status << std::endl;
 
-  mon_data.buffer_warning = lState.at("buf_warn").value();
-  mon_data.buffer_error = lState.at("buf_err").value();
-  mon_data.buffer_occupancy = lBufCount.value();
+  status << format_reg_table(controls, "Controls") << std::endl;
+  status << format_reg_table(state, "State") << std::endl;
+
+  status << "Event Counter: " << event_counter.value() << std::endl;
+  std::string lBufferStatusString = !state.find("buf_err")->second.value() ? "OK" : "Error";
+  status << "Buffer status: " << lBufferStatusString << std::endl;
+  status << "Buffer occupancy: " << buffer_count.value() << std::endl;
+
+  status << std::endl;
+
+  std::vector<uhal::ValVector<uint32_t>> counters_container = { accepted_counters, rejected_counters }; // NOLINT(build/unsigned)
+
+  status << format_counters_table(counters_container, { "Accept counters", "Reject counters" });
+
+  if (print_out)
+    TLOG() << status.str();
+  return status.str();
+}
+//-----------------------------------------------------------------------------
+void
+PartitionNode::get_info(timingfirmwareinfo::TimingPartitionMonitorData& mon_data) const
+{
+  auto controls = read_sub_nodes(getNode("csr.ctrl"), false);
+  auto state = read_sub_nodes(getNode("csr.stat"), false);
+
+  auto event_counter = getNode("evtctr").read();
+  auto buffer_count = getNode("buf.count").read();
+
+  auto accepted_counters = getNode("actrs").readBlock(getNode("actrs").getSize());
+  auto rejected_counters = getNode("rctrs").readBlock(getNode("actrs").getSize());
+
+  getClient().dispatch();
+
+  mon_data.enabled = controls.at("part_en").value();
+  mon_data.spill_interface_enabled = controls.at("spill_gate_en").value();
+  mon_data.trig_enabled = controls.at("trig_en").value();
+  mon_data.trig_mask = controls.at("trig_mask").value();
+  mon_data.rate_ctrl_enabled = controls.at("rate_ctrl_en").value();
+  mon_data.frag_mask = controls.at("frag_mask").value();
+  mon_data.buffer_enabled = controls.at("buf_en").value();
+
+  mon_data.in_run = state.at("in_run").value();
+  mon_data.in_spill = state.at("in_spill").value();
+
+  mon_data.buffer_warning = state.at("buf_warn").value();
+  mon_data.buffer_error = state.at("buf_err").value();
+  mon_data.buffer_occupancy = buffer_count.value();
 
   nlohmann::json cmd_data;
   

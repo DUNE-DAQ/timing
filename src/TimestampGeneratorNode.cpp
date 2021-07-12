@@ -31,11 +31,11 @@ TimestampGeneratorNode::~TimestampGeneratorNode() {}
 std::string
 TimestampGeneratorNode::get_status(bool print_out) const
 {
-  std::stringstream lStatus;
-  lStatus << "Timestamp: 0x" << std::hex << read_timestamp() << std::endl;
+  std::stringstream status;
+  status << "Timestamp: 0x" << std::hex << read_timestamp() << std::endl;
   if (print_out)
-    TLOG() << lStatus.str();
-  return lStatus.str();
+    TLOG() << status.str();
+  return status.str();
 }
 //-----------------------------------------------------------------------------
 
@@ -43,10 +43,10 @@ TimestampGeneratorNode::get_status(bool print_out) const
 uhal::ValVector<uint32_t> // NOLINT(build/unsigned)
 TimestampGeneratorNode::read_raw_timestamp(bool dispatch) const
 {
-  auto lTimestamp = getNode("ctr.val").readBlock(2);
+  auto timestamp = getNode("ctr.val").readBlock(2);
   if (dispatch)
     getClient().dispatch();
-  return lTimestamp;
+  return timestamp;
 }
 //-----------------------------------------------------------------------------
 
@@ -63,9 +63,9 @@ void
 TimestampGeneratorNode::set_timestamp(uint64_t timestamp) const // NOLINT(build/unsigned)
 {
   // Take the timestamp and split it up
-  uint32_t lNowH = (timestamp >> 32) & ((1UL << 32) - 1); // NOLINT(build/unsigned)
-  uint32_t lNowL = (timestamp >> 0) & ((1UL << 32) - 1);  // NOLINT(build/unsigned)
-  getNode("ctr.set").writeBlock({ lNowL, lNowH });
+  uint32_t now_high = (timestamp >> 32) & ((1UL << 32) - 1); // NOLINT(build/unsigned)
+  uint32_t now_low = (timestamp >> 0) & ((1UL << 32) - 1);  // NOLINT(build/unsigned)
+  getNode("ctr.set").writeBlock({ now_low, now_high });
   getClient().dispatch();
 }
 //-----------------------------------------------------------------------------

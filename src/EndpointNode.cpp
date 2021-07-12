@@ -77,53 +77,52 @@ std::string
 EndpointNode::get_status(bool print_out) const
 {
 
-  std::stringstream lStatus;
+  std::stringstream status;
 
   std::vector<std::pair<std::string, std::string>> ept_summary;
 
-  auto lEPTimestamp = getNode("tstamp").readBlock(2);
-  auto lEPEventCounter = getNode("evtctr").read();
-  auto lEPBufferCount = getNode("buf.count").read();
-  auto lEPControl = read_sub_nodes(getNode("csr.ctrl"), false);
+  auto ept_timestamp = getNode("tstamp").readBlock(2);
+  auto ept_event_counter = getNode("evtctr").read();
+  auto ept_buffer_count = getNode("buf.count").read();
+  auto ept_control = read_sub_nodes(getNode("csr.ctrl"), false);
   auto ept_state = read_sub_nodes(getNode("csr.stat"), false);
-  auto lEPCounters = getNode("ctrs").readBlock(g_command_number);
+  auto ept_counters = getNode("ctrs").readBlock(g_command_number);
   getClient().dispatch();
 
   ept_summary.push_back(std::make_pair("State", g_endpoint_state_map.at(ept_state.find("ep_stat")->second.value())));
-  ept_summary.push_back(std::make_pair("Partition", std::to_string(lEPControl.find("tgrp")->second.value())));
-  ept_summary.push_back(std::make_pair("Address", std::to_string(lEPControl.find("addr")->second.value())));
-  
+  ept_summary.push_back(std::make_pair("Partition", std::to_string(ept_control.find("tgrp")->second.value())));
+  ept_summary.push_back(std::make_pair("Address", std::to_string(ept_control.find("addr")->second.value())));
 
   auto ept_clock_frequency = read_clock_frequency();
  
   if (abs((ept_clock_frequency*1e6)-62.5e6) < 10e3) {
-    ept_summary.push_back(std::make_pair("Timestamp", format_timestamp(lEPTimestamp,62500000)));
+    ept_summary.push_back(std::make_pair("Timestamp", format_timestamp(ept_timestamp,62500000)));
   } else if (abs((ept_clock_frequency*1e6)-50e6) < 10e3) {
-    ept_summary.push_back(std::make_pair("Timestamp", format_timestamp(lEPTimestamp,50000000)));
+    ept_summary.push_back(std::make_pair("Timestamp", format_timestamp(ept_timestamp,50000000)));
   } else {
-    ept_summary.push_back(std::make_pair("Timestamp", format_timestamp(lEPTimestamp,ept_clock_frequency)));
+    ept_summary.push_back(std::make_pair("Timestamp", format_timestamp(ept_timestamp,ept_clock_frequency)));
   }
   
-  ept_summary.push_back(std::make_pair("Timestamp (hex)", format_reg_value(tstamp2int(lEPTimestamp))));
-  ept_summary.push_back(std::make_pair("EventCounter", std::to_string(lEPEventCounter.value())));
-  std::string lBufferStatusString = !ept_state.find("buf_err")->second.value() ? "OK" : "Error";
-  ept_summary.push_back(std::make_pair("Buffer status", lBufferStatusString));
-  ept_summary.push_back(std::make_pair("Buffer occupancy", std::to_string(lEPBufferCount.value())));
+  ept_summary.push_back(std::make_pair("Timestamp (hex)", format_reg_value(tstamp2int(ept_timestamp))));
+  ept_summary.push_back(std::make_pair("EventCounter", std::to_string(ept_event_counter.value())));
+  std::string buffer_status_string = !ept_state.find("buf_err")->second.value() ? "OK" : "Error";
+  ept_summary.push_back(std::make_pair("Buffer status", buffer_status_string));
+  ept_summary.push_back(std::make_pair("Buffer occupancy", std::to_string(ept_buffer_count.value())));
 
   std::vector<std::pair<std::string, std::string>> ept_command_counters;
 
   for (uint32_t i = 0; i < g_command_number; ++i) { // NOLINT(build/unsigned)
-    ept_command_counters.push_back(std::make_pair(g_command_map.at(i), std::to_string(lEPCounters[i])));
+    ept_command_counters.push_back(std::make_pair(g_command_map.at(i), std::to_string(ept_counters[i])));
   }
 
-  lStatus << format_reg_table(ept_summary, "Endpoint summary", { "", "" }) << std::endl;
-  lStatus << "Endpoint frequency: " << ept_clock_frequency << " MHz" << std::endl;
-  lStatus << format_reg_table(ept_state, "Endpoint state") << std::endl;
-  lStatus << format_reg_table(ept_command_counters, "Endpoint counters", { "Command", "Counter" });
+  status << format_reg_table(ept_summary, "Endpoint summary", { "", "" }) << std::endl;
+  status << "Endpoint frequency: " << ept_clock_frequency << " MHz" << std::endl;
+  status << format_reg_table(ept_state, "Endpoint state") << std::endl;
+  status << format_reg_table(ept_command_counters, "Endpoint counters", { "Command", "Counter" });
 
   if (print_out)
-    TLOG() << lStatus.str();
-  return lStatus.str();
+    TLOG() << status.str();
+  return status.str();
 }
 //-----------------------------------------------------------------------------
 
@@ -131,9 +130,9 @@ EndpointNode::get_status(bool print_out) const
 uint64_t // NOLINT(build/unsigned)
 EndpointNode::read_timestamp() const
 {
-  auto lTimestamp = getNode("tstamp").readBlock(2);
+  auto timestamp = getNode("tstamp").readBlock(2);
   getClient().dispatch();
-  return tstamp2int(lTimestamp);
+  return tstamp2int(timestamp);
 }
 //-----------------------------------------------------------------------------
 
@@ -141,9 +140,9 @@ EndpointNode::read_timestamp() const
 uint32_t // NOLINT(build/unsigned)
 EndpointNode::read_buffer_count() const
 {
-  auto lBufCount = getNode("buf.count").read();
+  auto buffer_count = getNode("buf.count").read();
   getClient().dispatch();
-  return lBufCount.value();
+  return buffer_count.value();
 }
 //-----------------------------------------------------------------------------
 
@@ -152,27 +151,27 @@ uhal::ValVector<uint32_t> // NOLINT(build/unsigned)
 EndpointNode::read_data_buffer(bool read_all) const
 {
 
-  auto lBufCount = getNode("buf.count").read();
+  auto buffer_count = getNode("buf.count").read();
   getClient().dispatch();
 
-  TLOG_DEBUG(0) << "Words available in readout buffer:      " << format_reg_value(lBufCount);
+  TLOG_DEBUG(0) << "Words available in readout buffer:      " << format_reg_value(buffer_count);
 
-  uint32_t lEventsToRead = lBufCount.value() / g_event_size; // NOLINT(build/unsigned)
+  uint32_t events_to_read = buffer_count.value() / g_event_size; // NOLINT(build/unsigned)
 
-  TLOG_DEBUG(0) << "Events available in readout buffer:     " << format_reg_value(lEventsToRead);
+  TLOG_DEBUG(0) << "Events available in readout buffer:     " << format_reg_value(events_to_read);
 
-  uint32_t lWordsToRead = read_all ? lBufCount.value() : lEventsToRead * g_event_size; // NOLINT(build/unsigned)
+  uint32_t words_to_read = read_all ? buffer_count.value() : events_to_read * g_event_size; // NOLINT(build/unsigned)
 
-  TLOG_DEBUG(0) << "Words to be read out in readout buffer: " << format_reg_value(lWordsToRead);
+  TLOG_DEBUG(0) << "Words to be read out in readout buffer: " << format_reg_value(words_to_read);
 
-  if (!lWordsToRead) {
+  if (!words_to_read) {
     TLOG() << "No words to be read out.";
   }
 
-  auto lBufData = getNode("buf.data").readBlock(lWordsToRead);
+  auto buffer_data = getNode("buf.data").readBlock(words_to_read);
   getClient().dispatch();
 
-  return lBufData;
+  return buffer_data;
 }
 //-----------------------------------------------------------------------------
 
@@ -181,22 +180,22 @@ std::string
 EndpointNode::get_data_buffer_table(bool read_all, bool print_out) const
 {
 
-  std::stringstream lTable;
-  auto lBufData = read_data_buffer(read_all);
+  std::stringstream table;
+  auto buffer_data = read_data_buffer(read_all);
 
-  std::vector<std::pair<std::string, uint32_t>> lBufferTable; // NOLINT(build/unsigned)
+  std::vector<std::pair<std::string, uint32_t>> buffer_table; // NOLINT(build/unsigned)
 
   uint32_t i = 0; // NOLINT(build/unsigned)
-  for (auto it = lBufData.begin(); it != lBufData.end(); ++it, ++i) {
-    std::stringstream lIndexStream;
-    lIndexStream << std::setfill('0') << std::setw(4) << i;
-    lBufferTable.push_back(std::make_pair(lIndexStream.str(), *it));
+  for (auto it = buffer_data.begin(); it != buffer_data.end(); ++it, ++i) {
+    std::stringstream index_stream;
+    index_stream << std::setfill('0') << std::setw(4) << i;
+    buffer_table.push_back(std::make_pair(index_stream.str(), *it));
   }
-  lTable << format_reg_table(lBufferTable, "Endpoint buffer", { "Word", "Data" });
+  table << format_reg_table(buffer_table, "Endpoint buffer", { "Word", "Data" });
 
   if (print_out)
-    TLOG() << lTable.str();
-  return lTable.str();
+    TLOG() << table.str();
+  return table.str();
 }
 //-----------------------------------------------------------------------------
 
@@ -204,8 +203,8 @@ EndpointNode::get_data_buffer_table(bool read_all, bool print_out) const
 double
 EndpointNode::read_clock_frequency() const
 {
-  std::vector<double> lFrequencies = getNode<FrequencyCounterNode>("freq").measure_frequencies(1);
-  return lFrequencies.at(0);
+  std::vector<double> frequencies = getNode<FrequencyCounterNode>("freq").measure_frequencies(1);
+  return frequencies.at(0);
 }
 //-----------------------------------------------------------------------------
 
@@ -213,9 +212,9 @@ EndpointNode::read_clock_frequency() const
 uint32_t // NOLINT(build/unsigned)
 EndpointNode::read_version() const
 {
-  auto lBufCount = getNode("version").read();
+  auto buffer_version = getNode("version").read();
   getClient().dispatch();
-  return lBufCount.value();
+  return buffer_version.value();
 }
 //-----------------------------------------------------------------------------
 

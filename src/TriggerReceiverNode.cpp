@@ -32,22 +32,22 @@ TriggerReceiverNode::~TriggerReceiverNode() {}
 std::string
 TriggerReceiverNode::get_status(bool print_out) const
 {
-  std::stringstream lStatus;
+  std::stringstream status;
 
-  auto lState = read_sub_nodes(getNode("csr.stat"), false);
-  auto lControls = read_sub_nodes(getNode("csr.ctrl"), false);
-  auto lCounters = getNode("ctrs").readBlock(0x10);
+  auto state = read_sub_nodes(getNode("csr.stat"), false);
+  auto controls = read_sub_nodes(getNode("csr.ctrl"), false);
+  auto counters = getNode("ctrs").readBlock(0x10);
   getClient().dispatch();
 
-  lStatus << format_reg_table(lState, "Trigger rx state");
-  lStatus << format_reg_table(lControls, "Trigger rx controls");
+  status << format_reg_table(state, "Trigger rx state");
+  status << format_reg_table(controls, "Trigger rx controls");
 
-  std::vector<uhal::ValVector<uint32_t>> lCountersContainer = { lCounters }; // NOLINT(build/unsigned)
-  lStatus << format_counters_table(lCountersContainer, { "Counters" }, "Trig rx counters");
+  std::vector<uhal::ValVector<uint32_t>> counters_container = { counters }; // NOLINT(build/unsigned)
+  status << format_counters_table(counters_container, { "Counters" }, "Trig rx counters");
 
   if (print_out)
-    TLOG() << lStatus.str();
-  return lStatus.str();
+    TLOG() << status.str();
+  return status.str();
 }
 //-----------------------------------------------------------------------------
 

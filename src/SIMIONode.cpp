@@ -33,14 +33,14 @@ SIMIONode::~SIMIONode() {}
 std::string
 SIMIONode::get_status(bool print_out) const
 {
-  std::stringstream lStatus;
+  std::stringstream status;
 
   auto subnodes = read_sub_nodes(getNode("csr.stat"));
-  lStatus << format_reg_table(subnodes, "SIM IO state");
+  status << format_reg_table(subnodes, "SIM IO state");
 
   if (print_out)
-    TLOG() << lStatus.str();
-  return lStatus.str();
+    TLOG() << status.str();
+  return status.str();
 }
 //-----------------------------------------------------------------------------
 
@@ -64,42 +64,42 @@ SIMIONode::get_board_revision() const
 std::string
 SIMIONode::get_hardware_info(bool print_out) const
 {
-  std::stringstream lInfo;
-  const BoardType lBoardType = convert_value_to_board_type(read_board_type());
-  const BoardRevision lBoardRevision = get_board_revision();
-  const CarrierType lCarrierType = convert_value_to_carrier_type(read_carrier_type());
-  const DesignType lDesignType = convert_value_to_design_type(read_design_type());
+  std::stringstream info;
+  const BoardType board_type = convert_value_to_board_type(read_board_type());
+  const BoardRevision board_revision = get_board_revision();
+  const CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
+  const DesignType design_type = convert_value_to_design_type(read_design_type());
 
-  std::vector<std::pair<std::string, std::string>> lHardwareInfo;
+  std::vector<std::pair<std::string, std::string>> hardware_info;
 
   try {
-    lHardwareInfo.push_back(std::make_pair("Board type", g_board_type_map.at(lBoardType)));
+    hardware_info.push_back(std::make_pair("Board type", g_board_type_map.at(board_type)));
   } catch (const std::out_of_range& e) {
-    throw MissingBoardTypeMapEntry(ERS_HERE, format_reg_value(lBoardType), e);
+    throw MissingBoardTypeMapEntry(ERS_HERE, format_reg_value(board_type), e);
   }
 
   try {
-    lHardwareInfo.push_back(std::make_pair("Board revision", g_board_revision_map.at(lBoardRevision)));
+    hardware_info.push_back(std::make_pair("Board revision", g_board_revision_map.at(board_revision)));
   } catch (const std::out_of_range& e) {
-    throw MissingBoardRevisionMapEntry(ERS_HERE, format_reg_value(lBoardRevision), e);
+    throw MissingBoardRevisionMapEntry(ERS_HERE, format_reg_value(board_revision), e);
   }
 
   try {
-    lHardwareInfo.push_back(std::make_pair("Carrier type", g_carrier_type_map.at(lCarrierType)));
+    hardware_info.push_back(std::make_pair("Carrier type", g_carrier_type_map.at(carrier_type)));
   } catch (const std::out_of_range& e) {
-    throw MissingCarrierTypeMapEntry(ERS_HERE, format_reg_value(lCarrierType), e);
+    throw MissingCarrierTypeMapEntry(ERS_HERE, format_reg_value(carrier_type), e);
   }
 
   try {
-    lHardwareInfo.push_back(std::make_pair("Design type", g_design_type_map.at(lDesignType)));
+    hardware_info.push_back(std::make_pair("Design type", g_design_type_map.at(design_type)));
   } catch (const std::out_of_range& e) {
-    throw MissingDesignTypeMapEntry(ERS_HERE, format_reg_value(lDesignType), e);
+    throw MissingDesignTypeMapEntry(ERS_HERE, format_reg_value(design_type), e);
   }
-  lInfo << format_reg_table(lHardwareInfo, "Hardware info", { "", "" });
+  info << format_reg_table(hardware_info, "Hardware info", { "", "" });
 
   if (print_out)
-    TLOG() << lInfo.str();
-  return lInfo.str();
+    TLOG() << info.str();
+  return info.str();
 }
 //-----------------------------------------------------------------------------
 

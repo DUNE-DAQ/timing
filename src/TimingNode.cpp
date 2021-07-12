@@ -28,15 +28,15 @@ TimingNode::~TimingNode() {}
 std::map<std::string, uhal::ValWord<uint32_t>> // NOLINT(build/unsigned)
 TimingNode::read_sub_nodes(const uhal::Node& node, bool dispatch) const
 {
-  auto lNodeNames = node.getNodes();
+  auto node_names = node.getNodes();
 
-  std::map<std::string, uhal::ValWord<uint32_t>> lNodeNameValuePairs; // NOLINT(build/unsigned)
+  std::map<std::string, uhal::ValWord<uint32_t>> node_name_value_pairs; // NOLINT(build/unsigned)
 
-  for (auto it = lNodeNames.begin(); it != lNodeNames.end(); ++it)
-    lNodeNameValuePairs[*it] = node.getNode(*it).read();
+  for (auto it = node_names.begin(); it != node_names.end(); ++it)
+    node_name_value_pairs[*it] = node.getNode(*it).read();
   if (dispatch)
     getClient().dispatch();
-  return lNodeNameValuePairs;
+  return node_name_value_pairs;
 }
 //-----------------------------------------------------------------------------
 
@@ -45,9 +45,9 @@ void
 TimingNode::reset_sub_nodes(const uhal::Node& node, uint32_t aValue, bool dispatch) const // NOLINT(build/unsigned)
 {
 
-  auto lNodeNames = node.getNodes();
+  auto node_names = node.getNodes();
 
-  for (auto it = lNodeNames.begin(); it != lNodeNames.end(); ++it)
+  for (auto it = node_names.begin(); it != node_names.end(); ++it)
     node.getNode(*it).write(aValue);
 
   if (dispatch)
