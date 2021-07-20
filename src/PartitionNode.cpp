@@ -324,14 +324,14 @@ PartitionNode::get_info(timingfirmwareinfo::TimingPartitionMonitorData& mon_data
   mon_data.buffer_error = lState.at("buf_err").value();
   mon_data.buffer_occupancy = lBufCount.value();
 
-  for (uint i = 0; i < accepted_counters.size(); ++i) { // NOLINT(build/unsigned)
-    timingfirmwareinfo::TimingFLCmdCounters fl_cmd_counters;
-
-    fl_cmd_counters.accepted = accepted_counters.at(i);
-    fl_cmd_counters.rejected = rejected_counters.at(i);
-
-    mon_data.command_counters.push_back(fl_cmd_counters);
-  }
+//  for (uint i = 0; i < accepted_counters.size(); ++i) { // NOLINT(build/unsigned)
+//    timingfirmwareinfo::TimingFLCmdCounters fl_cmd_counters;
+//
+//    fl_cmd_counters.accepted = accepted_counters.at(i);
+//    fl_cmd_counters.rejected = rejected_counters.at(i);
+//
+//    mon_data.command_counters.push_back(fl_cmd_counters);
+//  }
 }
 //-----------------------------------------------------------------------------
 } // namespace timing

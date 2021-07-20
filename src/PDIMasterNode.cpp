@@ -248,13 +248,12 @@ PDIMasterNode::get_info(timingfirmwareinfo::PDIMasterMonitorData& mon_data) cons
 
   mon_data.spill_interface_enabled = spill_interface_enabled.value();
 
-  getNode<FLCmdGeneratorNode>("scmd_gen").get_info(mon_data.command_counters);
+  //getNode<FLCmdGeneratorNode>("scmd_gen").get_info(mon_data.command_counters);
 
-  for (uint i = 0; i < 4; ++i) { // NOLINT(build/unsigned)
-    timingfirmwareinfo::TimingPartitionMonitorData partition_data;
-    get_partition_node(i).get_info(partition_data);
-    mon_data.partitions_data.push_back(partition_data);
-  }
+  get_partition_node(0).get_info(mon_data.partition_0_data);
+  get_partition_node(1).get_info(mon_data.partition_1_data);
+  get_partition_node(2).get_info(mon_data.partition_2_data);
+  get_partition_node(3).get_info(mon_data.partition_3_data);
 }
 //-----------------------------------------------------------------------------
 
