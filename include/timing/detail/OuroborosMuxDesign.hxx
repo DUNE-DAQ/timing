@@ -32,13 +32,13 @@ template<class IO>
 std::string
 OuroborosMuxDesign<IO>::get_status(bool print_out) const
 {
-  std::stringstream lStatus;
-  lStatus << this->get_io_node().get_pll_status();
-  lStatus << this->get_master_node().get_status();
-  lStatus << this->get_endpoint_node(0).get_status();
+  std::stringstream status;
+  status << this->get_io_node().get_pll_status();
+  status << this->get_master_node().get_status();
+  status << this->get_endpoint_node(0).get_status();
   if (print_out)
-    std::cout << lStatus.str();
-  return lStatus.str();
+    TLOG() << status.str();
+  return status.str();
 }
 //-----------------------------------------------------------------------------
 

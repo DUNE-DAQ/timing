@@ -53,17 +53,17 @@ CRTNode::disable() const
 std::string
 CRTNode::get_status(bool print_out) const
 {
-  std::stringstream lStatus;
-  auto lCRTRegs = read_sub_nodes(getNode(""));
-  lStatus << format_reg_table(lCRTRegs, "CRT state", { "", "" }) << std::endl;
+  std::stringstream status;
+  auto crt_registers = read_sub_nodes(getNode(""));
+  status << format_reg_table(crt_registers, "CRT state", { "", "" }) << std::endl;
 
-  const uint64_t lLastPulseTimestamp =                                                       // NOLINT(build/unsigned)
-    ((uint64_t)lCRTRegs.at("pulse.ts_h").value() << 32) + lCRTRegs.at("pulse.ts_l").value(); // NOLINT(build/unsigned)
-  lStatus << "Last Pulse Timestamp: 0x" << std::hex << lLastPulseTimestamp << std::endl;
+  const uint64_t last_pulse_timestamp =                                                       // NOLINT(build/unsigned)
+    ((uint64_t)crt_registers.at("pulse.ts_h").value() << 32) + crt_registers.at("pulse.ts_l").value(); // NOLINT(build/unsigned)
+  status << "Last Pulse Timestamp: 0x" << std::hex << last_pulse_timestamp << std::endl;
 
   if (print_out)
-    TLOG() << lStatus.str();
-  return lStatus.str();
+    TLOG() << status.str();
+  return status.str();
 }
 //-----------------------------------------------------------------------------
 
@@ -72,11 +72,11 @@ uint64_t // NOLINT(build/unsigned)
 CRTNode::read_last_pulse_timestamp() const
 {
 
-  auto lTimestampRegLow = getNode("pulse.ts_l").read();
-  auto lTimestampRegHigh = getNode("pulse.ts_h").read();
+  auto timestamp_reg_low = getNode("pulse.ts_l").read();
+  auto timestamp_reg_high = getNode("pulse.ts_h").read();
   getClient().dispatch();
 
-  return ((uint64_t)lTimestampRegHigh.value() << 32) + lTimestampRegLow.value(); // NOLINT(build/unsigned)
+  return ((uint64_t)timestamp_reg_high.value() << 32) + timestamp_reg_low.value(); // NOLINT(build/unsigned)
 }
 //-----------------------------------------------------------------------------
 

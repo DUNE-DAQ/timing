@@ -13,6 +13,7 @@
 #include "timing/OuroborosDesign.hpp"
 #include "timing/OuroborosMuxDesign.hpp"
 #include "timing/OverlordDesign.hpp"
+#include "timing/ChronosDesign.hpp"
 
 namespace dunedaq {
 namespace timing {
@@ -49,6 +50,8 @@ uhal::RegistrationHelper<OverlordDesign<FMCIONode>> OverlordDesign_FMCIONode_Reg
 uhal::RegistrationHelper<BoreasDesign<FMCIONode>> BoreasDesign_FMCIONode_RegistrationHelper("BoreasDesign<FMCIONode>");
 uhal::RegistrationHelper<BoreasDesign<TLUIONode>> BoreasDesign_TLUIONode_RegistrationHelper("BoreasDesign<TLUIONode>");
 uhal::RegistrationHelper<BoreasDesign<SIMIONode>> BoreasDesign_SIMIONode_RegistrationHelper("BoreasDesign<SIMIONode>");
+
+uhal::RegistrationHelper<ChronosDesign<FMCIONode>> ChronosDesign_FMCIONode_RegistrationHelper("ChronosDesign<FMCIONode>");
 
 } // namespace timing
 } // namespace dunedaq

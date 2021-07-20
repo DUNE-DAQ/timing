@@ -7,35 +7,33 @@ namespace dunedaq::timing {
 //-----------------------------------------------------------------------------
 template<class IO>
 uhal::Node*
-OuroborosDesign<IO>::clone() const
+ChronosDesign<IO>::clone() const
 {
-  return new OuroborosDesign<IO>(static_cast<const OuroborosDesign<IO>&>(*this));
+  return new ChronosDesign<IO>(static_cast<const ChronosDesign<IO>&>(*this));
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 template<class IO>
-OuroborosDesign<IO>::OuroborosDesign(const uhal::Node& node)
-  : TopDesign<IO>(node)
-  , MasterDesign<IO, PDIMasterNode>(node)
+ChronosDesign<IO>::ChronosDesign(const uhal::Node& node)
+  : TopDesign<IO>(node), EndpointDesign<IO>(node)
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 template<class IO>
-OuroborosDesign<IO>::~OuroborosDesign()
+ChronosDesign<IO>::~ChronosDesign()
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 template<class IO>
 std::string
-OuroborosDesign<IO>::get_status(bool print_out) const
+ChronosDesign<IO>::get_status(bool print_out) const
 {
   std::stringstream status;
   status << this->get_io_node().get_pll_status();
-  status << this->get_master_node().get_status();
-  status << this->get_endpoint_node(0).get_status();
+  status << this->get_hsi_node().get_status();
   if (print_out)
     TLOG() << status.str();
   return status.str();
@@ -44,31 +42,12 @@ OuroborosDesign<IO>::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 template<class IO>
-void
-OuroborosDesign<IO>::configure() const
-{
-
-  // Hard resets
-  this->reset();
-
-  // Set timestamp to current time
-  this->get_master_node().sync_timestamp();
-
-  // Enable spill interface
-  this->get_master_node().enable_spill_interface();
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-template<class IO>
 template<class T>
 void
-OuroborosDesign<IO>::get_info(T& data) const
+ChronosDesign<IO>::get_info(T& data) const
 {
-  this->get_master_node().get_info(data.master_data);
   this->get_io_node().get_info(data.hardware_data);
-  this->get_endpoint_node(0).get_info(data.endpoint_data);
+  this->get_hsi_node().get_info(data.hsi_data);
 }
 //-----------------------------------------------------------------------------
-
 }

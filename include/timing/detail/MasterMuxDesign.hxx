@@ -32,13 +32,13 @@ template<class IO, class MST>
 std::string
 MasterMuxDesign<IO, MST>::get_status(bool print_out) const
 {
-  std::stringstream lStatus;
-  lStatus << this->get_io_node().get_pll_status();
-  lStatus << this->get_master_node().get_status();
+  std::stringstream status;
+  status << this->get_io_node().get_pll_status();
+  status << this->get_master_node().get_status();
   // TODO mux specific status
   if (print_out)
-    std::cout << lStatus.str();
-  return lStatus.str();
+    TLOG() << status.str();
+  return status.str();
 }
 //-----------------------------------------------------------------------------
 
@@ -47,19 +47,14 @@ template<class IO, class MST>
 void
 MasterMuxDesign<IO, MST>::configure() const
 {
-  // fanout mode hard-coded, to be passed in as parameter in future
-  uint32_t lFanoutMode = 0;
-
   // Hard reset
   this->reset();
 
-  if (!lFanoutMode) {
-    // Set timestamp to current time
-    this->get_master_node().sync_timestamp();
+  // Set timestamp to current time
+  this->get_master_node().sync_timestamp();
 
-    // Enable spill interface
-    this->get_master_node().enable_spill_interface();
-  }
+  // Enable spill interface
+  this->get_master_node().enable_spill_interface();
 }
 //-----------------------------------------------------------------------------
 
@@ -112,11 +107,11 @@ MasterMuxDesign<IO, MST>::measure_endpoint_rtt(uint32_t address, bool control_sf
 
   // gets master rtt ept in a good state, and sends echo command (due to second argument endpoint sfp is not controlled
   // in this call, already done above)
-  uint32_t lRTT = this->get_master_node().measure_endpoint_rtt(address, false);
+  uint32_t rtt = this->get_master_node().measure_endpoint_rtt(address, false);
 
   if (control_sfp)
     this->get_master_node().switch_endpoint_sfp(address, false);
-  return lRTT;
+  return rtt;
 }
 //-----------------------------------------------------------------------------
 
@@ -155,11 +150,11 @@ template<class IO, class MST>
 std::vector<uint32_t>
 MasterMuxDesign<IO, MST>::scan_sfp_mux() const
 {
-  std::vector<uint32_t> lLockedChannels;
+  std::vector<uint32_t> locked_channels;
 
   // TODO will this be right for every fanout board, need to check the IO board
-  uint32_t lNumberOfMuxChannels = 8;
-  for (uint32_t i = 0; i < lNumberOfMuxChannels; ++i) {
+  uint32_t number_of_mux_channels = 8;
+  for (uint32_t i = 0; i < number_of_mux_channels; ++i) {
     TLOG_DEBUG(0) << "Scanning slot " << i;
 
     try {
@@ -170,15 +165,15 @@ MasterMuxDesign<IO, MST>::scan_sfp_mux() const
     // TODO catch right except
 
     TLOG_DEBUG(0) << "Slot " << i << " locked";
-    lLockedChannels.push_back(i);
+    locked_channels.push_back(i);
   }
 
-  if (lLockedChannels.size()) {
-    TLOG() << "Slots locked: " << vec_fmt(lLockedChannels);
+  if (locked_channels.size()) {
+    TLOG() << "Slots locked: " << vec_fmt(locked_channels);
   } else {
     TLOG() << "No slots locked";
   }
-  return lLockedChannels;
+  return locked_channels;
 }
 //-----------------------------------------------------------------------------
 

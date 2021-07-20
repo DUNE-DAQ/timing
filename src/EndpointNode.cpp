@@ -79,35 +79,35 @@ EndpointNode::get_status(bool print_out) const
 
   std::stringstream lStatus;
 
-  std::vector<std::pair<std::string, std::string>> lEPSummary;
+  std::vector<std::pair<std::string, std::string>> ept_summary;
 
   auto lEPTimestamp = getNode("tstamp").readBlock(2);
   auto lEPEventCounter = getNode("evtctr").read();
   auto lEPBufferCount = getNode("buf.count").read();
   auto lEPControl = read_sub_nodes(getNode("csr.ctrl"), false);
-  auto lEPState = read_sub_nodes(getNode("csr.stat"), false);
+  auto ept_state = read_sub_nodes(getNode("csr.stat"), false);
   auto lEPCounters = getNode("ctrs").readBlock(g_command_number);
   getClient().dispatch();
 
-  lEPSummary.push_back(std::make_pair("State", g_endpoint_state_map.at(lEPState.find("ep_stat")->second.value())));
-  lEPSummary.push_back(std::make_pair("Partition", std::to_string(lEPControl.find("tgrp")->second.value())));
-  lEPSummary.push_back(std::make_pair("Address", std::to_string(lEPControl.find("addr")->second.value())));
-  lEPSummary.push_back(std::make_pair("Timestamp", format_timestamp(lEPTimestamp)));
-  lEPSummary.push_back(std::make_pair("Timestamp (hex)", format_reg_value(tstamp2int(lEPTimestamp))));
-  lEPSummary.push_back(std::make_pair("EventCounter", std::to_string(lEPEventCounter.value())));
-  std::string lBufferStatusString = !lEPState.find("buf_err")->second.value() ? "OK" : "Error";
-  lEPSummary.push_back(std::make_pair("Buffer status", lBufferStatusString));
-  lEPSummary.push_back(std::make_pair("Buffer occupancy", std::to_string(lEPBufferCount.value())));
+  ept_summary.push_back(std::make_pair("State", g_endpoint_state_map.at(ept_state.find("ep_stat")->second.value())));
+  ept_summary.push_back(std::make_pair("Partition", std::to_string(lEPControl.find("tgrp")->second.value())));
+  ept_summary.push_back(std::make_pair("Address", std::to_string(lEPControl.find("addr")->second.value())));
+  ept_summary.push_back(std::make_pair("Timestamp", format_timestamp(lEPTimestamp)));
+  ept_summary.push_back(std::make_pair("Timestamp (hex)", format_reg_value(tstamp2int(lEPTimestamp))));
+  ept_summary.push_back(std::make_pair("EventCounter", std::to_string(lEPEventCounter.value())));
+  std::string lBufferStatusString = !ept_state.find("buf_err")->second.value() ? "OK" : "Error";
+  ept_summary.push_back(std::make_pair("Buffer status", lBufferStatusString));
+  ept_summary.push_back(std::make_pair("Buffer occupancy", std::to_string(lEPBufferCount.value())));
 
-  std::vector<std::pair<std::string, std::string>> lEPCommandCounters;
+  std::vector<std::pair<std::string, std::string>> ept_command_counters;
 
   for (uint32_t i = 0; i < g_command_number; ++i) { // NOLINT(build/unsigned)
-    lEPCommandCounters.push_back(std::make_pair(g_command_map.at(i), std::to_string(lEPCounters[i])));
+    ept_command_counters.push_back(std::make_pair(g_command_map.at(i), std::to_string(lEPCounters[i])));
   }
 
-  lStatus << format_reg_table(lEPSummary, "Endpoint summary", { "", "" }) << std::endl;
-  lStatus << format_reg_table(lEPState, "Endpoint state") << std::endl;
-  lStatus << format_reg_table(lEPCommandCounters, "Endpoint counters", { "Command", "Counter" });
+  lStatus << format_reg_table(ept_summary, "Endpoint summary", { "", "" }) << std::endl;
+  lStatus << format_reg_table(ept_state, "Endpoint state") << std::endl;
+  lStatus << format_reg_table(ept_command_counters, "Endpoint counters", { "Command", "Counter" });
 
   if (print_out)
     TLOG() << lStatus.str();

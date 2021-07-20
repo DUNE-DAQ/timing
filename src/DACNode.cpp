@@ -41,9 +41,9 @@ DACSlave::set_dac(uint8_t channel, uint32_t code) const // NOLINT(build/unsigned
     throw DACValueOutOfRange(ERS_HERE, std::to_string(code));
   }
 
-  uint32_t lAddr = 0x18 + (channel & 0x7); // NOLINT(build/unsigned)
+  uint32_t address = 0x18 + (channel & 0x7); // NOLINT(build/unsigned)
 
-  this->write_i2cArray(lAddr, { (uint8_t)((code >> 8) & 0xff), (uint8_t)(code & 0xff) }); // NOLINT(build/unsigned)
+  this->write_i2cArray(address, { (uint8_t)((code >> 8) & 0xff), (uint8_t)(code & 0xff) }); // NOLINT(build/unsigned)
 }
 //-----------------------------------------------------------------------------
 
