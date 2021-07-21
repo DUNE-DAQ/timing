@@ -92,8 +92,8 @@ local timingfirmwareinfo = {
                 doc="Timing partition 2 data"),
         s.field("partition_3_data", self.timing_partition_mon_data,
                 doc="Timing partition 3 data"),
-        s.field("partitions_data", self.timing_partition_mon_data_vector,
-                doc="Vector of timing partition data"),
+        //s.field("partitions_data", self.timing_partition_mon_data_vector,
+        //        doc="Vector of timing partition data"),
         s.field("spill_interface_enabled", self.bool_data, 0,
                 doc="Partition spill interface enabled flag"),
     ], doc="PDI master monitor data"),
@@ -339,22 +339,6 @@ local timingfirmwareinfo = {
         s.field("endpoint_data", teih.dunedaq.timing.timingendpointinfo.TimingEndpointInfo,
                 doc="Timing endpoint firmware monitor data"),
     ], doc="Timing endpoint monitor data"),
-
-    
-    timing_device_data: s.any("TimingDeviceData", 
-                    doc="Generic structure for timing hw device data"),
-
-    timing_device_data_vector: s.sequence("TimingDeviceDataVector", self.timing_device_data,
-            doc="A vector of timing device data"),
-
-    timing_devices_data: s.record("TimingDevicesData",
-    [
-        s.field("collector", self.text_data, "Collector",
-                doc="Name of module collecting the data"),
-        s.field("device_data", self.timing_device_data_vector,
-                doc="Sequence of timing device data")
-    ],
-    doc="Contained to hold all gathered timing device data"),
 };
 
 // Output a topologically sorted array.
