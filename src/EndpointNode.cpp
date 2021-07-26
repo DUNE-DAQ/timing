@@ -236,9 +236,12 @@ EndpointNode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const
   mon_data.coarse_delay = endpoint_state.at("cdelay").value();
   mon_data.fine_delay = endpoint_state.at("fdelay").value();
 
-  // for (uint32_t i=0; i < g_command_number; ++i) {
-  //	counters.push_back(std::make_pair(g_command_map.at(i), std::to_string(counters[i])));
-  //}
+  nlohmann::json cmd_data;
+
+  for (uint32_t i=0; i < g_command_number; ++i) {
+  	cmd_data[g_command_map.at(i)] = counters.at(i);
+  }
+  timingendpointinfo::from_json(cmd_data, mon_data.received_fl_commands_counters);
 }
 //-----------------------------------------------------------------------------
 

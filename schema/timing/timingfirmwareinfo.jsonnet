@@ -58,15 +58,12 @@ local timingfirmwareinfo = {
                 doc="Buffer error flag"),
         s.field("buffer_occupancy", self.uint,
                 doc="Buffer occupancy"),
-        //s.field("command_counters", self.timing_fl_cmd_counters_vector,
-        //        doc="Vector of command counter structure"),
+        s.field("timing_fl_cmd_counters", self.timing_fl_cmd_counters,
+                doc="Command counter structure"),
     ], 
     doc="Timing partition monitor data"),
 
-    timing_partition_mon_data_vector: s.sequence("TimingPartitionMonitorDataVector", self.timing_partition_mon_data,
-            doc="A vector timing partition data"),
-
-    timing_fl_cmd_counters: s.record("TimingFLCmdCounters",
+    timing_fl_cmd_counter: s.record("TimingFLCmdCounter",
     [
         s.field("accepted", self.uint,
                 doc="Number of commands accepted"),
@@ -74,16 +71,81 @@ local timingfirmwareinfo = {
                 doc="Number of commands rejected"),
     ],
     doc="Fixed length command counters structure"),
+    
+    timing_fl_cmd_counters: s.record("TimingFLCmdCounters",
+    [
+        s.field("TimeSync", self.timing_fl_cmd_counter,
+                doc="TimeSync counters"),
+        
+        s.field("Echo", self.timing_fl_cmd_counter,
+                doc="Echo counters"),
+        
+        s.field("SpillStart", self.timing_fl_cmd_counter,
+                doc="SpillStart counters"),
+        
+        s.field("SpillStop", self.timing_fl_cmd_counter,
+                doc="SpillStop counters"),
+        
+        s.field("RunStart", self.timing_fl_cmd_counter,
+                doc="RunStart counters"),
+        
+        s.field("RunStop", self.timing_fl_cmd_counter,
+                doc="RunStop counters"),
+        
+        s.field("WibCalib", self.timing_fl_cmd_counter,
+                doc="WibCalib counters"),
+        
+        s.field("SSPCalib", self.timing_fl_cmd_counter,
+                doc="SSPCalib counters"),
+        
+        s.field("FakeTrig0", self.timing_fl_cmd_counter,
+                doc="FakeTrig0 counters"),
+        
+        s.field("FakeTrig1", self.timing_fl_cmd_counter,
+                doc="FakeTrig1 counters"),
+        
+        s.field("FakeTrig2", self.timing_fl_cmd_counter,
+                doc="FakeTrig2 counters"),
+        
+        s.field("FakeTrig3", self.timing_fl_cmd_counter,
+                doc="FakeTrig3 counters"),
+        
+        s.field("BeamTrig", self.timing_fl_cmd_counter,
+                doc="BeamTrig counters"),
+        
+        s.field("NoBeamTrig", self.timing_fl_cmd_counter,
+                doc="NoBeamTrig counters"),
+        
+        s.field("ExtFakeTrig", self.timing_fl_cmd_counter,
+                doc="ExtFakeTrig counters"),
+    ],
+    doc="Command counters list"),
 
-    timing_fl_cmd_counters_vector: s.sequence("TimingFLCmdCountersVector", self.timing_fl_cmd_counters,
-                doc="A vector command counters object"),
+    timing_fl_cmd_channel_counters: s.record("TimingFLCmdChannelCounters",
+    [
+        s.field("channel_0", self.timing_fl_cmd_counter,
+                doc="TimeSync counters"),
+        
+        s.field("channel_1", self.timing_fl_cmd_counter,
+                doc="Echo counters"),
+        
+        s.field("channel_2", self.timing_fl_cmd_counter,
+                doc="SpillStart counters"),
+        
+        s.field("channel_3", self.timing_fl_cmd_counter,
+                doc="SpillStop counters"),
+        
+        s.field("channel_4", self.timing_fl_cmd_counter,
+                doc="RunStart counters"),
+    ],
+    doc="Command channel counters list"),
 
     pdi_master_fw_mon_data: s.record("PDIMasterMonitorData", 
     [
         s.field("timestamp", self.l_uint,
                 doc="Timestamp"),
-        //s.field("command_counters", self.timing_fl_cmd_counters_vector,
-        //        doc="Vector of command counter structure"),
+        s.field("sent_fl_command_channel_counters", self.timing_fl_cmd_channel_counters,
+                doc="Sent fl command counters"),
         s.field("partition_0_data", self.timing_partition_mon_data,
                 doc="Timing partition 0 data"),        
         s.field("partition_1_data", self.timing_partition_mon_data,
@@ -92,8 +154,6 @@ local timingfirmwareinfo = {
                 doc="Timing partition 2 data"),
         s.field("partition_3_data", self.timing_partition_mon_data,
                 doc="Timing partition 3 data"),
-        //s.field("partitions_data", self.timing_partition_mon_data_vector,
-        //        doc="Vector of timing partition data"),
         s.field("spill_interface_enabled", self.bool_data, 0,
                 doc="Partition spill interface enabled flag"),
     ], doc="PDI master monitor data"),

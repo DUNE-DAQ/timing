@@ -248,7 +248,7 @@ PDIMasterNode::get_info(timingfirmwareinfo::PDIMasterMonitorData& mon_data) cons
 
   mon_data.spill_interface_enabled = spill_interface_enabled.value();
 
-  //getNode<FLCmdGeneratorNode>("scmd_gen").get_info(mon_data.command_counters);
+  getNode<FLCmdGeneratorNode>("scmd_gen").get_info(mon_data.sent_fl_command_channel_counters);
 
   get_partition_node(0).get_info(mon_data.partition_0_data);
   get_partition_node(1).get_info(mon_data.partition_1_data);
