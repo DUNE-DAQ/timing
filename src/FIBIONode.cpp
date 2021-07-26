@@ -97,7 +97,7 @@ FIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) cons
 	
 	// Find the right pll config file
 	std:: string lClockConfigFile = get_full_clock_config_file_path(clock_config_file, fanout_mode);
-	TLOG_DEBUG(0) << "PLL configuration file : " << lClockConfigFile;
+	TLOG() << "PLL configuration file : " << lClockConfigFile;
 
 	// Upload config file to PLL
 	configure_pll(lClockConfigFile);
