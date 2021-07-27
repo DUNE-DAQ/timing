@@ -67,7 +67,7 @@ FMCIONode::reset(const std::string& clock_config_file) const
 
   // Find the right pll config file
   std::string lClockConfigFile = get_full_clock_config_file_path(clock_config_file);
-  TLOG_DEBUG(0) << "PLL configuration file : " << lClockConfigFile;
+  TLOG() << "PLL configuration file : " << lClockConfigFile;
 
   // Upload config file to PLL
   configure_pll(lClockConfigFile);

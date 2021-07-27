@@ -59,6 +59,7 @@ enum BoardRevision
   kFMCRev1,
   kFMCRev2,
   kFMCRev3,
+  kFMCRev4,
   kPC059Rev1,
   kTLURev1,
   kSIMRev1,
@@ -99,7 +100,7 @@ const std::map<DesignType, std::string> g_design_type_map = {
 const std::map<BoardRevision, std::string> g_board_revision_map = {
   { kFMCRev1, "kFMCRev1" },     { kFMCRev2, "kFMCRev2" }, { kFMCRev3, "kFMCRev3" },
   { kPC059Rev1, "kPC059Rev1" }, { kTLURev1, "kTLURev1" }, { kSIMRev1, "kSIMRev1" },
-  { kFIBRev1, "kFIBRev1" },
+  { kFIBRev1, "kFIBRev1" }, { kFMCRev4, "kFMCRev4" },
 };
 
 // NOLINTNEXTLINE(build/unsigned)
@@ -142,6 +143,16 @@ const std::map<uint64_t, BoardRevision> g_board_uid_revision_map = {
   { 0x49162b62948, kFMCRev3 },
   { 0x49162b675ea, kFMCRev3 },
   { 0x49162b645cd, kFMCRev3 },
+  { 0xd880395dab52, kFMCRev4 },
+  { 0xd880395d99b3, kFMCRev4 },
+  { 0xd880395df010, kFMCRev4 },
+  { 0xd880395df00f, kFMCRev4 },
+  { 0xd880395de4a4, kFMCRev4 },
+  { 0xd880395d99a9, kFMCRev4 },
+  { 0xd880395d99b0, kFMCRev4 },
+  { 0xd880395de452, kFMCRev4 },
+  { 0xd880395da48e, kFMCRev4 },
+  { 0xd880395dbcee, kFMCRev4 },
 };
 
 const std::map<std::string, std::string> g_clock_config_map = {
@@ -149,26 +160,32 @@ const std::map<std::string, std::string> g_clock_config_map = {
   { "kFMCRev1_enclustra-a35_endpoint", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
   { "kFMCRev2_enclustra-a35_endpoint", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
   { "kFMCRev3_enclustra-a35_endpoint", "devel/Si5394-053endptr_62-5MHz_4kHz-Registers.txt" },
+  { "kFMCRev4_enclustra-a35_endpoint", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
 
   { "kFMCRev1_enclustra-a35_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
   { "kFMCRev2_enclustra-a35_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
   { "kFMCRev3_enclustra-a35_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
+  { "kFMCRev4_enclustra-a35_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
 
   { "kFMCRev1_enclustra-a35_chronos", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
   { "kFMCRev2_enclustra-a35_chronos", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
   { "kFMCRev3_enclustra-a35_chronos", "devel/Si5394-053endptr_62-5MHz_4kHz-Registers.txt" },
+  { "kFMCRev4_enclustra-a35_chronos", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
 
   { "kFMCRev1_enclustra-a35_ouroboros", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
   { "kFMCRev2_enclustra-a35_ouroboros", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
   { "kFMCRev3_enclustra-a35_ouroboros", "devel/Si5394-RevA-94mst625-Registers.txt" },
+  { "kFMCRev4_enclustra-a35_ouroboros", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
 
   { "kFMCRev1_enclustra-a35_overlord", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
   { "kFMCRev2_enclustra-a35_overlord", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
   { "kFMCRev3_enclustra-a35_overlord", "devel/Si5394-RevA-94mst625-Registers.txt" },
+  { "kFMCRev4_enclustra-a35_overlord", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
 
   { "kFMCRev1_enclustra-a35_boreas", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
   { "kFMCRev2_enclustra-a35_boreas", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
   { "kFMCRev3_enclustra-a35_boreas", "devel/Si5394-RevA-94mst625-Registers.txt" },
+  { "kFMCRev4_enclustra-a35_boreas", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
 
   { "kTLURev1_enclustra-a35_overlord", "devel/DUNE_TLU-DUNTLU09-Registers_62.5_mhz.txt" },
   { "kTLURev1_enclustra-a35_boreas", "devel/DUNE_TLU-DUNTLU09-Registers_62.5_mhz.txt" },
@@ -192,19 +209,23 @@ const std::map<std::string, std::string> g_clock_config_map = {
   { "kFMCRev1_enclustra-a35_endpoint_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
   { "kFMCRev2_enclustra-a35_endpoint_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
   { "kFMCRev3_enclustra-a35_endpoint_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
+  { "kFMCRev4_enclustra-a35_endpoint_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
 
   { "kFMCRev1_enclustra-a35_endpoint-bi-crt_50_mhz", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
   { "kFMCRev2_enclustra-a35_endpoint-bi-crt_50_mhz", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
   { "kFMCRev3_enclustra-a35_endpoint-bi-crt_50_mhz", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
+  { "kFMCRev4_enclustra-a35_endpoint-bi-crt_50_mhz", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
 
   { "kFMCRev1_enclustra-a35_chronos_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
   { "kFMCRev2_enclustra-a35_chronos_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
   { "kFMCRev3_enclustra-a35_chronos_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
+  { "kFMCRev4_enclustra-a35_chronos_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
 
   { "kFMCRev1_enclustra-a35_ouroboros_50_mhz", "SI5344/PDTS0000.txt" },
   { "kFMCRev2_enclustra-a35_ouroboros_50_mhz", "SI5344/PDTS0003.txt" },
   { "kFMCRev3_enclustra-a35_ouroboros_50_mhz", "SI5344/PDTS0003.txt" },
-  
+  { "kFMCRev4_enclustra-a35_ouroboros_50_mhz", "SI5344/PDTS0003.txt" },
+
   { "kPC059Rev1_enclustra-a35_ouroboros_50_mhz", "SI5345/PDTS0005.txt" },
 
   { "kTLURev1_enclustra-a35_overlord_50_mhz", "wr/TLU_EXTCLK_10MHZ_NOZDM.txt" },
