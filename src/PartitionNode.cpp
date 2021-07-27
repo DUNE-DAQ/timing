@@ -335,7 +335,7 @@ PartitionNode::get_info(timingfirmwareinfo::TimingPartitionMonitorData& mon_data
     cmd_data[g_command_map.at(i)] = cmd_datum;
   }
 
-  timingfirmwareinfo::from_json(cmd_data, mon_data.timing_fl_cmd_counters);
+  timingfirmwareinfo::from_json(cmd_data, mon_data.fl_cmd_counters);
 }
 //-----------------------------------------------------------------------------
 } // namespace timing
