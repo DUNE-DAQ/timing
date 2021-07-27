@@ -16,9 +16,11 @@
 #include "TimingIssues.hpp"
 #include "timing/TimingNode.hpp"
 #include "timing/timingfirmwareinfo/InfoStructs.hpp"
+#include "timing/timingfirmwareinfo/InfoNljs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
+#include <nlohmann/json.hpp>
 
 // C++ Headers
 #include <chrono>

@@ -120,23 +120,27 @@ FLCmdGeneratorNode::get_cmd_counters_table(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-FLCmdGeneratorNode::get_info(timingfirmwareinfo::TimingFLCmdCountersVector& mon_data) const
+FLCmdGeneratorNode::get_info(timingfirmwareinfo::TimingFLCmdChannelCounters& mon_data) const
 {
   auto accepted_counters = getNode("actrs").readBlock(getNode("actrs").getSize());
   auto rejected_counters = getNode("rctrs").readBlock(getNode("actrs").getSize());
   getClient().dispatch();
 
-  // uint counters_number = getNode("actrs").getSize();
+  uint number_of_channels = 5;
 
-  // 5 cmd channels
-  uint counters_number = 5;
+  nlohmann::json cmd_data;
+  
+  for (uint i = 0; i < number_of_channels; ++i) { // NOLINT(build/unsigned)
+    nlohmann::json cmd_datum;
 
-  for (uint i = 0; i < counters_number; ++i) {
-    timingfirmwareinfo::TimingFLCmdCounters fl_cmd_counters;
-    fl_cmd_counters.accepted = accepted_counters.at(i);
-    fl_cmd_counters.rejected = rejected_counters.at(i);
-    mon_data.push_back(fl_cmd_counters);
+    cmd_datum["accepted"] = accepted_counters.at(i);
+    cmd_datum["rejected"] = rejected_counters.at(i);
+
+    std::string channel = "channel_" + std::to_string(i);
+    cmd_data[channel] = cmd_datum;
   }
+
+  timingfirmwareinfo::from_json(cmd_data, mon_data);
 }
 //-----------------------------------------------------------------------------
 

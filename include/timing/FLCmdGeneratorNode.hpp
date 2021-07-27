@@ -16,9 +16,11 @@
 #include "timing/TimestampGeneratorNode.hpp"
 #include "timing/TimingNode.hpp"
 #include "timing/timingfirmwareinfo/InfoStructs.hpp"
+#include "timing/timingfirmwareinfo/InfoNljs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
+#include <nlohmann/json.hpp>
 
 #include <string>
 
@@ -112,7 +114,7 @@ public:
   /**
    * @brief     Fill the fixed length command counters monitoring structure.
    */
-  void get_info(timingfirmwareinfo::TimingFLCmdCountersVector& mon_data) const;
+  void get_info(timingfirmwareinfo::TimingFLCmdChannelCounters& mon_data) const;
 };
 
 } // namespace timing

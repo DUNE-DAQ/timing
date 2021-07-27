@@ -324,14 +324,18 @@ PartitionNode::get_info(timingfirmwareinfo::TimingPartitionMonitorData& mon_data
   mon_data.buffer_error = lState.at("buf_err").value();
   mon_data.buffer_occupancy = lBufCount.value();
 
-  for (uint i = 0; i < accepted_counters.size(); ++i) { // NOLINT(build/unsigned)
-    timingfirmwareinfo::TimingFLCmdCounters fl_cmd_counters;
+  nlohmann::json cmd_data;
+  
+  for (uint i = 0; i < g_command_map.size(); ++i) { // NOLINT(build/unsigned)
+    nlohmann::json cmd_datum;
 
-    fl_cmd_counters.accepted = accepted_counters.at(i);
-    fl_cmd_counters.rejected = rejected_counters.at(i);
+    cmd_datum["accepted"] = accepted_counters.at(i);
+    cmd_datum["rejected"] = rejected_counters.at(i);
 
-    mon_data.command_counters.push_back(fl_cmd_counters);
+    cmd_data[g_command_map.at(i)] = cmd_datum;
   }
+
+  timingfirmwareinfo::from_json(cmd_data, mon_data.fl_cmd_counters);
 }
 //-----------------------------------------------------------------------------
 } // namespace timing
