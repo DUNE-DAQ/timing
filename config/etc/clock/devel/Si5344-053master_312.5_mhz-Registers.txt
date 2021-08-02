@@ -1,12 +1,12 @@
 # Si534x/7x/8x/9x Registers Script
 # 
 # Part: Si5344
-# Project File: Z:\clockConfiguration\Si5344-053master_312.5_mhz.slabtimeproj
+# Project File: Z:\clockConfiguration\Si5344-053master_312.5_mhz-053mst31.slabtimeproj
 # Design ID: 053mst31
 # Includes Pre/Post Download Control Register Writes: Yes
 # Die Revision: B1
 # Creator: ClockBuilder Pro v2.38 [2019-10-31]
-# Created On: 2020-11-19 12:35:56 GMT+00:00
+# Created On: 2021-08-02 09:17:51 GMT+01:00
 Address,Data
 # 
 # Start configuration preamble
@@ -125,7 +125,7 @@ Address,Data
 0x0127,0x09
 0x0128,0x33
 0x0129,0x08
-0x012B,0x01
+0x012B,0x02
 0x012C,0xCC
 0x012D,0x00
 0x012E,0x08
@@ -197,7 +197,7 @@ Address,Data
 0x025C,0x00
 0x025D,0x00
 0x025E,0x00
-0x025F,0x00
+0x025F,0x04
 0x0260,0x00
 0x0261,0x00
 0x026B,0x30
