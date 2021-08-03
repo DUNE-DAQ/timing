@@ -144,8 +144,6 @@ local timingfirmwareinfo = {
     [
         s.field("timestamp", self.l_uint,
                 doc="Timestamp"),
-        s.field("sent_fl_cmd_chan_counters", self.timing_fl_cmd_channel_counters,
-                doc="Sent fl command counters"),
         s.field("partition_0", self.timing_partition_mon_data,
                 doc="Timing partition 0 data"),        
         s.field("partition_1", self.timing_partition_mon_data,
@@ -160,6 +158,8 @@ local timingfirmwareinfo = {
 
     pdi_master_fw_mon_data_debug: s.record("PDIMasterMonitorDataDebug", 
     [
+        s.field("sent_fl_cmd_chan_counters", self.timing_fl_cmd_channel_counters,
+                    doc="Sent fl command counters"),
     ], doc="PDI master extended monitor data"),
 
 
