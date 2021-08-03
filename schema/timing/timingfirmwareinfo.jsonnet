@@ -158,6 +158,10 @@ local timingfirmwareinfo = {
                 doc="Partition spill interface enabled flag"),
     ], doc="PDI master monitor data"),
 
+    pdi_master_fw_mon_data_debug: s.record("PDIMasterMonitorDataDebug", 
+    [
+    ], doc="PDI master extended monitor data"),
+
 
     overlord_tlu_mon_data: s.record("OverlordTLUMonitorData", 
     [
@@ -182,7 +186,7 @@ local timingfirmwareinfo = {
 
         s.field("hardware_data", thih.dunedaq.timing.timinghardwareinfo.TimingTLUMonitorDataDebug,
                 doc="TLU hardware monitor data"),
-        s.field("master_data", self.pdi_master_fw_mon_data,
+        s.field("master_data", self.pdi_master_fw_mon_data_debug,
                 doc="PD-I timing master firmware monitor data"),
         
         s.field("trig_interface_enabled", self.bool_data, 0,
@@ -212,7 +216,7 @@ local timingfirmwareinfo = {
 
         s.field("hardware_data", thih.dunedaq.timing.timinghardwareinfo.TimingFMCMonitorDataDebug,
                 doc="FMC hardware monitor data"),
-        s.field("master_data", self.pdi_master_fw_mon_data,
+        s.field("master_data", self.pdi_master_fw_mon_data_debug,
                 doc="PD-I timing master firmware monitor data"),
         
         s.field("trig_interface_enabled", self.bool_data, 0,
@@ -287,7 +291,7 @@ local timingfirmwareinfo = {
 
         s.field("hardware_data", thih.dunedaq.timing.timinghardwareinfo.TimingTLUMonitorDataDebug,
                 doc="TLU hardware monitor data"),
-        s.field("master_data", self.pdi_master_fw_mon_data,
+        s.field("master_data", self.pdi_master_fw_mon_data_debug,
                 doc="PDI master monitor data"),
         
         s.field("hsi_data", self.hsi_fw_mon_data,
@@ -316,7 +320,7 @@ local timingfirmwareinfo = {
 
         s.field("hardware_data", thih.dunedaq.timing.timinghardwareinfo.TimingFMCMonitorDataDebug,
                 doc="FMC hardware monitor data"),
-        s.field("master_data", self.pdi_master_fw_mon_data,
+        s.field("master_data", self.pdi_master_fw_mon_data_debug,
                 doc="PDI master monitor data"),
         
         s.field("hsi_data", self.hsi_fw_mon_data,
@@ -345,7 +349,7 @@ local timingfirmwareinfo = {
 
         s.field("hardware_data", thih.dunedaq.timing.timinghardwareinfo.TimingPC059MonitorDataDebug,
                 doc="PC059 hardware monitor data"),
-        s.field("master_data", self.pdi_master_fw_mon_data,
+        s.field("master_data", self.pdi_master_fw_mon_data_debug,
                 doc="PD-I timing master firmware monitor data"),
         
         s.field("fanout_mode", self.bool_data, 0,
@@ -371,7 +375,7 @@ local timingfirmwareinfo = {
                 doc="When was the data actually gathered"),
         s.field("hardware_data", thih.dunedaq.timing.timinghardwareinfo.TimingPC059MonitorDataDebug,
                 doc="PC059 hardware monitor data"),
-        s.field("master_data", self.pdi_master_fw_mon_data,
+        s.field("master_data", self.pdi_master_fw_mon_data_debug,
                 doc="PD-I timing master firmware monitor data"),
         s.field("endpoint_data", teih.dunedaq.timing.timingendpointinfo.TimingEndpointInfo,
                 doc="Timing endpoint firmware monitor data"),
