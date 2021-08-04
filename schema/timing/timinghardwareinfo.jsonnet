@@ -91,9 +91,6 @@ local timinghardwareinfo = {
     ], 
     doc="Timing SFP monitor structure for data read over I2C"),
 
-    timing_sfp_mon_data_vector: s.sequence("TimingSFPMonitorDataVector", self.timing_sfp_mon_data,
-            doc="A vector of timing SFP monitoring data"),
-
     timing_fmc_mon_data: s.record("TimingFMCMonitorData", 
     [
         s.field("cdr_lol", self.bool_data,
@@ -188,8 +185,24 @@ local timinghardwareinfo = {
     [
         s.field("pll_mon_data", self.timing_pll_mon_data,
                 doc="PLL monitoring data"),
-        s.field("sfps_mon_data", self.timing_sfp_mon_data_vector,
-                doc="Sequence of SFPs monitoring data"),
+        s.field("upstream_sfp_mon_data", self.timing_sfp_mon_data,
+                doc="SFP monitoring data"),
+        s.field("sfp_0_mon_data", self.timing_sfp_mon_data,
+                doc="SFP monitoring data"),
+        s.field("sfp_1_mon_data", self.timing_sfp_mon_data,
+                doc="SFP monitoring data"),
+        s.field("sfp_2_mon_data", self.timing_sfp_mon_data,
+                doc="SFP monitoring data"),
+        s.field("sfp_3_mon_data", self.timing_sfp_mon_data,
+                doc="SFP monitoring data"),
+        s.field("sfp_4_mon_data", self.timing_sfp_mon_data,
+                doc="SFP monitoring data"),
+        s.field("sfp_5_mon_data", self.timing_sfp_mon_data,
+                doc="SFP monitoring data"),
+        s.field("sfp_6_mon_data", self.timing_sfp_mon_data,
+                doc="SFP monitoring data"),
+        s.field("sfp_7_mon_data", self.timing_sfp_mon_data,
+                doc="SFP monitoring data"),
     ], 
     doc="Extended iming PC059 monitor data"),
 };

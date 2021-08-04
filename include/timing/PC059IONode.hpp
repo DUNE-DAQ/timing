@@ -15,9 +15,12 @@
 // PDT Headers
 #include "TimingIssues.hpp"
 #include "timing/FanoutIONode.hpp"
+#include "timing/timinghardwareinfo/InfoStructs.hpp"
+#include "timing/timinghardwareinfo/InfoNljs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
+#include <nlohmann/json.hpp>
 
 // C++ Headers
 #include <chrono>

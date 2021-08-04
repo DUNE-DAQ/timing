@@ -227,20 +227,29 @@ PC059IONode::get_info(timinghardwareinfo::TimingPC059MonitorDataDebug& mon_data)
 
   this->get_pll()->get_info(mon_data.pll_mon_data);
   
-  mon_data.sfps_mon_data = std::vector<timinghardwareinfo::TimingSFPMonitorData> (9);
   auto upstream_sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
-  upstream_sfp->get_info(mon_data.sfps_mon_data.at(0));
+  upstream_sfp->get_info(mon_data.upstream_sfp_mon_data);
+
+  nlohmann::json sfps_data;
 
   for (uint sfp_id=0; sfp_id < 8; ++sfp_id) {
     TLOG_DEBUG(0) << "checking sfp: " << sfp_id;
     switch_sfp_i2c_mux_channel(sfp_id);
     auto sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(1), "SFP_EEProm");
+    
+    timinghardwareinfo::TimingSFPMonitorData sfp_data;
+
     try {
-      sfp->get_info(mon_data.sfps_mon_data.at(sfp_id+1));
+      sfp->get_info(sfp_data);
     } catch (timing::SFPUnreachable& e) {
       ers::error(e);
     }
+
+    sfps_data["sfp_"+std::to_string(sfp_id)+"_mon_data"] = sfp_data;
   }
+
+  timinghardwareinfo::from_json(sfps_data, mon_data);
+
 }
 //-----------------------------------------------------------------------------
 

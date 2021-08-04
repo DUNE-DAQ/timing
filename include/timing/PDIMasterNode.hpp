@@ -115,6 +115,11 @@ public:
    * @brief     Fill the PD-I master monitoring structure.
    */
   void get_info(timingfirmwareinfo::PDIMasterMonitorData& mon_data) const;
+
+  /**
+   * @brief     Fill the PD-I master extended monitoring structure.
+   */
+  void get_info(timingfirmwareinfo::PDIMasterMonitorDataDebug& mon_data) const;
 };
 
 } // namespace timing
