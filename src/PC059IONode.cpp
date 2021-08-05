@@ -94,9 +94,9 @@ PC059IONode::reset(int32_t fanout_mode, const std::string& clock_config_file) co
   lSFPExp->set_outputs(0, 0x00);
   TLOG_DEBUG(0) << "SFPs 0-7 enabled";
 
-  getNode("csr.ctrl.rst_lock_mon").write(0x1);
-  getNode("csr.ctrl.rst_lock_mon").write(0x0);
-  getClient().dispatch();
+  //getNode("csr.ctrl.rst_lock_mon").write(0x1);
+  //getNode("csr.ctrl.rst_lock_mon").write(0x0);
+  //getClient().dispatch();
 
   TLOG() << "Reset done";
 }

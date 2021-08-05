@@ -176,6 +176,11 @@ const std::map<std::string, std::string> g_clock_config_map = {
   { "kFMCRev3_enclustra-a35_ouroboros", "devel/Si5394-RevA-94mst625-Registers.txt" },
   { "kFMCRev4_enclustra-a35_ouroboros", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
 
+  { "kFMCRev1_enclustra-a35_master", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
+  { "kFMCRev2_enclustra-a35_master", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
+  { "kFMCRev3_enclustra-a35_master", "devel/Si5394-RevA-94mst625-Registers.txt" },
+  { "kFMCRev4_enclustra-a35_master", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
+
   { "kFMCRev1_enclustra-a35_overlord", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
   { "kFMCRev2_enclustra-a35_overlord", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
   { "kFMCRev3_enclustra-a35_overlord", "devel/Si5394-RevA-94mst625-Registers.txt" },
@@ -224,6 +229,11 @@ const std::map<std::string, std::string> g_clock_config_map = {
   { "kFMCRev2_enclustra-a35_ouroboros_50_mhz", "SI5344/PDTS0003.txt" },
   { "kFMCRev3_enclustra-a35_ouroboros_50_mhz", "SI5344/PDTS0003.txt" },
   { "kFMCRev4_enclustra-a35_ouroboros_50_mhz", "SI5344/PDTS0003.txt" },
+
+  { "kFMCRev1_enclustra-a35_master_50_mhz", "SI5344/PDTS0000.txt" },
+  { "kFMCRev2_enclustra-a35_master_50_mhz", "SI5344/PDTS0003.txt" },
+  { "kFMCRev3_enclustra-a35_master_50_mhz", "SI5344/PDTS0003.txt" },
+  { "kFMCRev4_enclustra-a35_master_50_mhz", "SI5344/PDTS0003.txt" },
 
   { "kPC059Rev1_enclustra-a35_ouroboros_50_mhz", "SI5345/PDTS0005.txt" },
 
