@@ -72,11 +72,13 @@ FMCIONode::reset(const std::string& clock_config_file) const
   // Upload config file to PLL
   configure_pll(lClockConfigFile);
 
-  // Disable sfp tx laser
+  // Enable sfp tx laser
   getNode("csr.ctrl.sfp_tx_dis").write(0x0);
 
-  getNode("csr.ctrl.rst_lock_mon").write(0x1);
-  getNode("csr.ctrl.rst_lock_mon").write(0x0);
+  // To be removed from firmware address maps also
+  //getNode("csr.ctrl.rst_lock_mon").write(0x1);
+  //getNode("csr.ctrl.rst_lock_mon").write(0x0);
+
   getClient().dispatch();
 
   TLOG() << "Reset done";

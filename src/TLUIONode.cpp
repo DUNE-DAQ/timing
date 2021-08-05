@@ -108,9 +108,10 @@ TLUIONode::reset(const std::string& clock_config_file) const
 
   TLOG_DEBUG(0) << "DAC1 and DAC2 set to " << std::hex << lBISignalThreshold;
 
-  getNode("csr.ctrl.rst_lock_mon").write(0x1);
-  getNode("csr.ctrl.rst_lock_mon").write(0x0);
-  getClient().dispatch();
+  // To be removed from firmware address maps also
+  //getNode("csr.ctrl.rst_lock_mon").write(0x1);
+  //getNode("csr.ctrl.rst_lock_mon").write(0x0);
+  //getClient().dispatch();
 
   TLOG() << "Reset done";
 }
