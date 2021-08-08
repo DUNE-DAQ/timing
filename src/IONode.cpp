@@ -190,11 +190,11 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
       throw MissingBoardRevisionMapEntry(ERS_HERE, format_reg_value(lBoardRevision), e);
     }
 
-    try {
-      lClockConfigKey = lClockConfigKey + g_carrier_type_map.at(lCarrierType) + "_";
-    } catch (const std::out_of_range& e) {
-      throw MissingCarrierTypeMapEntry(ERS_HERE, format_reg_value(lCarrierType), e);
-    }
+//    try {
+//      lClockConfigKey = lClockConfigKey + g_carrier_type_map.at(lCarrierType) + "_";
+//    } catch (const std::out_of_range& e) {
+//      throw MissingCarrierTypeMapEntry(ERS_HERE, format_reg_value(lCarrierType), e);
+//    }
 
     try {
       lClockConfigKey = lClockConfigKey + g_design_type_map.at(lDesignType);
