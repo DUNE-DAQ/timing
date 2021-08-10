@@ -92,7 +92,19 @@ EndpointNode::get_status(bool print_out) const
   ept_summary.push_back(std::make_pair("State", g_endpoint_state_map.at(ept_state.find("ep_stat")->second.value())));
   ept_summary.push_back(std::make_pair("Partition", std::to_string(lEPControl.find("tgrp")->second.value())));
   ept_summary.push_back(std::make_pair("Address", std::to_string(lEPControl.find("addr")->second.value())));
-  ept_summary.push_back(std::make_pair("Timestamp", format_timestamp(lEPTimestamp)));
+  
+
+  auto ept_clock_frequency = read_clock_frequency();
+  uint32_t clock_frequency_for_date_calculation;
+
+  if (abs((ept_clock_frequency*1e6)-62.5e6) < 10e3) {
+    ept_summary.push_back(std::make_pair("Timestamp", format_timestamp(lEPTimestamp,62500000)));
+  } else if (abs((ept_clock_frequency*1e6)-50e6) < 10e3) {
+    ept_summary.push_back(std::make_pair("Timestamp", format_timestamp(lEPTimestamp,50000000)));
+  } else {
+    ept_summary.push_back(std::make_pair("Timestamp", format_timestamp(lEPTimestamp,ept_clock_frequency)));
+  }
+  
   ept_summary.push_back(std::make_pair("Timestamp (hex)", format_reg_value(tstamp2int(lEPTimestamp))));
   ept_summary.push_back(std::make_pair("EventCounter", std::to_string(lEPEventCounter.value())));
   std::string lBufferStatusString = !ept_state.find("buf_err")->second.value() ? "OK" : "Error";
@@ -106,6 +118,7 @@ EndpointNode::get_status(bool print_out) const
   }
 
   lStatus << format_reg_table(ept_summary, "Endpoint summary", { "", "" }) << std::endl;
+  lStatus << "Endpoint frequency: " << ept_clock_frequency << " MHz" << std::endl;
   lStatus << format_reg_table(ept_state, "Endpoint state") << std::endl;
   lStatus << format_reg_table(ept_command_counters, "Endpoint counters", { "Command", "Counter" });
 

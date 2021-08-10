@@ -198,9 +198,9 @@ get_seconds_since_epoch()
 
 //-----------------------------------------------------------------------------
 std::string
-format_timestamp(uint64_t rawTimestamp) // NOLINT(build/unsigned)
+format_timestamp(uint64_t rawTimestamp, uint32_t clock_frequency_hz) // NOLINT(build/unsigned)
 {
-  std::time_t lSecFromEpoch = rawTimestamp / g_dune_sp_clock_in_hz;
+  std::time_t lSecFromEpoch = rawTimestamp / clock_frequency_hz;
 
   struct tm* lTime = localtime(&lSecFromEpoch); // NOLINT
   char lTimeBuffer[32];
@@ -212,10 +212,10 @@ format_timestamp(uint64_t rawTimestamp) // NOLINT(build/unsigned)
 
 //-----------------------------------------------------------------------------
 std::string
-format_timestamp(uhal::ValVector<uint32_t> rawTimestamp) // NOLINT(build/unsigned)
+format_timestamp(uhal::ValVector<uint32_t> rawTimestamp, uint32_t clock_frequency_hz) // NOLINT(build/unsigned)
 {
   uint64_t lTimestamp = tstamp2int(rawTimestamp); // NOLINT(build/unsigned)
-  return format_timestamp(lTimestamp);
+  return format_timestamp(lTimestamp, clock_frequency_hz);
 }
 //-----------------------------------------------------------------------------
 

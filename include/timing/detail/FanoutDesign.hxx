@@ -55,7 +55,7 @@ FanoutDesign<IO, MST>::configure() const
 
   if (!fanout_mode) {
     // Set timestamp to current time
-    this->get_master_node().sync_timestamp();
+    this->sync_timestamp();
 
     // Enable spill interface
     this->get_master_node().enable_spill_interface();

@@ -60,7 +60,7 @@ FLCmdGeneratorNode::send_fl_cmd(uint32_t command, // NOLINT(build/unsigned)
   getNode("chan_ctrl.force").write(0x0);
   getClient().dispatch();
   TLOG() << "Command sent " << g_command_map.at(command) << "(" << format_reg_value(command) << ") from generator "
-         << format_reg_value(channel) << " @time 0x" << tstamp2int(lTStamp) << " " << format_timestamp(lTStamp);
+         << format_reg_value(channel) << " @time 0x" << tstamp2int(lTStamp);
 }
 //-----------------------------------------------------------------------------
 

@@ -171,14 +171,14 @@ get_seconds_since_epoch();
  * @return
  */
 std::string
-format_timestamp(uhal::ValVector<uint32_t> rawTimestamp); // NOLINT(build/unsigned)
+format_timestamp(uhal::ValVector<uint32_t> rawTimestamp, uint32_t clock_frequency_hz); // NOLINT(build/unsigned)
 
 /**
  * ""
  * @return
  */
 std::string
-format_timestamp(uint64_t rawTimestamp); // NOLINT(build/unsigned)
+format_timestamp(uint64_t rawTimestamp, uint32_t clock_frequency_hz); // NOLINT(build/unsigned)
 
 /**
  * @brief     Format reg-value table
