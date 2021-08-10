@@ -15,6 +15,7 @@
 
 #include "timing/BoreasDesign.hpp"
 #include "timing/FanoutDesign.hpp"
+#include "timing/OuroborosDesign.hpp"
 #include "timing/OuroborosMuxDesign.hpp"
 #include "timing/OverlordDesign.hpp"
 
@@ -148,6 +149,31 @@ register_top_designs(py::module& m)
     .def("apply_endpoint_delay", &timing::OuroborosMuxDesign<FIBIONode>::apply_endpoint_delay)
     .def("measure_endpoint_rtt", &timing::OuroborosMuxDesign<FIBIONode>::measure_endpoint_rtt)
     .def("scan_sfp_mux", &timing::OuroborosMuxDesign<FIBIONode>::scan_sfp_mux);
+
+  // Ouroboros on FMC
+  py::class_<timing::OuroborosDesign<FMCIONode>, uhal::Node>(m, "OuroborosDesign<FMCIONode>")
+    .def("sync_timestamp", &timing::OuroborosDesign<FMCIONode>::sync_timestamp)
+    .def("get_status", &timing::OuroborosDesign<FMCIONode>::get_status)
+    .def("enable_fake_trigger",
+         &timing::OuroborosDesign<FMCIONode>::enable_fake_trigger,
+         py::arg("channel"),
+         py::arg("rate"),
+         py::arg("poisson"))
+    .def("apply_endpoint_delay", &timing::OuroborosDesign<FMCIONode>::apply_endpoint_delay)
+    .def("measure_endpoint_rtt", &timing::OuroborosDesign<FMCIONode>::measure_endpoint_rtt);
+
+  // Ouroboros on SIM
+  py::class_<timing::OuroborosDesign<SIMIONode>, uhal::Node>(m, "OuroborosDesign<SIMIONode>")
+    .def("sync_timestamp", &timing::OuroborosDesign<SIMIONode>::sync_timestamp)
+    .def("get_status", &timing::OuroborosDesign<SIMIONode>::get_status)
+    .def("enable_fake_trigger",
+         &timing::OuroborosDesign<SIMIONode>::enable_fake_trigger,
+         py::arg("channel"),
+         py::arg("rate"),
+         py::arg("poisson"))
+    .def("apply_endpoint_delay", &timing::OuroborosDesign<SIMIONode>::apply_endpoint_delay)
+    .def("measure_endpoint_rtt", &timing::OuroborosDesign<SIMIONode>::measure_endpoint_rtt);
+
 }
 
 } // namespace python
