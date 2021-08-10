@@ -47,7 +47,8 @@ register_master(py::module& m)
          &timing::PDIMasterNode::enable_fake_trigger,
          py::arg("channel"),
          py::arg("rate"),
-         py::arg("poisson") = false)
+         py::arg("poisson"),
+         py::arg("clock_frequency_hz"))
     .def("disable_fake_trigger", &timing::PDIMasterNode::disable_fake_trigger)
     .def("enable_spill_interface", &timing::PDIMasterNode::enable_spill_interface)
     .def("enable_fake_spills",
@@ -55,6 +56,7 @@ register_master(py::module& m)
          py::arg("cycle_length") = 16,
          py::arg("spill_length") = 8)
     .def("get_status", &timing::PDIMasterNode::get_status, py::arg("print_out") = false)
+    .def("get_status_with_date", &timing::PDIMasterNode::get_status_with_date, py::arg("clock_frequency_hz"), py::arg("print_out") = false)
     .def("sync_timestamp", &timing::PDIMasterNode::sync_timestamp);
 
   py::class_<timing::TriggerReceiverNode, uhal::Node>(m, "TriggerReceiverNode")

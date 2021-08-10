@@ -85,7 +85,8 @@ def master(obj, device):
     obj.mDevice = lDevice
     obj.mTopDesign = lDevice.getNode('')
     obj.mMaster = lMaster
-    
+    obj.mIO = lDevice.getNode('io')
+
     obj.mGenerics = { k:v.value() for k,v in lGenerics.items()}
     obj.mVersion = lVersion.value()
     obj.mBoardType = lBoardInfo['board_type'].value()
@@ -102,10 +103,13 @@ def master(obj, device):
 # ------------------------------------------------------------------------------
 @master.command('status', short_help="Print master status")
 @click.pass_obj
-def synctime(obj):
-
+def status(obj):
+    
     lMaster = obj.mMaster
-    echo(lMaster.get_status())
+    lIO = obj.mIO
+    firmware_clock_frequency_hz = lIO.read_firmware_frequency()
+
+    echo(lMaster.get_status_with_date(firmware_clock_frequency_hz))
 # ------------------------------------------------------------------------------
 
 
@@ -114,8 +118,8 @@ def synctime(obj):
 @click.pass_obj
 def synctime(obj):
 
-    lMaster = obj.mMaster
-    lMaster.sync_timestamp()
+    lDesign = obj.mTopDesign
+    lDesign.sync_timestamp()
 # ------------------------------------------------------------------------------
 
 
@@ -151,7 +155,9 @@ def partstatus(obj, watch, period):
     # lDevice = obj.mDevice
     lMaster = obj.mMaster
     lPartNode = obj.mPartitionNode
-
+    lIO = obj.mIO
+    
+    firmware_clock_frequency_hz = lIO.read_firmware_frequency()
     lTStampNode = lMaster.getNode('tstamp.ctr.val')
 
     while(True):
@@ -161,7 +167,7 @@ def partstatus(obj, watch, period):
         echo( "-- " + style("Master state", fg='green') + "---")
         echo()
         
-        echo(lMaster.get_status())
+        echo(lMaster.get_status_with_date(firmware_clock_frequency_hz))
 
         echo()
 
@@ -390,8 +396,8 @@ def faketriggen(obj, chan, rate, poisson):
     # b) Division by a power of two set by n = 2 ^ rate_div_d (ranging from 2^0 -> 2^15)
     # c) 1-in-n prescaling set by n = rate_div_p
 
-    lMaster = obj.mMaster
-    lMaster.enable_fake_trigger(chan,rate,poisson)
+    lTopDesign = obj.mTopDesign
+    lTopDesign.enable_fake_trigger(chan,rate,poisson)
 # ------------------------------------------------------------------------------
 
 

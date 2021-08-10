@@ -70,6 +70,7 @@ def endpoint(obj, device, ids):
 
     obj.mDevice = lDevice
     obj.mEndpoints = lEndpoints
+    obj.mIO = lDevice.getNode('io')
 # ------------------------------------------------------------------------------
 
 
@@ -132,6 +133,9 @@ def status(obj, watch, period):
     lDevice = obj.mDevice
     lEndpoints = obj.mEndpoints
     lEndPointNode = lDevice.getNode('endpoint0')
+    lIO = obj.mIO
+
+    firmware_clock_frequency_hz = lIO.read_firmware_frequency()
 
     while(True):
         if watch:
@@ -175,7 +179,7 @@ def status(obj, watch, period):
         )
         lEPSummary.add_row(
                 ['Timestamp']+
-                [style(str(toolbox.formatTStamp(lEPData[p]['tstamp'])), fg='blue') for p in lEPKeys]
+                [style(str(toolbox.formatTStamp(lEPData[p]['tstamp'],firmware_clock_frequency_hz)), fg='blue') for p in lEPKeys]
         )
         lEPSummary.add_row(
                 ['Timestamp (hex)']+

@@ -33,7 +33,21 @@ PDIMasterNode::get_status(bool print_out) const
 {
   std::stringstream lStatus;
   auto lTStamp = getNode<TimestampGeneratorNode>("tstamp").read_raw_timestamp();
-  lStatus << "Timestamp: 0x" << std::hex << tstamp2int(lTStamp) << " -> " << format_timestamp(lTStamp) << std::endl
+  lStatus << "Timestamp: 0x" << std::hex << tstamp2int(lTStamp) << std::endl << std::endl;
+  lStatus << getNode<FLCmdGeneratorNode>("scmd_gen").get_cmd_counters_table();
+  if (print_out)
+    TLOG() << lStatus.str();
+  return lStatus.str();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+std::string
+PDIMasterNode::get_status_with_date(uint32_t clock_frequency_hz, bool print_out) const
+{
+  std::stringstream lStatus;
+  auto lTStamp = getNode<TimestampGeneratorNode>("tstamp").read_raw_timestamp();
+  lStatus << "Timestamp: 0x" << std::hex << tstamp2int(lTStamp) << " -> " << format_timestamp(lTStamp, clock_frequency_hz) << std::endl
           << std::endl;
   lStatus << getNode<FLCmdGeneratorNode>("scmd_gen").get_cmd_counters_table();
   if (print_out)
@@ -154,7 +168,7 @@ PDIMasterNode::send_fl_cmd(uint32_t command,                  // NOLINT(build/un
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::enable_fake_trigger(uint32_t channel, double rate, bool poisson) const // NOLINT(build/unsigned)
+PDIMasterNode::enable_fake_trigger(uint32_t channel, double rate, bool poisson, uint32_t clock_frequency_hz) const // NOLINT(build/unsigned)
 {
 
   // Configures the internal command generator to produce triggers at a defined frequency.
@@ -167,7 +181,7 @@ PDIMasterNode::enable_fake_trigger(uint32_t channel, double rate, bool poisson) 
   // b) Division by a power of two set by n = 2 ^ rate_div_d (ranging from 2^0 -> 2^15)
   // c) 1-in-n prescaling set by n = rate_div_p
 
-  FakeTriggerConfig lFTConfig(rate);
+  FakeTriggerConfig lFTConfig(rate, clock_frequency_hz);
 
   lFTConfig.print();
   std::stringstream trig_stream;
@@ -222,17 +236,19 @@ PDIMasterNode::read_in_spill() const
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::sync_timestamp() const
+PDIMasterNode::sync_timestamp(uint32_t clock_frequency_hz) const
 {
 
-  const uint64_t lOldTimestamp = read_timestamp(); // NOLINT(build/unsigned)
-  TLOG() << "Old timestamp: " << format_reg_value(lOldTimestamp) << ", " << format_timestamp(lOldTimestamp);
+  const uint64_t old_timestamp = read_timestamp(); // NOLINT(build/unsigned)
+  TLOG() << "Reading old timestamp: " << format_reg_value(old_timestamp) << ", " << format_timestamp(old_timestamp, clock_frequency_hz);
 
-  const uint64_t lNow = get_seconds_since_epoch() * g_dune_sp_clock_in_hz; // NOLINT(build/unsigned)
-  set_timestamp(lNow);
+  const uint64_t now_timestamp = get_seconds_since_epoch() * clock_frequency_hz; // NOLINT(build/unsigned)
+  TLOG() << "Setting new timestamp: " << format_reg_value(now_timestamp) << ", " << format_timestamp(now_timestamp, clock_frequency_hz);
 
-  const uint64_t lNewTimestamp = read_timestamp(); // NOLINT(build/unsigned)
-  TLOG() << "New timestamp: " << format_reg_value(lNewTimestamp) << ", " << format_timestamp(lNewTimestamp);
+  set_timestamp(now_timestamp);
+
+  const uint64_t new_timestamp = read_timestamp(); // NOLINT(build/unsigned)
+  TLOG() << "Reading new timestamp: " << format_reg_value(new_timestamp) << ", " << format_timestamp(new_timestamp, clock_frequency_hz);
 }
 //-----------------------------------------------------------------------------
 
