@@ -95,8 +95,7 @@ EndpointNode::get_status(bool print_out) const
   
 
   auto ept_clock_frequency = read_clock_frequency();
-  uint32_t clock_frequency_for_date_calculation;
-
+ 
   if (abs((ept_clock_frequency*1e6)-62.5e6) < 10e3) {
     ept_summary.push_back(std::make_pair("Timestamp", format_timestamp(lEPTimestamp,62500000)));
   } else if (abs((ept_clock_frequency*1e6)-50e6) < 10e3) {
