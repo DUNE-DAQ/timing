@@ -38,8 +38,8 @@
   <connection id="EPT_1"             uri="ipbusudp-2.0://192.168.200.17:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/endpoint_fmc/top.xml" />
 
   <connection id="BOREAS_FMC"        uri="ipbusudp-2.0://192.168.200.16:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/boreas_fmc/top_fmc.xml" />
-  <connection id="BOREAS_FMC_WR"     uri="ipbusudp-2.0://10.11.34.118:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/boreas_fmc/top_fmc.xml" />  
-  <connection id="BOREAS_FMC_WR_CH"  uri="chtcp-2.0://np04-srv-012.cern.ch:10203?target=10.11.34.118:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/boreas_fmc/top_fmc.xml" />
+  <connection id="BOREAS_FMC_WR"     uri="ipbusudp-2.0://10.11.34.119:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/boreas_fmc/top_fmc.xml" />  
+  <connection id="BOREAS_FMC_WR_CH"  uri="chtcp-2.0://np04-srv-012.cern.ch:10203?target=10.11.34.119:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/boreas_fmc/top_fmc.xml" />
 
   <connection id="BOREAS_TLU"        uri="ipbusudp-2.0://192.168.200.64:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/boreas_tlu/top_tlu.xml" />
 
@@ -53,6 +53,8 @@
   <connection id="FAN_FIB_AFC"          uri="ipbusudp-2.0://192.168.121.100:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/fanout_fib/top_fib.xml" />
 
   <connection id="CHRONOS_FMC"          uri="ipbusudp-2.0://192.168.200.16:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/chronos_fmc/top.xml" />
+  <connection id="CHRONOS_FMC_WR"       uri="ipbusudp-2.0://10.11.34.118:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/boreas_fmc/top_fmc.xml" />
+  <connection id="CHRONOS_FMC_WR_CH"    uri="chtcp-2.0://np04-srv-012.cern.ch:10203?target=10.11.34.118:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v540/boreas_fmc/top_fmc.xml" />
 
 </connections>
     
