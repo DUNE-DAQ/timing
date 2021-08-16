@@ -250,7 +250,7 @@ EndpointNode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const
 
   nlohmann::json cmd_data;
 
-  for (uint32_t i=0; i < g_command_number; ++i) {
+  for (int i=0; i < g_command_number; ++i) {
   	cmd_data[g_command_map.at(i)] = counters.at(i);
   }
   timingendpointinfo::from_json(cmd_data, mon_data.received_fl_commands_counters);

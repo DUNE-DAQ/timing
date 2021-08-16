@@ -72,7 +72,6 @@ SIMIONode::get_hardware_info(bool print_out) const
 
   std::vector<std::pair<std::string, std::string>> lHardwareInfo;
 
-  // TODO check map at exception
   try {
     lHardwareInfo.push_back(std::make_pair("Board type", g_board_type_map.at(lBoardType)));
   } catch (const std::out_of_range& e) {

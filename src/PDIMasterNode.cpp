@@ -43,7 +43,7 @@ PDIMasterNode::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 std::string
-PDIMasterNode::get_status_with_date(uint32_t clock_frequency_hz, bool print_out) const
+PDIMasterNode::get_status_with_date(uint32_t clock_frequency_hz, bool print_out) const // NOLINT(build/unsigned)
 {
   std::stringstream lStatus;
   auto lTStamp = getNode<TimestampGeneratorNode>("tstamp").read_raw_timestamp();
@@ -236,7 +236,7 @@ PDIMasterNode::read_in_spill() const
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::sync_timestamp(uint32_t clock_frequency_hz) const
+PDIMasterNode::sync_timestamp(uint32_t clock_frequency_hz) const // NOLINT(build/unsigned)
 {
 
   const uint64_t old_timestamp = read_timestamp(); // NOLINT(build/unsigned)

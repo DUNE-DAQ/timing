@@ -61,8 +61,8 @@ TLUIONode::reset(const std::string& clock_config_file) const
   // enclustra i2c switch stuff
   try {
     getNode<I2CMasterNode>(m_uid_i2c_bus).get_slave("AX3_Switch").write_i2c(0x01, 0x7f);
-  } catch (...) { // NOLINT
-                  // TODO, Eric Flumerfelt <eflumerf@fnal.gov> May-21-2021: Throw appropriate ERS exception
+  } catch (const std::exception& e) {
+    ers::warning(EnclustraSwitchFailure(ERS_HERE, e));
   }
 
   // Find the right pll config file
