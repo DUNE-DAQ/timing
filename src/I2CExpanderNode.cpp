@@ -86,8 +86,8 @@ I2CExpanderSlave::read_inputs(uint8_t bank_id) const // NOLINT(build/unsigned)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-uint8_t
-I2CExpanderSlave::read_outputs_config(uint8_t bank_id) const {
+uint8_t                                                        // NOLINT(build/unsigned)
+I2CExpanderSlave::read_outputs_config(uint8_t bank_id) const { // NOLINT(build/unsigned)
 
     this->ensure_valid_bank_id(bank_id);
     return this->read_i2c(0x2 + bank_id);

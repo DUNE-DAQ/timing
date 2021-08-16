@@ -66,8 +66,8 @@ PC059IONode::reset(int32_t fanout_mode, const std::string& clock_config_file) co
   // enclustra i2c switch stuff
   try {
     getNode<I2CMasterNode>(m_uid_i2c_bus).get_slave("AX3_Switch").write_i2c(0x01, 0x7f);
-  } catch (...) { // NOLINT
-                  // TODO, Eric Flumerfelt <eflumerf@fnal.gov> May-21-2021: Throw appropriate ERS exception
+  } catch (const std::exception& e) {
+      ers::warning(EnclustraSwitchFailure(ERS_HERE, e));
   }
 
   // Find the right pll config file
@@ -94,6 +94,7 @@ PC059IONode::reset(int32_t fanout_mode, const std::string& clock_config_file) co
   lSFPExp->set_outputs(0, 0x00);
   TLOG_DEBUG(0) << "SFPs 0-7 enabled";
 
+  // To be removed from firmware address maps also
   //getNode("csr.ctrl.rst_lock_mon").write(0x1);
   //getNode("csr.ctrl.rst_lock_mon").write(0x0);
   //getClient().dispatch();

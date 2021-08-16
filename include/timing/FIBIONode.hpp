@@ -21,6 +21,7 @@
 
 // C++ Headers
 #include <chrono>
+#include <string>
 
 namespace dunedaq {
 namespace timing {
@@ -32,7 +33,7 @@ class FIBIONode : public FanoutIONode {
     UHAL_DERIVEDNODE(FIBIONode)
 
 public:
-    FIBIONode(const uhal::Node& aNode);
+    explicit FIBIONode(const uhal::Node& aNode);
     virtual ~FIBIONode();
 
     /**
@@ -53,23 +54,23 @@ public:
     /**
      * @brief     Switch the SFP mux channel
      */
-    void switch_sfp_mux_channel(uint32_t sfp_id) const override;
+    void switch_sfp_mux_channel(uint32_t sfp_id) const override; // NOLINT(build/unsigned)
 
     /**
      * @brief     Read the active SFP mux channel
      */
-    uint32_t read_active_sfp_mux_channel() const override;
+    uint32_t read_active_sfp_mux_channel() const override; // NOLINT(build/unsigned)
 
 
     /**
      * @brief      Print status of on-board SFP.
      */
-    std::string get_sfp_status(uint32_t sfp_id, bool print_out=false) const override;
+    std::string get_sfp_status(uint32_t sfp_id, bool print_out=false) const override; // NOLINT(build/unsigned)
 
     /**
      * @brief      control tx laser of on-board SFP softly (I2C command)
      */
-    void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const override;
+    void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
 
     /**
      * @brief      reset on-board PLL using I2C IO expanders
@@ -79,22 +80,22 @@ public:
     /**
      * @brief      reset on-board SFP flags using I2C IO expanders
      */
-    uint8_t read_sfp_los_flag(uint32_t sfp_id) const;
+    uint8_t read_sfp_los_flag(uint32_t sfp_id) const; // NOLINT(build/unsigned)
 
     /**
      * @brief      reset on-board SFP flags using I2C IO expanders
      */
-    uint8_t read_sfp_fault_flag(uint32_t sfp_id) const;
+    uint8_t read_sfp_fault_flag(uint32_t sfp_id) const; // NOLINT(build/unsigned)
 
     /**
      * @brief      reset on-board SFP flags using I2C IO expanders
      */
-    uint8_t read_sfp_los_flags() const;
+    uint8_t read_sfp_los_flags() const; // NOLINT(build/unsigned)
 
     /**
      * @brief      reset on-board SFP flags using I2C IO expanders
      */
-    uint8_t read_sfp_fault_flags() const;
+    uint8_t read_sfp_fault_flags() const; // NOLINT(build/unsigned)
 
     /**
      * @brief      reset on-board SFP flags using I2C IO expanders
@@ -104,13 +105,13 @@ public:
     /**
      * @brief      Switch on or off the SFP tx laser via the I2C IO expander controlling the sfp tx disable pin. aOn=1: laster transmitting, tx disable pin = 0; aOn=0: laster NOT transmitting, tx disable pin = 1. 
      */
-    void switch_sfp_tx(uint32_t sfp_id, bool turn_on) const;
+    void switch_sfp_tx(uint32_t sfp_id, bool turn_on) const; // NOLINT(build/unsigned)
 
 
 
 private:
 
-    void validate_sfp_id(uint32_t sfp_id) const;
+    void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)
 
 };
 

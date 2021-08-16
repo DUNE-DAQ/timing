@@ -34,7 +34,7 @@ struct FakeTriggerConfig
   uint32_t prescale; // NOLINT(build/unsigned)
   double actual_rate;
 
-  explicit FakeTriggerConfig(double rate, uint32_t clock_frequency_hz)
+  explicit FakeTriggerConfig(double rate, uint32_t clock_frequency_hz) // NOLINT
     : requested_rate(rate)
   {
     // Rate =  (50MHz / 2^(d+8)) / p where n in [0,15] and p in [1,256]

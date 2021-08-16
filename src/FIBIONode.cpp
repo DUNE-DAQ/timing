@@ -1,4 +1,15 @@
+/**
+ * @file FIBIONode.cpp
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
+
 #include "timing/FIBIONode.hpp"
+
+#include <map>
+#include <string>
 
 namespace dunedaq {
 namespace timing {
@@ -22,19 +33,20 @@ FIBIONode::~FIBIONode() {
 std::string
 FIBIONode::get_status(bool print_out) const {
 	std::stringstream lStatus;
-	std::map<std::string,uhal::ValWord<uint32_t>> subnodes = read_sub_nodes(getNode("csr.stat"));
+	std::map<std::string,uhal::ValWord<uint32_t>> subnodes = read_sub_nodes(getNode("csr.stat")); // NOLINT(build/unsigned)
 
-	uhal::ValWord<uint32_t> lSFPLOSFlags(read_sfp_los_flags());
+	uhal::ValWord<uint32_t> lSFPLOSFlags(read_sfp_los_flags()); // NOLINT(build/unsigned)
 	lSFPLOSFlags.valid(true);
 	subnodes.emplace("SFP LOS flags", lSFPLOSFlags);
 	
-	uhal::ValWord<uint32_t> lSFPFaultFlags(read_sfp_fault_flags());
+	uhal::ValWord<uint32_t> lSFPFaultFlags(read_sfp_fault_flags()); // NOLINT(build/unsigned)
 	lSFPFaultFlags.valid(true);
 	subnodes.emplace("SFP Fault flags", lSFPFaultFlags);
 
 	lStatus << format_reg_table(subnodes, "FIB IO state");
 
-	if (print_out) std::cout << lStatus.str();
+	if (print_out) TLOG() << lStatus.str();
+
     return lStatus.str();
 }
 //-----------------------------------------------------------------------------
@@ -60,8 +72,9 @@ FIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) cons
 		// enclustra i2c switch stuff
 		try {
 			getNode<I2CMasterNode>(m_uid_i2c_bus).get_slave("AX3_Switch").write_i2c(0x01, 0x7f);
-		} catch(...) {
-		}
+		} catch (const std::exception& e) {
+      		ers::warning(EnclustraSwitchFailure(ERS_HERE, e));
+    	}
 	}
 	
 	// Configure I2C IO expanders
@@ -105,6 +118,7 @@ FIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) cons
 	//getNode("csr.ctrl.inmux").write(0);
 	//getClient().dispatch();
 	
+// To be removed from firmware address maps also
 //	getNode("csr.ctrl.rst_lock_mon").write(0x1);
 //	getNode("csr.ctrl.rst_lock_mon").write(0x0);
 //	getClient().dispatch();
@@ -124,7 +138,7 @@ FIBIONode::reset(const std::string& clock_config_file) const {
 
 //-----------------------------------------------------------------------------
 void
-FIBIONode::switch_sfp_mux_channel(uint32_t sfp_id) const {
+FIBIONode::switch_sfp_mux_channel(uint32_t sfp_id) const { // NOLINT(build/unsigned)
 	validate_sfp_id(sfp_id);
 	getNode("csr.ctrl.inmux").write(sfp_id);
 	getClient().dispatch();	
@@ -134,7 +148,7 @@ FIBIONode::switch_sfp_mux_channel(uint32_t sfp_id) const {
 
 
 //-----------------------------------------------------------------------------
-uint32_t
+uint32_t // NOLINT(build/unsigned)
 FIBIONode::read_active_sfp_mux_channel() const {
 	auto lActiveSFPMUXChannel = getNode("csr.ctrl.inmux").read();
 	getClient().dispatch();
@@ -145,7 +159,7 @@ FIBIONode::read_active_sfp_mux_channel() const {
 
 //-----------------------------------------------------------------------------
 std::string
-FIBIONode::get_sfp_status(uint32_t sfp_id, bool print_out) const {
+FIBIONode::get_sfp_status(uint32_t sfp_id, bool print_out) const { // NOLINT(build/unsigned)
 	std::stringstream lStatus;
 	
 	validate_sfp_id(sfp_id);
@@ -155,7 +169,8 @@ FIBIONode::get_sfp_status(uint32_t sfp_id, bool print_out) const {
 	lStatus << "Fanout SFP " << sfp_id << ":" << std::endl;
 	lStatus << sfp->get_status();	
 	
-	if (print_out) std::cout << lStatus.str();
+	if (print_out) TLOG() << lStatus.str();
+
 	return lStatus.str();
 }
 //-----------------------------------------------------------------------------
@@ -163,7 +178,7 @@ FIBIONode::get_sfp_status(uint32_t sfp_id, bool print_out) const {
 
 //-----------------------------------------------------------------------------
 void
-FIBIONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const {
+FIBIONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const { // NOLINT(build/unsigned)
 	validate_sfp_id(sfp_id);
 
 	// on this board the 8 downstream sfps have their own i2c bus
@@ -184,37 +199,37 @@ FIBIONode::reset_pll() const {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-uint8_t
+uint8_t // NOLINT(build/unsigned)
 FIBIONode::read_sfp_los_flags() const {
 	auto lIC23 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "Expander2");
 	
-	uint8_t lSFPLOSFlags = lIC23->read_inputs(0x01);
+	uint8_t lSFPLOSFlags = lIC23->read_inputs(0x01); // NOLINT(build/unsigned)
 	return lSFPLOSFlags;
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-uint8_t
+uint8_t // NOLINT(build/unsigned)
 FIBIONode::read_sfp_fault_flags() const {
 	auto lIC10 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "Expander1");
 	
-	uint8_t lSFPFaultFlags = lIC10->read_inputs(0x01);
+	uint8_t lSFPFaultFlags = lIC10->read_inputs(0x01); // NOLINT(build/unsigned)
 	return lSFPFaultFlags;
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-uint8_t
-FIBIONode::read_sfp_los_flag(uint32_t sfp_id) const {
+uint8_t 											  // NOLINT(build/unsigned)
+FIBIONode::read_sfp_los_flag(uint32_t sfp_id) const { // NOLINT(build/unsigned)
 	return read_sfp_los_flags() & (1UL << sfp_id);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-uint8_t
-FIBIONode::read_sfp_fault_flag(uint32_t sfp_id) const {
+uint8_t 												// NOLINT(build/unsigned)
+FIBIONode::read_sfp_fault_flag(uint32_t sfp_id) const { // NOLINT(build/unsigned)
 	return read_sfp_fault_flags() & (1UL << sfp_id);
 }
 //-----------------------------------------------------------------------------
@@ -222,17 +237,19 @@ FIBIONode::read_sfp_fault_flag(uint32_t sfp_id) const {
 
 //-----------------------------------------------------------------------------
 void
-FIBIONode::switch_sfp_tx(uint32_t sfp_id, bool turn_on) const {
+FIBIONode::switch_sfp_tx(uint32_t sfp_id, bool turn_on) const { // NOLINT(build/unsigned)
 	validate_sfp_id(sfp_id);
 	
 	auto lIC10 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "Expander1");
-	uint8_t lCurrentSFPTxControlFlags = lIC10->read_outputs_config(0);
+	uint8_t lCurrentSFPTxControlFlags = lIC10->read_outputs_config(0); // NOLINT(build/unsigned)
 
-	uint8_t lNewSFPTxControlFlags;
-	if (turn_on) {
+	uint8_t lNewSFPTxControlFlags; // NOLINT(build/unsigned)
+	if (turn_on) 
+	{
 		lNewSFPTxControlFlags = lCurrentSFPTxControlFlags & ~(1UL << sfp_id);
 	}
-    else {
+    else
+    {
     	lNewSFPTxControlFlags = lCurrentSFPTxControlFlags | (1UL << sfp_id);
     }
 
@@ -243,7 +260,7 @@ FIBIONode::switch_sfp_tx(uint32_t sfp_id, bool turn_on) const {
 
 //-----------------------------------------------------------------------------
 void
-FIBIONode::validate_sfp_id(uint32_t sfp_id) const {
+FIBIONode::validate_sfp_id(uint32_t sfp_id) const { // NOLINT(build/unsigned)
 	// on this board we have 8 downstream SFPs
 	if (sfp_id > 7) {
 		std::ostringstream lMsg;

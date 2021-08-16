@@ -122,7 +122,7 @@ ERS_DECLARE_ISSUE(timing,                                               ///< Nam
 ERS_DECLARE_ISSUE(timing,                                                              ///< Namespace
                   UnknownFirmwareClockFrequency,                                       ///< Issue class name
                   frequency << " Hz is not a known timing firmwaare clock frequency!", ///< Message
-                  ((std::uint32_t)frequency)                                           ///< Message parameters
+                  ((std::uint32_t)frequency)                                           // NOLINT(build/unsigned) /< Message parameters 
 )
 
 ERS_DECLARE_ISSUE(timing,                                              ///< Namespace
@@ -223,6 +223,11 @@ ERS_DECLARE_ISSUE(timing,                                                       
 )
 
 ERS_DECLARE_ISSUE(timing, HSIBufferIssue, "HSI buffer in state: " << buffer_state, ((std::string)buffer_state))
+
+ERS_DECLARE_ISSUE(timing,                                                                       ///< Namespace
+                  EnclustraSwitchFailure,                                                       ///< Issue class name
+                  " Failed to program Enclustra I2C IO expander. FMC I2C access may not work.", ///< Message
+                  ERS_EMPTY)                                                                    ///< Message parameters
 
 
 } // namespace dunedaq

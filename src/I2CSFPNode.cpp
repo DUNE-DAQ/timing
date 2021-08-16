@@ -401,9 +401,6 @@ I2CSFPSlave::get_info(timinghardwareinfo::TimingSFPMonitorData& mon_data) const
 
   sfp_reachable();
 
-  // TODO ?
-  // fault
-
   // Vendor name
   mon_data.vendor_name = this->read_vendor_name();
 

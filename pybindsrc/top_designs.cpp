@@ -174,7 +174,7 @@ register_top_designs(py::module& m)
     .def("apply_endpoint_delay", &timing::OuroborosDesign<SIMIONode>::apply_endpoint_delay)
     .def("measure_endpoint_rtt", &timing::OuroborosDesign<SIMIONode>::measure_endpoint_rtt);
 
-}
+} // NOLINT
 
 } // namespace python
 } // namespace timing

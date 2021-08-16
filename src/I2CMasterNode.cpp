@@ -443,7 +443,8 @@ I2CMasterNode::send_i2c_command_and_write_data(uint8_t command, uint8_t data) co
   getClient().dispatch();
 
   // Wait for transaction to finish. Require idle bus at the end if stop bit is high
-  wait_until_finished(/*req hack*/ true, /*requ idle*/ command & kStopCmd);
+  // wait_until_finished(req_hack, requ_idle)
+  wait_until_finished( true, command & kStopCmd); // NOLINT
 }
 //-----------------------------------------------------------------------------
 

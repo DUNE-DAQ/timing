@@ -128,7 +128,6 @@ IONode::get_hardware_info(bool print_out) const
 
   std::vector<std::pair<std::string, std::string>> lHardwareInfo;
 
-  // TODO check map at exception
   try {
     lHardwareInfo.push_back(std::make_pair("Board type", g_board_type_map.at(lBoardType)));
   } catch (const std::out_of_range& e) {
@@ -280,7 +279,7 @@ IONode::get_clock_frequencies_table(bool print_out) const
   for (uint8_t i = 0; i < lFrequencies.size(); ++i) { // NOLINT(build/unsigned)
     lTable << m_clock_names.at(i) << " freq: " << std::setprecision(12) << lFrequencies.at(i) << std::endl;
   }
-  // TODO add freq validation
+  // TODO add freq validation Stoyan Trilov stoyan.trilov@cern.ch
   if (print_out)
     TLOG() << lTable.str();
   return lTable.str();
