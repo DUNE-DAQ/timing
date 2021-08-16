@@ -55,12 +55,12 @@ PartitionNode::enable(bool enable, bool dispatch) const
 //-----------------------------------------------------------------------------
 void
 PartitionNode::configure(uint32_t trigger_mask, // NOLINT(build/unsigned)
-                         bool enableSpillGate,
+                         bool enable_spill_gate,
                          bool rate_control_enabled) const
 {
   getNode("csr.ctrl.rate_ctrl_en").write(rate_control_enabled);
   getNode("csr.ctrl.trig_mask").write(trigger_mask);
-  getNode("csr.ctrl.spill_gate_en").write(enableSpillGate);
+  getNode("csr.ctrl.spill_gate_en").write(enable_spill_gate);
   getClient().dispatch();
 }
 //-----------------------------------------------------------------------------
@@ -195,10 +195,10 @@ PartitionNode::start(uint32_t timeout /*milliseconds*/) const // NOLINT(build/un
   std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
   while (true) {
-    auto lInRun = getNode("csr.stat.in_run").read();
+    auto in_run = getNode("csr.stat.in_run").read();
     getClient().dispatch();
 
-    if (lInRun)
+    if (in_run)
       break;
 
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
@@ -221,10 +221,10 @@ PartitionNode::stop(uint32_t timeout /*milliseconds*/) const // NOLINT(build/uns
 
   while (true) {
 
-    auto lInRun = getNode("csr.stat.in_run").read();
+    auto in_run = getNode("csr.stat.in_run").read();
     getClient().dispatch();
 
-    if (!lInRun)
+    if (!in_run)
       break;
 
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
@@ -280,8 +280,8 @@ PartitionNode::get_status(bool print_out) const
   status << format_reg_table(state, "State") << std::endl;
 
   status << "Event Counter: " << event_counter.value() << std::endl;
-  std::string lBufferStatusString = !state.find("buf_err")->second.value() ? "OK" : "Error";
-  status << "Buffer status: " << lBufferStatusString << std::endl;
+  std::string buffer_status_string = !state.find("buf_err")->second.value() ? "OK" : "Error";
+  status << "Buffer status: " << buffer_status_string << std::endl;
   status << "Buffer occupancy: " << buffer_count.value() << std::endl;
 
   status << std::endl;

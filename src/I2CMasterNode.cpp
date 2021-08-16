@@ -84,12 +84,12 @@ I2CMasterNode::constructor()
 
   // Build the list of slaves
   // Loop over node parameters. Each parameter becomes a slave node.
-  const std::unordered_map<std::string, std::string>& lPars = this->getParameters();
-  std::unordered_map<std::string, std::string>::const_iterator lIt;
-  for (lIt = lPars.begin(); lIt != lPars.end(); ++lIt) {
-    uint32_t lSlaveAddr = (boost::lexical_cast<timing::stoul<uint32_t>>(lIt->second) & 0x7f); // NOLINT(build/unsigned)
-    m_i2c_device_addresses.insert(std::make_pair(lIt->first, lSlaveAddr));
-    m_i2c_devices.insert(std::make_pair(lIt->first, new I2CSlave(this, lSlaveAddr)));
+  const std::unordered_map<std::string, std::string>& parameters = this->getParameters();
+  std::unordered_map<std::string, std::string>::const_iterator it;
+  for (it = parameters.begin(); it != parameters.end(); ++it) {
+    uint32_t slave_addr = (boost::lexical_cast<timing::stoul<uint32_t>>(it->second) & 0x7f); // NOLINT(build/unsigned)
+    m_i2c_device_addresses.insert(std::make_pair(it->first, slave_addr));
+    m_i2c_devices.insert(std::make_pair(it->first, new I2CSlave(this, slave_addr)));
   }
 }
 //-----------------------------------------------------------------------------
@@ -97,10 +97,10 @@ I2CMasterNode::constructor()
 //-----------------------------------------------------------------------------
 I2CMasterNode::~I2CMasterNode()
 {
-  std::unordered_map<std::string, I2CSlave*>::iterator lIt;
-  for (lIt = m_i2c_devices.begin(); lIt != m_i2c_devices.end(); ++lIt) {
+  std::unordered_map<std::string, I2CSlave*>::iterator it;
+  for (it = m_i2c_devices.begin(); it != m_i2c_devices.end(); ++it) {
     // Delete slaves
-    delete lIt->second; // NOLINT
+    delete it->second; // NOLINT
   }
 }
 //-----------------------------------------------------------------------------
@@ -109,10 +109,10 @@ I2CMasterNode::~I2CMasterNode()
 std::vector<std::string>
 I2CMasterNode::get_slaves() const
 {
-  std::vector<std::string> lSlaves;
+  std::vector<std::string> slaves;
 
-  boost::copy(m_i2c_device_addresses | boost::adaptors::map_keys, std::back_inserter(lSlaves));
-  return lSlaves;
+  boost::copy(m_i2c_device_addresses | boost::adaptors::map_keys, std::back_inserter(slaves));
+  return slaves;
 }
 //-----------------------------------------------------------------------------
 
@@ -120,12 +120,12 @@ I2CMasterNode::get_slaves() const
 uint8_t // NOLINT(build/unsigned)
 I2CMasterNode::get_slave_address(const std::string& name) const
 {
-  std::unordered_map<std::string, uint8_t>::const_iterator lIt = // NOLINT(build/unsigned)
+  std::unordered_map<std::string, uint8_t>::const_iterator it = // NOLINT(build/unsigned)
     m_i2c_device_addresses.find(name);
-  if (lIt == m_i2c_device_addresses.end()) {
+  if (it == m_i2c_device_addresses.end()) {
     throw I2CDeviceNotFound(ERS_HERE, getId(), name);
   }
-  return lIt->second;
+  return it->second;
 }
 //-----------------------------------------------------------------------------
 
@@ -133,11 +133,11 @@ I2CMasterNode::get_slave_address(const std::string& name) const
 const I2CSlave&
 I2CMasterNode::get_slave(const std::string& name) const
 {
-  std::unordered_map<std::string, I2CSlave*>::const_iterator lIt = m_i2c_devices.find(name);
-  if (lIt == m_i2c_devices.end()) {
+  std::unordered_map<std::string, I2CSlave*>::const_iterator it = m_i2c_devices.find(name);
+  if (it == m_i2c_devices.end()) {
     throw I2CDeviceNotFound(ERS_HERE, getId(), name);
   }
-  return *(lIt->second);
+  return *(it->second);
 }
 //-----------------------------------------------------------------------------
 
@@ -224,7 +224,7 @@ I2CMasterNode::write_i2cPrimitive(uint8_t i2c_device_address,       // NOLINT(bu
 //-----------------------------------------------------------------------------
 void
 I2CMasterNode::write_block_i2c(uint8_t i2c_device_address,         // NOLINT(build/unsigned)
-                               const std::vector<uint8_t>& aArray, // NOLINT(build/unsigned)
+                               const std::vector<uint8_t>& data, // NOLINT(build/unsigned)
                                bool send_stop) const
 {
   // transmit reg definitions
@@ -248,20 +248,20 @@ I2CMasterNode::write_block_i2c(uint8_t i2c_device_address,         // NOLINT(bui
   // Open the connection and send the slave address, bit 0 set to zero
   send_i2c_command_and_write_data(kStartCmd, (i2c_device_address << 1) & 0xfe);
 
-  for (unsigned iByte = 0; iByte < aArray.size(); iByte++) {
+  for (unsigned ibyte = 0; ibyte < data.size(); ibyte++) {
 
     // Send stop if last element of the array (and not vetoed)
-    uint8_t lCmd = (((iByte == aArray.size() - 1) && send_stop) ? kStopCmd : 0x0); // NOLINT(build/unsigned)
+    uint8_t cmd = (((ibyte == data.size() - 1) && send_stop) ? kStopCmd : 0x0); // NOLINT(build/unsigned)
 
     // Push the byte on the bus
-    send_i2c_command_and_write_data(lCmd, aArray[iByte]);
+    send_i2c_command_and_write_data(cmd, data[ibyte]);
   }
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 std::vector<uint8_t>                                                                // NOLINT(build/unsigned)
-I2CMasterNode::read_block_i2c(uint8_t i2c_device_address, uint32_t lNumBytes) const // NOLINT(build/unsigned)
+I2CMasterNode::read_block_i2c(uint8_t i2c_device_address, uint32_t number_of_bytes) const // NOLINT(build/unsigned)
 {
   // transmit reg definitions
   // bits 7-1: 7-bit slave address during address transfer
@@ -285,12 +285,12 @@ I2CMasterNode::read_block_i2c(uint8_t i2c_device_address, uint32_t lNumBytes) co
   send_i2c_command_and_write_data(kStartCmd, (i2c_device_address << 1) | 0x01);
 
   std::vector<uint8_t> lArray; // NOLINT(build/unsigned)
-  for (unsigned iByte = 0; iByte < lNumBytes; iByte++) {
+  for (unsigned ibyte = 0; ibyte < number_of_bytes; ibyte++) {
 
-    uint8_t lCmd = ((iByte == lNumBytes - 1) ? (kStopCmd | kAckCmd) : 0x0); // NOLINT(build/unsigned)
+    uint8_t cmd = ((ibyte == number_of_bytes - 1) ? (kStopCmd | kAckCmd) : 0x0); // NOLINT(build/unsigned)
 
     // Push the cmd on the bus, retrieve the result and put it in the arrary
-    lArray.push_back(send_i2c_command_and_read_data(lCmd));
+    lArray.push_back(send_i2c_command_and_read_data(cmd));
   }
   return lArray;
 }
@@ -300,9 +300,6 @@ I2CMasterNode::read_block_i2c(uint8_t i2c_device_address, uint32_t lNumBytes) co
 bool
 I2CMasterNode::ping(uint8_t i2c_device_address) const // NOLINT(build/unsigned)
 {
-
-  std::vector<uint8_t> lAddrVector; // NOLINT(build/unsigned)
-
   // Reset bus before beginning
   reset();
 
@@ -310,8 +307,7 @@ I2CMasterNode::ping(uint8_t i2c_device_address) const // NOLINT(build/unsigned)
     send_i2c_command_and_write_data(kStartCmd, (i2c_device_address << 1) | 0x01);
     send_i2c_command_and_read_data(kStopCmd | kAckCmd);
     return true;
-  } catch (const timing::I2CException& lExc) {
-    // TIMING_LOG(kError) << std::showbase << std::hex << (uint32_t)iAddr << "  " << lExc.what();
+  } catch (const timing::I2CException& excp) {
     return false;
   }
 }
@@ -322,25 +318,25 @@ std::vector<uint8_t> // NOLINT(build/unsigned)
 I2CMasterNode::scan() const
 {
 
-  std::vector<uint8_t> lAddrVector; // NOLINT(build/unsigned)
+  std::vector<uint8_t> address_vector; // NOLINT(build/unsigned)
 
   // Reset bus before beginning
   reset();
 
-  for (uint8_t iAddr(0); iAddr < 0x7f; ++iAddr) { // NOLINT(build/unsigned)
+  for (uint8_t iaddr(0); iaddr < 0x7f; ++iaddr) { // NOLINT(build/unsigned)
     // Open the connection & send the target i2c address. Bit 0 set to 1 (read)
     try {
-      send_i2c_command_and_write_data(kStartCmd, (iAddr << 1) | 0x01);
+      send_i2c_command_and_write_data(kStartCmd, (iaddr << 1) | 0x01);
       send_i2c_command_and_read_data(kStopCmd | kAckCmd);
-    } catch (const timing::I2CException& lExc) {
-      // TIMING_LOG(kError) << std::showbase << std::hex << (uint32_t)iAddr << "  " << lExc.what();
+    } catch (const timing::I2CException& excp) {
+      // TIMING_LOG(kError) << std::showbase << std::hex << (uint32_t)iaddr << "  " << excp.what();
       continue;
     }
-    lAddrVector.push_back(iAddr);
-    // TIMING_LOG(kNotice) << std::showbase << std::hex << (uint32_t)iAddr << " found";
+    address_vector.push_back(iaddr);
+    // TIMING_LOG(kNotice) << std::showbase << std::hex << (uint32_t)iaddr << " found";
   }
 
-  return lAddrVector;
+  return address_vector;
 }
 //-----------------------------------------------------------------------------
 
@@ -357,15 +353,15 @@ I2CMasterNode::reset() const
   //        4) Sets all writable bus-master registers to default values
 
   auto ctrl = getNode(kCtrlNode).read();
-  auto preHi = getNode(kPreHiNode).read();
-  auto preLo = getNode(kPreLoNode).read();
+  auto pre_hi = getNode(kPreHiNode).read();
+  auto pre_lo = getNode(kPreLoNode).read();
   getClient().dispatch();
 
-  bool lFullReset(false);
+  bool full_reset(false);
 
-  lFullReset = (m_clock_prescale != (preHi << 8) + preLo);
+  full_reset = (m_clock_prescale != (pre_hi << 8) + pre_lo);
 
-  if (lFullReset) {
+  if (full_reset) {
     // disable the I2C core
     getNode(kCtrlNode).write(0x00);
     getClient().dispatch();
@@ -398,23 +394,23 @@ I2CMasterNode::send_i2c_command_and_read_data(uint8_t command) const // NOLINT(b
 
   assert(!(command & kWriteToSlaveCmd));
 
-  uint8_t lFullCmd = command | kReadFromSlaveCmd;                                     // NOLINT(build/unsigned)
-  TLOG_DEBUG(4) << ">> sending read cmd  = " << format_reg_value((uint32_t)lFullCmd); // NOLINT(build/unsigned)
+  uint8_t full_cmd = command | kReadFromSlaveCmd;                                     // NOLINT(build/unsigned)
+  TLOG_DEBUG(4) << ">> sending read cmd  = " << format_reg_value((uint32_t)full_cmd); // NOLINT(build/unsigned)
 
   // Force the read bit high and set them cmd bits
-  getNode(kCmdNode).write(lFullCmd);
+  getNode(kCmdNode).write(full_cmd);
   getClient().dispatch();
 
   // Wait for transaction to finish. Require idle bus at the end if stop bit is high)
   wait_until_finished(/*req ack*/ false, command & kStopCmd);
 
   // Pull the data out of the rx register.
-  uhal::ValWord<uint32_t> lResult = getNode(kRxNode).read(); // NOLINT(build/unsigned)
+  uhal::ValWord<uint32_t> result = getNode(kRxNode).read(); // NOLINT(build/unsigned)
   getClient().dispatch();
 
-  TLOG_DEBUG(4) << "<< receive data      = " << format_reg_value((uint32_t)lResult); // NOLINT(build/unsigned)v
+  TLOG_DEBUG(4) << "<< receive data      = " << format_reg_value((uint32_t)result); // NOLINT(build/unsigned)v
 
-  return (lResult & 0xff);
+  return (result & 0xff);
 }
 //-----------------------------------------------------------------------------
 
@@ -426,9 +422,9 @@ I2CMasterNode::send_i2c_command_and_write_data(uint8_t command, uint8_t data) co
   //
   assert(!(command & kReadFromSlaveCmd));
 
-  uint8_t lFullCmd = command | kWriteToSlaveCmd; // NOLINT(build/unsigned)
+  uint8_t full_cmd = command | kWriteToSlaveCmd; // NOLINT(build/unsigned)
   std::stringstream debug_stream;
-  debug_stream << ">> sending write cmd = " << std::showbase << std::hex << (uint32_t)lFullCmd // NOLINT(build/unsigned)
+  debug_stream << ">> sending write cmd = " << std::showbase << std::hex << (uint32_t)full_cmd // NOLINT(build/unsigned)
                << " data = " << std::showbase << std::hex << (uint32_t)data;                   // NOLINT(build/unsigned)
   TLOG_DEBUG(4) << debug_stream.str();
 
@@ -437,7 +433,7 @@ I2CMasterNode::send_i2c_command_and_write_data(uint8_t command, uint8_t data) co
   getClient().dispatch();
 
   // Force the write bit high and set them cmd bits
-  getNode(kCmdNode).write(lFullCmd);
+  getNode(kCmdNode).write(full_cmd);
 
   // Run the commands and wait for transaction to finish
   getClient().dispatch();
@@ -450,7 +446,7 @@ I2CMasterNode::send_i2c_command_and_write_data(uint8_t command, uint8_t data) co
 
 //-----------------------------------------------------------------------------
 void
-I2CMasterNode::wait_until_finished(bool aRequireAcknowledgement, bool aRequireBusIdleAtEnd) const
+I2CMasterNode::wait_until_finished(bool require_acknowledgement, bool require_bus_idle_at_end) const
 {
   // Ensures the current bus transaction has finished successfully
   // before allowing further I2C bus transactions
@@ -458,35 +454,35 @@ I2CMasterNode::wait_until_finished(bool aRequireAcknowledgement, bool aRequireBu
   // and will not allow execution to continue until the
   // I2C bus has completed properly.  It will throw an exception
   // if it picks up bus problems or a bus timeout occurs.
-  const unsigned lMaxRetry = 20;
-  unsigned lAttempt = 1;
-  bool lReceivedAcknowledge, lBusy;
+  const unsigned max_retry = 20;
+  unsigned attempt = 1;
+  bool received_acknowledge, busy;
 
-  const uhal::Node& lStatusNode = getNode(kStatusNode);
+  const uhal::Node& status_node = getNode(kStatusNode);
 
-  while (lAttempt <= lMaxRetry) {
+  while (attempt <= max_retry) {
     usleep(10);
     // Get the status
-    uhal::ValWord<uint32_t> i2c_status = lStatusNode.read(); // NOLINT(build/unsigned)
+    uhal::ValWord<uint32_t> i2c_status = status_node.read(); // NOLINT(build/unsigned)
     getClient().dispatch();
 
-    lReceivedAcknowledge = !(i2c_status & kReceivedAckBit);
-    lBusy = (i2c_status & kBusyBit);
-    bool arbitrationLost = (i2c_status & kArbitrationLostBit);
-    bool transferInProgress = (i2c_status & kInProgressBit);
+    received_acknowledge = !(i2c_status & kReceivedAckBit);
+    busy = (i2c_status & kBusyBit);
+    bool arbitration_lost = (i2c_status & kArbitrationLostBit);
+    bool transfer_in_progress = (i2c_status & kInProgressBit);
 
-    if (arbitrationLost) {
+    if (arbitration_lost) {
       // This is an instant error at any time
       throw I2CBusArbitrationLost(ERS_HERE, getId());
     }
 
-    if (!transferInProgress) {
+    if (!transfer_in_progress) {
       // The transfer looks to have completed successfully,
       // pending further checks
       break;
     }
 
-    lAttempt += 1;
+    attempt += 1;
   }
 
   // At this point, we've either had too many retries, or the
@@ -494,15 +490,15 @@ I2CMasterNode::wait_until_finished(bool aRequireAcknowledgement, bool aRequireBu
   // did go low, then we do a couple of other checks to see if
   // the bus operated as expected:
 
-  if (lAttempt > lMaxRetry) {
+  if (attempt > max_retry) {
     throw I2CTransactionTimeout(ERS_HERE, getId());
   }
 
-  if (aRequireAcknowledgement && !lReceivedAcknowledge) {
+  if (require_acknowledgement && !received_acknowledge) {
     throw I2CNoAcknowledgeReceived(ERS_HERE, getId());
   }
 
-  if (aRequireBusIdleAtEnd && lBusy) {
+  if (require_bus_idle_at_end && busy) {
     throw I2CTransferFinishedBusStillBusy(ERS_HERE, getId());
   }
 }

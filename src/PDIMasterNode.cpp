@@ -269,9 +269,7 @@ PDIMasterNode::read_in_spill() const
 void
 PDIMasterNode::sync_timestamp(uint32_t clock_frequency_hz) const // NOLINT(build/unsigned)
 {
-
   const uint64_t old_timestamp = read_timestamp(); // NOLINT(build/unsigned)
-<<<<<<< HEAD
   TLOG() << "Reading old timestamp: " << format_reg_value(old_timestamp) << ", " << format_timestamp(old_timestamp, clock_frequency_hz);
 
   const uint64_t now_timestamp = get_seconds_since_epoch() * clock_frequency_hz; // NOLINT(build/unsigned)
@@ -281,15 +279,6 @@ PDIMasterNode::sync_timestamp(uint32_t clock_frequency_hz) const // NOLINT(build
 
   const uint64_t new_timestamp = read_timestamp(); // NOLINT(build/unsigned)
   TLOG() << "Reading new timestamp: " << format_reg_value(new_timestamp) << ", " << format_timestamp(new_timestamp, clock_frequency_hz);
-=======
-  TLOG() << "Old timestamp: " << format_reg_value(old_timestamp) << ", " << format_timestamp(old_timestamp);
-
-  const uint64_t now = get_seconds_since_epoch() * g_dune_sp_clock_in_hz; // NOLINT(build/unsigned)
-  set_timestamp(now);
-
-  const uint64_t new_timestamp = read_timestamp(); // NOLINT(build/unsigned)
-  TLOG() << "New timestamp: " << format_reg_value(new_timestamp) << ", " << format_timestamp(new_timestamp);
->>>>>>> move to snake case
 }
 //-----------------------------------------------------------------------------
 

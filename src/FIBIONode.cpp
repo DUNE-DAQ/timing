@@ -45,9 +45,10 @@ FIBIONode::get_status(bool print_out) const {
 
 	status << format_reg_table(subnodes, "FIB IO state");
 
-	if (print_out) TLOG() << lStatus.str();
+	if (print_out)
+	  TLOG() << status.str();
 
-    return lStatus.str();
+    return status.str();
 }
 //-----------------------------------------------------------------------------
 
@@ -169,9 +170,10 @@ FIBIONode::get_sfp_status(uint32_t sfp_id, bool print_out) const { // NOLINT(bui
 	status << "Fanout SFP " << sfp_id << ":" << std::endl;
 	status << sfp->get_status();	
 	
-	if (print_out) TLOG() << status.str();
+	if (print_out)
+		TLOG() << status.str();
 
-	return lStatus.str();
+	return status.str();
 }
 //-----------------------------------------------------------------------------
 
