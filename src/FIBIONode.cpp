@@ -10,6 +10,8 @@
 
 #include <map>
 #include <string>
+#include <utility>
+#include <vector>
 
 namespace dunedaq {
 namespace timing {
@@ -33,17 +35,17 @@ FIBIONode::~FIBIONode() {
 std::string
 FIBIONode::get_status(bool print_out) const {
 	std::stringstream status;
-	std::map<std::string,uhal::ValWord<uint32_t>> subnodes = read_sub_nodes(getNode("csr.stat")); // NOLINT(build/unsigned)
+	auto subnodes = read_sub_nodes(getNode("csr.stat"));
 
-	uhal::ValWord<uint32_t> sfp_los_flags(read_sfp_los_flags()); // NOLINT(build/unsigned)
-	sfp_los_flags.valid(true);
-	subnodes.emplace("SFP LOS flags", sfp_los_flags);
+	uint32_t sfp_los_flags = read_sfp_los_flags(); // NOLINT(build/unsigned)
+	uint32_t sfp_fault_flags = read_sfp_fault_flags(); // NOLINT(build/unsigned)
 	
-	uhal::ValWord<uint32_t> sfp_fault_flags(read_sfp_fault_flags()); // NOLINT(build/unsigned)
-	sfp_los_flags.valid(true);
-	subnodes.emplace("SFP Fault flags", sfp_fault_flags);
+	std::vector<std::pair<std::string, std::string>> sfps_summary;
+	sfps_summary.push_back(std::make_pair("SFP LOS flags", format_reg_value(sfp_los_flags, 16)));
+	sfps_summary.push_back(std::make_pair("SFP fault flags", format_reg_value(sfp_fault_flags, 16)));
 
-	status << format_reg_table(subnodes, "FIB IO state");
+	status << format_reg_table(subnodes, "FIB IO state") << std::endl;
+	status << format_reg_table(sfps_summary, "FIB SFPs state");
 
 	if (print_out)
 	  TLOG() << status.str();
