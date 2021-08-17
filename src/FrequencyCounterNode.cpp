@@ -32,12 +32,12 @@ FrequencyCounterNode::~FrequencyCounterNode() {}
 std::string
 FrequencyCounterNode::get_status(bool print_out) const
 {
-  std::stringstream lStatus;
+  std::stringstream status;
   auto subnodes = read_sub_nodes(getNode("csr.ctrl"));
-  lStatus << format_reg_table(subnodes, "Freq counter state");
+  status << format_reg_table(subnodes, "Freq counter state");
   if (print_out)
-    TLOG() << lStatus.str();
-  return lStatus.str();
+    TLOG() << status.str();
+  return status.str();
 }
 //-----------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@ FrequencyCounterNode::get_status(bool print_out) const
 std::vector<double>
 FrequencyCounterNode::measure_frequencies(uint8_t number_of_clocks) const // NOLINT(build/unsigned)
 {
-  std::vector<double> lFrequencies;
+  std::vector<double> frequencies;
 
   for (uint8_t i = 0; i < number_of_clocks; ++i) { // NOLINT(build/unsigned)
     getNode("ctrl.chan_sel").write(i);
@@ -54,18 +54,18 @@ FrequencyCounterNode::measure_frequencies(uint8_t number_of_clocks) const // NOL
 
     millisleep(2000);
 
-    uhal::ValWord<uint32_t> lFrequency = getNode("freq.count").read();      // NOLINT(build/unsigned)
-    uhal::ValWord<uint32_t> lFrequencyValid = getNode("freq.valid").read(); // NOLINT(build/unsigned)
+    uhal::ValWord<uint32_t> frequency = getNode("freq.count").read();      // NOLINT(build/unsigned)
+    uhal::ValWord<uint32_t> frequency_valid = getNode("freq.valid").read(); // NOLINT(build/unsigned)
     getClient().dispatch();
 
-    if (lFrequencyValid.value()) {
-      double freq = lFrequency.value() * 119.20928 / 1000000;
-      lFrequencies.push_back(freq);
+    if (frequency_valid.value()) {
+      double freq = frequency.value() * 119.20928 / 1000000;
+      frequencies.push_back(freq);
     } else {
-      lFrequencies.push_back(-1);
+      frequencies.push_back(-1);
     }
   }
-  return lFrequencies;
+  return frequencies;
 }
 //-----------------------------------------------------------------------------
 

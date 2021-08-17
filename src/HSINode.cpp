@@ -63,7 +63,7 @@ std::string
 HSINode::get_status(bool print_out) const
 {
 
-  std::stringstream lStatus;
+  std::stringstream status;
 
   std::vector<std::pair<std::string, std::string>> ept_summary;
   std::vector<std::pair<std::string, std::string>> hsi_summary;
@@ -101,12 +101,12 @@ HSINode::get_status(bool print_out) const
     std::make_pair("Buffer warning", format_reg_value(hsi_state.find("buf_warn")->second.value(), 16)));
   hsi_summary.push_back(std::make_pair("Buffer occupancy", to_string(hsi_buffer_count.value())));
 
-  lStatus << format_reg_table(ept_summary, "Endpoint summary", { "", "" }) << std::endl;
-  lStatus << format_reg_table(hsi_summary, "HSI summary", { "", "" }) << std::endl;
+  status << format_reg_table(ept_summary, "Endpoint summary", { "", "" }) << std::endl;
+  status << format_reg_table(hsi_summary, "HSI summary", { "", "" }) << std::endl;
 
   if (print_out)
-    TLOG() << lStatus.str();
-  return lStatus.str();
+    TLOG() << status.str();
+  return status.str();
 }
 //-----------------------------------------------------------------------------
 
@@ -114,9 +114,9 @@ HSINode::get_status(bool print_out) const
 uint32_t // NOLINT(build/unsigned)
 HSINode::read_buffer_count() const
 {
-  auto lBufCount = getNode("hsi.buf.count").read();
+  auto buffer_count = getNode("hsi.buf.count").read();
   getClient().dispatch();
-  return lBufCount.value();
+  return buffer_count.value();
 }
 //-----------------------------------------------------------------------------
 
@@ -153,19 +153,19 @@ HSINode::read_data_buffer(uint16_t& n_words, bool read_all, bool fail_on_error) 
     n_hsi_words = 1024;
   }
 
-  uint32_t lEventsToRead = n_hsi_words / g_hsi_event_size; // NOLINT(build/unsigned)
+  uint32_t events_to_read = n_hsi_words / g_hsi_event_size; // NOLINT(build/unsigned)
 
-  TLOG_DEBUG(2) << "Events available in readout buffer:     " << format_reg_value(lEventsToRead);
+  TLOG_DEBUG(2) << "Events available in readout buffer:     " << format_reg_value(events_to_read);
 
-  uint32_t lWordsToRead = read_all ? n_hsi_words : lEventsToRead * g_hsi_event_size; // NOLINT(build/unsigned)
+  uint32_t words_to_read = read_all ? n_hsi_words : events_to_read * g_hsi_event_size; // NOLINT(build/unsigned)
 
-  TLOG_DEBUG(2) << "Words to be read out in readout buffer: " << format_reg_value(lWordsToRead);
+  TLOG_DEBUG(2) << "Words to be read out in readout buffer: " << format_reg_value(words_to_read);
 
-  if (!lWordsToRead) {
+  if (!words_to_read) {
     TLOG_DEBUG(2) << "No words to be read out.";
   }
 
-  buffer_data = getNode("hsi.buf.data").readBlock(lWordsToRead);
+  buffer_data = getNode("hsi.buf.data").readBlock(words_to_read);
   getClient().dispatch();
 
   return buffer_data;
@@ -185,22 +185,22 @@ std::string
 HSINode::get_data_buffer_table(bool read_all, bool print_out) const
 {
 
-  std::stringstream lTable;
-  auto lBufData = read_data_buffer(read_all);
+  std::stringstream table;
+  auto buffer_data = read_data_buffer(read_all);
 
-  std::vector<std::pair<std::string, uint32_t>> lBufferTable; // NOLINT(build/unsigned)
+  std::vector<std::pair<std::string, uint32_t>> buffer_table; // NOLINT(build/unsigned)
 
   uint32_t i = 0; // NOLINT(build/unsigned)
-  for (auto it = lBufData.begin(); it != lBufData.end(); ++it, ++i) {
-    std::stringstream lIndexStream;
-    lIndexStream << std::setfill('0') << std::setw(4) << i;
-    lBufferTable.push_back(std::make_pair(lIndexStream.str(), *it));
+  for (auto it = buffer_data.begin(); it != buffer_data.end(); ++it, ++i) {
+    std::stringstream index_stream;
+    index_stream << std::setfill('0') << std::setw(4) << i;
+    buffer_table.push_back(std::make_pair(index_stream.str(), *it));
   }
-  lTable << format_reg_table(lBufferTable, "HSI buffer", { "Word", "Data" });
+  table << format_reg_table(buffer_table, "HSI buffer", { "Word", "Data" });
 
   if (print_out)
-    TLOG() << lTable.str();
-  return lTable.str();
+    TLOG() << table.str();
+  return table.str();
 }
 //-----------------------------------------------------------------------------
 

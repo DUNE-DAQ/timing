@@ -32,12 +32,12 @@ FLCmdGeneratorNode::~FLCmdGeneratorNode() {}
 std::string
 FLCmdGeneratorNode::get_status(bool print_out) const
 {
-  std::stringstream lStatus;
+  std::stringstream status;
   auto subnodes = read_sub_nodes(getNode("csr.stat"));
-  lStatus << format_reg_table(subnodes, "FL Cmd gen state");
+  status << format_reg_table(subnodes, "FL Cmd gen state");
   if (print_out)
-    TLOG() << lStatus.str();
-  return lStatus.str();
+    TLOG() << status.str();
+  return status.str();
 }
 //-----------------------------------------------------------------------------
 
@@ -53,14 +53,14 @@ FLCmdGeneratorNode::send_fl_cmd(uint32_t command, // NOLINT(build/unsigned)
 
   getNode("chan_ctrl.type").write(command);
   getNode("chan_ctrl.force").write(0x1);
-  auto lTStamp = timestamp_gen_node.read_raw_timestamp(false);
+  auto timestamp = timestamp_gen_node.read_raw_timestamp(false);
 
   getClient().dispatch();
 
   getNode("chan_ctrl.force").write(0x0);
   getClient().dispatch();
   TLOG() << "Command sent " << g_command_map.at(command) << "(" << format_reg_value(command) << ") from generator "
-         << format_reg_value(channel) << " @time 0x" << tstamp2int(lTStamp);
+         << format_reg_value(channel) << " @time 0x" << tstamp2int(timestamp);
 }
 //-----------------------------------------------------------------------------
 
@@ -71,11 +71,11 @@ FLCmdGeneratorNode::enable_fake_trigger(uint32_t channel,  // NOLINT(build/unsig
                                         uint32_t prescale, // NOLINT(build/unsigned)
                                         bool poisson) const
 {
-  uint32_t trigCmd = 0x8 + channel; // NOLINT(build/unsigned)
+  uint32_t trigger_cmd = 0x8 + channel; // NOLINT(build/unsigned)
 
   getNode("sel").write(channel);
 
-  getNode("chan_ctrl.type").write(trigCmd);
+  getNode("chan_ctrl.type").write(trigger_cmd);
   getNode("chan_ctrl.rate_div_d").write(divisor);
   getNode("chan_ctrl.rate_div_p").write(prescale);
   getNode("chan_ctrl.patt").write(poisson);
@@ -99,22 +99,22 @@ FLCmdGeneratorNode::disable_fake_trigger(uint32_t channel) const // NOLINT(build
 std::string
 FLCmdGeneratorNode::get_cmd_counters_table(bool print_out) const
 {
-  std::stringstream lCountersTable;
-  auto lAccCounters = getNode("actrs").readBlock(getNode("actrs").getSize());
-  auto lRejCounters = getNode("rctrs").readBlock(getNode("actrs").getSize());
+  std::stringstream counters_table;
+  auto accepted_counters = getNode("actrs").readBlock(getNode("actrs").getSize());
+  auto rejected_counters = getNode("rctrs").readBlock(getNode("actrs").getSize());
   getClient().dispatch();
 
-  std::vector<uhal::ValVector<uint32_t>> lCountersContainer = { lAccCounters, lRejCounters }; // NOLINT(build/unsigned)
+  std::vector<uhal::ValVector<uint32_t>> counters_container = { accepted_counters, rejected_counters }; // NOLINT(build/unsigned)
 
-  lCountersTable << format_counters_table(lCountersContainer,
+  counters_table << format_counters_table(counters_container,
                                           { "Accept counters", "Reject counters" },
                                           "Cmd gen counters",
                                           { "0x0", "0x1", "0x2", "0x3", "0x4" },
                                           "Chan");
 
   if (print_out)
-    TLOG() << lCountersTable.str();
-  return lCountersTable.str();
+    TLOG() << counters_table.str();
+  return counters_table.str();
 }
 //-----------------------------------------------------------------------------
 

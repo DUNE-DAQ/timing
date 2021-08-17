@@ -100,12 +100,12 @@ std::vector<uint32_t> // NOLINT(build/unsigned)
 I2CExpanderSlave::debug() const
 {
 
-  std::vector<uint32_t> lValues(8); // NOLINT(build/unsigned)
+  std::vector<uint32_t> values(8); // NOLINT(build/unsigned)
 
   for (size_t a(0); a < 8; ++a) {
-    lValues[a] = this->read_i2c(a);
+    values[a] = this->read_i2c(a);
   }
-  return lValues;
+  return values;
 }
 //-----------------------------------------------------------------------------
 

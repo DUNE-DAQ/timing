@@ -62,9 +62,9 @@ SIChipSlave::read_device_version() const
   // Go to the right page
   switch_page(0x0);
   // Read 2 words from 0x2
-  auto lVersion = read_i2cArray(0x2, 2);
+  auto version = read_i2cArray(0x2, 2);
 
-  return (((uint32_t)lVersion[1] << 8) + (uint32_t)lVersion[0]); // NOLINT(build/unsigned)
+  return (((uint32_t)version[1] << 8) + (uint32_t)version[0]); // NOLINT(build/unsigned)
 }
 //-----------------------------------------------------------------------------
 
@@ -73,22 +73,22 @@ uint8_t                                                  // NOLINT(build/unsigne
 SIChipSlave::read_clock_register(uint16_t address) const // NOLINT(build/unsigned)
 {
 
-  uint8_t lRegAddr = (address & 0xff);       // NOLINT(build/unsigned)
-  uint8_t lPageAddr = (address >> 8) & 0xff; // NOLINT(build/unsigned)
+  uint8_t reg_address = (address & 0xff);       // NOLINT(build/unsigned)
+  uint8_t page_address = (address >> 8) & 0xff; // NOLINT(build/unsigned)
   std::stringstream debug_stream;
   debug_stream << std::showbase << std::hex << "Read Address " << (uint32_t)address // NOLINT(build/unsigned)
-               << " reg: " << (uint32_t)lRegAddr                                    // NOLINT(build/unsigned)
-               << " page: " << (uint32_t)lPageAddr;                                 // NOLINT(build/unsigned)
+               << " reg: " << (uint32_t)reg_address                                    // NOLINT(build/unsigned)
+               << " page: " << (uint32_t)page_address;                                 // NOLINT(build/unsigned)
   TLOG_DEBUG(2) << debug_stream.str();
   // Change page only when required.
   // (The SI5344 don't like to have the page register id to be written all the time.)
-  uint8_t lCurrentPage = read_page(); // NOLINT(build/unsigned)
-  if (lPageAddr != lCurrentPage) {
-    switch_page(lPageAddr);
+  uint8_t current_address = read_page(); // NOLINT(build/unsigned)
+  if (page_address != current_address) {
+    switch_page(page_address);
   }
 
   // Read the register
-  return read_i2c(lRegAddr);
+  return read_i2c(reg_address);
 }
 //-----------------------------------------------------------------------------
 
@@ -97,22 +97,22 @@ void
 SIChipSlave::write_clock_register(uint16_t address, uint8_t data) const // NOLINT(build/unsigned)
 {
 
-  uint8_t lRegAddr = (address & 0xff);       // NOLINT(build/unsigned)
-  uint8_t lPageAddr = (address >> 8) & 0xff; // NOLINT(build/unsigned)
+  uint8_t reg_address = (address & 0xff);       // NOLINT(build/unsigned)
+  uint8_t page_address = (address >> 8) & 0xff; // NOLINT(build/unsigned)
 
   std::stringstream debug_stream;
   debug_stream << std::showbase << std::hex << "Write Address " << (uint32_t)address // NOLINT(build/unsigned)
-               << " reg: " << (uint32_t)lRegAddr                                     // NOLINT(build/unsigned)
-               << " page: " << (uint32_t)lPageAddr;                                  // NOLINT(build/unsigned)
+               << " reg: " << (uint32_t)reg_address                                     // NOLINT(build/unsigned)
+               << " page: " << (uint32_t)page_address;                                  // NOLINT(build/unsigned)
   TLOG_DEBUG(2) << debug_stream.str();
   // Change page only when required.
   // (The SI5344 don't like to have the page register id to be written all the time.)
-  uint8_t lCurrentPage = read_page(); // NOLINT(build/unsigned)
-  if (lPageAddr != lCurrentPage) {
-    switch_page(lPageAddr);
+  uint8_t current_address = read_page(); // NOLINT(build/unsigned)
+  if (page_address != current_address) {
+    switch_page(page_address);
   }
 
-  return write_i2c(lRegAddr, data);
+  return write_i2c(reg_address, data);
 }
 //-----------------------------------------------------------------------------
 

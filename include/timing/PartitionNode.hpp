@@ -118,7 +118,7 @@ public:
   // void writeTriggerMask( uint32_t aMask ) const;
 
   void configure(uint32_t trigger_mask, // NOLINT(build/unsigned)
-                 bool enableSpillGate,
+                 bool enable_spill_gate,
                  bool rate_control_enabled = 0x1) const;
 
   /**

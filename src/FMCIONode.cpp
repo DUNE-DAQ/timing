@@ -29,14 +29,14 @@ FMCIONode::~FMCIONode() {}
 std::string
 FMCIONode::get_status(bool print_out) const
 {
-  std::stringstream lStatus;
+  std::stringstream status;
 
   auto subnodes = read_sub_nodes(getNode("csr.stat"));
-  lStatus << format_reg_table(subnodes, "FMC IO state");
+  status << format_reg_table(subnodes, "FMC IO state");
 
   if (print_out)
-    TLOG() << std::endl << lStatus.str();
-  return lStatus.str();
+    TLOG() << std::endl << status.str();
+  return status.str();
 }
 //-----------------------------------------------------------------------------
 
@@ -54,10 +54,10 @@ FMCIONode::reset(const std::string& clock_config_file) const
   getNode("csr.ctrl.pll_rst").write(0x0);
   getClient().dispatch();
 
-  CarrierType lCarrierType = convert_value_to_carrier_type(read_carrier_type());
+  CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
 
   // enclustra i2c switch stuff
-  if (lCarrierType == kCarrierEnclustraA35) {
+  if (carrier_type == kCarrierEnclustraA35) {
     try {
       getNode<I2CMasterNode>(m_uid_i2c_bus).get_slave("AX3_Switch").write_i2c(0x01, 0x7f);
     } catch (const std::exception& e) {
@@ -66,11 +66,11 @@ FMCIONode::reset(const std::string& clock_config_file) const
   }
 
   // Find the right pll config file
-  std::string lClockConfigFile = get_full_clock_config_file_path(clock_config_file);
-  TLOG() << "PLL configuration file : " << lClockConfigFile;
+  std::string clock_config_path = get_full_clock_config_file_path(clock_config_file);
+  TLOG() << "PLL configuration file : " << clock_config_path;
 
   // Upload config file to PLL
-  configure_pll(lClockConfigFile);
+  configure_pll(clock_config_path);
 
   // Enable sfp tx laser
   getNode("csr.ctrl.sfp_tx_dis").write(0x0);
