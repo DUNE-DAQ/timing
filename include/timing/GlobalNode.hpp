@@ -26,30 +26,31 @@ namespace timing {
 /**
  * @brief      Class for master global node.
  */
-class GlobalNode : public TimingNode {
-    UHAL_DERIVEDNODE(GlobalNode)
+class GlobalNode : public TimingNode
+{
+  UHAL_DERIVEDNODE(GlobalNode)
 public:
-    explicit GlobalNode(const uhal::Node& node);
-    virtual ~GlobalNode();
+  explicit GlobalNode(const uhal::Node& node);
+  virtual ~GlobalNode();
 
-    bool in_spill() const;
-    bool tx_error() const;
+  bool in_spill() const;
+  bool tx_error() const;
 
-    uint32_t readTimeStamp() const;
-    uint32_t read_spill_counter() const;
+  uint32_t readTimeStamp() const;      // NOLINT(build/unsigned)
+  uint32_t read_spill_counter() const; // NOLINT(build/unsigned)
 
-    void select_partition() const;
-    void lock_partition() const;
+  void select_partition() const;
+  void lock_partition() const;
 
-    /**
-     * @brief     Enable the upstream endpoint.
-     */
-    void enable_upstream_endpoint(uint32_t timeout=500);
+  /**
+   * @brief     Enable the upstream endpoint.
+   */
+  void enable_upstream_endpoint(uint32_t timeout = 500); // NOLINT(build/unsigned)
 
-    /**
-     * @brief     Get status string, optionally print.
-     */
-    std::string get_status(bool print_out=false) const override;
+  /**
+   * @brief     Get status string, optionally print.
+   */
+  std::string get_status(bool print_out = false) const override;
 };
 
 } // namespace timing

@@ -13,7 +13,7 @@ from timing.core import SI534xSlave, I2CExpanderSlave, DACSlave
 
 from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
-from timing.common.definitions import kDesingOverlord, kDesingMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesingFanout
+from timing.common.definitions import kDesignOverlord, kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout
 from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
 
 from os.path import join, expandvars, basename
@@ -28,8 +28,9 @@ class MasterShell(object):
         lMstCtx = ShellContext()
 
         # Tol-level nodes
-        lMaster = self.device.getNode('master_top.master')
-        lExtTrigNode = self.device.getNode('master_top.trig')
+        lMaster = self.device.getNode('master')
+        lExtTrigNode = self.device.getNode('trig_rx')
+        lIO = self.device.getNode('io')
 
         lVersion = lMaster.getNode('global.version').read()
         lGenerics = toolbox.readSubNodes(lMaster.getNode('global.config'), False)
@@ -54,6 +55,7 @@ class MasterShell(object):
         lMstCtx.extTrigNode = lExtTrigNode
 
         self.masterCtx = lMstCtx
+        self.ioNode = lIO
     # ------------------------------------------------------------------------------
 
 
@@ -88,6 +90,9 @@ class MasterShell(object):
     def synctime(self):
 
         lMaster = self.masterCtx.masterNode
+        lIO = self.ioNode
+
+        firmmware_frequency_hz = lIO.read_firmware_frequency()
 
         lTStampReadNode = lMaster.getNode('tstamp.ctr.val')
         lTStampWriteNode = lMaster.getNode('tstamp.ctr.set')
@@ -99,7 +104,7 @@ class MasterShell(object):
         secho('Old Timestamp {}'.format(hex(lTime)), fg='cyan')
 
         # Take the local time and split it up
-        lNow = int(time.time()*defs.kSPSClockInHz)
+        lNow = int(time.time()*firmmware_frequency_hz)
         lNowH = (lNow >> 32) & ((1<<32)-1)
         lNowL = (lNow >> 0) & ((1<<32)-1)
 
@@ -115,7 +120,7 @@ class MasterShell(object):
 
         secho('New Timestamp {}'.format(hex(lTime)), fg='cyan')
 
-        print(float(lTime)/defs.kSPSClockInHz - x)
+        print(float(lTime)/firmmware_frequency_hz - x)
 
         echo ("DeltaT {}".format(toolbox.formatTStamp(lTimeStamp)))
     # ------------------------------------------------------------------------------
@@ -221,7 +226,7 @@ class MasterShell(object):
 
 # ------------------------------------------------------------------------------
 
-ShellFactory.registerBoard(kDesingOverlord, MasterShell)
+ShellFactory.registerBoard(kDesignOverlord, MasterShell)
 
 # ------------------------------------------------------------------------------
 

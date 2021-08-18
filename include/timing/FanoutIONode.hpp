@@ -13,16 +13,16 @@
 #define TIMING_INCLUDE_TIMING_FANOUTIONODE_HPP_
 
 // PDT Headers
-#include "timing/IONode.hpp"
 #include "TimingIssues.hpp"
+#include "timing/IONode.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
 // C++ Headers
 #include <chrono>
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace dunedaq {
 namespace timing {
@@ -30,26 +30,34 @@ namespace timing {
 /**
  * @brief      Base class for the fanout boards.
  */
-class FanoutIONode : public IONode {
+class FanoutIONode : public IONode
+{
 
 public:
-    FanoutIONode(const uhal::Node& node, std::string uid_i2c_bus, std::string uid_i2c_device, std::string pll_i2c_bus, std::string pll_i2c_device, std::vector<std::string> clock_names, std::vector<std::string> sfp_i2c_buses);
-    virtual ~FanoutIONode();
+  FanoutIONode(const uhal::Node& node,
+               std::string uid_i2c_bus,
+               std::string uid_i2c_device,
+               std::string pll_i2c_bus,
+               std::string pll_i2c_device,
+               std::vector<std::string> clock_names,
+               std::vector<std::string> sfp_i2c_buses);
+  virtual ~FanoutIONode();
 
-    /**
-     * @brief     Reset fanout board
-     */
-    virtual void reset(int32_t fanout_mode, const std::string& clock_config_file="") const = 0;
+  /**
+   * @brief     Reset fanout board
+   */
+  virtual void reset(int32_t fanout_mode, // NOLINT(build/unsigned)
+                     const std::string& clock_config_file = "") const = 0;
 
-    /**
-     * @brief     Switch the SFP mux channel
-     */
-    virtual void switch_sfp_mux_channel(uint32_t sfp_id) const = 0;
+  /**
+   * @brief     Switch the SFP mux channel
+   */
+  virtual void switch_sfp_mux_channel(uint32_t sfp_id) const = 0; // NOLINT(build/unsigned)
 
-    /**
-     * @brief     Read the active SFP mux channel
-     */
-    virtual uint32_t read_active_sfp_mux_channel() const = 0;
+  /**
+   * @brief     Read the active SFP mux channel
+   */
+  virtual uint32_t read_active_sfp_mux_channel() const = 0; // NOLINT(build/unsigned)
 };
 
 } // namespace timing

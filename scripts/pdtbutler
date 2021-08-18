@@ -26,6 +26,7 @@ import timing.cli.align as align
 import timing.cli.endpoint as endpoint
 import timing.cli.crt as crt
 import timing.cli.debug as debug
+import timing.cli.hsi as hsi
 
 
 from click import echo, style, secho
@@ -97,6 +98,7 @@ if __name__ == '__main__':
     cli.add_command(endpoint.endpoint)
     cli.add_command(crt.crt)
     cli.add_command(debug.debug)
+    cli.add_command(hsi.hsi)
 
     try:
         cli(obj=PDTContext())

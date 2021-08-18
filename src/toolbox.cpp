@@ -1,25 +1,36 @@
+/**
+ * @file toolbox.cpp
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
+
 #include "timing/toolbox.hpp"
 
-// C++ Headers
-#include <time.h>
-#include <cstdarg>
-#include <cstdlib>
-#include <stdio.h>
-#include <stdint.h>
-#include <vector>
-#include <wordexp.h>
-#include <stdexcept>
+// PDT Headers
+#include "timing/TimingIssues.hpp"
+
+// uHAL Headers
+#include "uhal/ValMem.hpp"
 
 // Boost Headers
 #include "boost/foreach.hpp"
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 
-// uHAL Headers
-#include "uhal/ValMem.hpp"
-
-// PDT Headers
-#include "timing/TimingIssues.hpp"
+// C++ Headers
+#include <cstdarg>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <ctime>
+#include <map>
+#include <stdexcept>
+#include <string>
+#include <utility>
+#include <vector>
+#include <wordexp.h>
 
 using namespace std;
 
@@ -28,283 +39,293 @@ namespace timing {
 
 //-----------------------------------------------------------------------------
 Snapshot
-snapshot(const uhal::Node& node) {
-    /// snapshot( node ) -> { subnode:value }
-    std::map<string, uhal::ValWord<uint32_t> > valWords;
+snapshot(const uhal::Node& node)
+{
+  /// snapshot( node ) -> { subnode:value }
+  std::map<string, uhal::ValWord<uint32_t>> value_words; // NOLINT(build/unsigned)
 
-    for(string n :  node.getNodes()) {
-        valWords.insert(make_pair(n, node.getNode(n).read()));
-    }
-    node.getClient().dispatch();
+  for (string n : node.getNodes()) {
+    value_words.insert(make_pair(n, node.getNode(n).read()));
+  }
+  node.getClient().dispatch();
 
-    Snapshot vals;
-    std::map<string, uhal::ValWord<uint32_t> >::iterator it;
-    for (it = valWords.begin(); it != valWords.end(); ++it)
-        vals.insert(make_pair(it->first, it->second.value()));
+  Snapshot vals;
+  std::map<string, uhal::ValWord<uint32_t>>::iterator it; // NOLINT(build/unsigned)
+  for (it = value_words.begin(); it != value_words.end(); ++it)
+    vals.insert(make_pair(it->first, it->second.value()));
 
-    return vals;
+  return vals;
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 Snapshot
-snapshot(const uhal::Node& node, const std::string& aRegex) {
-    std::map<string, uhal::ValWord<uint32_t> > valWords;
+snapshot(const uhal::Node& node, const std::string& regex)
+{
+  std::map<string, uhal::ValWord<uint32_t>> value_words; // NOLINT(build/unsigned)
 
-    for(string n :  node.getNodes(aRegex)) {
-        valWords.insert(make_pair(n, node.getNode(n).read()));
-    }
-    node.getClient().dispatch();
+  for (string n : node.getNodes(regex)) {
+    value_words.insert(make_pair(n, node.getNode(n).read()));
+  }
+  node.getClient().dispatch();
 
-    Snapshot vals;
-    std::map<string, uhal::ValWord<uint32_t> >::iterator it;
-    for (it = valWords.begin(); it != valWords.end(); ++it)
-        vals.insert(make_pair(it->first, it->second.value()));
+  Snapshot vals;
+  std::map<string, uhal::ValWord<uint32_t>>::iterator it; // NOLINT(build/unsigned)
+  for (it = value_words.begin(); it != value_words.end(); ++it)
+    vals.insert(make_pair(it->first, it->second.value()));
 
-    return vals;
+  return vals;
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 void
-millisleep(const double& aTimeInMilliseconds) {
-    //  using namespace uhal;
-    //  logging();
-    double lTimeInSeconds(aTimeInMilliseconds / 1e3);
-    int lIntegerPart((int) lTimeInSeconds);
-    double lFractionalPart(lTimeInSeconds - (double) lIntegerPart);
-    struct timespec sleepTime, returnTime;
-    sleepTime.tv_sec = lIntegerPart;
-    sleepTime.tv_nsec = (long) (lFractionalPart * 1e9);
-    nanosleep(&sleepTime, &returnTime);
+millisleep(const double& time_in_milliseconds)
+{
+  //  using namespace uhal;
+  //  logging();
+  double time_in_seconds(time_in_milliseconds / 1e3);
+  int integer_part(static_cast<int>(time_in_seconds));
+  double fractional_part(time_in_seconds - static_cast<double>(integer_part));
+  struct timespec sleep_time, return_time;
+  sleep_time.tv_sec = integer_part;
+  sleep_time.tv_nsec = static_cast<long>(fractional_part * 1e9); // NOLINT
+  nanosleep(&sleep_time, &return_time);
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 std::string
-strprintf(const char* fmt, ...) {
-    char* ret;
-    va_list ap;
-    va_start(ap, fmt);
-    vasprintf(&ret, fmt, ap);
-    va_end(ap);
-    std::string str(ret);
-    free(ret);
-    return str;
+strprintf(const char* fmt, ...) // NOLINT
+{
+  char* ret;
+  va_list ap;
+  va_start(ap, fmt);
+  vasprintf(&ret, fmt, ap); // NOLINT
+  va_end(ap);
+  std::string str(ret);
+  free(ret);
+  return str;
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 std::vector<std::string>
-shell_expand_paths(const std::string& aPath) {
+shell_expand_paths(const std::string& path)
+{
 
-    std::vector<std::string> lPaths;
-    wordexp_t lSubstitutedPath;
-    int code = wordexp(aPath.c_str(), &lSubstitutedPath, WRDE_NOCMD);
-    if (code) throw runtime_error("Failed expanding path: " + aPath);
+  std::vector<std::string> paths;
+  wordexp_t substituted_path;
+  int code = wordexp(path.c_str(), &substituted_path, WRDE_NOCMD);
+  if (code)
+    throw runtime_error("Failed expanding path: " + path);
 
-    for (std::size_t i = 0; i != lSubstitutedPath.we_wordc; i++)
-        lPaths.push_back(lSubstitutedPath.we_wordv[i]);
+  for (std::size_t i = 0; i != substituted_path.we_wordc; i++)
+    paths.push_back(substituted_path.we_wordv[i]);
 
-    wordfree(&lSubstitutedPath);
+  wordfree(&substituted_path);
 
-    return lPaths;
+  return paths;
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 std::string
-shellExpandPath(const std::string& aPath) {
-    std::vector<std::string> lPaths = shell_expand_paths(aPath);
+shellExpandPath(const std::string& path)
+{
+  std::vector<std::string> paths = shell_expand_paths(path);
 
-    if (lPaths.size() > 1) throw runtime_error("Failed to expand: multiple matches found");
+  if (paths.size() > 1)
+    throw runtime_error("Failed to expand: multiple matches found");
 
-    return lPaths[0];
+  return paths[0];
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 void
-throw_if_not_file(const std::string& aPath) {
+throw_if_not_file(const std::string& path)
+{
 
-    // FIXME: Review the implementation. The function never returns 
-    namespace fs = boost::filesystem;
+  // FIXME: Review the implementation. The function never returns
+  namespace fs = boost::filesystem;
 
-    // Check that the path exists and that it's not a directory
-    fs::path cfgFile(aPath);
-    if (!fs::exists(cfgFile)) {
-        throw FileNotFound(ERS_HERE, aPath);
-    } else if (fs::is_directory(cfgFile)) {
-        throw FileIsDirectory(ERS_HERE, aPath);
-    }
+  // Check that the path exists and that it's not a directory
+  fs::path cfgFile(path);
+  if (!fs::exists(cfgFile)) {
+    throw FileNotFound(ERS_HERE, path);
+  } else if (fs::is_directory(cfgFile)) {
+    throw FileIsDirectory(ERS_HERE, path);
+  }
 
-    //    return true;
+  //    return true;
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-uint8_t
-dec_rng(uint8_t word, uint8_t ibit, uint8_t nbits) {
-    return (word >> ibit) & ((1<<nbits)-1);
+uint8_t                                            // NOLINT(build/unsigned)
+dec_rng(uint8_t word, uint8_t ibit, uint8_t nbits) // NOLINT(build/unsigned)
+{
+  return (word >> ibit) & ((1 << nbits) - 1);
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
-uint64_t
-tstamp2int(uhal::ValVector< uint32_t > rawTimestamp) {
-    return (uint64_t)rawTimestamp[0] + ((uint64_t)rawTimestamp[1] << 32);
+uint64_t                                           // NOLINT(build/unsigned)
+tstamp2int(uhal::ValVector<uint32_t> raw_timestamp) // NOLINT(build/unsigned)
+{
+  return (uint64_t)raw_timestamp[0] + ((uint64_t)raw_timestamp[1] << 32); // NOLINT(build/unsigned)
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 int64_t
-get_seconds_since_epoch() {
-    // get the current time
-    const auto now = std::chrono::system_clock::now();
+get_seconds_since_epoch()
+{
+  // get the current time
+  const auto now = std::chrono::system_clock::now();
 
-    // transform the time into a duration since the epoch
-    const auto epoch = now.time_since_epoch();
+  // transform the time into a duration since the epoch
+  const auto epoch = now.time_since_epoch();
 
-    // cast the duration into seconds
-    const auto seconds = std::chrono::duration_cast<std::chrono::seconds>(epoch);
+  // cast the duration into seconds
+  const auto seconds = std::chrono::duration_cast<std::chrono::seconds>(epoch);
 
-    // return the number of seconds
-    return seconds.count();
+  // return the number of seconds
+  return seconds.count();
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
-std::string 
-format_timestamp(uint64_t rawTimestamp) {
-    std::time_t lSecFromEpoch = rawTimestamp / g_dune_sp_clock_in_hz;
+std::string
+format_timestamp(uint64_t raw_timestamp, uint32_t clock_frequency_hz) // NOLINT(build/unsigned)
+{
+  std::time_t sec_from_epoch = raw_timestamp / clock_frequency_hz;
 
-    struct tm * lTime = localtime(&lSecFromEpoch);
-    char lTimeBuffer[32];
-    
-    strftime(lTimeBuffer, sizeof lTimeBuffer, "%a, %d %b %Y %H:%M:%S +0000", lTime);
-    return lTimeBuffer;
+  struct tm* time = localtime(&sec_from_epoch); // NOLINT
+  char time_buffer[32];
+
+  strftime(time_buffer, sizeof time_buffer, "%a, %d %b %Y %H:%M:%S +0000", time);
+  return time_buffer;
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
-std::string 
-format_timestamp(uhal::ValVector< uint32_t > rawTimestamp) {
-    uint64_t lTimestamp = tstamp2int(rawTimestamp);
-    return format_timestamp(lTimestamp);
+std::string
+format_timestamp(uhal::ValVector<uint32_t> raw_timestamp, uint32_t clock_frequency_hz) // NOLINT(build/unsigned)
+{
+  uint64_t timestamp = tstamp2int(raw_timestamp); // NOLINT(build/unsigned)
+  return format_timestamp(timestamp, clock_frequency_hz);
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
-double convert_bits_to_float(uint64_t aBits, bool aIsDoublePrecision){
-    uint32_t lMantissaShift = aIsDoublePrecision ? 52 : 23;
-    uint64_t lExponentMask = aIsDoublePrecision ? 0x7FF0000000000000 : 0x7f800000;
-    uint32_t lBias = aIsDoublePrecision ? 1023 : 127;
-    uint32_t lSignShift = aIsDoublePrecision ? 63 : 31;
+double
+convert_bits_to_float(uint64_t bits, bool is_double_precision) // NOLINT(build/unsigned)
+{
+  uint32_t mantissa_shift = is_double_precision ? 52 : 23;                        // NOLINT(build/unsigned)
+  uint64_t exponent_mask = is_double_precision ? 0x7FF0000000000000 : 0x7f800000; // NOLINT(build/unsigned)
+  uint32_t bias = is_double_precision ? 1023 : 127;                              // NOLINT(build/unsigned)
+  uint32_t sign_shift = is_double_precision ? 63 : 31;                            // NOLINT(build/unsigned)
 
-    int32_t lSign = (aBits >> lSignShift) & 0x01;
-    uint32_t lExponentBiased = ((aBits & lExponentMask) >> lMantissaShift);
-    int32_t lExponent = lExponentBiased - lBias;
+  int32_t sign = (bits >> sign_shift) & 0x01;
+  uint32_t exponent_biased = ((bits & exponent_mask) >> mantissa_shift); // NOLINT(build/unsigned)
+  int32_t exponent = exponent_biased - bias;
 
-    int32_t lPower = -1;
-    double lMantissa = 0.0;
-    for (uint32_t i = 0; i < lMantissaShift; ++i) {
-        uint64_t lMantissaBit = (aBits >> (lMantissaShift-i-1)) & 0x01;
-        lMantissa += lMantissaBit * pow(2.0, lPower);
-        --lPower;
-    }
-    
-    if (lExponentBiased == 0) {
-        ++lExponent;
-        if (lMantissa == 0) return 0;
-    } else {
-        lMantissa += 1.0;    
-    }
-    return (lSign ? -1 : 1) * pow(2.0, lExponent) * lMantissa;
+  int32_t power = -1;
+  double mantissa = 0.0;
+  for (uint32_t i = 0; i < mantissa_shift; ++i) {                       // NOLINT(build/unsigned)
+    uint64_t mantissa_bit = (bits >> (mantissa_shift - i - 1)) & 0x01; // NOLINT(build/unsigned)
+    mantissa += mantissa_bit * pow(2.0, power);
+    --power;
+  }
+
+  if (exponent_biased == 0) {
+    ++exponent;
+    if (mantissa == 0)
+      return 0;
+  } else {
+    mantissa += 1.0;
+  }
+  return (sign ? -1 : 1) * pow(2.0, exponent) * mantissa;
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 BoardType
-convert_value_to_board_type(uint32_t aBoardType) {
-    // not pleasnt, but works for now
-    if (aBoardType > kBoardTLU) {
-        throw UnknownBoardType(ERS_HERE, format_reg_value(aBoardType));
-    } else {
-        return static_cast<BoardType> (aBoardType);
-    }
+convert_value_to_board_type(uint32_t board_type) // NOLINT(build/unsigned)
+{
+  // not pleasnt, but works for now
+  if (board_type > kBoardFIB) {
+    throw UnknownBoardType(ERS_HERE, format_reg_value(board_type));
+  } else {
+    return static_cast<BoardType>(board_type);
+  }
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 CarrierType
-convert_value_to_carrier_type(uint32_t aCarrierType) {
-    // not pleasnt, but works for now
-    if (aCarrierType > kCarrierATFC) {
-        throw UnknownCarrierType(ERS_HERE, format_reg_value(aCarrierType));
-    } else {
-        return static_cast<CarrierType> (aCarrierType);
-    }
+convert_value_to_carrier_type(uint32_t carrier_type) // NOLINT(build/unsigned)
+{
+  // not pleasnt, but works for now
+  if (carrier_type > kCarrierAFC) {
+    throw UnknownCarrierType(ERS_HERE, format_reg_value(carrier_type));
+  } else {
+    return static_cast<CarrierType>(carrier_type);
+  }
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 DesignType
-convert_value_to_design_type(uint32_t aDesignType) {
-    // not pleasnt, but works for now
-    if (aDesignType > kDesingEndpoBICRT) {
-        throw UnknownDesignType(ERS_HERE, format_reg_value(aDesignType));
-    } else {
-        return static_cast<DesignType> (aDesignType);
-    }
+convert_value_to_design_type(uint32_t design_type) // NOLINT(build/unsigned)
+{
+  // not pleasnt, but works for now
+  if (design_type > kDesignBoreas) {
+    throw UnknownDesignType(ERS_HERE, format_reg_value(design_type));
+  } else {
+    return static_cast<DesignType>(design_type);
+  }
 }
 //-----------------------------------------------------------------------------
 
-template std::string timing::vec_fmt<uint32_t>(const std::vector<uint32_t>& aVec);
-template std::string timing::short_vec_fmt<uint32_t>(const std::vector<uint32_t>& aVec);
+template std::string
+timing::vec_fmt<uint32_t>(const std::vector<uint32_t>& vec); // NOLINT(build/unsigned)
+template std::string
+timing::short_vec_fmt<uint32_t>(const std::vector<uint32_t>& vec); // NOLINT(build/unsigned)
 
 //-----------------------------------------------------------------------------
-uint32_t locate(float xx[], unsigned long n, float x) {
-    uint32_t j, ju, jm, jl;
-    int ascnd;
-    jl = 0; //Initialize lower
-    ju = n + 1; //and upper limits.
-    ascnd = (xx[n] >= xx[1]);
+uint32_t                                     // NOLINT(build/unsigned)
+locate(float xx[], unsigned long n, float x) // NOLINT
+{
+  uint32_t j, ju, jm, jl; // NOLINT(build/unsigned)
+  int ascnd;
+  jl = 0;                   // Initialize lower
+  ju = n + 1;               // and upper limits.
+  ascnd = (xx[n] >= xx[1]); // NOLINT
 
-    while (ju - jl > 1) //If we are not yet done,
+  while (ju - jl > 1) // If we are not yet done,
+  {
+    jm = (ju + jl) >> 1; // compute a midpoint,
+
+    if ((x >= xx[jm]) == ascnd) // added additional parenthesis
     {
-        jm = (ju + jl) >> 1; //compute a midpoint,
-
-        if ((x >= xx[jm]) == ascnd) // added additional parenthesis
-        {
-            jl = jm; //and replace either the lower limit
-        } else {
-            ju = jm; //or the upper limit, as appropriate.
-        }
-    } //Repeat until the test condition is satisﬁed.
-
-    if (x == xx[1]) {
-        j = 1; //Then set the output
-    } else if (x == xx[n]) {
-        j = n - 1;
+      jl = jm; // and replace either the lower limit
     } else {
-        j = jl;
+      ju = jm; // or the upper limit, as appropriate.
     }
+  } // Repeat until the test condition is satisﬁed.
 
-    return j;
+  if (x == xx[1]) {        // NOLINT
+    j = 1;                 // Then set the output
+  } else if (x == xx[n]) { // NOLINT
+    j = n - 1;
+  } else {
+    j = jl;
+  }
+
+  return j;
 }
 //-----------------------------------------------------------------------------
 

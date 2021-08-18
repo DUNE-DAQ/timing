@@ -13,11 +13,14 @@
 #define TIMING_INCLUDE_TIMING_PC059IONODE_HPP_
 
 // PDT Headers
-#include "timing/FanoutIONode.hpp"
 #include "TimingIssues.hpp"
+#include "timing/FanoutIONode.hpp"
+#include "timing/timinghardwareinfo/InfoStructs.hpp"
+#include "timing/timinghardwareinfo/InfoNljs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
+#include <nlohmann/json.hpp>
 
 // C++ Headers
 #include <chrono>
@@ -29,53 +32,63 @@ namespace timing {
 /**
  * @brief      Class for the PC059 board.
  */
-class PC059IONode : public FanoutIONode {
-    UHAL_DERIVEDNODE(PC059IONode)
+class PC059IONode : public FanoutIONode
+{
+  UHAL_DERIVEDNODE(PC059IONode)
 
 public:
-    explicit PC059IONode(const uhal::Node& node);
-    virtual ~PC059IONode();
+  explicit PC059IONode(const uhal::Node& node);
+  virtual ~PC059IONode();
 
-    /**
-     * @brief     Get status string, optionally print.
-     */
-    std::string get_status(bool print_out=false) const override;
-    
-    /**
-     * @brief      Reset pc059 node.
-     */
-    void reset(int32_t fanout_mode, const std::string& clock_config_file="") const override;
+  /**
+   * @brief     Get status string, optionally print.
+   */
+  std::string get_status(bool print_out = false) const override;
 
-    /**
-     * @brief      Reset pc059 node.
-     */
-    void reset(const std::string& clock_config_file="") const override;
+  /**
+   * @brief      Reset pc059 node.
+   */
+  void reset(int32_t fanout_mode, const std::string& clock_config_file = "") const override; // NOLINT(build/unsigned)
 
-    /**
-     * @brief     Switch the SFP mux channel
-     */
-    void switch_sfp_mux_channel(uint32_t sfp_id) const override;
+  /**
+   * @brief      Reset pc059 node.
+   */
+  void reset(const std::string& clock_config_file = "") const override;
 
-    /**
-     * @brief     Read the active SFP mux channel
-     */
-    uint32_t read_active_sfp_mux_channel() const override;
+  /**
+   * @brief     Switch the SFP mux channel
+   */
+  void switch_sfp_mux_channel(uint32_t sfp_id) const override; // NOLINT(build/unsigned)
 
-    /**
-     * @brief     Switch the SFP I2C mux channel
-     */
-    void switch_sfp_i2c_mux_channel(uint32_t sfp_id) const;
+  /**
+   * @brief     Read the active SFP mux channel
+   */
+  uint32_t read_active_sfp_mux_channel() const override; // NOLINT(build/unsigned)
 
-    /**
-     * @brief      Print status of on-board SFP.
-     */
-    std::string get_sfp_status(uint32_t sfp_id, bool print_out=false) const override;
+  /**
+   * @brief     Switch the SFP I2C mux channel
+   */
+  void switch_sfp_i2c_mux_channel(uint32_t sfp_id) const; // NOLINT(build/unsigned)
 
-    /**
-     * @brief      control tx laser of on-board SFP softly (I2C command)
-     */
-    void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const override;
+  /**
+   * @brief      Print status of on-board SFP.
+   */
+  std::string get_sfp_status(uint32_t sfp_id, bool print_out = false) const override; // NOLINT(build/unsigned)
 
+  /**
+   * @brief      control tx laser of on-board SFP softly (I2C command)
+   */
+  void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Fill hardware monitoring structure.
+   */
+  void get_info(timinghardwareinfo::TimingPC059MonitorData& mon_data) const;
+
+  /**
+   * @brief      Fill hardware monitoring structure.
+   */
+  void get_info(timinghardwareinfo::TimingPC059MonitorDataDebug& mon_data) const;
 };
 
 } // namespace timing

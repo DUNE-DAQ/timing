@@ -11,7 +11,7 @@ from os.path import join, expandvars, basename
 from click import echo, style, secho
 from timing.common.definitions import kBoardPC059
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
-from timing.common.definitions import kDesingFanout
+from timing.common.definitions import kDesignFanout
 from timing.core import I2CSlave, SI534xSlave, I2CExpanderSlave, DACSlave
 
 
@@ -167,7 +167,7 @@ class PC059Shell(BoardShell):
                 echo("Using PLL Clock configuration file: "+style(basename(lFullClockConfigPath), fg='green') )
 
             else:
-                if lDesignType == kDesingFanout and fanout in [0]:
+                if lDesignType == kDesignFanout and fanout in [0]:
                     secho("Overriding clock config - fanout mode", fg='green')
                     lClockConfigPath = self.kClockConfigMap[self.kPC059FanoutSFP]
                 else:
@@ -189,7 +189,7 @@ class PC059Shell(BoardShell):
 
             self.resetLockMon()
 
-            if lDesignType == kDesingFanout:
+            if lDesignType == kDesignFanout:
                 lDevice.getNode('switch.csr.ctrl.master_src').write(fanout)
                 lIO.getNode('csr.ctrl.mux').write(0)
                 lDevice.dispatch()

@@ -24,10 +24,57 @@ local timingendpointinfo = {
     double_val: s.number("DoubleValue", "f8", 
         doc="A double"),
 
+    timing_fl_cmd_counters: s.record("TimingFLCmdCounters",
+    [
+        s.field("TimeSync", self.uint,
+                doc="TimeSync counters"),
+        
+        s.field("Echo", self.uint,
+                doc="Echo counters"),
+        
+        s.field("SpillStart", self.uint,
+                doc="SpillStart counters"),
+        
+        s.field("SpillStop", self.uint,
+                doc="SpillStop counters"),
+        
+        s.field("RunStart", self.uint,
+                doc="RunStart counters"),
+        
+        s.field("RunStop", self.uint,
+                doc="RunStop counters"),
+        
+        s.field("WibCalib", self.uint,
+                doc="WibCalib counters"),
+        
+        s.field("SSPCalib", self.uint,
+                doc="SSPCalib counters"),
+        
+        s.field("FakeTrig0", self.uint,
+                doc="FakeTrig0 counters"),
+        
+        s.field("FakeTrig1", self.uint,
+                doc="FakeTrig1 counters"),
+        
+        s.field("FakeTrig2", self.uint,
+                doc="FakeTrig2 counters"),
+        
+        s.field("FakeTrig3", self.uint,
+                doc="FakeTrig3 counters"),
+        
+        s.field("BeamTrig", self.uint,
+                doc="BeamTrig counters"),
+        
+        s.field("NoBeamTrig", self.uint,
+                doc="NoBeamTrig counters"),
+        
+        s.field("ExtFakeTrig", self.uint,
+                doc="ExtFakeTrig counters"),
+    ],
+    doc="Command counters list"),
+
     timing_endpoint_mon_data: s.record("TimingEndpointInfo", 
     [
-        s.field("class_name", self.text_data, "TimingEndpointInfo",
-                doc="Info class name"),
         s.field("state", self.uint,
                 doc="Endpoint state"),
         s.field("ready", self.bool_data, 0,
@@ -58,6 +105,8 @@ local timingendpointinfo = {
                 doc="Configured coarse delay"),
         s.field("fine_delay", self.uint,
                 doc="Configured fine delay"),
+        s.field("received_fl_commands_counters", self.timing_fl_cmd_counters,
+                doc="Counters for received fixed-length commands")
     ], 
     doc="Timing endpoint monitor data"),
 };

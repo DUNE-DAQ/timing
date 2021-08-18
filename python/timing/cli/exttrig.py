@@ -7,6 +7,7 @@ import traceback
 # PDT imports
 import timing.cli.toolbox as toolbox
 import timing.common.definitions as defs
+from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord
 
 from click import echo, style, secho
 
@@ -28,17 +29,20 @@ def externaltrigger(obj):
 @click.pass_context
 def exttrg_ept(ctx, obj, action):
 
-    lExtTrig = obj.mExtTrig
-
-    if action == 'disable':
-        lExtTrig.disable()
-    elif action == 'enable':
-        lExtTrig.enable()
-    elif action == 'reset':
-        lExtTrig.reset()
-
-    secho("Trigger endpoint action '" + action + "' completed", fg='green')
-    ctx.invoke(exttrg_status)
+    if obj.mDesignType == kDesignOverlord:
+        lExtTrig = obj.mExtTrig
+    
+        if action == 'disable':
+            lExtTrig.disable()
+        elif action == 'enable':
+            lExtTrig.enable()
+        elif action == 'reset':
+            lExtTrig.reset()
+    
+        secho("Trigger endpoint action '" + action + "' completed", fg='green')
+        ctx.invoke(exttrg_status)
+    else:
+        secho("External triggers only available on overlord design", fg='red')
 # ------------------------------------------------------------------------------
 
 
@@ -49,14 +53,17 @@ def exttrg_ept(ctx, obj, action):
 @click.pass_context
 def exttrg_enable(ctx, obj, on):
 
-    lExtTrig = obj.mExtTrig
+    if obj.mDesignType == kDesignOverlord:
+        lExtTrig = obj.mExtTrig
 
-    if on:
-        lExtTrig.enable_triggers()
+        if on:
+            lExtTrig.enable_triggers()
+        else:
+            lExtTrig.disable_triggers()
+        secho("External triggers " + ("enabled" if on else "disabled"), fg='green')
+        ctx.invoke(exttrg_status)
     else:
-        lExtTrig.disable_triggers()
-    secho("External triggers " + ("enabled" if on else "disabled"), fg='green')
-    ctx.invoke(exttrg_status)
+        secho("External triggers only available on overlord design", fg='red')
 # ------------------------------------------------------------------------------
 
 
@@ -67,18 +74,21 @@ def exttrg_enable(ctx, obj, on):
 @click.pass_obj
 def exttrg_status(obj, watch, period):
     
-    lExtTrig = obj.mExtTrig
+    if obj.mDesignType == kDesignOverlord:
+        lExtTrig = obj.mExtTrig
 
-    while(True):
-        if watch:
-            click.clear()
-        
-        echo()
-
-        echo(lExtTrig.get_status())
-        
-        if watch:
-            time.sleep(period)
-        else:
-            break
+        while(True):
+            if watch:
+                click.clear()
+            
+            echo()
+    
+            echo(lExtTrig.get_status())
+            
+            if watch:
+                time.sleep(period)
+            else:
+                break
+    else:
+        secho("External triggers only available on overlord design", fg='red')
 # ------------------------------------------------------------------------------

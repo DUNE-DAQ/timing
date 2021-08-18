@@ -13,17 +13,17 @@
 #define TIMING_INCLUDE_TIMING_ENDPOINTDESIGN_HPP_
 
 // PDT Headers
-#include "timing/TopDesign.hpp"
-#include "timing/FMCIONode.hpp"
 #include "TimingIssues.hpp"
+#include "timing/FMCIONode.hpp"
+#include "timing/TopDesign.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
 // C++ Headers
 #include <chrono>
-#include <string>
 #include <sstream>
+#include <string>
 
 namespace dunedaq {
 namespace timing {
@@ -31,29 +31,35 @@ namespace timing {
 /**
  * @brief      Base class for timing endpoint design nodes.
  */
-template <class IO>
-class EndpointDesign : public TopDesign<IO> {
+template<class IO>
+class EndpointDesign : virtual public TopDesign<IO>
+{
 
 public:
-    explicit EndpointDesign(const uhal::Node& node);
-    virtual ~EndpointDesign();
-	
-	/**
-     * @brief     Get status string, optionally print.
-     */
-    std::string get_status(bool print_out=false) const override;
+  explicit EndpointDesign(const uhal::Node& node);
+  virtual ~EndpointDesign();
 
-    /**
-     * @brief      Enable the specified endpoint node.
-     *
-     * @return     { description_of_the_return_value }
-     */
-    void enable(uint32_t endpoint_id) const;
+  /**
+   * @brief     Get status string, optionally print.
+   */
+  std::string get_status(bool print_out = false) const override;
 
-// In leiu of UHAL_DERIVEDNODE
+  /**
+   * @brief      Prepare the timing endpoint for data taking.
+   *
+   */
+  void configure() const;
+
+  /**
+   * @brief      Collect operational monitoring information
+   */
+  template<class T>
+  void get_info(T& data) const;
+
+  // In leiu of UHAL_DERIVEDNODE
 protected:
-    virtual uhal::Node* clone() const;
-//
+  virtual uhal::Node* clone() const;
+  //
 };
 
 } // namespace timing

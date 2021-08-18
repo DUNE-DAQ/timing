@@ -19,108 +19,120 @@
  */
 
 #ifndef TIMING_INCLUDE_TIMING_I2CMASTERNODE_HPP_
-#define	TIMING_INCLUDE_TIMING_I2CMASTERNODE_HPP_
+#define TIMING_INCLUDE_TIMING_I2CMASTERNODE_HPP_
 
 #include "timing/TimingNode.hpp"
 
 // uHal Headers
-#include "uhal/DerivedNode.hpp"
 #include "TimingIssues.hpp"
 #include "ers/Issue.hpp"
+#include "uhal/DerivedNode.hpp"
 
-#include <vector>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace dunedaq {
 namespace timing {
 
-class I2CSlave; 
+class I2CSlave;
 
-class I2CMasterNode : public uhal::Node {
-    UHAL_DERIVEDNODE(I2CMasterNode)
+class I2CMasterNode : public uhal::Node
+{
+  UHAL_DERIVEDNODE(I2CMasterNode)
 public:
-    I2CMasterNode(const uhal::Node& node);
-    I2CMasterNode(const I2CMasterNode& node );
-    virtual ~I2CMasterNode();
+  explicit I2CMasterNode(const uhal::Node& node);
+  I2CMasterNode(const I2CMasterNode& node);
+  virtual ~I2CMasterNode();
 
-    ///
-    virtual uint16_t get_i2c_clock_prescale() const {
-        return m_clock_prescale;
-    }
+  ///
+  virtual uint16_t get_i2c_clock_prescale() const { return m_clock_prescale; } // NOLINT(build/unsigned)
 
-    virtual std::vector<std::string>  get_slaves() const;
-    virtual uint8_t get_slave_address( const std::string& name ) const;
-    virtual const I2CSlave& get_slave( const std::string& name ) const;
+  virtual std::vector<std::string> get_slaves() const;
+  virtual uint8_t get_slave_address(const std::string& name) const; // NOLINT(build/unsigned)
+  virtual const I2CSlave& get_slave(const std::string& name) const;
 
-    void reset() const;
+  void reset() const;
 
-    /// commodity functions
-    virtual uint8_t read_i2c(uint8_t i2c_device_address, uint32_t i2c_reg_address) const;
-    virtual void write_i2c(uint8_t i2c_device_address, uint32_t i2c_reg_address, uint8_t data, bool send_stop = true) const;
+  /// commodity functions
+  virtual uint8_t read_i2c(uint8_t i2c_device_address, uint32_t i2c_reg_address) const; // NOLINT(build/unsigned)
+  virtual void write_i2c(uint8_t i2c_device_address,                                    // NOLINT(build/unsigned)
+                         uint32_t i2c_reg_address,                                      // NOLINT(build/unsigned)
+                         uint8_t data,                                                  // NOLINT(build/unsigned)
+                         bool send_stop = true) const;
 
-    virtual std::vector<uint8_t> read_i2cArray(uint8_t i2c_device_address, uint32_t i2c_reg_address, uint32_t number_of_words) const;
-    virtual void write_i2cArray(uint8_t i2c_device_address, uint32_t i2c_reg_address, std::vector<uint8_t> data, bool send_stop = true ) const;
+  virtual std::vector<uint8_t> read_i2cArray(uint8_t i2c_device_address,      // NOLINT(build/unsigned)
+                                             uint32_t i2c_reg_address,        // NOLINT(build/unsigned)
+                                             uint32_t number_of_words) const; // NOLINT(build/unsigned)
+  virtual void write_i2cArray(uint8_t i2c_device_address,                     // NOLINT(build/unsigned)
+                              uint32_t i2c_reg_address,                       // NOLINT(build/unsigned)
+                              std::vector<uint8_t> data,                      // NOLINT(build/unsigned)
+                              bool send_stop = true) const;
 
-    virtual std::vector<uint8_t> read_i2cPrimitive(uint8_t i2c_device_address, uint32_t number_of_bytes) const;
-    virtual void write_i2cPrimitive(uint8_t i2c_device_address, const std::vector<uint8_t>& data, bool send_stop = true) const;
+  virtual std::vector<uint8_t> read_i2cPrimitive(uint8_t i2c_device_address,      // NOLINT(build/unsigned)
+                                                 uint32_t number_of_bytes) const; // NOLINT(build/unsigned)
+  virtual void write_i2cPrimitive(uint8_t i2c_device_address,                     // NOLINT(build/unsigned)
+                                  const std::vector<uint8_t>& data,               // NOLINT(build/unsigned)
+                                  bool send_stop = true) const;
 
-    bool ping(uint8_t i2c_device_address) const;
+  bool ping(uint8_t i2c_device_address) const; // NOLINT(build/unsigned)
 
-    std::vector<uint8_t> scan() const;
+  std::vector<uint8_t> scan() const; // NOLINT(build/unsigned)
+
 protected:
+  // low level i2c functions
+  std::vector<uint8_t> virtual read_block_i2c(uint8_t i2c_device_address,      // NOLINT(build/unsigned)
+                                              uint32_t number_of_bytes) const; // NOLINT(build/unsigned)
+  void virtual write_block_i2c(uint8_t i2c_device_address,                     // NOLINT(build/unsigned)
+                               const std::vector<uint8_t>& data,               // NOLINT(build/unsigned)
+                               bool send_stop = true) const;
 
-    // low level i2c functions
-    std::vector<uint8_t> virtual read_block_i2c(uint8_t i2c_device_address, uint32_t number_of_bytes) const;
-    void virtual write_block_i2c(uint8_t i2c_device_address, const std::vector<uint8_t>& data, bool send_stop = true) const;
+  uint8_t send_i2c_command_and_read_data(uint8_t command) const;             // NOLINT(build/unsigned)
+  void send_i2c_command_and_write_data(uint8_t command, uint8_t data) const; // NOLINT(build/unsigned)
 
-    uint8_t send_i2c_command_and_read_data( uint8_t command ) const;
-    void send_i2c_command_and_write_data( uint8_t command, uint8_t data ) const;
-
-    //! Slaves 
-    std::unordered_map<std::string,uint8_t> m_i2c_device_addresses;
+  //! Slaves
+  std::unordered_map<std::string, uint8_t> m_i2c_device_addresses; // NOLINT(build/unsigned)
 
 private:
-    ///
-    void constructor();
-    
-    // low level i2c functions
-    void wait_until_finished(bool require_acknowledgement = true, bool require_bus_idle_at_end = false) const;
-    
-    //! IPBus register names for i2c bus
-    static const std::string kPreHiNode;
-    static const std::string kPreLoNode;
-    static const std::string kCtrlNode;
-    static const std::string kTxNode;
-    static const std::string kRxNode;
-    static const std::string kCmdNode;
-    static const std::string kStatusNode;
+  ///
+  void constructor();
 
-    static const uint8_t kStartCmd; // 1 << 7
-    static const uint8_t kStopCmd;  // 1 << 6
-    static const uint8_t kReadFromSlaveCmd; // 1 << 5
-    static const uint8_t kWriteToSlaveCmd; // 1 << 4
-    static const uint8_t kAckCmd; // 1 << 3
-    static const uint8_t kInterruptAck; // 1
+  // low level i2c functions
+  void wait_until_finished(bool require_acknowledgement = true, bool require_bus_idle_at_end = false) const;
 
+  //! IPBus register names for i2c bus
+  static const std::string kPreHiNode;
+  static const std::string kPreLoNode;
+  static const std::string kCtrlNode;
+  static const std::string kTxNode;
+  static const std::string kRxNode;
+  static const std::string kCmdNode;
+  static const std::string kStatusNode;
 
-    static const uint8_t kReceivedAckBit;// recvdack = 0x1 << 7
-    static const uint8_t kBusyBit;// busy = 0x1 << 6
-    static const uint8_t kArbitrationLostBit;// arblost = 0x1 << 5
-    static const uint8_t kInProgressBit;// inprogress = 0x1 << 1
-    static const uint8_t kInterruptBit;// interrupt = 0x1
-    
-    //! clock prescale factor
-    uint16_t m_clock_prescale;
+  static const uint8_t kStartCmd;         // 1 << 7 // NOLINT(build/unsigned)
+  static const uint8_t kStopCmd;          // 1 <<   // NOLINT(build/unsigned)
+  static const uint8_t kReadFromSlaveCmd; // 1 << 5 // NOLINT(build/unsigned)
+  static const uint8_t kWriteToSlaveCmd;  // 1 << 4 // NOLINT(build/unsigned)
+  static const uint8_t kAckCmd;           // 1 << 3 // NOLINT(build/unsigned)
+  static const uint8_t kInterruptAck;     // 1      // NOLINT(build/unsigned)
 
-    //! I2C slaves attached to this node
-    std::unordered_map<std::string,I2CSlave*> m_i2c_devices;
+  static const uint8_t kReceivedAckBit;     // recvdack = 0x1 << 7   // NOLINT(build/unsigned)
+  static const uint8_t kBusyBit;            // busy = 0x1 << 6       // NOLINT(build/unsigned)
+  static const uint8_t kArbitrationLostBit; // arblost = 0x1 << 5    // NOLINT(build/unsigned)
+  static const uint8_t kInProgressBit;      // inprogress = 0x1 << 1 // NOLINT(build/unsigned)
+  static const uint8_t kInterruptBit;       // interrupt = 0x1       // NOLINT(build/unsigned)
 
-    friend class I2CSlave;
+  //! clock prescale factor
+  uint16_t m_clock_prescale; // NOLINT(build/unsigned)
+
+  //! I2C slaves attached to this node
+  std::unordered_map<std::string, I2CSlave*>
+    m_i2c_devices; // TODO, Eric Flumerfelt <eflumerf@fnal.gov> May-21-2021: Consider using smart pointers
+
+  friend class I2CSlave;
 };
 
 } // namespace timing
 } // namespace dunedaq
 
-#endif	// TIMING_INCLUDE_TIMING_I2CMASTERNODE_HPP_ 
-
+#endif // TIMING_INCLUDE_TIMING_I2CMASTERNODE_HPP_

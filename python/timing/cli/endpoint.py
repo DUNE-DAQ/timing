@@ -1,15 +1,15 @@
 import click
+import sys
 
 import collections
 
 from . import toolbox
-from . import definitions as defs
+import timing.common.definitions as defs
 from timing.common.definitions import kLibrarySupportedBoards
 
 from click import echo, style, secho
 from .click_texttable import Texttable
 import time
-
 
 # ------------------------------------------------------------------------------
 #    ____        __          _      __ 
@@ -35,7 +35,17 @@ def endpoint(obj, device, ids):
         lDevice.setTimeoutPeriod(obj.mTimeout)
 
     echo('Created endpoint device ' + style(lDevice.id(), fg='blue'))
-    echo(lDevice.getNode('io').get_hardware_info())
+    
+    lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
+    lDevice.dispatch()
+
+    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards:
+        try:
+            echo(lDevice.getNode('io').get_hardware_info())
+        except:
+            secho("Failed to retrieve hardware information I2C issue? Initial board reset needed?", fg='yellow')
+            e = sys.exc_info()[0]
+            secho("Error: {}".format(e), fg='red')
     # Ensure that target endpoint exists
 
     lEPNames = lDevice.getNodes('endpoint('+'|'.join( ( str(i) for i in ids ) )+')')
@@ -60,6 +70,7 @@ def endpoint(obj, device, ids):
 
     obj.mDevice = lDevice
     obj.mEndpoints = lEndpoints
+    obj.mIO = lDevice.getNode('io')
 # ------------------------------------------------------------------------------
 
 
@@ -122,6 +133,9 @@ def status(obj, watch, period):
     lDevice = obj.mDevice
     lEndpoints = obj.mEndpoints
     lEndPointNode = lDevice.getNode('endpoint0')
+    lIO = obj.mIO
+
+    firmware_clock_frequency_hz = lIO.read_firmware_frequency()
 
     while(True):
         if watch:
@@ -165,7 +179,7 @@ def status(obj, watch, period):
         )
         lEPSummary.add_row(
                 ['Timestamp']+
-                [style(str(toolbox.formatTStamp(lEPData[p]['tstamp'])), fg='blue') for p in lEPKeys]
+                [style(str(toolbox.formatTStamp(lEPData[p]['tstamp'],firmware_clock_frequency_hz)), fg='blue') for p in lEPKeys]
         )
         lEPSummary.add_row(
                 ['Timestamp (hex)']+

@@ -1,1 +1,1 @@
-from ._core import *
+from .._daq_timing_py.core import *

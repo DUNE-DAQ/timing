@@ -9,9 +9,9 @@ import timing.cli.toolbox as toolbox
 import timing.common.definitions as defs
 
 from click import echo, style, secho
-from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
+from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
-from timing.common.definitions import kDesingMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesingFanout
+from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout
 from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
 from timing.common.definitions import kLibrarySupportedBoards
 
@@ -45,13 +45,13 @@ def applydelay(ctx, obj, addr, cdelay, fdelay, mux, force):
     lBoardType = obj.mBoardType
     lTopDesign = obj.mTopDesign
 
-    # or a different type of fanout board
-    if lBoardType == kBoardPC059:
+    # Are we working with a board with a return path mux (i.e. a fanout board)?
+    if lBoardType in [kBoardPC059, kBoardFIB]:
         if mux is None:
             if force == True:
                 lTopDesign.apply_endpoint_delay(addr, cdelay, fdelay, 0, not force, True, 0)
             else:
-                raise RuntimeError('PC059 board: please supply an SFP mux channel')
+                raise RuntimeError('MUX board: please supply an SFP mux channel')
         else:
             lTopDesign.apply_endpoint_delay(addr, cdelay, fdelay, 0, not force, True, mux)
             
@@ -73,11 +73,11 @@ def measuredelay(ctx, obj, addr, mux):
     lTopDesign = obj.mTopDesign
     
     # or a different type of fanout board
-    if lBoardType == kBoardPC059:
+    if lBoardType in [kBoardPC059, kBoardFIB]:
         if mux is not None:
             echo("Endpoint (adr: {}, mux: {}) RTT: {}".format(addr,mux,lTopDesign.measure_endpoint_rtt(addr, True, mux)))
         else:
-            raise RuntimeError('PC059 board: please supply an SFP mux channel')
+            raise RuntimeError('MUX board: please supply an SFP mux channel')
     else:
         echo("Endpoint (adr: {}) RTT: {}".format(addr,lTopDesign.measure_endpoint_rtt(addr, True)))
 # ------------------------------------------------------------------------------
@@ -90,8 +90,8 @@ def measuredelay(ctx, obj, addr, mux):
 @click.pass_obj
 def toggletx(obj, addr, on):
 
-    lMasterTop = obj.mMasterTop
-    lMasterTop.switch_endpoint_sfp(addr, on)
+    lMaster = obj.mMaster
+    lMaster.switch_endpoint_sfp(addr, on)
 # ------------------------------------------------------------------------------
 
 
@@ -104,10 +104,10 @@ def scanmux(obj):
     lTopDesign = obj.mTopDesign
     lBoardType = obj.mBoardType
 
-    if lBoardType == kBoardPC059:
+    if lBoardType in [kBoardPC059, kBoardFIB]:
         lTopDesign.scan_sfp_mux()
     else:
-        raise RuntimeError('Mux scan is only available on PC059 boards')
+        raise RuntimeError('Mux scan is only available on MUX boards')
 # ------------------------------------------------------------------------------
 
 
@@ -120,14 +120,14 @@ def switchnlock(obj, mux):
     lDevice = obj.mDevice
     lTopDesign = obj.mTopDesign
     lBoardType = obj.mBoardType
-    lMasterTop = obj.mMasterTop
+    lMaster = obj.mMaster
     
     # or a different type of fanout board
-    if lBoardType == kBoardPC059:
+    if lBoardType in [kBoardPC059, kBoardFIB]:
         if mux is not None:
             lTopDesign.switch_sfp_mux_channel(mux, True)
         else:
-            raise RuntimeError('PC059 board: please supply an SFP mux channel')
+            raise RuntimeError('MUX board: please supply an SFP mux channel')
     else:
-        lMasterTop.enable_upstream_endpoint()
+        lMaster.enable_upstream_endpoint()
 # ------------------------------------------------------------------------------

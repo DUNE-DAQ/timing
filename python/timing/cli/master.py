@@ -9,6 +9,7 @@ import collections
 import math
 import timing
 import traceback
+import sys
 from io import StringIO
 
 # PDT imports
@@ -24,7 +25,7 @@ kMasterFWMajorRequired = 5
 
 from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
-from timing.common.definitions import kDesingMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesingFanout
+from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord
 from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
 from timing.common.definitions import kLibrarySupportedBoards
 # ------------------------------------------------------------------------------
@@ -49,7 +50,7 @@ def master(obj, device):
         
     echo('Created device ' + click.style(lDevice.id(), fg='blue'))
 
-    lMaster = lDevice.getNode('master_top.master')
+    lMaster = lDevice.getNode('master')
 
     lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
     lVersion = lMaster.getNode('global.version').read()
@@ -64,7 +65,12 @@ def master(obj, device):
     lPatch = (lVersion >> 0) & 0xff
     
     if lBoardInfo['board_type'].value() in kLibrarySupportedBoards:
-        echo(lDevice.getNode('io').get_hardware_info())
+        try:
+            echo(lDevice.getNode('io').get_hardware_info())
+        except:
+            secho("Failed to retrieve hardware information I2C issue? Initial board reset needed?", fg='yellow')
+            e = sys.exc_info()[0]
+            secho("Error: {}".format(e), fg='red')
 
     echo("Master FW rev: {}, partitions: {}, channels: {}".format(
         style(hex(lVersion), fg='cyan'),
@@ -79,14 +85,17 @@ def master(obj, device):
     obj.mDevice = lDevice
     obj.mTopDesign = lDevice.getNode('')
     obj.mMaster = lMaster
-    obj.mMasterTop = lDevice.getNode('master_top')
-    obj.mExtTrig = lDevice.getNode('master_top.trig')
-    
+    obj.mIO = lDevice.getNode('io')
+
     obj.mGenerics = { k:v.value() for k,v in lGenerics.items()}
     obj.mVersion = lVersion.value()
     obj.mBoardType = lBoardInfo['board_type'].value()
     obj.mCarrierType = lBoardInfo['carrier_type'].value()
     obj.mDesignType = lBoardInfo['design_type'].value()
+
+    # only overlord has ext trig ept
+    if obj.mDesignType == kDesignOverlord:
+        obj.mExtTrig = obj.mTopDesign.get_external_triggers_endpoint_node()
     
 # ------------------------------------------------------------------------------
 
@@ -94,10 +103,13 @@ def master(obj, device):
 # ------------------------------------------------------------------------------
 @master.command('status', short_help="Print master status")
 @click.pass_obj
-def synctime(obj):
+def status(obj):
+    
+    lMaster = obj.mMaster
+    lIO = obj.mIO
+    firmware_clock_frequency_hz = lIO.read_firmware_frequency()
 
-    lMasterTop = obj.mMasterTop
-    echo(lMasterTop.get_status())
+    echo(lMaster.get_status_with_date(firmware_clock_frequency_hz))
 # ------------------------------------------------------------------------------
 
 
@@ -106,8 +118,8 @@ def synctime(obj):
 @click.pass_obj
 def synctime(obj):
 
-    lMasterTop = obj.mMasterTop
-    lMasterTop.sync_timestamp()
+    lDesign = obj.mTopDesign
+    lDesign.sync_timestamp()
 # ------------------------------------------------------------------------------
 
 
@@ -142,9 +154,10 @@ def partstatus(obj, watch, period):
 
     # lDevice = obj.mDevice
     lMaster = obj.mMaster
-    lMasterTop = obj.mMasterTop
     lPartNode = obj.mPartitionNode
-
+    lIO = obj.mIO
+    
+    firmware_clock_frequency_hz = lIO.read_firmware_frequency()
     lTStampNode = lMaster.getNode('tstamp.ctr.val')
 
     while(True):
@@ -154,7 +167,7 @@ def partstatus(obj, watch, period):
         echo( "-- " + style("Master state", fg='green') + "---")
         echo()
         
-        echo(lMasterTop.get_status())
+        echo(lMaster.get_status_with_date(firmware_clock_frequency_hz))
 
         echo()
 
@@ -288,7 +301,7 @@ def readback(obj, readall, keep):
 
         echo ( "Words available in readout buffer: "+hex(lBufCount))
 
-        lWordsToRead = int(lBufCount) if readall else (int(lBufCount) / defs.kEventSize)*defs.kEventSize
+        lWordsToRead = int(lBufCount) if readall else int(lBufCount // defs.kEventSize)*defs.kEventSize
 
         # if lWordsToRead == 0:
             # echo("Nothing to read, goodbye!")
@@ -335,8 +348,8 @@ def sendcmd(obj, cmd, chan, n):
     Inject a single command.
     '''
 
-    lMasterTop = obj.mMasterTop
-    lMasterTop.send_fl_cmd(defs.kCommandIDs[cmd],chan,n)
+    lMaster = obj.mMaster
+    lMaster.send_fl_cmd(defs.kCommandIDs[cmd],chan,n)
 # ------------------------------------------------------------------------------
 
 
@@ -383,8 +396,8 @@ def faketriggen(obj, chan, rate, poisson):
     # b) Division by a power of two set by n = 2 ^ rate_div_d (ranging from 2^0 -> 2^15)
     # c) 1-in-n prescaling set by n = rate_div_p
 
-    lMasterTop = obj.mMasterTop
-    lMasterTop.enable_fake_trigger(chan,rate,poisson)
+    lTopDesign = obj.mTopDesign
+    lTopDesign.enable_fake_trigger(chan,rate,poisson)
 # ------------------------------------------------------------------------------
 
 
@@ -396,8 +409,8 @@ def faketrigclear(obj, chan):
     '''
     Clear the internal trigger generator.
     '''
-    lMasterTop = obj.mMasterTop
-    lMasterTop.disable_fake_trigger(chan)
+    lMaster = obj.mMaster
+    lMaster.disable_fake_trigger(chan)
     secho( "Fake triggers disabled; chan: {}".format(chan), fg='green')
 # ------------------------------------------------------------------------------
 
@@ -411,8 +424,8 @@ def spillenable(obj):
     \b
     Enables the internal spill generator.
     '''
-    lMasterTop = obj.mMasterTop
-    lMasterTop.enable_spill_interface()
+    lMaster = obj.mMaster
+    lMaster.enable_spill_interface()
     secho( "Spill interface enabled", fg='green')
 # ------------------------------------------------------------------------------
 
@@ -433,8 +446,8 @@ def fakespillgen(obj):
     \b
     FREQ
     '''
-    lMasterTop = obj.mMasterTop
-    lMasterTop.enable_fake_spills()
+    lMaster = obj.mMaster
+    lMaster.enable_fake_spills()
     secho( "Fake spills enabled", fg='green')
 
 # ------------------------------------------------------------------------------
