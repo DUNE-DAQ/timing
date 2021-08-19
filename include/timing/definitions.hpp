@@ -66,6 +66,10 @@ enum BoardRevision
   kFIBRev1,
 };
 
+const std::vector<BoardType> g_library_supported_boards = {
+    kBoardFMC, kBoardPC059, kBoardTLU, kBoardSim, kBoardFIB
+};
+
 const uint32_t g_event_size = 6;             // NOLINT(build/unsigned)
 const uint32_t g_hsi_event_size = 5;         // NOLINT(build/unsigned)
 

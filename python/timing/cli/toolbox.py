@@ -370,3 +370,9 @@ def printCounters( aTopNode, aSubNodes, aNumCtrs=0x10, aTitle='Cmd', aLegend=def
         print( '|'.join(['']+[kCellFmt.format(lCell) for lCell in lLine]+['']))
     print ( '-'*lLineLen)
 # ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+def fmtEpState(aState):
+    aState = aState.value()
+    return '{} ({})'.format(defs.kEpStates[aState], hex(aState)) if aState in defs.kEpStates else hex(aState)
+# ------------------------------------------------------------------------------

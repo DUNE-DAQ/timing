@@ -17,68 +17,11 @@ from os.path import join, expandvars, basename
 from timing.core import SI534xSlave, I2CExpanderSlave, DACSlave
 
 from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB
+from timing.common.definitions import kFMCRev1, kFMCRev2, kFMCRev3, kFMCRev4, kPC059Rev1, kTLURev1, kSIMRev1, kFIBRev1
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignChronos, kDesignBoreas
-from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
+from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap, kUIDRevisionMap, kClockConfigMap
 from timing.common.definitions import kLibrarySupportedBoards
-
-
-kFMCRev1 = 1
-kFMCRev2 = 2
-kFMCRev3 = 7
-kPC059Rev1 = 3
-kPC059FanoutHDMI = 4
-kPC059FanoutSFP = 5
-kTLURev1 = 6
-kFMCRev3 = 7
-
-kClockConfigMap = {
-    kFMCRev1: "SI5344/PDTS0000.txt",
-    kFMCRev2: "SI5344/PDTS0003.txt",
-    kFMCRev3: "SI5394/PDTS0003.txt",
-    kPC059Rev1: "SI5345/PDTS0005.txt",
-    kPC059FanoutHDMI: "devel/PDTS_PC059_FANOUT.txt",
-    kPC059FanoutSFP: "wr/FANOUT_PLL_WIDEBW_SFPIN.txt",
-    kTLURev1: "wr/TLU_EXTCLK_10MHZ_NOZDM.txt"
-}
-
-kUIDRevisionMap = {
-    0xd880395e720b: kFMCRev1,
-    0xd880395e501a: kFMCRev1,
-    0xd880395e50b8: kFMCRev1,
-    0xd880395e501b: kFMCRev1,
-    0xd880395e7201: kFMCRev1,
-    0xd880395e4fcc: kFMCRev1,
-    0xd880395e5069: kFMCRev1,
-    0xd880395e7206: kFMCRev1,
-    0xd880395e1c86: kFMCRev2,
-    0xd880395e2630: kFMCRev2,
-    0xd880395e262b: kFMCRev2,
-    0xd880395e2b38: kFMCRev2,
-    0xd880395e1a6a: kFMCRev2,
-    0xd880395e36ae: kFMCRev2,
-    0xd880395e2b2e: kFMCRev2,
-    0xd880395e2b33: kFMCRev2,
-    0xd880395e1c81: kFMCRev2,
-    0x049162b67ce6: kFMCRev3,
-    0x049162b62947: kFMCRev3,
-    0x049162b67cdf: kFMCRev3,
-    0x49162b62050 : kFMCRev3,
-    0x49162b62951 : kFMCRev3,
-    0x49162b675e3 : kFMCRev3,
-    0xd88039d980cf: kPC059Rev1,
-    0xd88039d98adf: kPC059Rev1,
-    0xd88039d92491: kPC059Rev1,
-    0xd88039d9248e: kPC059Rev1,
-    0xd88039d98ae9: kPC059Rev1,
-    0xd88039d92498: kPC059Rev1,
-    0x5410ecbba408: kTLURev1,
-    0x5410ecbb9426: kTLURev1,
-    #0x801f12f5ce48: kFIBRev1},
-    #0x801f12f5e9ae: kFIBRev1,
-    0x49162b65025:  kFMCRev3,
-    0x49162b62948:  kFMCRev3,
-}
 
 # ------------------------------------------------------------------------------
 #    __  ___         __         
