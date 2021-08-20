@@ -178,7 +178,7 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
     std::string clock_config_key;
 
     const BoardRevision board_revision = get_board_revision();
-    const CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
+//    const CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
     const DesignType design_type = convert_value_to_design_type(read_design_type());
     const uint32_t firmware_frequency = read_firmware_frequency(); // NOLINT(build/unsigned)
 
