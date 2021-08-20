@@ -256,7 +256,7 @@ BoardType
 convert_value_to_board_type(uint32_t board_type) // NOLINT(build/unsigned)
 {
   // not pleasnt, but works for now
-  if (board_type > kBoardFIB) {
+  if (board_type >= kBoardUnknown) {
     throw UnknownBoardType(ERS_HERE, format_reg_value(board_type));
   } else {
     return static_cast<BoardType>(board_type);
@@ -269,7 +269,7 @@ CarrierType
 convert_value_to_carrier_type(uint32_t carrier_type) // NOLINT(build/unsigned)
 {
   // not pleasnt, but works for now
-  if (carrier_type > kCarrierAFC) {
+  if (carrier_type >= kCarrierUnknown) {
     throw UnknownCarrierType(ERS_HERE, format_reg_value(carrier_type));
   } else {
     return static_cast<CarrierType>(carrier_type);
@@ -282,7 +282,7 @@ DesignType
 convert_value_to_design_type(uint32_t design_type) // NOLINT(build/unsigned)
 {
   // not pleasnt, but works for now
-  if (design_type > kDesignBoreas) {
+  if (design_type >= kDesignUnknown) {
     throw UnknownDesignType(ERS_HERE, format_reg_value(design_type));
   } else {
     return static_cast<DesignType>(design_type);
