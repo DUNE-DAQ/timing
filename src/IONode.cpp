@@ -24,14 +24,12 @@ namespace timing {
 //-----------------------------------------------------------------------------
 IONode::IONode(const uhal::Node& node,
                std::string uid_i2c_bus,
-               std::string uid_i2c_device,
                std::string pll_i2c_bus,
                std::string pll_i2c_device,
                std::vector<std::string> clock_names,
                std::vector<std::string> sfp_i2c_buses)
   : TimingNode(node)
   , m_uid_i2c_bus(uid_i2c_bus)
-  , m_uid_i2c_device(uid_i2c_device)
   , m_pll_i2c_bus(pll_i2c_bus)
   , m_pll_i2c_device(pll_i2c_device)
   , m_clock_names(clock_names)
@@ -92,7 +90,7 @@ IONode::read_board_uid() const
 
   uint64_t uid = 0;                // NOLINT(build/unsigned)
   std::vector<uint8_t> uid_values = // NOLINT(build/unsigned)
-    getNode<I2CMasterNode>(m_uid_i2c_bus).get_slave(m_uid_i2c_device).read_i2cArray(0xfa, 6);
+    getNode<I2CMasterNode>(m_uid_i2c_bus).get_slave(get_uid_address_parameter_name()).read_i2cArray(0xfa, 6);
 
   for (uint8_t i = 0; i < uid_values.size(); ++i) { // NOLINT(build/unsigned)
     uid = (uid << 8) | uid_values.at(i);

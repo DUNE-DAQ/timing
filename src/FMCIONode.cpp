@@ -17,12 +17,27 @@ UHAL_REGISTER_DERIVED_NODE(FMCIONode)
 
 //-----------------------------------------------------------------------------
 FMCIONode::FMCIONode(const uhal::Node& node)
-  : IONode(node, "uid_i2c", "FMC_UID_PROM", "pll_i2c", "i2caddr", { "PLL", "CDR" }, { "sfp_i2c" })
-{}
+  : IONode(node, "uid_i2c", "pll_i2c", "i2caddr", { "PLL", "CDR" }, { "sfp_i2c" })
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 FMCIONode::~FMCIONode() {}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+std::string
+FMCIONode::get_uid_address_parameter_name() const
+{
+  CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
+
+  if (carrier_type == kCarrierNexusVideo) {
+    return "FMC_UID_PROM_NEXUS";
+  } else {
+    return "FMC_UID_PROM";
+  }
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
