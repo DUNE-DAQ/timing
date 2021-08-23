@@ -32,7 +32,7 @@ FMCIONode::get_uid_address_parameter_name() const
 {
   CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
 
-  if (carrier_type == kCarrierNexusVideo) {
+  if (carrier_type == kCarrierNexusVideo || carrier_type == kCarrierAFC) {
     return "FMC_UID_PROM_NEXUS";
   } else {
     return "FMC_UID_PROM";
