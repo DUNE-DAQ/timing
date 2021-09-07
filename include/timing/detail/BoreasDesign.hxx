@@ -52,7 +52,7 @@ BoreasDesign<IO>::configure() const
   this->reset();
 
   // Set timestamp to current time
-  this->get_master_node().sync_timestamp();
+  this->sync_timestamp();
 
   // configure hsi
   // this->get_his_node().

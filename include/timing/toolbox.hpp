@@ -69,15 +69,15 @@ snapshot(const uhal::Node& node);
 
 //! Walk & read the sub-nodes whose IDs match this regex.
 Snapshot
-snapshot(const uhal::Node& node, const std::string& aRegex);
+snapshot(const uhal::Node& node, const std::string& regex);
 
 /**
  * Sleeps for a given number of milliseconds
  *
- * @param      aTimeInMilliseconds  Number of milliseconds to sleep
+ * @param      time_in_milliseconds  Number of milliseconds to sleep
  */
 void
-millisleep(const double& aTimeInMilliseconds);
+millisleep(const double& time_in_milliseconds);
 
 /**
  * Formats a std::string in printf fashion
@@ -88,31 +88,31 @@ millisleep(const double& aTimeInMilliseconds);
  * @return     A formatted string
  */
 std::string
-strprintf(const char* aFmt, ...); // NOLINT
+strprintf(const char* fmt, ...); // NOLINT
 
 /**
  * Expand the path
- * @param aPath path to expand
+ * @param path path to expand
  * @return vector of expanded paths
  */
 std::vector<std::string>
-shell_expand_paths(const std::string& aPath);
+shell_expand_paths(const std::string& path);
 
 /**
  * Performs variable subsitutition on path
- * @param aPath: Path to expand
+ * @param path: Path to expand
  * @return Expanded path
  */
 std::string
-shellExpandPath(const std::string& aPath);
+shellExpandPath(const std::string& path);
 
 /**
  * Checks that the input path corresponds to an existing filesystem item which
  * is a file
- * @param aPath: Path to file
+ * @param path: Path to file
  */
 void
-throw_if_not_file(const std::string& aPath);
+throw_if_not_file(const std::string& path);
 
 /**
  * @brief      Converts a vector of strings in a delimiter-separated string.
@@ -126,11 +126,11 @@ throw_if_not_file(const std::string& aPath);
  */
 template<typename C>
 std::string
-join(const C& aStrings, const std::string& aDelimiter = " ");
+join(const C& strings, const std::string& delimiter = " ");
 
 /**
  * Expand the path
- * @param aPath path to expand
+ * @param path path to expand
  * @return vector of expanded paths
  */
 uint8_t                                                 // NOLINT(build/unsigned)
@@ -140,8 +140,8 @@ dec_rng(uint8_t word, uint8_t ibit, uint8_t nbits = 1); // NOLINT(build/unsigned
  * ""
  * @return
  */
-uint64_t                                            // NOLINT(build/unsigned)
-tstamp2int(uhal::ValVector<uint32_t> rawTimestamp); // NOLINT(build/unsigned)
+uint64_t                                             // NOLINT(build/unsigned)
+tstamp2int(uhal::ValVector<uint32_t> raw_timestamp); // NOLINT(build/unsigned)
 
 /**
  * Format reg-value
@@ -149,7 +149,7 @@ tstamp2int(uhal::ValVector<uint32_t> rawTimestamp); // NOLINT(build/unsigned)
  */
 template<class T>
 std::string
-format_reg_value(T regValue, uint32_t base = 16); // NOLINT(build/unsigned)
+format_reg_value(T reg_value, uint32_t base = 16); // NOLINT(build/unsigned)
 
 /**
  * @brief     Format reg-value table
@@ -171,14 +171,14 @@ get_seconds_since_epoch();
  * @return
  */
 std::string
-format_timestamp(uhal::ValVector<uint32_t> rawTimestamp); // NOLINT(build/unsigned)
+format_timestamp(uhal::ValVector<uint32_t> raw_timestamp, uint32_t clock_frequency_hz); // NOLINT(build/unsigned)
 
 /**
  * ""
  * @return
  */
 std::string
-format_timestamp(uint64_t rawTimestamp); // NOLINT(build/unsigned)
+format_timestamp(uint64_t raw_timestamp, uint32_t clock_frequency_hz); // NOLINT(build/unsigned)
 
 /**
  * @brief     Format reg-value table
@@ -186,33 +186,33 @@ format_timestamp(uint64_t rawTimestamp); // NOLINT(build/unsigned)
  */
 template<class T>
 std::string
-format_counters_table(std::vector<T> aCounters,
-                      std::vector<std::string> aCounterNodeTitles = {},
-                      std::string aTableTitle = "",
-                      std::vector<std::string> aCounterLabels = {},
-                      std::string aCounterLabelsHeader = "Cmd");
+format_counters_table(std::vector<T> counters,
+                      std::vector<std::string> counter_node_titles = {},
+                      std::string table_title = "",
+                      std::vector<std::string> counter_labels = {},
+                      std::string counter_labels_header = "Cmd");
 
 /**
  * ""
  * @return
  */
 double
-convert_bits_to_float(uint64_t aBits, bool aIsDoublePrecision = false); // NOLINT(build/unsigned)
+convert_bits_to_float(uint64_t bits, bool is_double_precision = false); // NOLINT(build/unsigned)
 
 BoardType
-convert_value_to_board_type(uint32_t aBoardType); // NOLINT(build/unsigned)
+convert_value_to_board_type(uint32_t Board_type); // NOLINT(build/unsigned)
 CarrierType
-convert_value_to_carrier_type(uint32_t aCarrierType); // NOLINT(build/unsigned)
+convert_value_to_carrier_type(uint32_t darrier_type); // NOLINT(build/unsigned)
 DesignType
-convert_value_to_design_type(uint32_t aDesignType); // NOLINT(build/unsigned)
+convert_value_to_design_type(uint32_t design_type); // NOLINT(build/unsigned)
 
 template<typename T>
 std::string
-vec_fmt(const std::vector<T>& aVec);
+vec_fmt(const std::vector<T>& vec);
 
 template<typename T>
 std::string
-short_vec_fmt(const std::vector<T>& aVec);
+short_vec_fmt(const std::vector<T>& vec);
 
 } // namespace timing
 } // namespace dunedaq

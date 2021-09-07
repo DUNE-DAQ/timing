@@ -64,9 +64,10 @@ def applydelay(ctx, obj, addr, cdelay, fdelay, mux, force):
 @align.command('measure-delay', short_help="Measure endpoint round trip time")
 @click.argument('addr', type=toolbox.IntRange(0x0,0x100))
 @click.option('--mux', '-m', type=click.IntRange(0,7), help='Mux select (fanout only)')
+@click.option('--sfp-control/--no-sfp-control', default=True, help='Control SFP or not')
 @click.pass_obj
 @click.pass_context
-def measuredelay(ctx, obj, addr, mux):
+def measuredelay(ctx, obj, addr, mux, sfp_control):
 
     lDevice = obj.mDevice
     lBoardType = obj.mBoardType
@@ -75,11 +76,11 @@ def measuredelay(ctx, obj, addr, mux):
     # or a different type of fanout board
     if lBoardType in [kBoardPC059, kBoardFIB]:
         if mux is not None:
-            echo("Endpoint (adr: {}, mux: {}) RTT: {}".format(addr,mux,lTopDesign.measure_endpoint_rtt(addr, True, mux)))
+            echo("Endpoint (adr: {}, mux: {}) RTT: {}".format(addr,mux,lTopDesign.measure_endpoint_rtt(addr, sfp_control, mux)))
         else:
             raise RuntimeError('MUX board: please supply an SFP mux channel')
     else:
-        echo("Endpoint (adr: {}) RTT: {}".format(addr,lTopDesign.measure_endpoint_rtt(addr, True)))
+        echo("Endpoint (adr: {}) RTT: {}".format(addr,lTopDesign.measure_endpoint_rtt(addr, sfp_control)))
 # ------------------------------------------------------------------------------
 
 

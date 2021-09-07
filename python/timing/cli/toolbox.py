@@ -302,11 +302,11 @@ def escape_ansi(line):
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-def formatTStamp( aRawTStamp ):
+def formatTStamp( aRawTStamp, clock_frequency_hz ):
     ts = int(aRawTStamp[0]) + int((aRawTStamp[1]) << 32)
     
-    lSubSec = ts % defs.kSPSClockInHz
-    lSecFromEpoch = ts / defs.kSPSClockInHz
+    lSubSec = ts % clock_frequency_hz
+    lSecFromEpoch = ts / clock_frequency_hz
 
     return time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.localtime(lSecFromEpoch))
 # ------------------------------------------------------------------------------

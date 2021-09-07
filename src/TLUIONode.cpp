@@ -31,12 +31,12 @@ std::string
 TLUIONode::get_status(bool print_out) const
 {
   auto subnodes = read_sub_nodes(getNode("csr.stat"));
-  std::stringstream lStatus;
-  lStatus << format_reg_table(subnodes, "TLU IO state");
+  std::stringstream status;
+  status << format_reg_table(subnodes, "TLU IO state");
 
   if (print_out)
-    TLOG() << lStatus.str();
-  return lStatus.str();
+    TLOG() << status.str();
+  return status.str();
 }
 //-----------------------------------------------------------------------------
 
@@ -61,56 +61,57 @@ TLUIONode::reset(const std::string& clock_config_file) const
   // enclustra i2c switch stuff
   try {
     getNode<I2CMasterNode>(m_uid_i2c_bus).get_slave("AX3_Switch").write_i2c(0x01, 0x7f);
-  } catch (...) { // NOLINT
-                  // TODO, Eric Flumerfelt <eflumerf@fnal.gov> May-21-2021: Throw appropriate ERS exception
+  } catch (const std::exception& e) {
+    ers::warning(EnclustraSwitchFailure(ERS_HERE, e));
   }
 
   // Find the right pll config file
-  std::string lClockConfigFile = get_full_clock_config_file_path(clock_config_file);
-  TLOG() << "PLL configuration file : " << lClockConfigFile;
+  std::string clock_config_path = get_full_clock_config_file_path(clock_config_file);
+  TLOG() << "PLL configuration file : " << clock_config_path;
 
   // Upload config file to PLL
-  configure_pll(lClockConfigFile);
+  configure_pll(clock_config_path);
 
   // Tweak the PLL swing
-  auto lSIChip = get_pll();
-  lSIChip->write_i2cArray(0x113, { 0x9, 0x33 });
+  auto si_chip = get_pll();
+  si_chip->write_i2cArray(0x113, { 0x9, 0x33 });
 
   // configure tlu io expanders
-  auto lIC6 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "Expander1");
-  auto lIC7 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "Expander2");
+  auto ic_6 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "Expander1");
+  auto ic_7 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "Expander2");
 
   // Bank 0
-  lIC6->set_inversion(0, 0x00);
-  lIC6->set_io(0, 0x00);
-  lIC6->set_outputs(0, 0x00);
+  ic_6->set_inversion(0, 0x00);
+  ic_6->set_io(0, 0x00);
+  ic_6->set_outputs(0, 0x00);
 
   // Bank 1
-  lIC6->set_inversion(1, 0x00);
-  lIC6->set_io(1, 0x00);
-  lIC6->set_outputs(1, 0x88);
+  ic_6->set_inversion(1, 0x00);
+  ic_6->set_io(1, 0x00);
+  ic_6->set_outputs(1, 0x88);
 
   // Bank 0
-  lIC7->set_inversion(0, 0x00);
-  lIC7->set_io(0, 0x00);
-  lIC7->set_outputs(0, 0xf0);
+  ic_7->set_inversion(0, 0x00);
+  ic_7->set_io(0, 0x00);
+  ic_7->set_outputs(0, 0xf0);
 
   // Bank 1
-  lIC7->set_inversion(1, 0x00);
-  lIC7->set_io(1, 0x00);
-  lIC7->set_outputs(1, 0xf0);
+  ic_7->set_inversion(1, 0x00);
+  ic_7->set_io(1, 0x00);
+  ic_7->set_outputs(1, 0xf0);
 
   // BI signals are NIM
-  uint32_t lBISignalThreshold = 0x589D; // NOLINT(build/unsigned)
+  uint32_t bi_signal_threshold = 0x589D; // NOLINT(build/unsigned)
 
-  configure_dac(0, lBISignalThreshold);
-  configure_dac(1, lBISignalThreshold);
+  configure_dac(0, bi_signal_threshold);
+  configure_dac(1, bi_signal_threshold);
 
-  TLOG_DEBUG(0) << "DAC1 and DAC2 set to " << std::hex << lBISignalThreshold;
+  TLOG_DEBUG(0) << "DAC1 and DAC2 set to " << std::hex << bi_signal_threshold;
 
-  getNode("csr.ctrl.rst_lock_mon").write(0x1);
-  getNode("csr.ctrl.rst_lock_mon").write(0x0);
-  getClient().dispatch();
+  // To be removed from firmware address maps also
+  //getNode("csr.ctrl.rst_lock_mon").write(0x1);
+  //getNode("csr.ctrl.rst_lock_mon").write(0x0);
+  //getClient().dispatch();
 
   TLOG() << "Reset done";
 }
@@ -120,15 +121,15 @@ TLUIONode::reset(const std::string& clock_config_file) const
 void
 TLUIONode::configure_dac(uint32_t dac_id, uint32_t dac_value, bool internal_ref) const // NOLINT(build/unsigned)
 {
-  std::string lDACDevice;
+  std::string dac_device;
   try {
-    lDACDevice = m_dac_devices.at(dac_id);
+    dac_device = m_dac_devices.at(dac_id);
   } catch (const std::out_of_range& e) {
     throw InvalidDACId(ERS_HERE, format_reg_value(dac_id));
   }
-  auto lDAC = get_i2c_device<DACSlave>(m_uid_i2c_bus, lDACDevice);
-  lDAC->set_interal_ref(internal_ref);
-  lDAC->set_dac(7, dac_value);
+  auto dac = get_i2c_device<DACSlave>(m_uid_i2c_bus, dac_device);
+  dac->set_interal_ref(internal_ref);
+  dac->set_dac(7, dac_value);
 }
 //-----------------------------------------------------------------------------
 

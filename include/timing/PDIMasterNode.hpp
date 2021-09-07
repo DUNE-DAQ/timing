@@ -46,6 +46,11 @@ public:
   std::string get_status(bool print_out = false) const override;
 
   /**
+   * @brief     Print the status of the timing node.
+   */
+  std::string get_status_with_date(uint32_t clock_frequency_hz, bool print_out = false) const; // NOLINT(build/unsigned)
+
+  /**
    * @brief     Control the tx line of endpoint sfp
    */
   void switch_endpoint_sfp(uint32_t address, bool turn_on) const override; // NOLINT(build/unsigned)
@@ -84,7 +89,7 @@ public:
   /**
    * @brief     Configure fake trigger generator
    */
-  void enable_fake_trigger(uint32_t channel, double rate, bool poisson = false) const; // NOLINT(build/unsigned)
+  void enable_fake_trigger(uint32_t channel, double rate, bool poisson, uint32_t clock_frequency_hz) const; // NOLINT(build/unsigned)
 
   /**
    * @brief     Clear fake trigger configuration
@@ -109,7 +114,7 @@ public:
   /**
    * @brief     Set timestamp to current machine time
    */
-  void sync_timestamp() const;
+  void sync_timestamp(uint32_t clock_frequency_hz) const; // NOLINT(build/unsigned)
 
   /**
    * @brief     Fill the PD-I master monitoring structure.

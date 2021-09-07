@@ -57,6 +57,12 @@ public:
   virtual uint64_t read_master_timestamp() const; // NOLINT(build/unsigned)
 
   /**
+   * @brief      Sync timestamp to current machine value.
+   *
+   */
+  virtual void sync_timestamp() const;
+  
+  /**
    * @brief      Measure the endpoint round trip time.
    *
    * @return     { description_of_the_return_value }
@@ -72,6 +78,18 @@ public:
                                     uint32_t phase_delay,  // NOLINT(build/unsigned)
                                     bool measure_rtt = false,
                                     bool control_sfp = true) const;
+  /**
+   * @brief     Send a fixed length command
+   */
+  virtual void send_fl_cmd(uint32_t command,                       // NOLINT(build/unsigned)
+                           uint32_t channel,                       // NOLINT(build/unsigned)
+                           uint32_t number_of_commands = 1) const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief     Configure fake trigger generator
+   */
+  virtual void enable_fake_trigger(uint32_t channel, double rate, bool poisson = false) const; // NOLINT(build/unsigned)
+
 };
 
 } // namespace timing

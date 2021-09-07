@@ -31,12 +31,12 @@ EchoMonitorNode::~EchoMonitorNode() {}
 std::string
 EchoMonitorNode::get_status(bool print_out) const
 {
-  std::stringstream lStatus;
+  std::stringstream status;
   auto subnodes = read_sub_nodes(getNode("csr.stat"));
-  lStatus << format_reg_table(subnodes, "Echo mon state");
+  status << format_reg_table(subnodes, "Echo mon state");
   if (print_out)
-    TLOG() << lStatus.str();
-  return lStatus.str();
+    TLOG() << status.str();
+  return status.str();
 }
 //-----------------------------------------------------------------------------
 
@@ -50,44 +50,45 @@ EchoMonitorNode::send_echo_and_measure_delay(int64_t timeout) const
 
   auto start = std::chrono::high_resolution_clock::now();
 
-  std::chrono::milliseconds msSinceStart(0);
+  std::chrono::milliseconds ms_since_start(0);
 
-  uhal::ValWord<uint32_t> lDone; // NOLINT(build/unsigned)
+  uhal::ValWord<uint32_t> done; // NOLINT(build/unsigned)
 
-  while (msSinceStart.count() < timeout) {
+  while (ms_since_start.count() < timeout) {
 
     auto now = std::chrono::high_resolution_clock::now();
-    msSinceStart = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
+    ms_since_start = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
 
     millisleep(100);
 
-    lDone = getNode("csr.stat.rx_done").read();
+    done = getNode("csr.stat.rx_done").read();
     getClient().dispatch();
 
-    TLOG_DEBUG(0) << "rx done: " << std::hex << lDone.value();
+    TLOG_DEBUG(0) << "rx done: " << std::hex << done.value();
 
-    if (lDone.value())
+    if (done.value())
       break;
   }
 
-  if (!lDone.value()) {
+  if (!done.value()) {
     throw EchoTimeout(ERS_HERE, timeout);
   }
 
-  auto lTimeRxL = getNode("csr.rx_l").read();
-  auto lTimeRxH = getNode("csr.rx_h").read();
-  auto lTimeTxL = getNode("csr.tx_l").read();
-  auto lTimeTxH = getNode("csr.tx_h").read();
+  auto time_rx_l = getNode("csr.rx_l").read();
+  auto time_rx_h = getNode("csr.rx_h").read();
+
+  auto time_tx_l = getNode("csr.tx_l").read();
+  auto time_tx_h = getNode("csr.tx_h").read();
 
   getClient().dispatch();
 
-  uint64_t lTimeRx = ((uint64_t)lTimeRxH.value() << 32) + lTimeRxL.value(); // NOLINT(build/unsigned)
-  uint64_t lTimeTx = ((uint64_t)lTimeTxH.value() << 32) + lTimeTxL.value(); // NOLINT(build/unsigned)
+  uint64_t time_rx = ((uint64_t)time_rx_h.value() << 32) + time_rx_l.value(); // NOLINT(build/unsigned)
+  uint64_t time_tx = ((uint64_t)time_tx_h.value() << 32) + time_tx_l.value(); // NOLINT(build/unsigned)
 
-  TLOG_DEBUG(0) << "tx ts: " << format_reg_value(lTimeTx);
-  TLOG_DEBUG(0) << "rx ts: " << format_reg_value(lTimeRx);
+  TLOG_DEBUG(0) << "tx ts: " << format_reg_value(time_tx);
+  TLOG_DEBUG(0) << "rx ts: " << format_reg_value(time_rx);
 
-  return lTimeRx - lTimeTx;
+  return time_rx - time_tx;
 }
 //-----------------------------------------------------------------------------
 

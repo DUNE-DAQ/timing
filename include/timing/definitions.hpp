@@ -66,7 +66,6 @@ enum BoardRevision
   kFIBRev1,
 };
 
-const uint32_t g_dune_sp_clock_in_hz = 50e6; // NOLINT(build/unsigned)
 const uint32_t g_event_size = 6;             // NOLINT(build/unsigned)
 const uint32_t g_hsi_event_size = 5;         // NOLINT(build/unsigned)
 

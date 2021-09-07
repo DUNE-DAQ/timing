@@ -43,8 +43,8 @@ MasterNode::set_timestamp(uint64_t timestamp) const // NOLINT(build/unsigned)
 const PartitionNode&
 MasterNode::get_partition_node(uint32_t partition_id) const // NOLINT(build/unsigned)
 {
-  const std::string nodeName = "partition" + std::to_string(partition_id);
-  return getNode<PartitionNode>(nodeName);
+  const std::string node_name = "partition" + std::to_string(partition_id);
+  return getNode<PartitionNode>(node_name);
 }
 
 //-----------------------------------------------------------------------------
@@ -52,11 +52,11 @@ void
 MasterNode::apply_endpoint_delay(const ActiveEndpointConfig& ept_config, bool measure_rtt) const
 {
   std::string lEptIdD = ept_config.id;
-  uint32_t lEptAdr = ept_config.adr;    // NOLINT(build/unsigned)
-  uint32_t lCDelay = ept_config.cdelay; // NOLINT(build/unsigned)
-  uint32_t lFDelay = ept_config.fdelay; // NOLINT(build/unsigned)
-  uint32_t lPDelay = ept_config.pdelay; // NOLINT(build/unsigned)
-  apply_endpoint_delay(lEptAdr, lCDelay, lFDelay, lPDelay, measure_rtt);
+  uint32_t ept_address = ept_config.adr;    // NOLINT(build/unsigned)
+  uint32_t coarse_Delay = ept_config.cdelay; // NOLINT(build/unsigned)
+  uint32_t fine_delay = ept_config.fdelay; // NOLINT(build/unsigned)
+  uint32_t phase_delay = ept_config.pdelay; // NOLINT(build/unsigned)
+  apply_endpoint_delay(ept_address, coarse_Delay, fine_delay, phase_delay, measure_rtt);
 }
 //-----------------------------------------------------------------------------
 

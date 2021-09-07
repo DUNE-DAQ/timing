@@ -8,8 +8,8 @@
  * received with this code.
  */
 
-#ifndef TIMING_INCLUDE_TIMING_TIMINGSYSTEMMANAGER_HPP_
-#define TIMING_INCLUDE_TIMING_TIMINGSYSTEMMANAGER_HPP_
+#ifndef TIMING_TEST_SRC_TIMINGSYSTEMMANAGER_HPP_
+#define TIMING_TEST_SRC_TIMINGSYSTEMMANAGER_HPP_
 
 #include "TimingIssues.hpp"
 #include "timing/TimingSystemManagerBase.hpp"
@@ -127,4 +127,4 @@ public:
 
 #include "detail/TimingSystemManager.hxx"
 
-#endif // TIMING_INCLUDE_TIMING_TIMINGSYSTEMMANAGER_HPP_
+#endif // TIMING_TEST_SRC_TIMINGSYSTEMMANAGER_HPP_

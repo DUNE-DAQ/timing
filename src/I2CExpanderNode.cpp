@@ -86,8 +86,8 @@ I2CExpanderSlave::read_inputs(uint8_t bank_id) const // NOLINT(build/unsigned)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-uint8_t
-I2CExpanderSlave::read_outputs_config(uint8_t bank_id) const {
+uint8_t                                                        // NOLINT(build/unsigned)
+I2CExpanderSlave::read_outputs_config(uint8_t bank_id) const { // NOLINT(build/unsigned)
 
     this->ensure_valid_bank_id(bank_id);
     return this->read_i2c(0x2 + bank_id);
@@ -100,12 +100,12 @@ std::vector<uint32_t> // NOLINT(build/unsigned)
 I2CExpanderSlave::debug() const
 {
 
-  std::vector<uint32_t> lValues(8); // NOLINT(build/unsigned)
+  std::vector<uint32_t> values(8); // NOLINT(build/unsigned)
 
   for (size_t a(0); a < 8; ++a) {
-    lValues[a] = this->read_i2c(a);
+    values[a] = this->read_i2c(a);
   }
-  return lValues;
+  return values;
 }
 //-----------------------------------------------------------------------------
 

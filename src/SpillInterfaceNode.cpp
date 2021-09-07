@@ -31,13 +31,13 @@ SpillInterfaceNode::~SpillInterfaceNode() {}
 std::string
 SpillInterfaceNode::get_status(bool print_out) const
 {
-  std::stringstream lStatus;
+  std::stringstream status;
   auto subnodes = read_sub_nodes(getNode("csr.stat"));
-  lStatus << format_reg_table(subnodes, "Spill interface state");
+  status << format_reg_table(subnodes, "Spill interface state");
 
   if (print_out)
-    TLOG() << lStatus.str();
-  return lStatus.str();
+    TLOG() << status.str();
+  return status.str();
 }
 //-----------------------------------------------------------------------------
 
@@ -86,9 +86,9 @@ SpillInterfaceNode::enable_fake_spills(uint32_t cycle_length, uint32_t spill_len
 bool
 SpillInterfaceNode::read_in_spill() const
 {
-  auto lInSpill = getNode("csr.stat.in_spill").read();
+  auto in_spill = getNode("csr.stat.in_spill").read();
   getClient().dispatch();
-  return lInSpill.value();
+  return in_spill.value();
 }
 //------------------------------------------------------------------------------
 

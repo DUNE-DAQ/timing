@@ -31,13 +31,13 @@ VLCmdGeneratorNode::~VLCmdGeneratorNode() {}
 std::string
 VLCmdGeneratorNode::get_status(bool print_out) const
 {
-  std::stringstream lStatus;
+  std::stringstream status;
   auto subnodes = read_sub_nodes(getNode("csr.stat"));
-  lStatus << format_reg_table(subnodes, "VL Cmd gen state");
+  status << format_reg_table(subnodes, "VL Cmd gen state");
 
   if (print_out)
-    TLOG() << lStatus.str();
-  return lStatus.str();
+    TLOG() << status.str();
+  return status.str();
 }
 //-----------------------------------------------------------------------------
 
