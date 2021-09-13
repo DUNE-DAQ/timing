@@ -18,7 +18,7 @@ from timing.core import SI534xSlave, I2CExpanderSlave, DACSlave
 
 from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB
 from timing.common.definitions import kFMCRev1, kFMCRev2, kFMCRev3, kFMCRev4, kPC059Rev1, kTLURev1, kSIMRev1, kFIBRev1
-from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
+from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed, kCarrierNexusVideo
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignChronos, kDesignBoreas
 from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap, kUIDRevisionMap, kClockConfigMap
 from timing.common.definitions import kLibrarySupportedBoards

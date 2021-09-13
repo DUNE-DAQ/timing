@@ -57,6 +57,7 @@ register_definitions(py::module& m)
         .value("kCarrierMicrozed", kCarrierMicrozed)
         .value("kCarrierATFC", kCarrierATFC)
         .value("kCarrierAFC", kCarrierAFC)
+        .value("kCarrierNexusVideo", kCarrierNexusVideo)
         .value("kCarrierUnknown", kCarrierUnknown)
         .export_values();
 
