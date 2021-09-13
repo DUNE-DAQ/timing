@@ -16,9 +16,9 @@ from click import echo, style, secho
 from os.path import join, expandvars, basename
 from timing.core import SI534xSlave, I2CExpanderSlave, DACSlave
 
-from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB
-from timing.common.definitions import kFMCRev1, kFMCRev2, kFMCRev3, kFMCRev4, kPC059Rev1, kTLURev1, kSIMRev1, kFIBRev1
-from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed, kCarrierNexusVideo
+from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB, kBoardMIB
+from timing.common.definitions import kFMCRev1, kFMCRev2, kFMCRev3, kFMCRev4, kPC059Rev1, kTLURev1, kSIMRev1, kFIBRev1, kMIBRev1
+from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed, kCarrierNexusVideo, kCarrierTrenzTE0712
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignChronos, kDesignBoreas, kDesignTest
 from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap, kUIDRevisionMap, kClockConfigMap
 from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
@@ -126,8 +126,13 @@ def reset(ctx, obj, soft, fanout, forcepllcfg, sfpmuxsel):
         ctx.invoke(clkstatus)
 
     else:
-        secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
+        secho("Board identifier {} not supported by timing library".format(lBoardType), fg='yellow')
         # board not supported by library, do reset here
+        if lBoardType == kBoardMIB:
+            
+            # MIB reset reg writes here
+
+            secho('MIB reset done', fg='green')
 # ------------------------------------------------------------------------------
 
 
@@ -146,6 +151,11 @@ def freq(obj):
     else:
         secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
         # do freq measurement here
+        if lBoardType == kBoardMIB:
+            
+            # MIB clock freq meas reg ops here
+
+            secho('MIB clock freqs', fg='green')
 # ------------------------------------------------------------------------------
 
 
@@ -166,6 +176,11 @@ def status(ctx, obj, verbose):
     else:
         secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
         # do status printing here
+        if lBoardType == kBoardMIB:
+            
+            # MIB status reg reads here
+
+            secho('MIB status', fg='green')
 # ------------------------------------------------------------------------------
 
 
