@@ -166,7 +166,7 @@ def status(obj, watch, period):
         lEPSummary.set_cols_dtype(['t']*(len(lEPKeys)+1))
         lEPSummary.add_row(
                 ['State']+
-                [defs.fmtEpState(lEPData[p]['statdump']['ep_stat']) for p in lEPKeys
+                [toolbox.fmtEpState(lEPData[p]['statdump']['ep_stat']) for p in lEPKeys
                 ]
         )
         lEPSummary.add_row(
