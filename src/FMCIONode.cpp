@@ -17,12 +17,27 @@ UHAL_REGISTER_DERIVED_NODE(FMCIONode)
 
 //-----------------------------------------------------------------------------
 FMCIONode::FMCIONode(const uhal::Node& node)
-  : IONode(node, "uid_i2c", "FMC_UID_PROM", "pll_i2c", "i2caddr", { "PLL", "CDR" }, { "sfp_i2c" })
-{}
+  : IONode(node, "uid_i2c", "pll_i2c", "i2caddr", { "PLL", "CDR" }, { "sfp_i2c" })
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 FMCIONode::~FMCIONode() {}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+std::string
+FMCIONode::get_uid_address_parameter_name() const
+{
+  CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
+
+  if (carrier_type == kCarrierNexusVideo || carrier_type == kCarrierAFC) {
+    return "FMC_UID_PROM_NEXUS";
+  } else {
+    return "FMC_UID_PROM";
+  }
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -75,9 +90,23 @@ FMCIONode::reset(const std::string& clock_config_file) const
   // Enable sfp tx laser
   getNode("csr.ctrl.sfp_tx_dis").write(0x0);
 
-  // To be removed from firmware address maps also
-  //getNode("csr.ctrl.rst_lock_mon").write(0x1);
-  //getNode("csr.ctrl.rst_lock_mon").write(0x0);
+  // rx edges
+  uint32_t cdr_rx_edge = 0x0;
+  uint32_t sfp_rx_edge = 0x0;
+  uint32_t rj45_rx_edge = 0x0;
+
+  // tx edges
+  uint32_t sfp_tx_edge = 0x0;
+  uint32_t rj45_tx_edge = 0x0;
+
+  // rx edges
+  getNode("csr.ctrl.cdr_rx_edge").write(cdr_rx_edge);
+  getNode("csr.ctrl.sfp_rx_edge").write(sfp_rx_edge);
+  getNode("csr.ctrl.rj45_rx_edge").write(rj45_rx_edge);
+
+  // tx edges
+  getNode("csr.ctrl.sfp_tx_edge").write(sfp_tx_edge);
+  getNode("csr.ctrl.rj45_tx_edge").write(rj45_tx_edge);
 
   getClient().dispatch();
 

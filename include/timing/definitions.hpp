@@ -38,6 +38,7 @@ enum CarrierType
   kCarrierMicrozed,
   kCarrierATFC,
   kCarrierAFC,
+  kCarrierNexusVideo,
   kCarrierUnknown
 };
 enum DesignType
@@ -45,7 +46,7 @@ enum DesignType
   kDesignMaster,
   kDesignOuroborosSim,
   kDesignOuroboros,
-  kUnused,
+  kDesignTest,
   kDesignEndpoint,
   kDesignFanout,
   kDesignOverlord,
@@ -66,6 +67,10 @@ enum BoardRevision
   kFIBRev1,
 };
 
+const std::vector<BoardType> g_library_supported_boards = {
+    kBoardFMC, kBoardPC059, kBoardTLU, kBoardSim, kBoardFIB
+};
+
 const uint32_t g_event_size = 6;             // NOLINT(build/unsigned)
 const uint32_t g_hsi_event_size = 5;         // NOLINT(build/unsigned)
 
@@ -81,6 +86,7 @@ const std::map<CarrierType, std::string> g_carrier_type_map = { { kCarrierEnclus
                                                                 { kCarrierMicrozed, "microzed" },
                                                                 { kCarrierATFC, "atfc" },
                                                                 { kCarrierAFC, "afc" },
+                                                                { kCarrierNexusVideo, "nexus-video" },
 
 };
 
@@ -88,6 +94,7 @@ const std::map<DesignType, std::string> g_design_type_map = {
   { kDesignMaster, "master" },
   { kDesignOuroboros, "ouroboros" },
   { kDesignOuroborosSim, "ouroboros-sim" },
+  { kDesignTest, "test-design" },
   { kDesignEndpoint, "endpoint" },
   { kDesignFanout, "fanout" },
   { kDesignOverlord, "overlord" },
@@ -155,91 +162,91 @@ const std::map<uint64_t, BoardRevision> g_board_uid_revision_map = {
 
 const std::map<std::string, std::string> g_clock_config_map = {
   // 62.5 MHz mappings
-  { "kFMCRev1_enclustra-a35_endpoint", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
-  { "kFMCRev2_enclustra-a35_endpoint", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
-  { "kFMCRev3_enclustra-a35_endpoint", "devel/Si5394-053endptr_62-5MHz_4kHz-Registers.txt" },
-  { "kFMCRev4_enclustra-a35_endpoint", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
+  { "kFMCRev1_endpoint", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
+  { "kFMCRev2_endpoint", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
+  { "kFMCRev3_endpoint", "devel/Si5394-053endptr_62-5MHz_4kHz-Registers.txt" },
+  { "kFMCRev4_endpoint", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
 
-  { "kFMCRev1_enclustra-a35_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
-  { "kFMCRev2_enclustra-a35_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
-  { "kFMCRev3_enclustra-a35_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
-  { "kFMCRev4_enclustra-a35_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
+  { "kFMCRev1_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
+  { "kFMCRev2_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
+  { "kFMCRev3_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
+  { "kFMCRev4_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
 
-  { "kFMCRev1_enclustra-a35_chronos", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
-  { "kFMCRev2_enclustra-a35_chronos", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
-  { "kFMCRev3_enclustra-a35_chronos", "devel/Si5394-053endptr_62-5MHz_4kHz-Registers.txt" },
-  { "kFMCRev4_enclustra-a35_chronos", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
+  { "kFMCRev1_chronos", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
+  { "kFMCRev2_chronos", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
+  { "kFMCRev3_chronos", "devel/Si5394-053endptr_62-5MHz_4kHz-Registers.txt" },
+  { "kFMCRev4_chronos", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
 
-  { "kFMCRev1_enclustra-a35_ouroboros", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
-  { "kFMCRev2_enclustra-a35_ouroboros", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
-  { "kFMCRev3_enclustra-a35_ouroboros", "devel/Si5394-RevA-94mst625-Registers.txt" },
-  { "kFMCRev4_enclustra-a35_ouroboros", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
+  { "kFMCRev1_ouroboros", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
+  { "kFMCRev2_ouroboros", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
+  { "kFMCRev3_ouroboros", "devel/Si5394-RevA-94mst625-Registers.txt" },
+  { "kFMCRev4_ouroboros", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
 
-  { "kFMCRev1_enclustra-a35_master", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
-  { "kFMCRev2_enclustra-a35_master", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
-  { "kFMCRev3_enclustra-a35_master", "devel/Si5394-RevA-94mst625-Registers.txt" },
-  { "kFMCRev4_enclustra-a35_master", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
+  { "kFMCRev1_master", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
+  { "kFMCRev2_master", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
+  { "kFMCRev3_master", "devel/Si5394-RevA-94mst625-Registers.txt" },
+  { "kFMCRev4_master", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
 
-  { "kFMCRev1_enclustra-a35_overlord", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
-  { "kFMCRev2_enclustra-a35_overlord", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
-  { "kFMCRev3_enclustra-a35_overlord", "devel/Si5394-RevA-94mst625-Registers.txt" },
-  { "kFMCRev4_enclustra-a35_overlord", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
+  { "kFMCRev1_overlord", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
+  { "kFMCRev2_overlord", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
+  { "kFMCRev3_overlord", "devel/Si5394-RevA-94mst625-Registers.txt" },
+  { "kFMCRev4_overlord", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
 
-  { "kFMCRev1_enclustra-a35_boreas", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
-  { "kFMCRev2_enclustra-a35_boreas", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
-  { "kFMCRev3_enclustra-a35_boreas", "devel/Si5394-RevA-94mst625-Registers.txt" },
-  { "kFMCRev4_enclustra-a35_boreas", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
+  { "kFMCRev1_boreas", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
+  { "kFMCRev2_boreas", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
+  { "kFMCRev3_boreas", "devel/Si5394-RevA-94mst625-Registers.txt" },
+  { "kFMCRev4_boreas", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
 
-  { "kTLURev1_enclustra-a35_overlord", "devel/DUNE_TLU-DUNTLU09-Registers_62.5_mhz.txt" },
-  { "kTLURev1_enclustra-a35_boreas", "devel/DUNE_TLU-DUNTLU09-Registers_62.5_mhz.txt" },
+  { "kTLURev1_overlord", "devel/DUNE_TLU-DUNTLU09-Registers_62.5_mhz.txt" },
+  { "kTLURev1_boreas", "devel/DUNE_TLU-DUNTLU09-Registers_62.5_mhz.txt" },
 
-  { "kPC059Rev1_enclustra-a35_fanout_mode0",
+  { "kPC059Rev1_fanout_mode0",
     "devel/pc059_sfp_in_312_mhz-059_0s62-Registers.txt" }, // fanout mode, assuming sfp is the upstream input
-  { "kPC059Rev1_enclustra-a35_fanout_mode1",
+  { "kPC059Rev1_fanout_mode1",
     "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" }, // stand-alone mode
 
-  { "kFIBRev1_afc_fanout_mode0",
+  { "kFIBRev1_fanout_mode0",
     "devel/Si5395-RevA-FIB_fanout-65_FA_31-Registers.txt" }, // fanout mode, data and clock from backplane
-  { "kFIBRev1_afc_fanout_mode1",
+  { "kFIBRev1_fanout_mode1",
     "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" }, // stand-alone mode
 
-  { "kPC059Rev1_enclustra-a35_ouroboros", "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" },
+  { "kPC059Rev1_ouroboros", "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" },
 
-  { "kFIBRev1_enclustra-a35_ouroboros", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" },
-  { "kFIBRev1_afc_ouroboros", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" },
+  { "kFIBRev1_ouroboros", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" },
+  { "kFIBRev1_ouroboros", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" },
 
   // 50 MHz mappings
-  { "kFMCRev1_enclustra-a35_endpoint_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
-  { "kFMCRev2_enclustra-a35_endpoint_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
-  { "kFMCRev3_enclustra-a35_endpoint_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
-  { "kFMCRev4_enclustra-a35_endpoint_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
+  { "kFMCRev1_endpoint_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
+  { "kFMCRev2_endpoint_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
+  { "kFMCRev3_endpoint_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
+  { "kFMCRev4_endpoint_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
 
-  { "kFMCRev1_enclustra-a35_endpoint-bi-crt_50_mhz", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
-  { "kFMCRev2_enclustra-a35_endpoint-bi-crt_50_mhz", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
-  { "kFMCRev3_enclustra-a35_endpoint-bi-crt_50_mhz", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
-  { "kFMCRev4_enclustra-a35_endpoint-bi-crt_50_mhz", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
+  { "kFMCRev1_endpoint-bi-crt_50_mhz", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
+  { "kFMCRev2_endpoint-bi-crt_50_mhz", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
+  { "kFMCRev3_endpoint-bi-crt_50_mhz", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
+  { "kFMCRev4_endpoint-bi-crt_50_mhz", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
 
-  { "kFMCRev1_enclustra-a35_chronos_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
-  { "kFMCRev2_enclustra-a35_chronos_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
-  { "kFMCRev3_enclustra-a35_chronos_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
-  { "kFMCRev4_enclustra-a35_chronos_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
+  { "kFMCRev1_chronos_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
+  { "kFMCRev2_chronos_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
+  { "kFMCRev3_chronos_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
+  { "kFMCRev4_chronos_50_mhz", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
 
-  { "kFMCRev1_enclustra-a35_ouroboros_50_mhz", "SI5344/PDTS0000.txt" },
-  { "kFMCRev2_enclustra-a35_ouroboros_50_mhz", "SI5344/PDTS0003.txt" },
-  { "kFMCRev3_enclustra-a35_ouroboros_50_mhz", "SI5344/PDTS0003.txt" },
-  { "kFMCRev4_enclustra-a35_ouroboros_50_mhz", "SI5344/PDTS0003.txt" },
+  { "kFMCRev1_ouroboros_50_mhz", "SI5344/PDTS0000.txt" },
+  { "kFMCRev2_ouroboros_50_mhz", "SI5344/PDTS0003.txt" },
+  { "kFMCRev3_ouroboros_50_mhz", "SI5344/PDTS0003.txt" },
+  { "kFMCRev4_ouroboros_50_mhz", "SI5344/PDTS0003.txt" },
 
-  { "kFMCRev1_enclustra-a35_master_50_mhz", "SI5344/PDTS0000.txt" },
-  { "kFMCRev2_enclustra-a35_master_50_mhz", "SI5344/PDTS0003.txt" },
-  { "kFMCRev3_enclustra-a35_master_50_mhz", "SI5344/PDTS0003.txt" },
-  { "kFMCRev4_enclustra-a35_master_50_mhz", "SI5344/PDTS0003.txt" },
+  { "kFMCRev1_master_50_mhz", "SI5344/PDTS0000.txt" },
+  { "kFMCRev2_master_50_mhz", "SI5344/PDTS0003.txt" },
+  { "kFMCRev3_master_50_mhz", "SI5344/PDTS0003.txt" },
+  { "kFMCRev4_master_50_mhz", "SI5344/PDTS0003.txt" },
 
-  { "kPC059Rev1_enclustra-a35_ouroboros_50_mhz", "SI5345/PDTS0005.txt" },
+  { "kPC059Rev1_ouroboros_50_mhz", "SI5345/PDTS0005.txt" },
 
-  { "kTLURev1_enclustra-a35_overlord_50_mhz", "wr/TLU_EXTCLK_10MHZ_NOZDM.txt" },
+  { "kTLURev1_overlord_50_mhz", "wr/TLU_EXTCLK_10MHZ_NOZDM.txt" },
     
-  { "kPC059Rev1_enclustra-a35_fanout_mode0_50_mhz", "wr/FANOUT_PLL_WIDEBW_SFPIN.txt" }, // fanout mode
-  { "kPC059Rev1_enclustra-a35_fanout_mode1_50_mhz", "devel/PDTS_PC059_FANOUT.txt" },    // stand-alone mode
+  { "kPC059Rev1_fanout_mode0_50_mhz", "wr/FANOUT_PLL_WIDEBW_SFPIN.txt" }, // fanout mode
+  { "kPC059Rev1_fanout_mode1_50_mhz", "devel/PDTS_PC059_FANOUT.txt" },    // stand-alone mode
 };
 
 // NOLINTNEXTLINE(build/unsigned)

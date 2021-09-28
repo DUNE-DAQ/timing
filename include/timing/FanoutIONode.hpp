@@ -36,7 +36,6 @@ class FanoutIONode : public IONode
 public:
   FanoutIONode(const uhal::Node& node,
                std::string uid_i2c_bus,
-               std::string uid_i2c_device,
                std::string pll_i2c_bus,
                std::string pll_i2c_device,
                std::vector<std::string> clock_names,

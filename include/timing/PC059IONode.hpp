@@ -41,6 +41,13 @@ public:
   virtual ~PC059IONode();
 
   /**
+   * @brief      Get the UID address parameter name.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  std::string get_uid_address_parameter_name() const override;
+  
+  /**
    * @brief     Get status string, optionally print.
    */
   std::string get_status(bool print_out = false) const override;

@@ -24,14 +24,12 @@ namespace timing {
 //-----------------------------------------------------------------------------
 IONode::IONode(const uhal::Node& node,
                std::string uid_i2c_bus,
-               std::string uid_i2c_device,
                std::string pll_i2c_bus,
                std::string pll_i2c_device,
                std::vector<std::string> clock_names,
                std::vector<std::string> sfp_i2c_buses)
   : TimingNode(node)
   , m_uid_i2c_bus(uid_i2c_bus)
-  , m_uid_i2c_device(uid_i2c_device)
   , m_pll_i2c_bus(pll_i2c_bus)
   , m_pll_i2c_device(pll_i2c_device)
   , m_clock_names(clock_names)
@@ -92,7 +90,7 @@ IONode::read_board_uid() const
 
   uint64_t uid = 0;                // NOLINT(build/unsigned)
   std::vector<uint8_t> uid_values = // NOLINT(build/unsigned)
-    getNode<I2CMasterNode>(m_uid_i2c_bus).get_slave(m_uid_i2c_device).read_i2cArray(0xfa, 6);
+    getNode<I2CMasterNode>(m_uid_i2c_bus).get_slave(get_uid_address_parameter_name()).read_i2cArray(0xfa, 6);
 
   for (uint8_t i = 0; i < uid_values.size(); ++i) { // NOLINT(build/unsigned)
     uid = (uid << 8) | uid_values.at(i);
@@ -178,7 +176,7 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
     std::string clock_config_key;
 
     const BoardRevision board_revision = get_board_revision();
-    const CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
+//    const CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
     const DesignType design_type = convert_value_to_design_type(read_design_type());
     const uint32_t firmware_frequency = read_firmware_frequency(); // NOLINT(build/unsigned)
 
@@ -188,11 +186,11 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
       throw MissingBoardRevisionMapEntry(ERS_HERE, format_reg_value(board_revision), e);
     }
 
-    try {
-      clock_config_key = clock_config_key + g_carrier_type_map.at(carrier_type) + "_";
-    } catch (const std::out_of_range& e) {
-      throw MissingCarrierTypeMapEntry(ERS_HERE, format_reg_value(carrier_type), e);
-    }
+//    try {
+//      clock_config_key = clock_config_key + g_carrier_type_map.at(carrier_type) + "_";
+//    } catch (const std::out_of_range& e) {
+//      throw MissingCarrierTypeMapEntry(ERS_HERE, format_reg_value(carrier_type), e);
+//    }
 
     try {
       clock_config_key = clock_config_key + g_design_type_map.at(design_type);
