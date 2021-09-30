@@ -6,6 +6,7 @@ import collections
 from . import toolbox
 import timing.common.definitions as defs
 from timing.common.definitions import kLibrarySupportedBoards
+from timing.common.toolbox import format_firmware_version
 
 from click import echo, style, secho
 from .click_texttable import Texttable
@@ -35,20 +36,25 @@ def endpoint(obj, device, ids):
         lDevice.setTimeoutPeriod(obj.mTimeout)
 
     echo('Created endpoint device ' + style(lDevice.id(), fg='blue'))
-    
+    lTopDesign = lDevice.getNode('')
+
     lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
     lDevice.dispatch()
 
     if lBoardInfo['board_type'].value() in kLibrarySupportedBoards:
+        
+        lTopDesign.validate_firmware_version()
+
         try:
             echo(lDevice.getNode('io').get_hardware_info())
         except:
             secho("Failed to retrieve hardware information I2C issue? Initial board reset needed?", fg='yellow')
             e = sys.exc_info()[0]
             secho("Error: {}".format(e), fg='red')
+    
     # Ensure that target endpoint exists
-
     lEPNames = lDevice.getNodes('endpoint('+'|'.join( ( str(i) for i in ids ) )+')')
+
     if len(lEPNames) != len(ids):
         lEPNotFound = set( ( 'endpoint{}'.format(i) for i in ids ) ) -set(lEPNames)
         raise click.ClickException('Endpoints {} do(es) not exist'.format(', '.join( ('\''+ep+'\'' for ep in lEPNotFound) )))
@@ -65,7 +71,7 @@ def endpoint(obj, device, ids):
     lVTable.set_deco(Texttable.VLINES | Texttable.BORDER)
     lVTable.set_chars(['-', '|', '+', '-'])
     lVTable.header( sorted(lVersions.keys()) )
-    lVTable.add_row( [hex(lVersions[p]) for p in sorted(lVersions.keys()) ] )
+    lVTable.add_row( [format_firmware_version(lVersions[p]) for p in sorted(lVersions.keys()) ] )
     echo  ( lVTable.draw() )
 
     obj.mDevice = lDevice

@@ -75,6 +75,19 @@ public:
    * @return     { description_of_the_return_value }
    */
   virtual uint32_t get_number_of_endpoint_nodes() const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Read firmware version.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  virtual uint32_t read_firmware_version() const = 0; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Validate firmware version.
+   *
+   */
+  virtual void validate_firmware_version() const = 0;
   
   /**
    * @brief      Collect operational monitoring information

@@ -88,4 +88,35 @@ MasterDesign<IO, MST>::enable_fake_trigger(uint32_t channel, double rate, bool p
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+template<class IO, class MST>
+uint32_t
+MasterDesign<IO, MST>::read_firmware_version() const // NOLINT(build/unsigned)
+{
+  auto firmware_version = this->get_master_node().getNode("global.version").read();
+  uhal::Node::getClient().dispatch();
+
+  return firmware_version.value();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+template<class IO, class MST>
+void
+MasterDesign<IO, MST>::validate_firmware_version() const
+{
+  auto firmware_version = read_firmware_version();
+
+  int major_firmware_version = (firmware_version >> 16) & 0xff;
+  int minor_firmware_version = (firmware_version >> 8) & 0xff;
+  int patch_firmware_version = (firmware_version >> 0) & 0xff;
+
+  if (major_firmware_version != g_required_major_master_firmware_version)
+    throw IncompatibleMajorMasterFirmwareVersion(ERS_HERE, major_firmware_version, g_required_major_master_firmware_version);
+  if (minor_firmware_version != g_required_minor_master_firmware_version)
+    ers::warning(IncompatibleMinorMasterFirmwareVersion(ERS_HERE, minor_firmware_version, g_required_minor_master_firmware_version));
+  if (patch_firmware_version != g_required_patch_master_firmware_version)
+    ers::warning(IncompatiblePatchMasterFirmwareVersion(ERS_HERE, patch_firmware_version, g_required_patch_master_firmware_version));
+}
+//-----------------------------------------------------------------------------
 }

@@ -21,7 +21,8 @@ namespace python {
 	extern void register_io(py::module &);
 	extern void register_master(py::module &);
 	extern void register_top_designs(py::module &);
-        extern void register_definitions(py::module &);
+    extern void register_definitions(py::module &);
+    extern void register_toolbox(py::module &);
 
 PYBIND11_MODULE(_daq_timing_py, top_module) {
 
@@ -43,6 +44,10 @@ PYBIND11_MODULE(_daq_timing_py, top_module) {
     // timing.common.definitions
     py::module_ defs_module = common_module.def_submodule("definitions");
     timing::python::register_definitions(defs_module);
+
+    // timing.common.toolbox
+    py::module_ toolbox_module = common_module.def_submodule("toolbox");
+    timing::python::register_toolbox(toolbox_module);
 }
 
 } // namespace python

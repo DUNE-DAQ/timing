@@ -90,6 +90,19 @@ public:
    */
   virtual void enable_fake_trigger(uint32_t channel, double rate, bool poisson = false) const; // NOLINT(build/unsigned)
 
+  /**
+   * @brief      Read master firmware version.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  uint32_t read_firmware_version() const override;
+
+  /**
+   * @brief      Validate master firmware version.
+   *
+   */
+  void validate_firmware_version() const override;
+
 };
 
 } // namespace timing

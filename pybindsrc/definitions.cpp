@@ -86,6 +86,12 @@ register_definitions(py::module& m)
 	m.attr("kEpStates") = timing::g_endpoint_state_map;
 	m.attr("kLibrarySupportedBoards") = timing::g_library_supported_boards;
 	m.attr("kEventSize") = timing::g_event_size;
+    m.attr("kMasterFWMajorRequired") = timing::g_required_major_master_firmware_version;
+    m.attr("kMasterFWMinorRequired") = timing::g_required_minor_master_firmware_version;
+    m.attr("kMasterFWPatchRequired") = timing::g_required_patch_master_firmware_version;
+    m.attr("kEndpointFWMajorRequired") = timing::g_required_major_endpoint_firmware_version;
+    m.attr("kEndpointFWMinorRequired") = timing::g_required_minor_endpoint_firmware_version;
+    m.attr("kEndpointFWPatchRequired") = timing::g_required_patch_endpoint_firmware_version;
 }
 
 } // namespace python

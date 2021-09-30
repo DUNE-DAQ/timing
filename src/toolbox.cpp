@@ -329,5 +329,19 @@ locate(float xx[], unsigned long n, float x) // NOLINT
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+std::string
+format_firmware_version(uint32_t firmware_version) // NOLINT(build/unsigned)
+{
+  int major_firmware_version = (firmware_version >> 16) & 0xff;
+  int minor_firmware_version = (firmware_version >> 8) & 0xff;
+  int patch_firmware_version = (firmware_version >> 0) & 0xff;
+
+  std::stringstream firmware_version_stream;
+  firmware_version_stream << "v" << major_firmware_version << "." << minor_firmware_version << "." << patch_firmware_version;
+  return firmware_version_stream.str();
+}
+//-----------------------------------------------------------------------------
+
 } // namespace timing
 } // namespace dunedaq

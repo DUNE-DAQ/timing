@@ -7,6 +7,7 @@
  */
 
 #include "timing/BoreasDesign.hpp"
+#include "timing/CRTDesign.hpp"
 #include "timing/EndpointDesign.hpp"
 #include "timing/FanoutDesign.hpp"
 #include "timing/MasterMuxDesign.hpp"
@@ -18,6 +19,10 @@
 namespace dunedaq {
 namespace timing {
 // In leiu of UHAL_REGISTER_DERIVED_NODE
+
+// CRT
+uhal::RegistrationHelper<CRTDesign<FMCIONode>> CRTDesign_FMCIONode_RegistrationHelper(
+  "CRTDesign<FMCIONode>");
 
 // Endpoint
 uhal::RegistrationHelper<EndpointDesign<FMCIONode>> EndpointDesign_FMCIONode_RegistrationHelper(
