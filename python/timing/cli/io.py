@@ -44,9 +44,12 @@ def io(obj, device):
         lDevice.setTimeoutPeriod(obj.mTimeout)
         
     echo('Created device ' + click.style(lDevice.id(), fg='blue'))
+    lTopDesign = lDevice.getNode('')
     lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
     lDevice.dispatch()
 
+    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards:        
+        lTopDesign.validate_firmware_version()
 
     echo("Design '{}' on board '{}' on carrier '{}' with frequency {} MHz".format(
         style(kDesignNameMap[lBoardInfo['design_type'].value()], fg='blue'),

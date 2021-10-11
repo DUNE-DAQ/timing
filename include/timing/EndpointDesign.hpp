@@ -56,6 +56,19 @@ public:
   template<class T>
   void get_info(T& data) const;
 
+  /**
+   * @brief      Read endpoint firmware version.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  uint32_t read_firmware_version() const override;
+
+  /**
+   * @brief      Validate endpoint firmware version.
+   *
+   */
+  void validate_firmware_version() const override;
+  
   // In leiu of UHAL_DERIVEDNODE
 protected:
   virtual uhal::Node* clone() const;

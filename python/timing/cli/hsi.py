@@ -35,11 +35,12 @@ def hsi(obj, device):
 
     
     echo('Created HSI device')
-
+    lTopDesign = lDevice.getNode('')
     lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
     lDevice.dispatch()
 
     if lBoardInfo['board_type'].value() in kLibrarySupportedBoards:
+        lTopDesign.validate_firmware_version()
         try:
             echo(lDevice.getNode('io').get_hardware_info())
         except:

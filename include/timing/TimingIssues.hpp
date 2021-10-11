@@ -229,7 +229,41 @@ ERS_DECLARE_ISSUE(timing,                                                       
                   " Failed to program Enclustra I2C IO expander. FMC I2C access may not work.", ///< Message
                   ERS_EMPTY)                                                                    ///< Message parameters
 
+ERS_DECLARE_ISSUE(timing,                                                                                                                            ///< Namespace
+                  IncompatibleMajorMasterFirmwareVersion,                                                                                            ///< Issue class name
+                  " Incompatible major master firmware version; found: " << found_firmware_version << ", required: " << required_firmware_version, ///< Message
+                  ((int)found_firmware_version)((int)required_firmware_version)                                                                      ///< Message parameters
+)
 
+ERS_DECLARE_ISSUE(timing,                                                                                                                            ///< Namespace
+                  IncompatibleMinorMasterFirmwareVersion,                                                                                            ///< Issue class name
+                  " Incompatible minor master firmware version; found: " << found_firmware_version << ", required: " << required_firmware_version, ///< Message
+                  ((int)found_firmware_version)((int)required_firmware_version)                                                                      ///< Message parameters
+)
+
+ERS_DECLARE_ISSUE(timing,                                                                                                                            ///< Namespace
+                  IncompatiblePatchMasterFirmwareVersion,                                                                                            ///< Issue class name
+                  " Incompatible patch master firmware version; found: " << found_firmware_version << ", required: " << required_firmware_version, ///< Message
+                  ((int)found_firmware_version)((int)required_firmware_version)                                                                      ///< Message parameters
+)
+
+ERS_DECLARE_ISSUE(timing,                                                                                                                            ///< Namespace
+                  IncompatibleMajorEndpointFirmwareVersion,                                                                                          ///< Issue class name
+                  " Incompatible major endpoint firmware version; found: " << found_firmware_version << ", required: " << required_firmware_version, ///< Message
+                  ((int)found_firmware_version)((int)required_firmware_version)                                                                      ///< Message parameters
+)
+
+ERS_DECLARE_ISSUE(timing,                                                                                                                            ///< Namespace
+                  IncompatibleMinorEndpointFirmwareVersion,                                                                                          ///< Issue class name
+                  " Incompatible minor endpoint firmware version; found: " << found_firmware_version << ", required: " << required_firmware_version, ///< Message
+                  ((int)found_firmware_version)((int)required_firmware_version)                                                                      ///< Message parameters
+)
+
+ERS_DECLARE_ISSUE(timing,                                                                                                                            ///< Namespace
+                  IncompatiblePatchEndpointFirmwareVersion,                                                                                          ///< Issue class name
+                  " Incompatible patch endpoint firmware version; found: " << found_firmware_version << ", required: " << required_firmware_version, ///< Message
+                  ((int)found_firmware_version)((int)required_firmware_version)                                                                      ///< Message parameters
+)
 } // namespace dunedaq
 
 #endif // TIMING_INCLUDE_TIMING_TIMINGISSUES_HPP_
