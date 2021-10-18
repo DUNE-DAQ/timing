@@ -56,6 +56,8 @@ register_endpoint(py::module& m)
          py::arg("re_mask"),
          py::arg("fe_mask"),
          py::arg("inv_mask"),
+         py::arg("rate"),
+         py::arg("clock_frequency_hz"),
          py::arg("dispatch") = true)
     .def("start_hsi", &timing::HSINode::start_hsi, py::arg("dispatch") = true)
     .def("stop_hsi", &timing::HSINode::stop_hsi, py::arg("dispatch") = true)

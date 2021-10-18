@@ -14,10 +14,12 @@
 #include "timing/PDIMasterNode.hpp"
 
 #include "timing/BoreasDesign.hpp"
+#include "timing/ChronosDesign.hpp"
 #include "timing/FanoutDesign.hpp"
 #include "timing/OuroborosDesign.hpp"
 #include "timing/OuroborosMuxDesign.hpp"
 #include "timing/OverlordDesign.hpp"
+#include "timing/EndpointDesign.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -70,7 +72,15 @@ register_top_designs(py::module& m)
          py::arg("rate"),
          py::arg("poisson"))
     .def("apply_endpoint_delay", &timing::BoreasDesign<FMCIONode>::apply_endpoint_delay)
-    .def("measure_endpoint_rtt", &timing::BoreasDesign<FMCIONode>::measure_endpoint_rtt);
+    .def("measure_endpoint_rtt", &timing::BoreasDesign<FMCIONode>::measure_endpoint_rtt)
+    .def("configure_hsi", 
+         &timing::BoreasDesign<FMCIONode>::configure_hsi,
+         py::arg("src"),
+         py::arg("re_mask"),
+         py::arg("fe_mask"),
+         py::arg("inv_mask"),
+         py::arg("rate"),
+         py::arg("dispatch") = true);
 
   // Boreas on TLU
   py::class_<timing::BoreasDesign<TLUIONode>, uhal::Node>(m, "BoreasDesign<TLUIONode>")
@@ -82,7 +92,15 @@ register_top_designs(py::module& m)
          py::arg("rate"),
          py::arg("poisson"))
     .def("apply_endpoint_delay", &timing::BoreasDesign<TLUIONode>::apply_endpoint_delay)
-    .def("measure_endpoint_rtt", &timing::BoreasDesign<TLUIONode>::measure_endpoint_rtt);
+    .def("measure_endpoint_rtt", &timing::BoreasDesign<TLUIONode>::measure_endpoint_rtt)
+    .def("configure_hsi", 
+         &timing::BoreasDesign<TLUIONode>::configure_hsi,
+         py::arg("src"),
+         py::arg("re_mask"),
+         py::arg("fe_mask"),
+         py::arg("inv_mask"),
+         py::arg("rate"),
+         py::arg("dispatch") = true);
 
   // Boreas on sim
   py::class_<timing::BoreasDesign<SIMIONode>, uhal::Node>(m, "BoreasDesign<SIMIONode>")
@@ -94,7 +112,15 @@ register_top_designs(py::module& m)
          py::arg("rate"),
          py::arg("poisson"))
     .def("apply_endpoint_delay", &timing::BoreasDesign<SIMIONode>::apply_endpoint_delay)
-    .def("measure_endpoint_rtt", &timing::BoreasDesign<SIMIONode>::measure_endpoint_rtt);
+    .def("measure_endpoint_rtt", &timing::BoreasDesign<SIMIONode>::measure_endpoint_rtt)
+    .def("configure_hsi", 
+         &timing::BoreasDesign<SIMIONode>::configure_hsi,
+         py::arg("src"),
+         py::arg("re_mask"),
+         py::arg("fe_mask"),
+         py::arg("inv_mask"),
+         py::arg("rate"),
+         py::arg("dispatch") = true);
 
   // PD-I fanout design on pc059
   py::class_<timing::FanoutDesign<PC059IONode, PDIMasterNode>, uhal::Node>(m, "FanoutDesign<PC059IONode,PDIMasterNode>")
@@ -173,6 +199,22 @@ register_top_designs(py::module& m)
          py::arg("poisson"))
     .def("apply_endpoint_delay", &timing::OuroborosDesign<SIMIONode>::apply_endpoint_delay)
     .def("measure_endpoint_rtt", &timing::OuroborosDesign<SIMIONode>::measure_endpoint_rtt);
+
+  // Endpoint on FMC
+  py::class_<timing::EndpointDesign<FMCIONode>, uhal::Node>(m, "EndpointDesign<FMCIONode>")
+    .def("get_status", &timing::EndpointDesign<FMCIONode>::get_status);
+
+  // Chronos on FMC
+  py::class_<timing::ChronosDesign<FMCIONode>, uhal::Node>(m, "ChronosDesign<FMCIONode>")
+    .def("configure_hsi", 
+         &timing::ChronosDesign<FMCIONode>::configure_hsi,
+         py::arg("src"),
+         py::arg("re_mask"),
+         py::arg("fe_mask"),
+         py::arg("inv_mask"),
+         py::arg("rate"),
+         py::arg("dispatch") = true)
+    .def("get_status", &timing::ChronosDesign<FMCIONode>::get_status);
 
 } // NOLINT
 

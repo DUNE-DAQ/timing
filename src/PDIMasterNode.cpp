@@ -203,11 +203,11 @@ PDIMasterNode::enable_fake_trigger(uint32_t channel, double rate, bool poisson, 
 {
 
   // Configures the internal command generator to produce triggers at a defined frequency.
-  // Rate =  (50MHz / 2^(d+8)) / p where n in [0,15] and p in [1,256]
+  // Rate =  (clock_frequency_hz / 2^(d+8)) / p where n in [0,15] and p in [1,256]
 
   // DIVIDER (int): Frequency divider.
 
-  // The division from 50MHz to the desired rate is done in three steps:
+  // The division from clock_frequency_hz to the desired rate is done in three steps:
   // a) A pre-division by 256
   // b) Division by a power of two set by n = 2 ^ rate_div_d (ranging from 2^0 -> 2^15)
   // c) 1-in-n prescaling set by n = rate_div_p

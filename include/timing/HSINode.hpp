@@ -16,6 +16,7 @@
 #include "TimingIssues.hpp"
 #include "timing/EndpointNode.hpp"
 #include "timing/FrequencyCounterNode.hpp"
+#include "timing/definitions.hpp"
 
 #include "timing/timingfirmwareinfo/InfoNljs.hpp"
 #include "timing/timingfirmwareinfo/InfoStructs.hpp"
@@ -99,6 +100,8 @@ public:
                      uint32_t re_mask,  // NOLINT(build/unsigned)
                      uint32_t fe_mask,  // NOLINT(build/unsigned)
                      uint32_t inv_mask, // NOLINT(build/unsigned)
+                     double rate,
+                     uint32_t clock_frequency_hz,
                      bool dispatch = true) const;
 
   /**

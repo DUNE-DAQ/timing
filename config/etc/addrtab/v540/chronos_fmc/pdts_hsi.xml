@@ -5,6 +5,8 @@
 				<node id="en" mask="0x1"/>
 				<node id="buf_en" mask="0x2"/>
 				<node id="src" mask="0x4"/>
+				<node id="rate_div_p" mask="0xff0000"/>
+				<node id="rate_div_d" mask="0xf000000"/>
 			</node>
 			<node id="re_mask" address="0x1"/>
 			<node id="fe_mask" address="0x2"/>
