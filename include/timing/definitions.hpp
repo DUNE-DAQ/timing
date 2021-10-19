@@ -242,6 +242,7 @@ const std::map<std::string, std::string> g_clock_config_map = {
   { "kPC059Rev1_enclustra-a35_ouroboros_50_mhz", "SI5345/PDTS0005.txt" },
 
   { "kTLURev1_enclustra-a35_overlord_50_mhz", "wr/TLU_EXTCLK_10MHZ_NOZDM.txt" },
+  { "kTLURev1_enclustra-a35_boreas_50_mhz", "wr/TLU_EXTCLK_10MHZ_NOZDM.txt" },
     
   { "kPC059Rev1_enclustra-a35_fanout_mode0_50_mhz", "wr/FANOUT_PLL_WIDEBW_SFPIN.txt" }, // fanout mode
   { "kPC059Rev1_enclustra-a35_fanout_mode1_50_mhz", "devel/PDTS_PC059_FANOUT.txt" },    // stand-alone mode
