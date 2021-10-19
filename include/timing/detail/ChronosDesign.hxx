@@ -42,6 +42,21 @@ ChronosDesign<IO>::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 template<class IO>
+void
+ChronosDesign<IO>::configure_hsi(uint32_t src,      // NOLINT(build/unsigned)
+                                uint32_t re_mask,  // NOLINT(build/unsigned)
+                                uint32_t fe_mask,  // NOLINT(build/unsigned)
+                                uint32_t inv_mask, // NOLINT(build/unsigned)
+                                double rate,
+                                bool dispatch) const
+{
+  uint32_t firmware_frequency = this->get_io_node().read_firmware_frequency();
+  this->get_hsi_node().configure_hsi(src, re_mask, fe_mask, inv_mask, rate, firmware_frequency, dispatch);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+template<class IO>
 template<class T>
 void
 ChronosDesign<IO>::get_info(T& data) const

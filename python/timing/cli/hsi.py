@@ -49,6 +49,7 @@ def hsi(obj, device):
 
     obj.mDevice = lDevice
     obj.mHSIEndpoint = lDevice.getNode('endpoint0')
+    obj.mTopDesign = lDevice.getNode('')
 # ------------------------------------------------------------------------------
 
 
@@ -108,9 +109,10 @@ def configure(ctx, obj, src, re_mask, fe_mask, inv_mask):
 
     lDevice = obj.mDevice
     lHSIEpt = obj.mHSIEndpoint
+    lTopDesign = obj.mTopDesign
 
     lHSIEpt.reset_hsi()
-    lHSIEpt.configure_hsi(src, re_mask, fe_mask, inv_mask)
+    lTopDesign.configure_hsi(src, re_mask, fe_mask, inv_mask, rate)
     lHSIEpt.start_hsi()
     secho("HSI configured (and started)", fg='green')
 
