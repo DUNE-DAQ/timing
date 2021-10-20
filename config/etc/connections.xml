@@ -10,6 +10,7 @@
   <connection id="CRT_EPT"           uri="ipbusudp-2.0://192.168.200.16:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/crt_fmc/top.xml" />
 
   <connection id="PROD_MASTER"       uri="ipbusudp-2.0://192.168.200.64:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/overlord_tlu/top_tlu.xml" />
+  <connection id="PROD_MASTER_VDC"   uri="ipbusudp-2.0://10.73.137.84:50001"   address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/boreas_tlu/top_tlu.xml" />
   <connection id="PROD_FANOUT_0"     uri="ipbusudp-2.0://192.168.200.65:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/fanout_pc059/top.xml" />
   <connection id="PROD_FANOUT_1"     uri="ipbusudp-2.0://192.168.200.66:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/fanout_pc059/top.xml" />
   <connection id="PROD_FANOUT_2"     uri="ipbusudp-2.0://192.168.200.67:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/fanout_pc059/top.xml" />
