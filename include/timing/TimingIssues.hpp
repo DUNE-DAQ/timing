@@ -224,10 +224,16 @@ ERS_DECLARE_ISSUE(timing,                                                       
 
 ERS_DECLARE_ISSUE(timing, HSIBufferIssue, "HSI buffer in state: " << buffer_state, ((std::string)buffer_state))
 
+
 ERS_DECLARE_ISSUE(timing,                                                                       ///< Namespace
                   EnclustraSwitchFailure,                                                       ///< Issue class name
                   " Failed to program Enclustra I2C IO expander. FMC I2C access may not work.", ///< Message
                   ERS_EMPTY)                                                                    ///< Message parameters
+
+ERS_DECLARE_ISSUE(timing,                                                                       ///< Namespace
+                  FailedToUpdateHSIRandomRate,                                                  ///< Issue class name
+                  "  Random bit 0 trigger rate for HSI not updated!",                           ///< Message
+                  ERS_EMPTY)    
 
 
 } // namespace dunedaq
