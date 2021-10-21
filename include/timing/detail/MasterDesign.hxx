@@ -6,7 +6,8 @@ namespace dunedaq::timing {
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
 MasterDesign<IO, MST>::MasterDesign(const uhal::Node& node)
-  : TopDesign<IO>(node)
+  : MasterDesignInterface(node)
+  , TopDesign<IO>(node)
 {}
 //-----------------------------------------------------------------------------
 
@@ -39,7 +40,7 @@ template<class IO, class MST>
 void
 MasterDesign<IO, MST>::sync_timestamp() const
 {
-  auto dts_clock_frequency = this->get_io_node().read_firmware_frequency();
+  auto dts_clock_frequency = TopDesign<IO>::get_io_node().read_firmware_frequency();
   get_master_node().sync_timestamp(dts_clock_frequency);
 }
 //-----------------------------------------------------------------------------
@@ -83,7 +84,7 @@ template<class IO, class MST>
 void
 MasterDesign<IO, MST>::enable_fake_trigger(uint32_t channel, double rate, bool poisson) const // NOLINT(build/unsigned)
 {
-  auto dts_clock_frequency = this->get_io_node().read_firmware_frequency();
+  auto dts_clock_frequency = TopDesign<IO>::get_io_node().read_firmware_frequency();
   get_master_node().enable_fake_trigger(channel, rate, poisson, dts_clock_frequency);
 }
 //-----------------------------------------------------------------------------
@@ -117,6 +118,21 @@ MasterDesign<IO, MST>::validate_firmware_version() const
     ers::warning(IncompatibleMinorMasterFirmwareVersion(ERS_HERE, minor_firmware_version, g_required_minor_master_firmware_version));
   if (patch_firmware_version != g_required_patch_master_firmware_version)
     ers::warning(IncompatiblePatchMasterFirmwareVersion(ERS_HERE, patch_firmware_version, g_required_patch_master_firmware_version));
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+template<class IO, class MST>
+void
+MasterDesign<IO, MST>::get_info(opmonlib::InfoCollector& ci, int level) const
+{ 
+  opmonlib::InfoCollector master_collector;
+  this->get_master_node().get_info(master_collector, level);
+  ci.add("master", master_collector);
+
+  opmonlib::InfoCollector hardware_collector;
+  this->get_io_node().get_info(hardware_collector, level);
+  ci.add("io", hardware_collector);
 }
 //-----------------------------------------------------------------------------
 }

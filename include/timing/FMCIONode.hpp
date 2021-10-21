@@ -57,6 +57,12 @@ public:
   void reset(const std::string& clock_config_file = "") const override;
 
   /**
+   * @brief     Reset fanout board
+   */
+  void reset(int32_t fanout_mode = -1, // NOLINT(build/unsigned)
+                     const std::string& clock_config_file = "") const override;
+  
+  /**
    * @brief      Fill hardware monitoring structure.
    */
   void get_info(timinghardwareinfo::TimingFMCMonitorData& mon_data) const;

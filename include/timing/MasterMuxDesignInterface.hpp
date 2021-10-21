@@ -1,5 +1,5 @@
 /**
- * @file MasterMuxDesign.hpp
+ * @file MasterMuxDesignInterface.hpp
  *
  * MasterDesign is a base class providing an interface
  * to for top level master firmware designs on boards with muxes.
@@ -9,8 +9,8 @@
  * received with this code.
  */
 
-#ifndef TIMING_INCLUDE_TIMING_MASTERMUXDESIGN_HPP_
-#define TIMING_INCLUDE_TIMING_MASTERMUXDESIGN_HPP_
+#ifndef TIMING_INCLUDE_TIMING_MASTERMUXDESIGNINTERFACE_HPP_
+#define TIMING_INCLUDE_TIMING_MASTERMUXDESIGNINTERFACE_HPP_
 
 // PDT Headers
 #include "timing/MasterDesign.hpp"
@@ -34,35 +34,18 @@ namespace timing {
 /**
  * @brief      Class for timing fanout designs.
  */
-template<class IO, class MST>
-class MasterMuxDesign : public MasterDesign<IO, MST>
+class MasterMuxDesignInterface : virtual public MasterDesignInterface
 {
 
 public:
-  explicit MasterMuxDesign(const uhal::Node& node);
-  virtual ~MasterMuxDesign();
+  explicit MasterMuxDesignInterface(const uhal::Node& node);
+  virtual ~MasterMuxDesignInterface();
 
   /**
    * @brief     Get status string, optionally print.
    */
-  std::string get_status(bool print_out = false) const override;
+  std::string get_status(bool print_out=false) const override;
 
-  /**
-   * @brief      Prepare the timing fanout for data taking.
-   *
-   */
-  void configure() const override;
-
-  /**
-   * @brief      Reset timing fanout node.
-   */
-  void reset(const std::string& clock_config_file = "") const override;
-
-  /**
-   * @brief    Give info to collector.
-   */  
-  void get_info(opmonlib::InfoCollector& ci, int level) const override;
-  
   /**
    * @brief     Switch the SFP mux channel
    */
@@ -98,15 +81,9 @@ public:
    */
   virtual std::vector<uint32_t> scan_sfp_mux() const; // NOLINT(build/unsigned)
 
-  // In leiu of UHAL_DERIVEDNODE
-protected:
-  virtual uhal::Node* clone() const;
-  //
 };
 
 } // namespace timing
 } // namespace dunedaq
 
-#include "timing/detail/MasterMuxDesign.hxx"
-
-#endif // TIMING_INCLUDE_TIMING_MASTERMUXDESIGN_HPP_
+#endif // TIMING_INCLUDE_TIMING_MASTERMUXDESIGNINTERFACE_HPP_

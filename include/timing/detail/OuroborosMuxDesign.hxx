@@ -16,8 +16,12 @@ OuroborosMuxDesign<IO>::clone() const
 //-----------------------------------------------------------------------------
 template<class IO>
 OuroborosMuxDesign<IO>::OuroborosMuxDesign(const uhal::Node& node)
-  : TopDesign<IO>(node)
-  , MasterMuxDesign<IO, PDIMasterNode>(node)
+  : TopDesignInterface(node)
+  , MasterDesignInterface(node)
+  , EndpointDesignInterface(node)
+  , MasterMuxDesignInterface(node)
+//  , MasterDesign<IO, PDIMasterNode>(node)
+  , OuroborosDesign<IO>(node)
 {}
 //-----------------------------------------------------------------------------
 
@@ -33,8 +37,8 @@ std::string
 OuroborosMuxDesign<IO>::get_status(bool print_out) const
 {
   std::stringstream status;
-  status << this->get_io_node().get_pll_status();
-  status << this->get_master_node().get_status();
+  status << TopDesign<IO>::get_io_node().get_pll_status();
+  status << OuroborosDesign<IO>::get_master_node().get_status();
   status << this->get_endpoint_node(0).get_status();
   if (print_out)
     TLOG() << status.str();
@@ -49,13 +53,13 @@ OuroborosMuxDesign<IO>::configure() const
 {
 
   // Hard resets
-  this->reset();
+  this->reset_io();
 
   // Set timestamp to current time
   this->sync_timestamp();
 
   // Enable spill interface
-  this->get_master_node().enable_spill_interface();
+  MasterDesign<IO, PDIMasterNode>::get_master_node().enable_spill_interface();
 }
 //-----------------------------------------------------------------------------
 

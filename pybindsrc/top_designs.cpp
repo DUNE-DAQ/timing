@@ -192,7 +192,7 @@ register_top_designs(py::module& m)
          py::arg("poisson"))
     .def("switch_sfp_mux_channel", &timing::OuroborosMuxDesign<FIBIONode>::switch_sfp_mux_channel)
     .def("apply_endpoint_delay", &timing::OuroborosMuxDesign<FIBIONode>::apply_endpoint_delay)
-    .def("measure_endpoint_rtt", &timing::OuroborosMuxDesign<FIBIONode>::measure_endpoint_rtt)
+    .def( "measure_endpoint_rtt", &timing::OuroborosMuxDesign<FIBIONode>::measure_endpoint_rtt)
     .def("scan_sfp_mux", &timing::OuroborosMuxDesign<FIBIONode>::scan_sfp_mux);
 
   // Ouroboros on FMC

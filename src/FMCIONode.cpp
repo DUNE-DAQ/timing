@@ -116,6 +116,15 @@ FMCIONode::reset(const std::string& clock_config_file) const
 
 //-----------------------------------------------------------------------------
 void
+FMCIONode::reset(int32_t /*fanout_mode*/, // NOLINT(build/unsigned)
+                     const std::string& clock_config_file) const
+{
+  reset(clock_config_file);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
 FMCIONode::get_info(timinghardwareinfo::TimingFMCMonitorData& mon_data) const
 {
 

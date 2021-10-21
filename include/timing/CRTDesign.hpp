@@ -66,6 +66,8 @@ public:
    */
   void validate_firmware_version() const override {} // current crt firmware does not store firmware version
 
+  using TopDesign<IO>::get_io_node;
+  
   // In leiu of UHAL_DERIVEDNODE
 protected:
   virtual uhal::Node* clone() const;

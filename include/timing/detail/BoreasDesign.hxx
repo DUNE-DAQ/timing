@@ -16,7 +16,10 @@ BoreasDesign<IO>::clone() const
 //-----------------------------------------------------------------------------
 template<class IO>
 BoreasDesign<IO>::BoreasDesign(const uhal::Node& node)
-  : TopDesign<IO>(node)
+  : TopDesignInterface(node)
+  , EndpointDesignInterface(node)
+  , MasterDesignInterface(node)
+  , HSIDesignInterface(node)
   , MasterDesign<IO, PDIMasterNode>(node)
 {}
 //-----------------------------------------------------------------------------
@@ -33,8 +36,8 @@ std::string
 BoreasDesign<IO>::get_status(bool print_out) const
 {
   std::stringstream status;
-  status << this->get_io_node().get_pll_status();
-  status << this->get_master_node().get_status();
+  status << TopDesign<IO>::get_io_node().get_pll_status();
+  status << MasterDesign<IO, PDIMasterNode>::get_master_node().get_status();
   status << this->get_hsi_node().get_status();
   if (print_out)
     TLOG() << status.str();
@@ -49,28 +52,13 @@ BoreasDesign<IO>::configure() const
 {
 
   // Hard resets
-  this->reset();
+  this->reset_io();
 
   // Set timestamp to current time
   this->sync_timestamp();
 
   // configure hsi
   // this->get_his_node().
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-template<class IO>
-void
-BoreasDesign<IO>::configure_hsi(uint32_t src,      // NOLINT(build/unsigned)
-                                uint32_t re_mask,  // NOLINT(build/unsigned)
-                                uint32_t fe_mask,  // NOLINT(build/unsigned)
-                                uint32_t inv_mask, // NOLINT(build/unsigned)
-                                double rate,
-                                bool dispatch) const
-{
-  uint32_t firmware_frequency = this->get_io_node().read_firmware_frequency();
-  this->get_hsi_node().configure_hsi(src, re_mask, fe_mask, inv_mask, rate, firmware_frequency, dispatch);
 }
 //-----------------------------------------------------------------------------
 

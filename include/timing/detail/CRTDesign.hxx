@@ -16,7 +16,9 @@ CRTDesign<IO>::clone() const
 //-----------------------------------------------------------------------------
 template<class IO>
 CRTDesign<IO>::CRTDesign(const uhal::Node& node)
-  : TopDesign<IO>(node), EndpointDesign<IO>(node)
+  : TopDesignInterface(node) 
+  , EndpointDesignInterface(node)
+  , EndpointDesign<IO>(node)
 {}
 //-----------------------------------------------------------------------------
 

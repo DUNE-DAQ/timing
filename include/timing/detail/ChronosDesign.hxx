@@ -16,7 +16,10 @@ ChronosDesign<IO>::clone() const
 //-----------------------------------------------------------------------------
 template<class IO>
 ChronosDesign<IO>::ChronosDesign(const uhal::Node& node)
-  : TopDesign<IO>(node), EndpointDesign<IO>(node)
+  : TopDesignInterface(node)
+  , EndpointDesignInterface(node)
+  , EndpointDesign<IO>(node)
+  , HSIDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
@@ -32,26 +35,11 @@ std::string
 ChronosDesign<IO>::get_status(bool print_out) const
 {
   std::stringstream status;
-  status << this->get_io_node().get_pll_status();
+  status << TopDesign<IO>::get_io_node().get_pll_status();
   status << this->get_hsi_node().get_status();
   if (print_out)
     TLOG() << status.str();
   return status.str();
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-template<class IO>
-void
-ChronosDesign<IO>::configure_hsi(uint32_t src,      // NOLINT(build/unsigned)
-                                uint32_t re_mask,  // NOLINT(build/unsigned)
-                                uint32_t fe_mask,  // NOLINT(build/unsigned)
-                                uint32_t inv_mask, // NOLINT(build/unsigned)
-                                double rate,
-                                bool dispatch) const
-{
-  uint32_t firmware_frequency = this->get_io_node().read_firmware_frequency();
-  this->get_hsi_node().configure_hsi(src, re_mask, fe_mask, inv_mask, rate, firmware_frequency, dispatch);
 }
 //-----------------------------------------------------------------------------
 

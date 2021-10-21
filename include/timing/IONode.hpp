@@ -168,6 +168,12 @@ public:
    */
   virtual void reset(const std::string& clock_config_file = "") const = 0;
 
+  /**
+   * @brief     Reset fanout board
+   */
+  virtual void reset(int32_t fanout_mode, // NOLINT(build/unsigned)
+                     const std::string& clock_config_file = "") const = 0;
+
 protected:
   const std::string m_uid_i2c_bus;
   const std::string m_pll_i2c_bus;

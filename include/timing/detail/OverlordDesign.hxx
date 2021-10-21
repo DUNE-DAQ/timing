@@ -16,7 +16,9 @@ OverlordDesign<IO>::clone() const
 //-----------------------------------------------------------------------------
 template<class IO>
 OverlordDesign<IO>::OverlordDesign(const uhal::Node& node)
-  : TopDesign<IO>(node)
+  : TopDesignInterface(node)
+  , MasterDesignInterface(node)
+  , OverlordDesignInterface(node)
   , MasterDesign<IO, PDIMasterNode>(node)
 {}
 //-----------------------------------------------------------------------------
@@ -33,8 +35,8 @@ std::string
 OverlordDesign<IO>::get_status(bool print_out) const
 {
   std::stringstream status;
-  status << this->get_io_node().get_pll_status();
-  status << this->get_master_node().get_status();
+  status << timing::TopDesign<IO>::get_io_node().get_pll_status();
+  status << timing::MasterDesign<IO, PDIMasterNode>::get_master_node().get_status();
   status << this->get_external_triggers_endpoint_node().get_status();
   if (print_out)
     TLOG() << status.str();
@@ -49,53 +51,17 @@ OverlordDesign<IO>::configure() const
 {
 
   // Hard resets
-  this->reset();
+  this->reset_io();
 
   // Set timestamp to current time
   this->sync_timestamp();
 
   // Enable spill interface
-  this->get_master_node().enable_spill_interface();
+  timing::MasterDesign<IO, PDIMasterNode>::get_master_node().enable_spill_interface();
 
   // Trigger interface configuration
   this->reset_external_triggers_endpoint();
   this->enable_external_triggers();
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-template<class IO>
-const TriggerReceiverNode&
-OverlordDesign<IO>::get_external_triggers_endpoint_node() const
-{
-  return uhal::Node::getNode<TriggerReceiverNode>("trig_rx");
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-template<class IO>
-void
-OverlordDesign<IO>::reset_external_triggers_endpoint() const
-{
-  this->get_external_triggers_endpoint_node().reset();
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-template<class IO>
-void
-OverlordDesign<IO>::enable_external_triggers() const
-{
-  this->get_external_triggers_endpoint_node().enable_triggers();
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-template<class IO>
-void
-OverlordDesign<IO>::disable_external_triggers() const
-{
-  this->get_external_triggers_endpoint_node().disable_triggers();
 }
 //-----------------------------------------------------------------------------
 

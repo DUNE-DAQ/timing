@@ -10,7 +10,6 @@
 #include "timing/CRTDesign.hpp"
 #include "timing/EndpointDesign.hpp"
 #include "timing/FanoutDesign.hpp"
-#include "timing/MasterMuxDesign.hpp"
 #include "timing/OuroborosDesign.hpp"
 #include "timing/OuroborosMuxDesign.hpp"
 #include "timing/OverlordDesign.hpp"

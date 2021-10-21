@@ -16,7 +16,9 @@ EndpointDesign<IO>::clone() const
 //-----------------------------------------------------------------------------
 template<class IO>
 EndpointDesign<IO>::EndpointDesign(const uhal::Node& node)
-  : TopDesign<IO>(node)
+  : TopDesignInterface(node)
+  , EndpointDesignInterface(node)
+  , TopDesign<IO>(node)
 {}
 //-----------------------------------------------------------------------------
 
@@ -32,7 +34,7 @@ std::string
 EndpointDesign<IO>::get_status(bool print_out) const
 {
   std::stringstream status;
-  status << this->get_io_node().get_pll_status();
+  status << TopDesign<IO>::get_io_node().get_pll_status();
   uint32_t number_of_endpoint_nodes = EndpointDesign<IO>::get_number_of_endpoint_nodes();
   for (uint32_t i = 0; i < number_of_endpoint_nodes; ++i) {
     status << "Endpoint node " << i << " status" << std::endl;
@@ -50,7 +52,7 @@ void
 EndpointDesign<IO>::configure() const
 {
   // Hard resets
-  this->reset();
+  this->reset_io();
 }
 //-----------------------------------------------------------------------------
 

@@ -16,6 +16,7 @@
 #include "timing/EndpointDesign.hpp"
 #include "timing/FMCIONode.hpp"
 #include "timing/MasterDesign.hpp"
+#include "timing/EndpointDesignInterface.hpp"
 #include "timing/PDIMasterNode.hpp"
 #include "timing/SIMIONode.hpp"
 #include "timing/TLUIONode.hpp"
@@ -37,7 +38,7 @@ namespace timing {
  */
 template<class IO>
 class OuroborosDesign
-  : public MasterDesign<IO, PDIMasterNode>
+  : virtual public EndpointDesignInterface, public MasterDesign<IO, PDIMasterNode>
 {
 
 public:
@@ -60,6 +61,7 @@ public:
    */  
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
 
+  using TopDesign<IO>::get_io_node;
   // In leiu of UHAL_DERIVEDNODE
 protected:
   virtual uhal::Node* clone() const;

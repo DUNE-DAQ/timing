@@ -16,6 +16,7 @@
 #include "TimingIssues.hpp"
 #include "timing/FMCIONode.hpp"
 #include "timing/TopDesign.hpp"
+#include "timing/EndpointDesignInterface.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -32,7 +33,7 @@ namespace timing {
  * @brief      Base class for timing endpoint design nodes.
  */
 template<class IO>
-class EndpointDesign : virtual public TopDesign<IO>
+class EndpointDesign : public TopDesign<IO>, virtual public EndpointDesignInterface
 {
 
 public:
@@ -48,8 +49,8 @@ public:
    * @brief      Prepare the timing endpoint for data taking.
    *
    */
-  void configure() const;
-  
+  void configure() const override;
+
   /**
    * @brief    Give info to collector.
    */  
@@ -68,6 +69,8 @@ public:
    */
   void validate_firmware_version() const override;
   
+  using TopDesign<IO>::get_io_node;
+
   // In leiu of UHAL_DERIVEDNODE
 protected:
   virtual uhal::Node* clone() const;

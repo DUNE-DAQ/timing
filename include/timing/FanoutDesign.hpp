@@ -13,7 +13,8 @@
 #define TIMING_INCLUDE_TIMING_FANOUTDESIGN_HPP_
 
 // PDT Headers
-#include "timing/MasterMuxDesign.hpp"
+#include "timing/MasterMuxDesignInterface.hpp"
+#include "timing/EndpointDesignInterface.hpp"
 #include "timing/PC059IONode.hpp"
 #include "timing/FIBIONode.hpp"
 #include "timing/PDIMasterNode.hpp"
@@ -35,7 +36,7 @@ namespace timing {
  * @brief      Class for timing fanout designs.
  */
 template<class IO, class MST>
-class FanoutDesign : public MasterMuxDesign<IO, MST>
+class FanoutDesign : public MasterMuxDesignInterface, public EndpointDesignInterface, public MasterDesign<IO, MST>
 {
 
 public:
@@ -66,7 +67,7 @@ public:
   /**
    * @brief      Reset timing fanout node.
    */
-  virtual void reset(uint32_t fanout_mode, const std::string& clock_config_file = "") const; // NOLINT(build/unsigned)
+  void reset_io(int32_t fanout_mode, const std::string& clock_config_file = "") const override; // NOLINT(build/unsigned)
 
   /**
    * @brief      Measure the endpoint round trip time.
@@ -87,6 +88,9 @@ public:
                             bool measure_rtt,
                             bool control_sfp,
                             uint32_t sfp_mux) const override; // NOLINT(build/unsigned)
+
+  using TopDesign<IO>::get_io_node;
+  using MasterDesign<IO,MST>::get_master_node;
 
   // In leiu of UHAL_DERIVEDNODE
 protected:
