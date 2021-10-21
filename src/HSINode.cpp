@@ -229,16 +229,23 @@ HSINode::configure_hsi(uint32_t src,      // NOLINT(build/unsigned)
   // a) A pre-division by 256
   // b) Division by a power of two set by n = 2 ^ rate_div_d (ranging from 2^0 -> 2^15)
   // c) 1-in-n prescaling set by n = rate_div_p
-
-  FakeTriggerConfig fake_trigger_config(rate, clock_frequency_hz);
-
-  fake_trigger_config.print();
-  std::stringstream trig_stream;
-  trig_stream << "> Random trigger rate for HSI set to " << std::setprecision(3) << std::scientific << fake_trigger_config.actual_rate << " Hz. d: " << fake_trigger_config.divisor << " p: " << fake_trigger_config.prescale;
-  TLOG() << trig_stream.str();
   
-  getNode("hsi.csr.ctrl.rate_div_p").write(fake_trigger_config.prescale);
-  getNode("hsi.csr.ctrl.rate_div_d").write(fake_trigger_config.divisor);
+  try
+  {
+    FakeTriggerConfig fake_trigger_config(rate, clock_frequency_hz);
+    fake_trigger_config.print();
+
+    std::stringstream trig_stream;
+    trig_stream << "> Random trigger rate for HSI set to " << std::setprecision(3) << std::scientific << fake_trigger_config.actual_rate << " Hz. d: " << fake_trigger_config.divisor << " p: " << fake_trigger_config.prescale;
+    TLOG() << trig_stream.str();
+    
+    getNode("hsi.csr.ctrl.rate_div_p").write(fake_trigger_config.prescale);
+    getNode("hsi.csr.ctrl.rate_div_d").write(fake_trigger_config.divisor);
+  }
+  catch (const timing::BadRequestedFakeTriggerRate& e)
+  {
+    ers::error(FailedToUpdateHSIRandomRate(ERS_HERE,e));
+  }
 
   if (dispatch)
     getClient().dispatch();
