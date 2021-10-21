@@ -131,7 +131,7 @@ HSINode::read_data_buffer(uint16_t& n_words, bool read_all, bool fail_on_error) 
 
   n_words = n_hsi_words;
 
-  TLOG_DEBUG(2) << "Words available in readout buffer:      " << format_reg_value(n_hsi_words);
+  TLOG_DEBUG(5) << "Words available in readout buffer:      " << format_reg_value(n_hsi_words);
 
   uhal::ValVector<uint32_t> buffer_data; // NOLINT(build/unsigned)
 
@@ -155,14 +155,14 @@ HSINode::read_data_buffer(uint16_t& n_words, bool read_all, bool fail_on_error) 
 
   uint32_t events_to_read = n_hsi_words / g_hsi_event_size; // NOLINT(build/unsigned)
 
-  TLOG_DEBUG(2) << "Events available in readout buffer:     " << format_reg_value(events_to_read);
+  TLOG_DEBUG(5) << "Events available in readout buffer:     " << format_reg_value(events_to_read);
 
   uint32_t words_to_read = read_all ? n_hsi_words : events_to_read * g_hsi_event_size; // NOLINT(build/unsigned)
 
-  TLOG_DEBUG(2) << "Words to be read out in readout buffer: " << format_reg_value(words_to_read);
+  TLOG_DEBUG(5) << "Words to be read out in readout buffer: " << format_reg_value(words_to_read);
 
   if (!words_to_read) {
-    TLOG_DEBUG(2) << "No words to be read out.";
+    TLOG_DEBUG(5) << "No words to be read out.";
   }
 
   buffer_data = getNode("hsi.buf.data").readBlock(words_to_read);
@@ -229,16 +229,23 @@ HSINode::configure_hsi(uint32_t src,      // NOLINT(build/unsigned)
   // a) A pre-division by 256
   // b) Division by a power of two set by n = 2 ^ rate_div_d (ranging from 2^0 -> 2^15)
   // c) 1-in-n prescaling set by n = rate_div_p
-
-  FakeTriggerConfig fake_trigger_config(rate, clock_frequency_hz);
-
-  fake_trigger_config.print();
-  std::stringstream trig_stream;
-  trig_stream << "> Random trigger rate for HSI set to " << std::setprecision(3) << std::scientific << fake_trigger_config.actual_rate << " Hz. d: " << fake_trigger_config.divisor << " p: " << fake_trigger_config.prescale;
-  TLOG() << trig_stream.str();
   
-  getNode("hsi.csr.ctrl.rate_div_p").write(fake_trigger_config.prescale);
-  getNode("hsi.csr.ctrl.rate_div_d").write(fake_trigger_config.divisor);
+  try
+  {
+    FakeTriggerConfig fake_trigger_config(rate, clock_frequency_hz);
+    fake_trigger_config.print();
+
+    std::stringstream trig_stream;
+    trig_stream << "> Random trigger rate for HSI set to " << std::setprecision(3) << std::scientific << fake_trigger_config.actual_rate << " Hz. d: " << fake_trigger_config.divisor << " p: " << fake_trigger_config.prescale;
+    TLOG() << trig_stream.str();
+    
+    getNode("hsi.csr.ctrl.rate_div_p").write(fake_trigger_config.prescale);
+    getNode("hsi.csr.ctrl.rate_div_d").write(fake_trigger_config.divisor);
+  }
+  catch (const timing::BadRequestedFakeTriggerRate& e)
+  {
+    ers::error(FailedToUpdateHSIRandomRate(ERS_HERE,e));
+  }
 
   if (dispatch)
     getClient().dispatch();

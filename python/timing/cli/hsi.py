@@ -102,7 +102,7 @@ def enable(ctx, obj, action, partition, address):
 @click.option('--re-mask', '-r', type=click.IntRange(0,0xffffffff), help='Rising edge mask', default=0)
 @click.option('--fe-mask', '-f', type=click.IntRange(0,0xffffffff), help='Falling edge mask', default=0)
 @click.option('--inv-mask', '-i', type=click.IntRange(0,0xffffffff), help='Invert mask', default=0)
-@click.option('--rate', type=float, help='Rnadom trigger rate [Hz]', default=1)
+@click.option('--rate', type=float, help='Random trigger rate [Hz] on bit 0 in emulation mode', default=1)
 def configure(ctx, obj, src, re_mask, fe_mask, inv_mask, rate):
     '''
     Configure the hsi in the hsi wrapper block.
