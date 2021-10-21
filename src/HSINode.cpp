@@ -131,7 +131,7 @@ HSINode::read_data_buffer(uint16_t& n_words, bool read_all, bool fail_on_error) 
 
   n_words = n_hsi_words;
 
-  TLOG_DEBUG(2) << "Words available in readout buffer:      " << format_reg_value(n_hsi_words);
+  TLOG_DEBUG(5) << "Words available in readout buffer:      " << format_reg_value(n_hsi_words);
 
   uhal::ValVector<uint32_t> buffer_data; // NOLINT(build/unsigned)
 
@@ -155,14 +155,14 @@ HSINode::read_data_buffer(uint16_t& n_words, bool read_all, bool fail_on_error) 
 
   uint32_t events_to_read = n_hsi_words / g_hsi_event_size; // NOLINT(build/unsigned)
 
-  TLOG_DEBUG(2) << "Events available in readout buffer:     " << format_reg_value(events_to_read);
+  TLOG_DEBUG(5) << "Events available in readout buffer:     " << format_reg_value(events_to_read);
 
   uint32_t words_to_read = read_all ? n_hsi_words : events_to_read * g_hsi_event_size; // NOLINT(build/unsigned)
 
-  TLOG_DEBUG(2) << "Words to be read out in readout buffer: " << format_reg_value(words_to_read);
+  TLOG_DEBUG(5) << "Words to be read out in readout buffer: " << format_reg_value(words_to_read);
 
   if (!words_to_read) {
-    TLOG_DEBUG(2) << "No words to be read out.";
+    TLOG_DEBUG(5) << "No words to be read out.";
   }
 
   buffer_data = getNode("hsi.buf.data").readBlock(words_to_read);
