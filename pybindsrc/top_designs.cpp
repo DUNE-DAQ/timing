@@ -79,7 +79,15 @@ register_top_designs(py::module& m)
          py::arg("rate"),
          py::arg("poisson"))
     .def("apply_endpoint_delay", &timing::BoreasDesign<FMCIONode>::apply_endpoint_delay)
-    .def("measure_endpoint_rtt", &timing::BoreasDesign<FMCIONode>::measure_endpoint_rtt);
+    .def("measure_endpoint_rtt", &timing::BoreasDesign<FMCIONode>::measure_endpoint_rtt)
+    .def("configure_hsi", 
+         &timing::BoreasDesign<FMCIONode>::configure_hsi,
+         py::arg("src"),
+         py::arg("re_mask"),
+         py::arg("fe_mask"),
+         py::arg("inv_mask"),
+         py::arg("rate"),
+         py::arg("dispatch") = true);
 
   // Boreas on TLU
   py::class_<timing::BoreasDesign<TLUIONode>, uhal::Node>(m, "BoreasDesign<TLUIONode>")
@@ -93,7 +101,15 @@ register_top_designs(py::module& m)
          py::arg("rate"),
          py::arg("poisson"))
     .def("apply_endpoint_delay", &timing::BoreasDesign<TLUIONode>::apply_endpoint_delay)
-    .def("measure_endpoint_rtt", &timing::BoreasDesign<TLUIONode>::measure_endpoint_rtt);
+    .def("measure_endpoint_rtt", &timing::BoreasDesign<TLUIONode>::measure_endpoint_rtt)
+    .def("configure_hsi", 
+         &timing::BoreasDesign<TLUIONode>::configure_hsi,
+         py::arg("src"),
+         py::arg("re_mask"),
+         py::arg("fe_mask"),
+         py::arg("inv_mask"),
+         py::arg("rate"),
+         py::arg("dispatch") = true);
 
   // Boreas on sim
   py::class_<timing::BoreasDesign<SIMIONode>, uhal::Node>(m, "BoreasDesign<SIMIONode>")
@@ -107,7 +123,15 @@ register_top_designs(py::module& m)
          py::arg("rate"),
          py::arg("poisson"))
     .def("apply_endpoint_delay", &timing::BoreasDesign<SIMIONode>::apply_endpoint_delay)
-    .def("measure_endpoint_rtt", &timing::BoreasDesign<SIMIONode>::measure_endpoint_rtt);
+    .def("measure_endpoint_rtt", &timing::BoreasDesign<SIMIONode>::measure_endpoint_rtt)
+    .def("configure_hsi", 
+         &timing::BoreasDesign<SIMIONode>::configure_hsi,
+         py::arg("src"),
+         py::arg("re_mask"),
+         py::arg("fe_mask"),
+         py::arg("inv_mask"),
+         py::arg("rate"),
+         py::arg("dispatch") = true);
 
   // PD-I fanout design on pc059
   py::class_<timing::FanoutDesign<PC059IONode, PDIMasterNode>, uhal::Node>(m, "FanoutDesign<PC059IONode,PDIMasterNode>")
@@ -209,14 +233,21 @@ register_top_designs(py::module& m)
   py::class_<timing::ChronosDesign<FMCIONode>, uhal::Node>(m, "ChronosDesign<FMCIONode>")
     .def("read_firmware_version", &timing::ChronosDesign<FMCIONode>::read_firmware_version)
     .def("validate_firmware_version", &timing::ChronosDesign<FMCIONode>::validate_firmware_version)
-    .def("get_status", &timing::ChronosDesign<FMCIONode>::get_status);
-
+    .def("get_status", &timing::ChronosDesign<FMCIONode>::get_status)
+    .def("configure_hsi", 
+         &timing::ChronosDesign<FMCIONode>::configure_hsi,
+         py::arg("src"),
+         py::arg("re_mask"),
+         py::arg("fe_mask"),
+         py::arg("inv_mask"),
+         py::arg("rate"),
+         py::arg("dispatch") = true);
+    
   // CRT on FMC
   py::class_<timing::CRTDesign<FMCIONode>, uhal::Node>(m, "CRTDesign<FMCIONode>")
     .def("read_firmware_version", &timing::CRTDesign<FMCIONode>::read_firmware_version)
     .def("validate_firmware_version", &timing::CRTDesign<FMCIONode>::validate_firmware_version)
     .def("get_status", &timing::CRTDesign<FMCIONode>::get_status);
-
 } // NOLINT
 
 } // namespace python

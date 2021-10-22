@@ -13,6 +13,7 @@
 #define TIMING_INCLUDE_TIMING_PDIMASTERNODE_HPP_
 
 // PDT Headers
+#include "timing/definitions.hpp"
 #include "timing/FLCmdGeneratorNode.hpp"
 #include "timing/MasterNode.hpp"
 #include "timing/SpillInterfaceNode.hpp"

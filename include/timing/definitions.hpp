@@ -11,6 +11,11 @@
 #ifndef TIMING_INCLUDE_TIMING_DEFINITIONS_HPP_
 #define TIMING_INCLUDE_TIMING_DEFINITIONS_HPP_
 
+#include "TimingIssues.hpp"
+
+#include "logging/Logging.hpp"
+
+#include <cmath>
 #include <cstdint>
 #include <map>
 #include <string>
@@ -174,11 +179,11 @@ const std::map<std::string, std::string> g_clock_config_map = {
   { "kFMCRev2_endpoint", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
   { "kFMCRev3_endpoint", "devel/Si5394-053endptr_62-5MHz_4kHz-Registers.txt" },
   { "kFMCRev4_endpoint", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
-
-  { "kFMCRev1_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
-  { "kFMCRev2_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
-  { "kFMCRev3_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
-  { "kFMCRev4_endpoint-bi-crt", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
+  
+  { "kFMCRev1_endpoint-bi-crt", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
+  { "kFMCRev2_endpoint-bi-crt", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
+  { "kFMCRev3_endpoint-bi-crt", "devel/Si5394-053endptr_62-5MHz_4kHz-Registers.txt" },
+  { "kFMCRev4_endpoint-bi-crt", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
 
   { "kFMCRev1_chronos", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
   { "kFMCRev2_chronos", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
@@ -208,6 +213,7 @@ const std::map<std::string, std::string> g_clock_config_map = {
   { "kTLURev1_overlord", "devel/DUNE_TLU-DUNTLU09-Registers_62.5_mhz.txt" },
   { "kTLURev1_boreas", "devel/DUNE_TLU-DUNTLU09-Registers_62.5_mhz.txt" },
 
+  { "kPC059Rev1_ouroboros", "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" },
   { "kPC059Rev1_fanout_mode0",
     "devel/pc059_sfp_in_312_mhz-059_0s62-Registers.txt" }, // fanout mode, assuming sfp is the upstream input
   { "kPC059Rev1_fanout_mode1",
@@ -217,8 +223,6 @@ const std::map<std::string, std::string> g_clock_config_map = {
     "devel/Si5395-RevA-FIB_fanout-65_FA_31-Registers.txt" }, // fanout mode, data and clock from backplane
   { "kFIBRev1_fanout_mode1",
     "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" }, // stand-alone mode
-
-  { "kPC059Rev1_ouroboros", "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" },
 
   { "kFIBRev1_ouroboros", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" },
   { "kFIBRev1_ouroboros", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" },
@@ -249,10 +253,20 @@ const std::map<std::string, std::string> g_clock_config_map = {
   { "kFMCRev3_master_50_mhz", "SI5344/PDTS0003.txt" },
   { "kFMCRev4_master_50_mhz", "SI5344/PDTS0003.txt" },
 
-  { "kPC059Rev1_ouroboros_50_mhz", "SI5345/PDTS0005.txt" },
+  { "kFMCRev1_overlord_50_mhz", "SI5344/PDTS0000.txt" },
+  { "kFMCRev2_overlord_50_mhz", "SI5344/PDTS0003.txt" },
+  { "kFMCRev3_overlord_50_mhz", "SI5344/PDTS0003.txt" },
+  { "kFMCRev4_overlord_50_mhz", "SI5344/PDTS0003.txt" },
+
+  { "kFMCRev1_boreas_50_mhz", "SI5344/PDTS0000.txt" },
+  { "kFMCRev2_boreas_50_mhz", "SI5344/PDTS0003.txt" },
+  { "kFMCRev3_boreas_50_mhz", "SI5344/PDTS0003.txt" },
+  { "kFMCRev4_boreas_50_mhz", "SI5344/PDTS0003.txt" },
 
   { "kTLURev1_overlord_50_mhz", "wr/TLU_EXTCLK_10MHZ_NOZDM.txt" },
-    
+  { "kTLURev1_boreas_50_mhz", "wr/TLU_EXTCLK_10MHZ_NOZDM.txt" },
+  
+  { "kPC059Rev1_ouroboros_50_mhz", "SI5345/PDTS0005.txt" },
   { "kPC059Rev1_fanout_mode0_50_mhz", "wr/FANOUT_PLL_WIDEBW_SFPIN.txt" }, // fanout mode
   { "kPC059Rev1_fanout_mode1_50_mhz", "devel/PDTS_PC059_FANOUT.txt" },    // stand-alone mode
 };
@@ -282,6 +296,50 @@ const std::map<uint32_t, std::string> g_endpoint_state_map = {
   { 0xc, "Error in Rx (0xc)" },                           // 0b1100 when ERR_R, -- Error in rx
   { 0xd, "Error in time stamp check (0xd)" },             // 0b1101 when ERR_T; -- Error in time stamp check
   { 0xe, "Error in physical layer after lock (0xe)" },    // 0b1110 when ERR_P; -- Physical layer error after lock
+};
+
+struct FakeTriggerConfig
+{
+  double requested_rate;
+  uint32_t divisor;  // NOLINT(build/unsigned)
+  uint32_t prescale; // NOLINT(build/unsigned)
+  double actual_rate;
+
+  explicit FakeTriggerConfig(double rate, uint32_t clock_frequency_hz) // NOLINT
+    : requested_rate(rate)
+  {
+    // Rate =  (clock_frequency_hz / 2^(d+8)) / p where n in [0,15] and p in [1,256]
+
+    // DIVIDER (int): Frequency divider.
+
+    // The division from clock_frequency_hz to the desired rate is done in three steps:
+    // a) A pre-division by 256
+    // b) Division by a power of two set by n = 2 ^ rate_div_d (ranging from 2^0 -> 2^15)
+    // c) 1-in-n prescaling set by n = rate_div_p
+
+    double div = ceil(log(clock_frequency_hz / (requested_rate * 256 * 256)) / log(2));
+    if (div < 0) {
+      divisor = 0;
+    } else if (div > 15) {
+      divisor = 15;
+    } else {
+      divisor = div;
+    }
+
+    uint32_t ps = (uint32_t)((clock_frequency_hz / (rate * 256 * (1 << divisor))) + 0.5); // NOLINT(build/unsigned)
+    if (ps == 0 || ps > 256) {
+      throw BadRequestedFakeTriggerRate(ERS_HERE, rate, ps);
+    } else {
+      prescale = ps;
+    }
+    actual_rate = static_cast<double>(clock_frequency_hz) / (256 * prescale * (1 << divisor));
+  }
+
+  void print() const
+  {
+    TLOG() << "Requested rate, actual rate: " << requested_rate << ", " << actual_rate;
+    TLOG() << "prescale, divisor: " << prescale << ", " << divisor;
+  }
 };
 
 struct ActiveEndpointConfig

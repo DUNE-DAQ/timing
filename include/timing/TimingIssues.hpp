@@ -264,6 +264,11 @@ ERS_DECLARE_ISSUE(timing,                                                       
                   " Incompatible patch endpoint firmware version; found: " << found_firmware_version << ", required: " << required_firmware_version, ///< Message
                   ((int)found_firmware_version)((int)required_firmware_version)                                                                      ///< Message parameters
 )
+
+ERS_DECLARE_ISSUE(timing,                                                                       ///< Namespace
+                  FailedToUpdateHSIRandomRate,                                                  ///< Issue class name
+                  "  Random bit 0 trigger rate for HSI not updated!",                           ///< Message
+                  ERS_EMPTY)    
 } // namespace dunedaq
 
 #endif // TIMING_INCLUDE_TIMING_TIMINGISSUES_HPP_

@@ -50,6 +50,7 @@ def hsi(obj, device):
 
     obj.mDevice = lDevice
     obj.mHSIEndpoint = lDevice.getNode('endpoint0')
+    obj.mTopDesign = lDevice.getNode('')
 # ------------------------------------------------------------------------------
 
 
@@ -102,16 +103,18 @@ def enable(ctx, obj, action, partition, address):
 @click.option('--re-mask', '-r', type=click.IntRange(0,0xffffffff), help='Rising edge mask', default=0)
 @click.option('--fe-mask', '-f', type=click.IntRange(0,0xffffffff), help='Falling edge mask', default=0)
 @click.option('--inv-mask', '-i', type=click.IntRange(0,0xffffffff), help='Invert mask', default=0)
-def configure(ctx, obj, src, re_mask, fe_mask, inv_mask):
+@click.option('--rate', type=float, help='Random trigger rate [Hz] on bit 0 in emulation mode', default=1)
+def configure(ctx, obj, src, re_mask, fe_mask, inv_mask, rate):
     '''
     Configure the hsi in the hsi wrapper block.
     '''
 
     lDevice = obj.mDevice
     lHSIEpt = obj.mHSIEndpoint
+    lTopDesign = obj.mTopDesign
 
     lHSIEpt.reset_hsi()
-    lHSIEpt.configure_hsi(src, re_mask, fe_mask, inv_mask)
+    lTopDesign.configure_hsi(src, re_mask, fe_mask, inv_mask, rate)
     lHSIEpt.start_hsi()
     secho("HSI configured (and started)", fg='green')
 
