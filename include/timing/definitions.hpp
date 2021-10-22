@@ -239,6 +239,16 @@ const std::map<std::string, std::string> g_clock_config_map = {
   { "kFMCRev3_enclustra-a35_master_50_mhz", "SI5344/PDTS0003.txt" },
   { "kFMCRev4_enclustra-a35_master_50_mhz", "SI5344/PDTS0003.txt" },
 
+  { "kFMCRev1_enclustra-a35_overlord_50_mhz", "SI5344/PDTS0000.txt" },
+  { "kFMCRev2_enclustra-a35_overlord_50_mhz", "SI5344/PDTS0003.txt" },
+  { "kFMCRev3_enclustra-a35_overlord_50_mhz", "SI5344/PDTS0003.txt" },
+  { "kFMCRev4_enclustra-a35_overlord_50_mhz", "SI5344/PDTS0003.txt" },
+
+  { "kFMCRev1_enclustra-a35_boreas_50_mhz", "SI5344/PDTS0000.txt" },
+  { "kFMCRev2_enclustra-a35_boreas_50_mhz", "SI5344/PDTS0003.txt" },
+  { "kFMCRev3_enclustra-a35_boreas_50_mhz", "SI5344/PDTS0003.txt" },
+  { "kFMCRev4_enclustra-a35_boreas_50_mhz", "SI5344/PDTS0003.txt" },
+
   { "kPC059Rev1_enclustra-a35_ouroboros_50_mhz", "SI5345/PDTS0005.txt" },
 
   { "kTLURev1_enclustra-a35_overlord_50_mhz", "wr/TLU_EXTCLK_10MHZ_NOZDM.txt" },
