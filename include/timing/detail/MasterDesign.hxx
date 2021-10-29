@@ -112,7 +112,7 @@ MasterDesign<IO, MST>::validate_firmware_version() const
   int patch_firmware_version = (firmware_version >> 0) & 0xff;
 
   if (major_firmware_version != g_required_major_master_firmware_version)
-    throw IncompatibleMajorMasterFirmwareVersion(ERS_HERE, major_firmware_version, g_required_major_master_firmware_version);
+    ers::error(IncompatibleMajorMasterFirmwareVersion(ERS_HERE, major_firmware_version, g_required_major_master_firmware_version));
   if (minor_firmware_version != g_required_minor_master_firmware_version)
     ers::warning(IncompatibleMinorMasterFirmwareVersion(ERS_HERE, minor_firmware_version, g_required_minor_master_firmware_version));
   if (patch_firmware_version != g_required_patch_master_firmware_version)
