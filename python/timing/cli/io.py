@@ -21,7 +21,7 @@ from timing.common.definitions import kFMCRev1, kFMCRev2, kFMCRev3, kFMCRev4, kP
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed, kCarrierNexusVideo
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignChronos, kDesignBoreas, kDesignTest
 from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap, kUIDRevisionMap, kClockConfigMap
-from timing.common.definitions import kLibrarySupportedBoards
+from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
 
 # ------------------------------------------------------------------------------
 #    __  ___         __         
@@ -48,7 +48,7 @@ def io(obj, device):
     lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
     lDevice.dispatch()
 
-    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards:        
+    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards and lBoardInfo['design_type'].value() in kLibrarySupportedDesigns:
         lTopDesign.validate_firmware_version()
 
     echo("Design '{}' on board '{}' on carrier '{}' with frequency {} MHz".format(

@@ -24,7 +24,7 @@ from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardM
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord
 from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
-from timing.common.definitions import kLibrarySupportedBoards, kMasterFWMajorRequired, kMasterFWMinorRequired, kMasterFWPatchRequired
+from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns, kMasterFWMajorRequired, kMasterFWMinorRequired, kMasterFWPatchRequired
 
 from timing.common.toolbox import format_firmware_version
 # ------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ def master(obj, device):
     lGenerics = toolbox.readSubNodes(lMaster.getNode('global.config'), False)
     lDevice.dispatch()
 
-    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards:
+    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards and lBoardInfo['design_type'].value() in kLibrarySupportedDesigns:
         
         lVersion = lTopDesign.read_firmware_version()
         lTopDesign.validate_firmware_version()

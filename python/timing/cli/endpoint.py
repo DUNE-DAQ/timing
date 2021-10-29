@@ -5,7 +5,7 @@ import collections
 
 from . import toolbox
 import timing.common.definitions as defs
-from timing.common.definitions import kLibrarySupportedBoards
+from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
 from timing.common.toolbox import format_firmware_version
 
 from click import echo, style, secho
@@ -41,7 +41,7 @@ def endpoint(obj, device, ids):
     lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
     lDevice.dispatch()
 
-    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards:
+    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards and lBoardInfo['design_type'].value() in kLibrarySupportedDesigns:
         
         lTopDesign.validate_firmware_version()
 

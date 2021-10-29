@@ -85,6 +85,7 @@ register_definitions(py::module& m)
 	m.attr("kCommandIDs") = swap_commands_map(timing::g_command_map);
 	m.attr("kEpStates") = timing::g_endpoint_state_map;
 	m.attr("kLibrarySupportedBoards") = timing::g_library_supported_boards;
+    m.attr("kLibrarySupportedDesigns") = timing::g_library_supported_designs;
 	m.attr("kEventSize") = timing::g_event_size;
     m.attr("kMasterFWMajorRequired") = timing::g_required_major_master_firmware_version;
     m.attr("kMasterFWMinorRequired") = timing::g_required_minor_master_firmware_version;

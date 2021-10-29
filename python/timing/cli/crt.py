@@ -4,7 +4,7 @@ import collections
 
 from . import toolbox
 import timing.common.definitions as defs
-from timing.common.definitions import kLibrarySupportedBoards
+from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
 
 from click import echo, style, secho
 from .click_texttable import Texttable
@@ -37,7 +37,7 @@ def crt(obj, device):
     lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
     lDevice.dispatch()
 
-    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards:        
+    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards and lBoardInfo['design_type'].value() in kLibrarySupportedDesigns:        
         lTopDesign.validate_firmware_version()
         try:
             echo(lDevice.getNode('io').get_hardware_info())

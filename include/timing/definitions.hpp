@@ -80,11 +80,11 @@ const uint32_t g_event_size = 6;             // NOLINT(build/unsigned)
 const uint32_t g_hsi_event_size = 5;         // NOLINT(build/unsigned)
 
 const int g_required_major_master_firmware_version = 6;
-const int g_required_minor_master_firmware_version = 0;
+const int g_required_minor_master_firmware_version = 1;
 const int g_required_patch_master_firmware_version = 0;
 
 const int g_required_major_endpoint_firmware_version = 6;
-const int g_required_minor_endpoint_firmware_version = 0;
+const int g_required_minor_endpoint_firmware_version = 1;
 const int g_required_patch_endpoint_firmware_version = 0;
 
 const std::map<BoardType, std::string> g_board_type_map = { { kBoardFMC, "fmc" },
@@ -114,6 +114,10 @@ const std::map<DesignType, std::string> g_design_type_map = {
   { kDesignEndpoBICRT, "endpoint-bi-crt" },
   { kDesignChronos, "chronos" },
   { kDesignBoreas, "boreas" },
+};
+
+const std::vector<DesignType> g_library_supported_designs = {
+    kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord, kDesignEndpoBICRT, kDesignChronos, kDesignBoreas
 };
 
 const std::map<BoardRevision, std::string> g_board_revision_map = {
