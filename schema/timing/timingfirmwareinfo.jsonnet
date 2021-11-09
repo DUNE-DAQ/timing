@@ -327,6 +327,31 @@ local timingfirmwareinfo = {
                 doc="HSI monitor data"),
     ], doc="Boreas on FMC monitor data with extended hardware data"),
 
+
+    chronos_fmc_mon_data: s.record("ChronosFMCMonitorData", 
+    [
+        s.field("time_gathered", self.l_int, 0,
+                doc="When was the data actually gathered"),
+
+        s.field("hardware_data", thih.dunedaq.timing.timinghardwareinfo.TimingFMCMonitorData,
+                doc="FMC hardware monitor data"),
+        
+        s.field("hsi_data", self.hsi_fw_mon_data,
+                doc="HSI monitor data"),
+    ], doc="Chronos on FMC monitor data"),
+
+    chronos_fmc_mon_data_debug: s.record("ChronosFMCMonitorDataDebug", 
+    [
+        s.field("time_gathered", self.l_int, 0,
+                doc="When was the data actually gathered"),
+
+        s.field("hardware_data", thih.dunedaq.timing.timinghardwareinfo.TimingFMCMonitorDataDebug,
+                doc="FMC hardware monitor data"),
+        
+        s.field("hsi_data", self.hsi_fw_mon_data,
+                doc="HSI monitor data"),
+    ], doc="Chronos on FMC monitor data with extended hardware data"),
+
     // Fanout designs
     fanout_pc059_mon_data: s.record("FanoutPC059MonitorData", 
     [
