@@ -58,9 +58,11 @@ public:
    */
   void reset(const std::string& clock_config_file = "") const override;
 
-  template<class T>
-  void get_info(T& data) const;
-
+  /**
+   * @brief    Give info to collector.
+   */  
+  void get_info(opmonlib::InfoCollector& ci, int level) const override;
+  
   /**
    * @brief     Switch the SFP mux channel
    */

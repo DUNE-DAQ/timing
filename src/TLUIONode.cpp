@@ -170,10 +170,19 @@ TLUIONode::get_info(timinghardwareinfo::TimingTLUMonitorData& mon_data) const
 
 //-----------------------------------------------------------------------------
 void
-TLUIONode::get_info(timinghardwareinfo::TimingTLUMonitorDataDebug& mon_data) const
+TLUIONode::get_info(opmonlib::InfoCollector& ci, int level) const
 {
 
-  this->get_pll()->get_info(mon_data.pll_mon_data);
+  if (level >= 2) {
+    timinghardwareinfo::TimingPLLMonitorData pll_mon_data;
+    this->get_pll()->get_info(pll_mon_data);
+    ci.add(pll_mon_data);
+  }
+  if (level >= 1) {
+    timinghardwareinfo::TimingTLUMonitorData mon_data;
+    this->get_info(mon_data);
+    ci.add(mon_data);
+  }
 }
 //-----------------------------------------------------------------------------
 

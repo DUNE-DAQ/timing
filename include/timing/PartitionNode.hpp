@@ -178,6 +178,11 @@ public:
    * @brief     Fill the partition monitoring structure.
    */
   void get_info(timingfirmwareinfo::TimingPartitionMonitorData& mon_data) const;
+
+  /**
+   * @brief    Give info to collector.
+   */
+  void get_info(opmonlib::InfoCollector& ic, int level) const override;
 };
 
 } // namespace timing

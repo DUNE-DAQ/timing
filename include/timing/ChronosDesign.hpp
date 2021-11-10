@@ -62,10 +62,12 @@ public:
                              uint32_t inv_mask, // NOLINT(build/unsigned)
                              double rate,
                              bool dispatch = true) const;
-
-  template<class T>
-  void get_info(T& data) const;
   
+  /**
+   * @brief    Give info to collector.
+   */  
+  void get_info(opmonlib::InfoCollector& ci, int level) const override;
+
   // In leiu of UHAL_DERIVEDNODE
 protected:
   virtual uhal::Node* clone() const;
