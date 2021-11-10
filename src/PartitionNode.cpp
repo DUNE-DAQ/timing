@@ -325,7 +325,7 @@ PartitionNode::get_info(timingfirmwareinfo::TimingPartitionMonitorData& mon_data
 
 //-----------------------------------------------------------------------------
 void
-PartitionNode::get_info(opmonlib::InfoCollector& ic, int level) const
+PartitionNode::get_info(opmonlib::InfoCollector& ic, int /*level*/) const
 {
   timingfirmwareinfo::TimingPartitionMonitorData mon_data;
   this->get_info(mon_data);

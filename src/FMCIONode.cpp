@@ -114,7 +114,8 @@ FMCIONode::get_info(opmonlib::InfoCollector& ci, int level) const
     auto sfp = this->get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
     sfp->get_info(sfp_mon_data);
     ci.add(sfp_mon_data);
-  } else if (level >= 1) {
+  }
+  if (level >= 1) {
     timinghardwareinfo::TimingFMCMonitorData mon_data;
     this->get_info(mon_data);
     ci.add(mon_data);

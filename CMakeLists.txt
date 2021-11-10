@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(timing VERSION 5.6.2)
+project(timing VERSION 5.7.0)
 
 find_package(daq-cmake REQUIRED)
 

@@ -70,25 +70,6 @@ local timingfirmwareinfo = {
     ],
     doc="Fixed length command counters structure"),
     
-    timing_fl_cmd_channel_counters: s.record("TimingFLCmdChannelCounters",
-    [
-        s.field("channel_0", self.timing_fl_cmd_counter,
-                doc="TimeSync counters"),
-        
-        s.field("channel_1", self.timing_fl_cmd_counter,
-                doc="Echo counters"),
-        
-        s.field("channel_2", self.timing_fl_cmd_counter,
-                doc="SpillStart counters"),
-        
-        s.field("channel_3", self.timing_fl_cmd_counter,
-                doc="SpillStop counters"),
-        
-        s.field("channel_4", self.timing_fl_cmd_counter,
-                doc="RunStart counters"),
-    ],
-    doc="Command channel counters list"),
-
     pdi_master_fw_mon_data: s.record("PDIMasterMonitorData", 
     [
         s.field("timestamp", self.l_uint,

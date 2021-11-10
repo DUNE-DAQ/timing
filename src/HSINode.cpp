@@ -367,7 +367,7 @@ HSINode::get_info(timingfirmwareinfo::HSIFirmwareMonitorData& mon_data) const
 
 //-----------------------------------------------------------------------------
 void
-HSINode::get_info(opmonlib::InfoCollector& ci, int level) const
+HSINode::get_info(opmonlib::InfoCollector& ci, int /*level*/) const
 {
   timingfirmwareinfo::HSIFirmwareMonitorData mon_data;
   this->get_info(mon_data);

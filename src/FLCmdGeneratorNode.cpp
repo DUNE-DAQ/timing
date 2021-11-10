@@ -120,7 +120,7 @@ FLCmdGeneratorNode::get_cmd_counters_table(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-FLCmdGeneratorNode::get_info(opmonlib::InfoCollector& ic, int level) const
+FLCmdGeneratorNode::get_info(opmonlib::InfoCollector& ic, int /*level*/) const
 {
   auto accepted_counters = getNode("actrs").readBlock(getNode("actrs").getSize());
   auto rejected_counters = getNode("rctrs").readBlock(getNode("actrs").getSize());

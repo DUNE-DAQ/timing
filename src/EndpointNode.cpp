@@ -250,7 +250,7 @@ EndpointNode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const
 
 //-----------------------------------------------------------------------------
 void
-EndpointNode::get_info(opmonlib::InfoCollector& ci, int level) const
+EndpointNode::get_info(opmonlib::InfoCollector& ci, int /*level*/) const
 {
   timingendpointinfo::TimingEndpointInfo mon_data;
   this->get_info(mon_data);
