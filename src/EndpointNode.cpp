@@ -228,7 +228,6 @@ EndpointNode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const
   auto buffer_count = getNode("buf.count").read();
   auto endpoint_control = read_sub_nodes(getNode("csr.ctrl"), false);
   auto endpoint_state = read_sub_nodes(getNode("csr.stat"), false);
-  auto counters = getNode("ctrs").readBlock(g_command_number);
   getClient().dispatch();
 
   mon_data.state = endpoint_state.at("ep_stat").value();
@@ -246,13 +245,28 @@ EndpointNode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const
   mon_data.sfp_tx_disable = endpoint_state.at("sfp_tx_dis").value();
   mon_data.coarse_delay = endpoint_state.at("cdelay").value();
   mon_data.fine_delay = endpoint_state.at("fdelay").value();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+EndpointNode::get_info(opmonlib::InfoCollector& ci, int level) const
+{
+  timingendpointinfo::TimingEndpointInfo mon_data;
+  this->get_info(mon_data);
+  ci.add(mon_data);
 
   nlohmann::json cmd_data;
-
+  timingendpointinfo::TimingFLCmdCounters received_fl_commands_counters;
+  
+  auto counters = getNode("ctrs").readBlock(g_command_number);
+  getClient().dispatch();
+  
   for (size_t i(0); i < g_command_number; ++i) {
-  	cmd_data[g_command_map.at(i)] = counters.at(i);
+    cmd_data[g_command_map.at(i)] = counters.at(i);
   }
-  timingendpointinfo::from_json(cmd_data, mon_data.received_fl_commands_counters);
+  timingendpointinfo::from_json(cmd_data, received_fl_commands_counters);
+  ci.add(received_fl_commands_counters);
 }
 //-----------------------------------------------------------------------------
 

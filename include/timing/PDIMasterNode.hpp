@@ -123,9 +123,9 @@ public:
   void get_info(timingfirmwareinfo::PDIMasterMonitorData& mon_data) const;
 
   /**
-   * @brief     Fill the PD-I master extended monitoring structure.
+   * @brief    Give info to collector.
    */
-  void get_info(timingfirmwareinfo::PDIMasterMonitorDataDebug& mon_data) const;
+  void get_info(opmonlib::InfoCollector& ic, int level) const override;
 };
 
 } // namespace timing

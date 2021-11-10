@@ -304,9 +304,6 @@ PartitionNode::get_info(timingfirmwareinfo::TimingPartitionMonitorData& mon_data
   auto event_counter = getNode("evtctr").read();
   auto buffer_count = getNode("buf.count").read();
 
-  auto accepted_counters = getNode("actrs").readBlock(getNode("actrs").getSize());
-  auto rejected_counters = getNode("rctrs").readBlock(getNode("actrs").getSize());
-
   getClient().dispatch();
 
   mon_data.enabled = controls.at("part_en").value();
@@ -323,20 +320,35 @@ PartitionNode::get_info(timingfirmwareinfo::TimingPartitionMonitorData& mon_data
   mon_data.buffer_warning = state.at("buf_warn").value();
   mon_data.buffer_error = state.at("buf_err").value();
   mon_data.buffer_occupancy = buffer_count.value();
-
-  nlohmann::json cmd_data;
-  
-  for (uint i = 0; i < g_command_map.size(); ++i) { // NOLINT(build/unsigned)
-    nlohmann::json cmd_datum;
-
-    cmd_datum["accepted"] = accepted_counters.at(i);
-    cmd_datum["rejected"] = rejected_counters.at(i);
-
-    cmd_data[g_command_map.at(i)] = cmd_datum;
-  }
-
-  timingfirmwareinfo::from_json(cmd_data, mon_data.fl_cmd_counters);
 }
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+PartitionNode::get_info(opmonlib::InfoCollector& ic, int level) const
+{
+  timingfirmwareinfo::TimingPartitionMonitorData mon_data;
+  this->get_info(mon_data);
+  ic.add(mon_data);
+
+  auto accepted_counters = getNode("actrs").readBlock(getNode("actrs").getSize());
+  auto rejected_counters = getNode("rctrs").readBlock(getNode("actrs").getSize());
+  getClient().dispatch();
+
+
+  for (uint i = 0; i < g_command_map.size(); ++i) { // NOLINT(build/unsigned)
+    timingfirmwareinfo::TimingFLCmdCounter cmd_counter;
+    opmonlib::InfoCollector cmd_counter_ic;
+
+    cmd_counter.accepted = accepted_counters.at(i);
+    cmd_counter.rejected = rejected_counters.at(i);
+
+    cmd_counter_ic.add(cmd_counter);
+    ic.add(g_command_map.at(i), cmd_counter_ic);
+  }
+
+}
+//-----------------------------------------------------------------------------
+
 } // namespace timing
 } // namespace dunedaq

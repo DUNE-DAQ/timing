@@ -76,13 +76,20 @@ BoreasDesign<IO>::configure_hsi(uint32_t src,      // NOLINT(build/unsigned)
 
 //-----------------------------------------------------------------------------
 template<class IO>
-template<class T>
 void
-BoreasDesign<IO>::get_info(T& data) const
-{
-  this->get_master_node().get_info(data.master_data);
-  this->get_io_node().get_info(data.hardware_data);
-  this->get_hsi_node().get_info(data.hsi_data);
+BoreasDesign<IO>::get_info(opmonlib::InfoCollector& ci, int level) const
+{ 
+  opmonlib::InfoCollector master_collector;
+  this->get_master_node().get_info(master_collector, level);
+  ci.add("master", master_collector);
+
+  opmonlib::InfoCollector hardware_collector;
+  this->get_io_node().get_info(hardware_collector, level);
+  ci.add("io", hardware_collector);
+
+  opmonlib::InfoCollector hsi_collector;
+  this->get_hsi_node().get_info(hsi_collector, level);
+  ci.add("hsi", hsi_collector);
 }
 //-----------------------------------------------------------------------------
 }

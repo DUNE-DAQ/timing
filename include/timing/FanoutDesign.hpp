@@ -47,8 +47,10 @@ public:
    */
   std::string get_status(bool print_out = false) const override;
 
-  template<class T>
-  void get_info(T& data) const;
+  /**
+   * @brief    Give info to collector.
+   */  
+  void get_info(opmonlib::InfoCollector& ci, int level) const override;
 
   /**
    * @brief      Prepare the timing fanout for data taking.

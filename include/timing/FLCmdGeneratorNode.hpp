@@ -69,9 +69,9 @@ public:
   std::string get_cmd_counters_table(bool print_out = false) const;
 
   /**
-   * @brief     Fill the fixed length command counters monitoring structure.
+   * @brief    Give info to collector.
    */
-  void get_info(timingfirmwareinfo::TimingFLCmdChannelCounters& mon_data) const;
+  void get_info(opmonlib::InfoCollector& ic, int level) const override;
 };
 
 } // namespace timing

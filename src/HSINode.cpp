@@ -364,5 +364,15 @@ HSINode::get_info(timingfirmwareinfo::HSIFirmwareMonitorData& mon_data) const
   mon_data.endpoint_state = ept_state.find("ep_stat")->second.value();
 }
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+HSINode::get_info(opmonlib::InfoCollector& ci, int level) const
+{
+  timingfirmwareinfo::HSIFirmwareMonitorData mon_data;
+  this->get_info(mon_data);
+  ci.add(mon_data);
+}
+//-----------------------------------------------------------------------------
 } // namespace timing
 } // namespace dunedaq
