@@ -293,19 +293,25 @@ PDIMasterNode::get_info(timingfirmwareinfo::PDIMasterMonitorData& mon_data) cons
   getClient().dispatch();
 
   mon_data.spill_interface_enabled = spill_interface_enabled.value();
-
-  get_partition_node(0).get_info(mon_data.partition_0);
-  get_partition_node(1).get_info(mon_data.partition_1);
-  get_partition_node(2).get_info(mon_data.partition_2);
-  get_partition_node(3).get_info(mon_data.partition_3);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::get_info(timingfirmwareinfo::PDIMasterMonitorDataDebug& mon_data) const
+PDIMasterNode::get_info(opmonlib::InfoCollector& ic, int level) const
 {
-  getNode<FLCmdGeneratorNode>("scmd_gen").get_info(mon_data.sent_fl_cmd_chan_counters);
+  timingfirmwareinfo::PDIMasterMonitorData mon_data;
+  this->get_info(mon_data);
+  ic.add(mon_data);
+
+  for (int i=0; i < 4; ++i)
+  {
+    opmonlib::InfoCollector partition_ic;
+    get_partition_node(i).get_info(partition_ic, level);
+    ic.add("partition"+std::to_string(i),partition_ic);
+  }
+
+  getNode<FLCmdGeneratorNode>("scmd_gen").get_info(ic, level);
 }
 //-----------------------------------------------------------------------------
 

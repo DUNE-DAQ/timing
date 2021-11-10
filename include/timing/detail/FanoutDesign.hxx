@@ -128,17 +128,16 @@ FanoutDesign<IO, MST>::apply_endpoint_delay(uint32_t address,
 
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
-template<class T>
 void
-FanoutDesign<IO, MST>::get_info(T& data) const
-{
-  this->get_master_node().get_info(data.master_data);
-  this->get_io_node().get_info(data.hardware_data);
+FanoutDesign<IO, MST>::get_info(opmonlib::InfoCollector& ci, int level) const
+{ 
+  opmonlib::InfoCollector master_collector;
+  this->get_master_node().get_info(master_collector, level);
+  ci.add("master", master_collector);
 
-  auto fanout_mode = uhal::Node::getNode("switch.csr.ctrl.master_src").read();
-  uhal::Node::getClient().dispatch();
-
-  data.fanout_mode = fanout_mode.value();
+  opmonlib::InfoCollector hardware_collector;
+  this->get_io_node().get_info(hardware_collector, level);
+  ci.add("io", hardware_collector);
 }
 //-----------------------------------------------------------------------------
 

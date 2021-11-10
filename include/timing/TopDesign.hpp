@@ -76,12 +76,6 @@ public:
    */
   virtual uint32_t get_number_of_endpoint_nodes() const; // NOLINT(build/unsigned)
   
-  /**
-   * @brief      Collect operational monitoring information
-   */
-  template<class T>
-  void get_info(T& data) const
-  {}
 };
 
 } // namespace timing

@@ -105,8 +105,6 @@ local timingendpointinfo = {
                 doc="Configured coarse delay"),
         s.field("fine_delay", self.uint,
                 doc="Configured fine delay"),
-        s.field("received_fl_commands_counters", self.timing_fl_cmd_counters,
-                doc="Counters for received fixed-length commands")
     ], 
     doc="Timing endpoint monitor data"),
 };

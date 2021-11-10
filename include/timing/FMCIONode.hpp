@@ -16,6 +16,7 @@
 #include "TimingIssues.hpp"
 #include "timing/IONode.hpp"
 #include "timing/timinghardwareinfo/InfoStructs.hpp"
+#include "timing/timinghardwareinfo/InfoNljs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -54,9 +55,9 @@ public:
   void get_info(timinghardwareinfo::TimingFMCMonitorData& mon_data) const;
 
   /**
-   * @brief      Fill hardware monitoring structure.
+   * @brief    Give info to collector.
    */
-  void get_info(timinghardwareinfo::TimingFMCMonitorDataDebug& mon_data) const;
+  void get_info(opmonlib::InfoCollector& ci, int level) const override;
 };
 
 } // namespace timing

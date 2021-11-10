@@ -57,12 +57,16 @@ ChronosDesign<IO>::configure_hsi(uint32_t src,      // NOLINT(build/unsigned)
 
 //-----------------------------------------------------------------------------
 template<class IO>
-template<class T>
 void
-ChronosDesign<IO>::get_info(T& data) const
-{
-  this->get_io_node().get_info(data.hardware_data);
-  this->get_hsi_node().get_info(data.hsi_data);
+ChronosDesign<IO>::get_info(opmonlib::InfoCollector& ci, int level) const
+{  
+  opmonlib::InfoCollector hardware_collector;
+  this->get_io_node().get_info(hardware_collector, level);
+  ci.add("io", hardware_collector);
+
+  opmonlib::InfoCollector hsi_collector;
+  this->get_hsi_node().get_info(hsi_collector, level);
+  ci.add("hsi", hsi_collector);
 }
 //-----------------------------------------------------------------------------
 }

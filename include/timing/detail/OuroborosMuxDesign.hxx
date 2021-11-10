@@ -61,14 +61,20 @@ OuroborosMuxDesign<IO>::configure() const
 
 //-----------------------------------------------------------------------------
 template<class IO>
-template<class T>
 void
-OuroborosMuxDesign<IO>::get_info(T& data) const
-{
-  this->get_master_node().get_info(data.master_data);
-  this->get_io_node().get_info(data.hardware_data);
-  this->get_endpoint_node(0).get_info(data.endpoint_data);
+OuroborosMuxDesign<IO>::get_info(opmonlib::InfoCollector& ci, int level) const
+{ 
+  opmonlib::InfoCollector master_collector;
+  this->get_master_node().get_info(master_collector, level);
+  ci.add("master", master_collector);
+
+  opmonlib::InfoCollector hardware_collector;
+  this->get_io_node().get_info(hardware_collector, level);
+  ci.add("io", hardware_collector);
+
+  opmonlib::InfoCollector endpoint_collector;
+  this->get_endpoint_node(0).get_info(endpoint_collector, level);
+  ci.add("master", endpoint_collector);
 }
 //-----------------------------------------------------------------------------
-
 }

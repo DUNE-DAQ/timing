@@ -115,6 +115,11 @@ public:
    *
    */
   virtual void get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const;
+
+  /**
+   * @brief    Give info to collector.
+   */
+  void get_info(opmonlib::InfoCollector& ci, int level) const override;
 };
 
 } // namespace timing
