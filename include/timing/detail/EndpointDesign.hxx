@@ -56,12 +56,16 @@ EndpointDesign<IO>::configure() const
 
 //-----------------------------------------------------------------------------
 template<class IO>
-template<class T>
 void
-EndpointDesign<IO>::get_info(T& data) const
-{
-  this->get_endpoint_node(0).get_info(data.endpoint_data);
-  this->get_io_node().get_info(data.hardware_data);
+EndpointDesign<IO>::get_info(opmonlib::InfoCollector& ci, int level) const
+{ 
+  opmonlib::InfoCollector endpoint_collector;
+  this->get_endpoint_node(0).get_info(endpoint_collector, level);
+  ci.add("endpoint", endpoint_collector);
+
+  opmonlib::InfoCollector hardware_collector;
+  this->get_io_node().get_info(hardware_collector, level);
+  ci.add("io", hardware_collector);
 }
 //-----------------------------------------------------------------------------
 

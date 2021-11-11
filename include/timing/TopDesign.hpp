@@ -89,12 +89,6 @@ public:
    */
   virtual void validate_firmware_version() const = 0;
   
-  /**
-   * @brief      Collect operational monitoring information
-   */
-  template<class T>
-  void get_info(T& data) const
-  {}
 };
 
 } // namespace timing

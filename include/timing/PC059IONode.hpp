@@ -93,9 +93,9 @@ public:
   void get_info(timinghardwareinfo::TimingPC059MonitorData& mon_data) const;
 
   /**
-   * @brief      Fill hardware monitoring structure.
+   * @brief    Give info to collector.
    */
-  void get_info(timinghardwareinfo::TimingPC059MonitorDataDebug& mon_data) const;
+  void get_info(opmonlib::InfoCollector& ci, int level) const override;
 };
 
 } // namespace timing

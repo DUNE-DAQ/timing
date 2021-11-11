@@ -132,14 +132,24 @@ FMCIONode::get_info(timinghardwareinfo::TimingFMCMonitorData& mon_data) const
 
 //-----------------------------------------------------------------------------
 void
-FMCIONode::get_info(timinghardwareinfo::TimingFMCMonitorDataDebug& mon_data) const
+FMCIONode::get_info(opmonlib::InfoCollector& ci, int level) const
 {
+  if (level >= 2) {
+    timinghardwareinfo::TimingPLLMonitorData pll_mon_data;
+    this->get_pll()->get_info(pll_mon_data);
+    ci.add(pll_mon_data);
 
-  this->get_pll()->get_info(mon_data.pll_mon_data);
-  auto sfp = this->get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
-  sfp->get_info(mon_data.sfp_mon_data);
+    timinghardwareinfo::TimingSFPMonitorData sfp_mon_data;
+    auto sfp = this->get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
+    sfp->get_info(sfp_mon_data);
+    ci.add(sfp_mon_data);
+  }
+  if (level >= 1) {
+    timinghardwareinfo::TimingFMCMonitorData mon_data;
+    this->get_info(mon_data);
+    ci.add(mon_data);
+  }
 }
 //-----------------------------------------------------------------------------
-
 } // namespace timing
 } // namespace dunedaq

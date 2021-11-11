@@ -101,17 +101,21 @@ OverlordDesign<IO>::disable_external_triggers() const
 
 //-----------------------------------------------------------------------------
 template<class IO>
-template<class T>
 void
-OverlordDesign<IO>::get_info(T& data) const
-{
-  this->get_master_node().get_info(data.master_data);
-  this->get_io_node().get_info(data.hardware_data);
+OverlordDesign<IO>::get_info(opmonlib::InfoCollector& ci, int level) const
+{ 
+  opmonlib::InfoCollector master_collector;
+  this->get_master_node().get_info(master_collector, level);
+  ci.add("master", master_collector);
+
+  opmonlib::InfoCollector hardware_collector;
+  this->get_io_node().get_info(hardware_collector, level);
+  ci.add("io", hardware_collector);
 
   // TODO full trix info
-  auto trig_interface_enabled = uhal::Node::getNode("trig_rx.csr.ctrl.ext_trig_en").read();
-  uhal::Node::getClient().dispatch();
-  data.trig_interface_enabled = trig_interface_enabled.value();
+  //auto trig_interface_enabled = uhal::Node::getNode("trig_rx.csr.ctrl.ext_trig_en").read();
+  //uhal::Node::getClient().dispatch();
+  //data.trig_interface_enabled = trig_interface_enabled.value();
 }
 //-----------------------------------------------------------------------------
 

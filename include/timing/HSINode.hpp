@@ -145,6 +145,12 @@ public:
    *
    */
   void get_info(timingfirmwareinfo::HSIFirmwareMonitorData& mon_data) const;
+
+  /**
+   * @brief    Give info to collector.
+   */
+  void get_info(opmonlib::InfoCollector& ci, int level) const override;
+  
   // Hide methods which do not apply at the moment
 private:
   using EndpointNode::read_clock_frequency;

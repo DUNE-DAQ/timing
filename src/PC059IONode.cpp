@@ -231,34 +231,44 @@ PC059IONode::get_info(timinghardwareinfo::TimingPC059MonitorData& mon_data) cons
 
 //-----------------------------------------------------------------------------
 void
-PC059IONode::get_info(timinghardwareinfo::TimingPC059MonitorDataDebug& mon_data) const
+PC059IONode::get_info(opmonlib::InfoCollector& ci, int level) const
 {
+  if (level >= 2) {
+    timinghardwareinfo::TimingPLLMonitorData pll_mon_data;
+    this->get_pll()->get_info(pll_mon_data);
+    ci.add(pll_mon_data);
 
-  this->get_pll()->get_info(mon_data.pll_mon_data);
-  
-  auto upstream_sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
-  upstream_sfp->get_info(mon_data.upstream_sfp_mon_data);
+    timinghardwareinfo::TimingSFPMonitorData upstream_sfp_mon_data;
+    auto upstream_sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
+    upstream_sfp->get_info(upstream_sfp_mon_data);
+    opmonlib::InfoCollector upstream_sfp_ic;
+    upstream_sfp_ic.add(upstream_sfp_mon_data);
+    ci.add("upstream_sfp", upstream_sfp_ic);
 
-  nlohmann::json sfps_data;
+    for (uint sfp_id=0; sfp_id < 8; ++sfp_id) {
+      TLOG_DEBUG(0) << "checking sfp: " << sfp_id;
+      switch_sfp_i2c_mux_channel(sfp_id);
+      
+      auto sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(1), "SFP_EEProm");
+      timinghardwareinfo::TimingSFPMonitorData sfp_data;
 
-  for (uint sfp_id=0; sfp_id < 8; ++sfp_id) {
-    TLOG_DEBUG(0) << "checking sfp: " << sfp_id;
-    switch_sfp_i2c_mux_channel(sfp_id);
-    auto sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(1), "SFP_EEProm");
-    
-    timinghardwareinfo::TimingSFPMonitorData sfp_data;
+      try {
+        sfp->get_info(sfp_data);
+      } catch (timing::SFPUnreachable& e) {
+        ers::error(e);
+      }
 
-    try {
-      sfp->get_info(sfp_data);
-    } catch (timing::SFPUnreachable& e) {
-      ers::error(e);
+      opmonlib::InfoCollector sfp_ic;
+      sfp_ic.add(sfp_data);
+      ci.add("sfp_"+std::to_string(sfp_id), sfp_ic);
     }
-
-    sfps_data["sfp_"+std::to_string(sfp_id)+"_mon_data"] = sfp_data;
   }
 
-  timinghardwareinfo::from_json(sfps_data, mon_data);
-
+  if (level >= 1) {
+    timinghardwareinfo::TimingPC059MonitorData mon_data;
+    this->get_info(mon_data);
+    ci.add(mon_data);
+  }  
 }
 //-----------------------------------------------------------------------------
 

@@ -105,22 +105,12 @@ local timinghardwareinfo = {
                 doc="SFP fault pin value"), 
         s.field("sfp_los", self.bool_data, 0,
                 doc="SFP LOS pin value"),
-    ], 
-    doc="Timing FMC monitor data"),
-//
-    timing_fmc_mon_data_debug: s.record("TimingFMCMonitorDataDebug", 
-    [
-        s.field("pll_mon_data", self.timing_pll_mon_data,
-                doc="PLL monitoring data"),
-        s.field("sfp_mon_data", self.timing_sfp_mon_data,
-                doc="SFP monitoring data"),
         s.field("cdr_freq", self.double_val,
                 doc="CDR frequency"),
         s.field("pll_freq", self.double_val,
                 doc="PLL frequency"),
-    ],
-    bases=self.timing_fmc_mon_data,
-    doc="Extended timing FMC monitor data"),
+    ], 
+    doc="Timing FMC monitor data"),
 
     timing_tlu_mon_data: s.record("TimingTLUMonitorData", 
     [
@@ -142,13 +132,6 @@ local timinghardwareinfo = {
                 doc="SFP LOS pin value"),
     ], 
     doc="Timing TLU monitor data"),
-
-    timing_tlu_mon_data_debug: s.record("TimingTLUMonitorDataDebug", 
-    [   
-        s.field("pll_mon_data", self.timing_pll_mon_data,
-                doc="PLL monitoring data"),
-    ], 
-    doc="Extended timing TLU monitor data"),
 
     timing_pc059_mon_data: s.record("TimingPC059MonitorData", 
     [
@@ -180,31 +163,6 @@ local timinghardwareinfo = {
                 doc="Active SFP MUX channel"),
     ], 
     doc="Timing PC059 monitor data"),
-
-    timing_pc059_mon_data_debug: s.record("TimingPC059MonitorDataDebug", 
-    [
-        s.field("pll_mon_data", self.timing_pll_mon_data,
-                doc="PLL monitoring data"),
-        s.field("upstream_sfp_mon_data", self.timing_sfp_mon_data,
-                doc="SFP monitoring data"),
-        s.field("sfp_0_mon_data", self.timing_sfp_mon_data,
-                doc="SFP monitoring data"),
-        s.field("sfp_1_mon_data", self.timing_sfp_mon_data,
-                doc="SFP monitoring data"),
-        s.field("sfp_2_mon_data", self.timing_sfp_mon_data,
-                doc="SFP monitoring data"),
-        s.field("sfp_3_mon_data", self.timing_sfp_mon_data,
-                doc="SFP monitoring data"),
-        s.field("sfp_4_mon_data", self.timing_sfp_mon_data,
-                doc="SFP monitoring data"),
-        s.field("sfp_5_mon_data", self.timing_sfp_mon_data,
-                doc="SFP monitoring data"),
-        s.field("sfp_6_mon_data", self.timing_sfp_mon_data,
-                doc="SFP monitoring data"),
-        s.field("sfp_7_mon_data", self.timing_sfp_mon_data,
-                doc="SFP monitoring data"),
-    ], 
-    doc="Extended iming PC059 monitor data"),
 };
 
 // Output a topologically sorted array.
