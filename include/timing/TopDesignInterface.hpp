@@ -43,33 +43,30 @@ public:
   /**
    * @brief      Get io node pointer
    */
+  virtual const IONode* get_io_node_plain() const = 0;
+  
+
   template<class IO>
-  const IO* get_io_node() const { return dynamic_cast<const IO*>(&uhal::Node::getNode("io")); }
-
-  /**
-   * @brief      Reset timing node.
-   */
-  virtual void soft_reset_io() const
-  {
-    get_io_node<IONode>()->soft_reset();
+  const IO* get_io_node_plain() const
+  { 
+    return dynamic_cast<const IO*>(get_io_node_plain()); 
   }
 
   /**
    * @brief      Reset timing node.
    */
-  virtual void reset_io(const std::string& clock_config_file = "") const
-  {
-    get_io_node<IONode>()->reset(clock_config_file);
-  }
+  virtual void soft_reset_io() const = 0;
+
+  /**
+   * @brief      Reset timing node.
+   */
+  virtual void reset_io(const std::string& clock_config_file = "") const = 0;
 
   /**
    * @brief      Reset timing node.
    */
   virtual void reset_io(int32_t fanout_mode, // NOLINT(build/unsigned)
-                        const std::string& clock_config_file = "") const
-  {
-    get_io_node<IONode>()->reset(fanout_mode, clock_config_file);
-  }
+                        const std::string& clock_config_file = "") const = 0;
 
   /**
    * @brief      Prepare the timing device for data taking.
@@ -80,13 +77,7 @@ public:
   /**
    * @brief      Print hardware information
    */
-  virtual std::string get_hardware_info(bool print_out = false) const
-  {
-    auto info = get_io_node<IONode>()->get_hardware_info();
-    if (print_out)
-      TLOG() << info;
-    return info;
-  }
+  virtual std::string get_hardware_info(bool print_out = false) const = 0;
 
   /**
    * @brief      Read firmware version.

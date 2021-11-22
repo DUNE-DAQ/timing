@@ -19,6 +19,7 @@ OverlordDesign<IO>::OverlordDesign(const uhal::Node& node)
   : TopDesignInterface(node)
   , MasterDesignInterface(node)
   , OverlordDesignInterface(node)
+  , EndpointDesignInterface(node)
   , MasterDesign<IO, PDIMasterNode>(node)
 {}
 //-----------------------------------------------------------------------------

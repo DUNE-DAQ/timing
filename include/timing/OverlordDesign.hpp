@@ -39,7 +39,7 @@ namespace timing {
  */
 template<class IO>
 class OverlordDesign
-  : public OverlordDesignInterface, public MasterDesign<IO, PDIMasterNode>
+  : public OverlordDesignInterface, public EndpointDesignInterface, public MasterDesign<IO, PDIMasterNode>
 {
 
 public:
@@ -61,9 +61,6 @@ public:
    * @brief    Give info to collector.
    */  
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
-
-  using TopDesign<IO>::get_io_node;
-  using MasterDesign<IO, PDIMasterNode>::get_master_node;
   
   // In leiu of UHAL_DERIVEDNODE
 protected:

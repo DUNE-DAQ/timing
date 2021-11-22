@@ -17,10 +17,10 @@ BoreasDesign<IO>::clone() const
 template<class IO>
 BoreasDesign<IO>::BoreasDesign(const uhal::Node& node)
   : TopDesignInterface(node)
-  , EndpointDesignInterface(node)
   , MasterDesignInterface(node)
-  , HSIDesignInterface(node)
+  , EndpointDesignInterface(node)
   , MasterDesign<IO, PDIMasterNode>(node)
+  , HSIDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 

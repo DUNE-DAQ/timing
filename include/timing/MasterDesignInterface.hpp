@@ -14,6 +14,7 @@
 
 // PDT Headers
 #include "timing/TopDesign.hpp"
+#include "timing/MasterNode.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -34,7 +35,8 @@ class MasterDesignInterface : virtual public TopDesignInterface
 
 public:
   explicit MasterDesignInterface(const uhal::Node& node)
-  : TopDesignInterface(node) {}
+  : TopDesignInterface(node)
+    {}
   virtual ~MasterDesignInterface() {}
 
   /**
@@ -55,8 +57,9 @@ public:
    *
    * @return     { description_of_the_return_value }
    */
-  virtual uint32_t measure_endpoint_rtt(uint32_t address, bool control_sfp = true) const = 0; // NOLINT(build/unsigned)
-
+  virtual uint32_t measure_endpoint_rtt(uint32_t address, // NOLINT(build/unsigned)
+                                        bool control_sfp = true,
+                                        int sfp_mux = -1) const = 0;
   /**
    * @brief      Apply delay to endpoint
    */
@@ -65,7 +68,9 @@ public:
                                     uint32_t fine_delay,   // NOLINT(build/unsigned)
                                     uint32_t phase_delay,  // NOLINT(build/unsigned)
                                     bool measure_rtt = false,
-                                    bool control_sfp = true) const = 0;
+                                    bool control_sfp = true,
+                                    int sfp_mux = -1) const = 0;
+
   /**
    * @brief     Send a fixed length command
    */
@@ -79,10 +84,16 @@ public:
   virtual void enable_fake_trigger(uint32_t channel, double rate, bool poisson = false) const = 0; // NOLINT(build/unsigned)
 
   /**
-   * @brief      Get io node pointer
+   * @brief      Get master node pointer
    */
-  template<class MST>
-  const MST* get_master_node() const { return dynamic_cast<const MST*>(&uhal::Node::getNode("master")); }
+  virtual const MasterNode* get_master_node_plain() const = 0;
+
+  /**
+   * @brief      Get partition node
+   *
+   * @return     { description_of_the_return_value }
+   */
+  virtual const PartitionNode& get_partition_node(uint32_t partition_id) const = 0; // NOLINT(build/unsigned)
 
 };
 

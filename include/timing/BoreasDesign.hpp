@@ -33,7 +33,7 @@ namespace timing {
  * @brief      Class for timing master with integrated HSI designs.
  */
 template<class IO>
-class BoreasDesign : public HSIDesignInterface, public MasterDesign<IO, PDIMasterNode>
+class BoreasDesign : public MasterDesign<IO, PDIMasterNode>, public HSIDesignInterface
 {
 
 public:
@@ -55,8 +55,6 @@ public:
    * @brief    Give info to collector.
    */  
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
-
-  using TopDesign<IO>::get_io_node;
 
   // In leiu of UHAL_DERIVEDNODE
 protected:

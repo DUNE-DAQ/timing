@@ -47,7 +47,51 @@ public:
    */
   virtual const IO& get_io_node() const
   {
-    return uhal::Node::getNode<IO>("io");
+    return dynamic_cast<const IO&>(*get_io_node_plain());
+  }
+  
+  /**
+   * @brief      Get io node pointer
+   */
+  const IONode* get_io_node_plain() const override
+  { 
+    return dynamic_cast<const IONode*>(&uhal::Node::getNode("io")); 
+  }
+
+  /**
+   * @brief      Reset timing node.
+   */
+  void soft_reset_io() const override
+  {
+    get_io_node().soft_reset();
+  }
+
+  /**
+   * @brief      Reset timing node.
+   */
+  void reset_io(const std::string& clock_config_file = "") const override
+  {
+    get_io_node().reset(clock_config_file);
+  }
+
+  /**
+   * @brief      Reset timing node.
+   */
+  void reset_io(int32_t fanout_mode, // NOLINT(build/unsigned)
+                        const std::string& clock_config_file = "") const override
+  {
+    get_io_node().reset(fanout_mode, clock_config_file);
+  }
+
+  /**
+   * @brief      Print hardware information
+   */
+  std::string get_hardware_info(bool print_out = false) const override
+  {
+    auto info = get_io_node().get_hardware_info();
+    if (print_out)
+      TLOG() << info;
+    return info;
   }
 };
 

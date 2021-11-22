@@ -17,11 +17,10 @@ OuroborosMuxDesign<IO>::clone() const
 template<class IO>
 OuroborosMuxDesign<IO>::OuroborosMuxDesign(const uhal::Node& node)
   : TopDesignInterface(node)
+  , MuxDesignInterface(node)
   , MasterDesignInterface(node)
   , EndpointDesignInterface(node)
-  , MasterMuxDesignInterface(node)
-//  , MasterDesign<IO, PDIMasterNode>(node)
-  , OuroborosDesign<IO>(node)
+  , MasterMuxDesign<IO, PDIMasterNode>(node)
 {}
 //-----------------------------------------------------------------------------
 
@@ -38,8 +37,9 @@ OuroborosMuxDesign<IO>::get_status(bool print_out) const
 {
   std::stringstream status;
   status << TopDesign<IO>::get_io_node().get_pll_status();
-  status << OuroborosDesign<IO>::get_master_node().get_status();
+  status << this->get_master_node().get_status();
   status << this->get_endpoint_node(0).get_status();
+  // mux status
   if (print_out)
     TLOG() << status.str();
   return status.str();

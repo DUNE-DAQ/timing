@@ -6,7 +6,8 @@ namespace dunedaq::timing {
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
 MasterDesign<IO, MST>::MasterDesign(const uhal::Node& node)
-  : MasterDesignInterface(node)
+  : TopDesignInterface(node)
+  , MasterDesignInterface(node)
   , TopDesign<IO>(node)
 {}
 //-----------------------------------------------------------------------------
@@ -15,6 +16,35 @@ MasterDesign<IO, MST>::MasterDesign(const uhal::Node& node)
 template<class IO, class MST>
 MasterDesign<IO, MST>::~MasterDesign()
 {}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+template<class IO, class MST>
+std::string
+MasterDesign<IO,MST>::get_status(bool print_out) const
+{
+  std::stringstream status;
+  status << TopDesign<IO>::get_io_node().get_pll_status();
+  status << get_master_node().get_status();
+
+  if (print_out)
+    TLOG() << status.str();
+  return status.str();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+template<class IO, class MST>
+void
+MasterDesign<IO,MST>::configure() const
+{
+
+  // Hard resets
+  this->reset_io();
+
+  // Set timestamp to current time
+  this->sync_timestamp();
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -48,7 +78,7 @@ MasterDesign<IO, MST>::sync_timestamp() const
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
 uint32_t
-MasterDesign<IO, MST>::measure_endpoint_rtt(uint32_t address, bool control_sfp) const
+MasterDesign<IO, MST>::measure_endpoint_rtt(uint32_t address, bool control_sfp, int /*sfp_mux*/) const
 {
   return get_master_node().measure_endpoint_rtt(address, control_sfp);
 }
@@ -62,7 +92,8 @@ MasterDesign<IO, MST>::apply_endpoint_delay(uint32_t address,
                                             uint32_t fine_delay,
                                             uint32_t phase_delay,
                                             bool measure_rtt,
-                                            bool control_sfp) const
+                                            bool control_sfp,
+                                            int /*sfp_mux*/) const
 {
   get_master_node().apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp);
 }
