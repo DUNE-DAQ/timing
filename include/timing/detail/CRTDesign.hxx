@@ -16,9 +16,10 @@ CRTDesign<IO>::clone() const
 //-----------------------------------------------------------------------------
 template<class IO>
 CRTDesign<IO>::CRTDesign(const uhal::Node& node)
-  : TopDesignInterface(node) 
+  : TopDesignInterface(node)
   , EndpointDesignInterface(node)
-  , EndpointDesign<IO>(node)
+  , TopDesign<IO>(node)
+  , CRTDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
@@ -44,12 +45,12 @@ CRTDesign<IO>::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 template<class IO>
-template<class T>
 void
-CRTDesign<IO>::get_info(T& data) const
+CRTDesign<IO>::configure() const
 {
-  this->get_io_node().get_info(data.hardware_data);
-//  this->get_hsi_node().get_info(data.hsi_data);
+  // Hard resets
+  this->reset_io();
 }
 //-----------------------------------------------------------------------------
+
 }

@@ -33,7 +33,7 @@ namespace timing {
  * @brief      Base class for timing endpoint design nodes.
  */
 template<class IO>
-class EndpointDesign : public TopDesign<IO>, virtual public EndpointDesignInterface
+class EndpointDesign : public TopDesign<IO>, public EndpointDesignInterface
 {
 
 public:

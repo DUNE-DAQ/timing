@@ -18,7 +18,7 @@ template<class IO>
 ChronosDesign<IO>::ChronosDesign(const uhal::Node& node)
   : TopDesignInterface(node)
   , EndpointDesignInterface(node)
-  , EndpointDesign<IO>(node)
+  , TopDesign<IO>(node)
   , HSIDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
@@ -40,6 +40,16 @@ ChronosDesign<IO>::get_status(bool print_out) const
   if (print_out)
     TLOG() << status.str();
   return status.str();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+template<class IO>
+void
+ChronosDesign<IO>::configure() const
+{
+  // Hard resets
+  this->reset_io();
 }
 //-----------------------------------------------------------------------------
 

@@ -32,7 +32,7 @@ namespace timing {
  * @brief      Class for timing master with integrated HSI designs.
  */
 template<class IO>
-class ChronosDesign : public EndpointDesign<IO>, public HSIDesignInterface
+class ChronosDesign : public TopDesign<IO>, public HSIDesignInterface
 {
 
 public:
@@ -44,7 +44,12 @@ public:
    */
   std::string get_status(bool print_out = false) const override;
 
-
+  /**
+   * @brief      Prepare the timing endpoint for data taking.
+   *
+   */
+  void configure() const override;
+  
   /**
    * @brief      Read endpoint firmware version.
    *
