@@ -43,12 +43,6 @@ public:
   virtual ~FanoutIONode();
 
   /**
-   * @brief     Reset fanout board
-   */
-  virtual void reset(int32_t fanout_mode, // NOLINT(build/unsigned)
-                     const std::string& clock_config_file = "") const = 0;
-
-  /**
    * @brief     Switch the SFP mux channel
    */
   virtual void switch_sfp_mux_channel(uint32_t sfp_id) const = 0; // NOLINT(build/unsigned)

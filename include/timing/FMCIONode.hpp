@@ -52,10 +52,16 @@ public:
   std::string get_status(bool print_out = false) const override;
 
   /**
-   * @brief      Reset timing node.
+   * @brief      Reset FMC IO.
    */
   void reset(const std::string& clock_config_file = "") const override;
 
+  /**
+   * @brief     Reset FMC IO.
+   */
+  void reset(int32_t fanout_mode = -1, // NOLINT(build/unsigned)
+                     const std::string& clock_config_file = "") const override;
+  
   /**
    * @brief      Fill hardware monitoring structure.
    */

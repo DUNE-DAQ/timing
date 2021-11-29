@@ -13,12 +13,8 @@
 #define TIMING_INCLUDE_TIMING_OUROBOROSMUXDESIGN_HPP_
 
 // PDT Headers
-#include "timing/EndpointDesign.hpp"
 #include "timing/MasterMuxDesign.hpp"
-#include "timing/PDIMasterNode.hpp"
-#include "timing/FIBIONode.hpp"
-#include "timing/PC059IONode.hpp"
-#include "timing/TriggerReceiverNode.hpp"
+#include "timing/EndpointDesignInterface.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -36,7 +32,7 @@ namespace timing {
  */
 template<class IO>
 class OuroborosMuxDesign
-  : public MasterMuxDesign<IO, PDIMasterNode>
+  : public EndpointDesignInterface, public MasterMuxDesign<IO, PDIMasterNode>
 {
 
 public:
@@ -58,7 +54,7 @@ public:
    * @brief    Give info to collector.
    */  
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
-
+  
   // In leiu of UHAL_DERIVEDNODE
 protected:
   virtual uhal::Node* clone() const;

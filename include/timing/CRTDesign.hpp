@@ -14,7 +14,8 @@
 
 // Timing Headers
 #include "timing/CRTNode.hpp"
-#include "timing/EndpointDesign.hpp"
+#include "timing/TopDesign.hpp"
+#include "timing/CRTDesignInterface.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -31,7 +32,7 @@ namespace timing {
  * @brief      Class for timing master with integrated HSI designs.
  */
 template<class IO>
-class CRTDesign : public EndpointDesign<IO>
+class CRTDesign : public TopDesign<IO>, public CRTDesignInterface
 {
 
 public:
@@ -43,15 +44,11 @@ public:
    */
   std::string get_status(bool print_out = false) const override;
 
-  template<class T>
-  void get_info(T& data) const;
-
   /**
-   * @brief      Get the HSI node.
+   * @brief      Prepare the timing endpoint for data taking.
    *
-   * @return     { description_of_the_return_value }
    */
-  virtual const CRTNode& get_crt_node() const { return uhal::Node::getNode<CRTNode>("endpoint0"); }
+  void configure() const override;
 
   /**
    * @brief      Read endpoint firmware version.
@@ -65,7 +62,7 @@ public:
    *
    */
   void validate_firmware_version() const override {} // current crt firmware does not store firmware version
-
+  
   // In leiu of UHAL_DERIVEDNODE
 protected:
   virtual uhal::Node* clone() const;

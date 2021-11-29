@@ -14,6 +14,7 @@
 
 // PDT Headers
 #include "timing/MasterMuxDesign.hpp"
+#include "timing/EndpointDesignInterface.hpp"
 #include "timing/PC059IONode.hpp"
 #include "timing/FIBIONode.hpp"
 #include "timing/PDIMasterNode.hpp"
@@ -35,7 +36,7 @@ namespace timing {
  * @brief      Class for timing fanout designs.
  */
 template<class IO, class MST>
-class FanoutDesign : public MasterMuxDesign<IO, MST>
+class FanoutDesign : public MasterMuxDesign<IO, MST>, public EndpointDesignInterface
 {
 
 public:
@@ -66,7 +67,7 @@ public:
   /**
    * @brief      Reset timing fanout node.
    */
-  virtual void reset(uint32_t fanout_mode, const std::string& clock_config_file = "") const; // NOLINT(build/unsigned)
+  void reset_io(int32_t fanout_mode, const std::string& clock_config_file = "") const override; // NOLINT(build/unsigned)
 
   /**
    * @brief      Measure the endpoint round trip time.
@@ -74,8 +75,8 @@ public:
    * @return     { description_of_the_return_value }
    */
   uint32_t measure_endpoint_rtt(uint32_t address, // NOLINT(build/unsigned)
-                                bool control_sfp,
-                                uint32_t sfp_mux) const override; // NOLINT(build/unsigned)
+                                        bool control_sfp = true,
+                                        int sfp_mux = -1) const override;
 
   /**
    * @brief      Apply delay to endpoint
@@ -86,7 +87,7 @@ public:
                             uint32_t phase_delay,  // NOLINT(build/unsigned)
                             bool measure_rtt,
                             bool control_sfp,
-                            uint32_t sfp_mux) const override; // NOLINT(build/unsigned)
+                            int sfp_mux) const override;
 
   // In leiu of UHAL_DERIVEDNODE
 protected:

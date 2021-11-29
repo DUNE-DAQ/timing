@@ -14,6 +14,7 @@
 
 // Timing Headers
 #include "timing/HSINode.hpp"
+#include "timing/HSIDesignInterface.hpp"
 #include "timing/MasterDesign.hpp"
 #include "timing/PDIMasterNode.hpp"
 
@@ -32,7 +33,7 @@ namespace timing {
  * @brief      Class for timing master with integrated HSI designs.
  */
 template<class IO>
-class BoreasDesign : public MasterDesign<IO, PDIMasterNode>
+class BoreasDesign : public MasterDesign<IO, PDIMasterNode>, public HSIDesignInterface
 {
 
 public:
@@ -49,25 +50,6 @@ public:
    *
    */
   void configure() const override;
-
-  /**
-   * @brief      Get the HSI node.
-   *
-   * @return     { description_of_the_return_value }
-   */
-  virtual const HSINode& get_hsi_node() const { return uhal::Node::getNode<HSINode>("endpoint0"); }
-
-  /**
-   * @brief      Configure the HSI node.
-   *
-   * @return     { description_of_the_return_value }
-   */
-  virtual void configure_hsi(uint32_t src,      // NOLINT(build/unsigned)
-                             uint32_t re_mask,  // NOLINT(build/unsigned)
-                             uint32_t fe_mask,  // NOLINT(build/unsigned)
-                             uint32_t inv_mask, // NOLINT(build/unsigned)
-                             double rate,
-                             bool dispatch = true) const;
 
   /**
    * @brief    Give info to collector.

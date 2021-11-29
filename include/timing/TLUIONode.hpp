@@ -58,6 +58,11 @@ public:
   void reset(const std::string& clock_config_file = "") const override;
 
   /**
+   * @brief     Reset fanout board
+   */
+  void reset(int32_t fanout_mode = -1, // NOLINT(build/unsigned)
+                     const std::string& clock_config_file = "") const override;
+  /**
    * @brief      Configure on-board DAC
    */
   void configure_dac(uint32_t dac_id, uint32_t dac_value, bool internal_ref = false) const; // NOLINT(build/unsigned)

@@ -14,6 +14,7 @@
 
 // PDT Headers
 #include "timing/TopDesign.hpp"
+#include "timing/MasterDesignInterface.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -30,7 +31,7 @@ namespace timing {
  * @brief      Base class for timing master designs.
  */
 template<class IO, class MST>
-class MasterDesign : virtual public TopDesign<IO>
+class MasterDesign : public TopDesign<IO>, virtual public MasterDesignInterface
 {
 
 public:
@@ -45,50 +46,71 @@ public:
   virtual const MST& get_master_node() const;
 
   /**
-   * @brief      Configure the timing master design node.
+   * @brief     Get status string, optionally print.
    */
-  virtual void configure() const = 0;
+  std::string get_status(bool print_out = false) const override;
 
+  /**
+   * @brief      Prepare the timing master for data taking.
+   *
+   */
+  void configure() const override;
+  
   /**
    * @brief      Read the current timestamp.
    *
    * @return     { description_of_the_return_value }
    */
-  virtual uint64_t read_master_timestamp() const; // NOLINT(build/unsigned)
+  uint64_t read_master_timestamp() const override; // NOLINT(build/unsigned)
 
   /**
    * @brief      Sync timestamp to current machine value.
    *
    */
-  virtual void sync_timestamp() const;
+  void sync_timestamp() const override;
   
   /**
    * @brief      Measure the endpoint round trip time.
    *
    * @return     { description_of_the_return_value }
    */
-  virtual uint32_t measure_endpoint_rtt(uint32_t address, bool control_sfp = true) const; // NOLINT(build/unsigned)
-
+  uint32_t measure_endpoint_rtt(uint32_t address, // NOLINT(build/unsigned)
+                                        bool control_sfp = true,
+                                        int sfp_mux = -1) const override;
   /**
    * @brief      Apply delay to endpoint
    */
-  virtual void apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned)
+  void apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned)
                                     uint32_t coarse_delay, // NOLINT(build/unsigned)
                                     uint32_t fine_delay,   // NOLINT(build/unsigned)
                                     uint32_t phase_delay,  // NOLINT(build/unsigned)
                                     bool measure_rtt = false,
-                                    bool control_sfp = true) const;
+                                    bool control_sfp = true,
+                                    int sfp_mux = -1) const override;
+
   /**
    * @brief     Send a fixed length command
    */
-  virtual void send_fl_cmd(uint32_t command,                       // NOLINT(build/unsigned)
-                           uint32_t channel,                       // NOLINT(build/unsigned)
-                           uint32_t number_of_commands = 1) const; // NOLINT(build/unsigned)
+  void send_fl_cmd(uint32_t command,                       // NOLINT(build/unsigned)
+                   uint32_t channel,                       // NOLINT(build/unsigned)
+                   uint32_t number_of_commands = 1) const override; // NOLINT(build/unsigned)
 
   /**
    * @brief     Configure fake trigger generator
    */
-  virtual void enable_fake_trigger(uint32_t channel, double rate, bool poisson = false) const; // NOLINT(build/unsigned)
+  void enable_fake_trigger(uint32_t channel, double rate, bool poisson = false) const override; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Get master node pointer
+   */
+  const MasterNode* get_master_node_plain() const override { return dynamic_cast<const MasterNode*>(&uhal::Node::getNode("master")); }
+
+  /**
+   * @brief      Get partition node
+   *
+   * @return     { description_of_the_return_value }
+   */
+  const PartitionNode& get_partition_node(uint32_t partition_id) const override { return get_master_node().get_partition_node(partition_id); } // NOLINT(build/unsigned)
 
   /**
    * @brief      Read master firmware version.
@@ -103,6 +125,10 @@ public:
    */
   void validate_firmware_version() const override;
 
+  /**
+   * @brief    Give info to collector.
+   */  
+  void get_info(opmonlib::InfoCollector& ci, int level) const override;
 };
 
 } // namespace timing

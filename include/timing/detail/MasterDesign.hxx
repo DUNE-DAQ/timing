@@ -6,7 +6,9 @@ namespace dunedaq::timing {
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
 MasterDesign<IO, MST>::MasterDesign(const uhal::Node& node)
-  : TopDesign<IO>(node)
+  : TopDesignInterface(node)
+  , MasterDesignInterface(node)
+  , TopDesign<IO>(node)
 {}
 //-----------------------------------------------------------------------------
 
@@ -14,6 +16,35 @@ MasterDesign<IO, MST>::MasterDesign(const uhal::Node& node)
 template<class IO, class MST>
 MasterDesign<IO, MST>::~MasterDesign()
 {}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+template<class IO, class MST>
+std::string
+MasterDesign<IO,MST>::get_status(bool print_out) const
+{
+  std::stringstream status;
+  status << TopDesign<IO>::get_io_node().get_pll_status();
+  status << get_master_node().get_status();
+
+  if (print_out)
+    TLOG() << status.str();
+  return status.str();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+template<class IO, class MST>
+void
+MasterDesign<IO,MST>::configure() const
+{
+
+  // Hard resets
+  this->reset_io();
+
+  // Set timestamp to current time
+  this->sync_timestamp();
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -39,7 +70,7 @@ template<class IO, class MST>
 void
 MasterDesign<IO, MST>::sync_timestamp() const
 {
-  auto dts_clock_frequency = this->get_io_node().read_firmware_frequency();
+  auto dts_clock_frequency = TopDesign<IO>::get_io_node().read_firmware_frequency();
   get_master_node().sync_timestamp(dts_clock_frequency);
 }
 //-----------------------------------------------------------------------------
@@ -47,7 +78,7 @@ MasterDesign<IO, MST>::sync_timestamp() const
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
 uint32_t
-MasterDesign<IO, MST>::measure_endpoint_rtt(uint32_t address, bool control_sfp) const
+MasterDesign<IO, MST>::measure_endpoint_rtt(uint32_t address, bool control_sfp, int /*sfp_mux*/) const
 {
   return get_master_node().measure_endpoint_rtt(address, control_sfp);
 }
@@ -61,7 +92,8 @@ MasterDesign<IO, MST>::apply_endpoint_delay(uint32_t address,
                                             uint32_t fine_delay,
                                             uint32_t phase_delay,
                                             bool measure_rtt,
-                                            bool control_sfp) const
+                                            bool control_sfp,
+                                            int /*sfp_mux*/) const
 {
   get_master_node().apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp);
 }
@@ -83,7 +115,7 @@ template<class IO, class MST>
 void
 MasterDesign<IO, MST>::enable_fake_trigger(uint32_t channel, double rate, bool poisson) const // NOLINT(build/unsigned)
 {
-  auto dts_clock_frequency = this->get_io_node().read_firmware_frequency();
+  auto dts_clock_frequency = TopDesign<IO>::get_io_node().read_firmware_frequency();
   get_master_node().enable_fake_trigger(channel, rate, poisson, dts_clock_frequency);
 }
 //-----------------------------------------------------------------------------
@@ -117,6 +149,21 @@ MasterDesign<IO, MST>::validate_firmware_version() const
     ers::warning(IncompatibleMinorMasterFirmwareVersion(ERS_HERE, minor_firmware_version, g_required_minor_master_firmware_version));
   if (patch_firmware_version != g_required_patch_master_firmware_version)
     ers::warning(IncompatiblePatchMasterFirmwareVersion(ERS_HERE, patch_firmware_version, g_required_patch_master_firmware_version));
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+template<class IO, class MST>
+void
+MasterDesign<IO, MST>::get_info(opmonlib::InfoCollector& ci, int level) const
+{ 
+  opmonlib::InfoCollector master_collector;
+  this->get_master_node().get_info(master_collector, level);
+  ci.add("master", master_collector);
+
+  opmonlib::InfoCollector hardware_collector;
+  this->get_io_node().get_info(hardware_collector, level);
+  ci.add("io", hardware_collector);
 }
 //-----------------------------------------------------------------------------
 }

@@ -32,7 +32,8 @@ register_io(py::module& m)
 
   py::class_<timing::FMCIONode, timing::IONode, uhal::Node>(m, "FMCIONode")
     .def(py::init<const uhal::Node&>())
-    .def("reset", &timing::FMCIONode::reset, py::arg("clock_config_file") = "")
+    .def<void (timing::FMCIONode::*)(const std::string&) const>(
+      "reset", &timing::FMCIONode::reset, py::arg("clock_config_file") = "")
     .def("soft_reset", &timing::FMCIONode::soft_reset)
     .def("read_firmware_frequency", &timing::FMCIONode::read_firmware_frequency)
     .def("get_clock_frequencies_table", &timing::FMCIONode::get_clock_frequencies_table, py::arg("print_out") = false)
@@ -78,7 +79,8 @@ register_io(py::module& m)
 
   py::class_<timing::TLUIONode, timing::IONode, uhal::Node>(m, "TLUIONode")
     .def(py::init<const uhal::Node&>())
-    .def("reset", &timing::TLUIONode::reset, py::arg("clock_config_file") = "")
+    .def<void (timing::TLUIONode::*)(const std::string&) const>(
+      "reset", &timing::TLUIONode::reset, py::arg("clock_config_file") = "")
     .def("soft_reset", &timing::TLUIONode::soft_reset)
     .def("read_firmware_frequency", &timing::TLUIONode::read_firmware_frequency)
     .def("get_clock_frequencies_table", &timing::TLUIONode::get_clock_frequencies_table, py::arg("print_out") = false)
@@ -95,7 +97,8 @@ register_io(py::module& m)
 
   py::class_<timing::SIMIONode, timing::IONode, uhal::Node>(m, "SIMIONode")
     .def(py::init<const uhal::Node&>())
-    .def("reset", &timing::SIMIONode::reset, py::arg("clock_config_file") = "")
+    .def<void (timing::SIMIONode::*)(const std::string&) const>(
+      "reset", &timing::SIMIONode::reset, py::arg("clock_config_file") = "")
     .def("soft_reset", &timing::SIMIONode::soft_reset)
     .def("read_firmware_frequency", &timing::SIMIONode::read_firmware_frequency)
     .def("get_clock_frequencies_table", &timing::SIMIONode::get_clock_frequencies_table, py::arg("print_out") = false)

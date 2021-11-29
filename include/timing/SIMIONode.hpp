@@ -68,6 +68,12 @@ public:
   void reset(const std::string& clock_config_file = "") const override;
 
   /**
+   * @brief     Reset fanout board
+   */
+  void reset(int32_t fanout_mode = -1, // NOLINT(build/unsigned)
+                     const std::string& clock_config_file = "") const override;
+
+  /**
    * @brief      Read the word containing the timing board UID.
    *
    * @return     { description_of_the_return_value }

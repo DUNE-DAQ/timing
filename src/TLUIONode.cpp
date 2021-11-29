@@ -127,6 +127,15 @@ TLUIONode::reset(const std::string& clock_config_file) const
 
 //-----------------------------------------------------------------------------
 void
+TLUIONode::reset(int32_t /*fanout_mode*/, // NOLINT(build/unsigned)
+                     const std::string& clock_config_file) const
+{
+  reset(clock_config_file);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
 TLUIONode::configure_dac(uint32_t dac_id, uint32_t dac_value, bool internal_ref) const // NOLINT(build/unsigned)
 {
   std::string dac_device;

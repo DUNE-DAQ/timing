@@ -49,7 +49,8 @@ register_top_designs(py::module& m)
     .def("apply_endpoint_delay", &timing::OverlordDesign<TLUIONode>::apply_endpoint_delay)
     .def("measure_endpoint_rtt", &timing::OverlordDesign<TLUIONode>::measure_endpoint_rtt)
     .def("get_external_triggers_endpoint_node",
-         &timing::OverlordDesign<TLUIONode>::get_external_triggers_endpoint_node);
+         &timing::OverlordDesign<TLUIONode>::get_external_triggers_endpoint_node)
+    .def("get_endpoint_node", &timing::OverlordDesign<TLUIONode>::get_endpoint_node);
 
   // Overlord on FMC
   py::class_<timing::OverlordDesign<FMCIONode>, uhal::Node>(m, "OverlordDesign<FMCIONode>")
@@ -65,7 +66,8 @@ register_top_designs(py::module& m)
     .def("apply_endpoint_delay", &timing::OverlordDesign<FMCIONode>::apply_endpoint_delay)
     .def("measure_endpoint_rtt", &timing::OverlordDesign<FMCIONode>::measure_endpoint_rtt)
     .def("get_external_triggers_endpoint_node",
-         &timing::OverlordDesign<FMCIONode>::get_external_triggers_endpoint_node);
+         &timing::OverlordDesign<FMCIONode>::get_external_triggers_endpoint_node)
+    .def("get_endpoint_node", &timing::OverlordDesign<FMCIONode>::get_endpoint_node);
 
   // Boreas on FMC
   py::class_<timing::BoreasDesign<FMCIONode>, uhal::Node>(m, "BoreasDesign<FMCIONode>")
@@ -80,6 +82,7 @@ register_top_designs(py::module& m)
          py::arg("poisson"))
     .def("apply_endpoint_delay", &timing::BoreasDesign<FMCIONode>::apply_endpoint_delay)
     .def("measure_endpoint_rtt", &timing::BoreasDesign<FMCIONode>::measure_endpoint_rtt)
+    .def("get_hsi_node", &timing::BoreasDesign<FMCIONode>::get_hsi_node)
     .def("configure_hsi", 
          &timing::BoreasDesign<FMCIONode>::configure_hsi,
          py::arg("src"),
@@ -102,6 +105,7 @@ register_top_designs(py::module& m)
          py::arg("poisson"))
     .def("apply_endpoint_delay", &timing::BoreasDesign<TLUIONode>::apply_endpoint_delay)
     .def("measure_endpoint_rtt", &timing::BoreasDesign<TLUIONode>::measure_endpoint_rtt)
+    .def("get_hsi_node", &timing::BoreasDesign<TLUIONode>::get_hsi_node)
     .def("configure_hsi", 
          &timing::BoreasDesign<TLUIONode>::configure_hsi,
          py::arg("src"),
@@ -124,6 +128,7 @@ register_top_designs(py::module& m)
          py::arg("poisson"))
     .def("apply_endpoint_delay", &timing::BoreasDesign<SIMIONode>::apply_endpoint_delay)
     .def("measure_endpoint_rtt", &timing::BoreasDesign<SIMIONode>::measure_endpoint_rtt)
+    .def("get_hsi_node", &timing::BoreasDesign<SIMIONode>::get_hsi_node)
     .def("configure_hsi", 
          &timing::BoreasDesign<SIMIONode>::configure_hsi,
          py::arg("src"),
@@ -192,7 +197,7 @@ register_top_designs(py::module& m)
          py::arg("poisson"))
     .def("switch_sfp_mux_channel", &timing::OuroborosMuxDesign<FIBIONode>::switch_sfp_mux_channel)
     .def("apply_endpoint_delay", &timing::OuroborosMuxDesign<FIBIONode>::apply_endpoint_delay)
-    .def("measure_endpoint_rtt", &timing::OuroborosMuxDesign<FIBIONode>::measure_endpoint_rtt)
+    .def( "measure_endpoint_rtt", &timing::OuroborosMuxDesign<FIBIONode>::measure_endpoint_rtt)
     .def("scan_sfp_mux", &timing::OuroborosMuxDesign<FIBIONode>::scan_sfp_mux);
 
   // Ouroboros on FMC
@@ -227,13 +232,15 @@ register_top_designs(py::module& m)
   py::class_<timing::EndpointDesign<FMCIONode>, uhal::Node>(m, "EndpointDesign<FMCIONode>")
     .def("read_firmware_version", &timing::EndpointDesign<FMCIONode>::read_firmware_version)
     .def("validate_firmware_version", &timing::EndpointDesign<FMCIONode>::validate_firmware_version)
-    .def("get_status", &timing::EndpointDesign<FMCIONode>::get_status);
+    .def("get_status", &timing::EndpointDesign<FMCIONode>::get_status)
+    .def("get_endpoint_node", &timing::EndpointDesign<FMCIONode>::get_endpoint_node);
 
   // Chronos on FMC
   py::class_<timing::ChronosDesign<FMCIONode>, uhal::Node>(m, "ChronosDesign<FMCIONode>")
     .def("read_firmware_version", &timing::ChronosDesign<FMCIONode>::read_firmware_version)
     .def("validate_firmware_version", &timing::ChronosDesign<FMCIONode>::validate_firmware_version)
     .def("get_status", &timing::ChronosDesign<FMCIONode>::get_status)
+    .def("get_hsi_node", &timing::ChronosDesign<FMCIONode>::get_hsi_node)
     .def("configure_hsi", 
          &timing::ChronosDesign<FMCIONode>::configure_hsi,
          py::arg("src"),
@@ -247,7 +254,8 @@ register_top_designs(py::module& m)
   py::class_<timing::CRTDesign<FMCIONode>, uhal::Node>(m, "CRTDesign<FMCIONode>")
     .def("read_firmware_version", &timing::CRTDesign<FMCIONode>::read_firmware_version)
     .def("validate_firmware_version", &timing::CRTDesign<FMCIONode>::validate_firmware_version)
-    .def("get_status", &timing::CRTDesign<FMCIONode>::get_status);
+    .def("get_status", &timing::CRTDesign<FMCIONode>::get_status)
+    .def("get_crt_node", &timing::CRTDesign<FMCIONode>::get_crt_node);
 } // NOLINT
 
 } // namespace python
