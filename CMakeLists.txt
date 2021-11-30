@@ -7,7 +7,6 @@ daq_setup_environment()
 
 find_package(ers REQUIRED)     
 find_package(logging REQUIRED)
-find_package(Boost 1.73.0 COMPONENTS regex REQUIRED)
 find_package(pybind11 REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(opmonlib REQUIRED)
