@@ -253,7 +253,7 @@ def status(obj, watch, period):
 # ------------------------------------------------------------------------------
 @endpoint.command('readback', short_help='Read the content of the endpoint master readout buffer.')
 @click.pass_obj
-@click.option('--all/--events', ' /-a', 'readall', default=False, help="Buffer readout mode.\n- events: only completed events are readout.\n- all: the content of the buffer is fully read-out.")
+@click.option('--all/--events', '-a/ ', 'readall', default=False, help="Buffer readout mode.\n- events: only completed events are readout.\n- all: the content of the buffer is fully read-out.")
 def readback(obj, readall):
     '''
     Read the content of the endpoint master readout buffer.

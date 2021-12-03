@@ -276,7 +276,7 @@ def stop(obj):
 
 @partition.command('readback', short_help='Read the timing master readout buffer.')
 @click.pass_obj
-@click.option('--events/--all', ' /-a', 'readall', default=False, help="Buffer readout mode.\n- events: only completed events are readout.\n- all: the content of the buffer is fully read-out.")
+@click.option('--all/--events', '-a/ ', 'readall', default=False, help="Buffer readout mode.\n- events: only completed events are readout.\n- all: the content of the buffer is fully read-out.")
 @click.option('--keep-reading', '-k', 'keep', is_flag=True, default=False, help='Continuous buffer readout')
 def readback(obj, readall, keep):
     '''
