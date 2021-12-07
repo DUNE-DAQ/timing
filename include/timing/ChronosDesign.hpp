@@ -55,7 +55,10 @@ public:
    *
    * @return     { description_of_the_return_value }
    */
-  uint32_t read_firmware_version() const override {return 0;} // current chronos firmware does not store firmware version
+  uint32_t read_firmware_version() const override { // NOLINT(build/unsigned)
+    // current chronos firmware does not store firmware version
+    return 0;
+  } 
 
   /**
    * @brief      Validate endpoint firmware version.

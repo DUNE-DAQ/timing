@@ -91,13 +91,13 @@ FMCIONode::reset(const std::string& clock_config_file) const
   getNode("csr.ctrl.sfp_tx_dis").write(0x0);
 
   // rx edges
-  uint32_t cdr_rx_edge = 0x0;
-  uint32_t sfp_rx_edge = 0x0;
-  uint32_t rj45_rx_edge = 0x0;
+  uint32_t cdr_rx_edge = 0x0; // NOLINT(build/unsigned)
+  uint32_t sfp_rx_edge = 0x0; // NOLINT(build/unsigned)
+  uint32_t rj45_rx_edge = 0x0; // NOLINT(build/unsigned)
 
   // tx edges
-  uint32_t sfp_tx_edge = 0x0;
-  uint32_t rj45_tx_edge = 0x0;
+  uint32_t sfp_tx_edge = 0x0; // NOLINT(build/unsigned)
+  uint32_t rj45_tx_edge = 0x0; // NOLINT(build/unsigned)
 
   // rx edges
   getNode("csr.ctrl.cdr_rx_edge").write(cdr_rx_edge);

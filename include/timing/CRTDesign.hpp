@@ -55,7 +55,10 @@ public:
    *
    * @return     { description_of_the_return_value }
    */
-  uint32_t read_firmware_version() const override {return 0;} // current crt firmware does not store firmware version
+  uint32_t read_firmware_version() const override { // NOLINT(build/unsigned)
+    // current crt firmware does not store firmware version
+    return 0; 
+  } 
 
   /**
    * @brief      Validate endpoint firmware version.
@@ -74,4 +77,4 @@ protected:
 
 #include "timing/detail/CRTDesign.hxx"
 
-#endif // TIMING_INCLUDE_TIMING_CRTDesign_HPP_
+#endif // TIMING_INCLUDE_TIMING_CRTDESIGN_HPP_
