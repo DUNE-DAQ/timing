@@ -61,7 +61,7 @@ public:
    *
    * @return     { description_of_the_return_value }
    */
-  uint32_t read_firmware_version() const override;
+  uint32_t read_firmware_version() const override; // NOLINT(build/unsigned)
 
   /**
    * @brief      Validate endpoint firmware version.

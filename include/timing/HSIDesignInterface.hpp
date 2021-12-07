@@ -58,7 +58,7 @@ public:
                              double rate,
                              bool dispatch = true) const 
   {
-    uint32_t firmware_frequency = get_io_node_plain()->read_firmware_frequency();
+    uint32_t firmware_frequency = get_io_node_plain()->read_firmware_frequency(); // NOLINT(build/unsigned)
     get_hsi_node().configure_hsi(src, re_mask, fe_mask, inv_mask, rate, firmware_frequency, dispatch);
   }
 };

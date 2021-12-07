@@ -1,3 +1,10 @@
+/**
+ * @file OverlordDesignInterface.cpp
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
 
 #include "timing/OverlordDesignInterface.hpp"
 
@@ -49,4 +56,4 @@ OverlordDesignInterface::disable_external_triggers() const
   this->get_external_triggers_endpoint_node().disable_triggers();
 }
 //-----------------------------------------------------------------------------
-}
+} // namespace dunedaq::timing

@@ -23,6 +23,7 @@
 #include <chrono>
 #include <sstream>
 #include <string>
+#include <vector>
 
 namespace dunedaq {
 namespace timing {

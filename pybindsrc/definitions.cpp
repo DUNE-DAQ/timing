@@ -11,18 +11,22 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include <utility>
+#include <map>
+#include <string>
+
 namespace py = pybind11;
 
 namespace dunedaq {
 namespace timing {
 namespace python {
 
-std::map<std::string, uint32_t> swap_commands_map(const std::map<uint32_t, std::string>& command_map)
+std::map<std::string, uint32_t> swap_commands_map(const std::map<uint32_t, std::string>& command_map) // NOLINT(build/unsigned)
 {
-	std::map<std::string, uint32_t> swapped_map;
+	std::map<std::string, uint32_t> swapped_map; // NOLINT(build/unsigned)
 
 	for (auto it=command_map.begin(); it != command_map.end(); ++it) {
-		swapped_map.emplace( std::pair<std::string,uint32_t>(it->second, it->first) );
+		swapped_map.emplace( std::pair<std::string,uint32_t>(it->second, it->first) ); // NOLINT(build/unsigned)
 	}
 	return swapped_map;
 }

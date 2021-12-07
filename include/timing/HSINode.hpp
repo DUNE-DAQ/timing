@@ -101,7 +101,7 @@ public:
                      uint32_t fe_mask,  // NOLINT(build/unsigned)
                      uint32_t inv_mask, // NOLINT(build/unsigned)
                      double rate,
-                     uint32_t clock_frequency_hz,
+                     uint32_t clock_frequency_hz, // NOLINT(build/unsigned)
                      bool dispatch = true) const;
 
   /**
