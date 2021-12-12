@@ -14,8 +14,7 @@
 
 // PDT Headers
 #include "TimingIssues.hpp"
-#include "timing/EndpointNode.hpp"
-#include "timing/FrequencyCounterNode.hpp"
+#include "timing/EndpointNodeInterface.hpp"
 #include "timing/definitions.hpp"
 
 #include "timing/timingfirmwareinfo/InfoNljs.hpp"
@@ -34,7 +33,7 @@ namespace timing {
 /**
  * @brief      Class for HSI nodes.
  */
-class HSINode : public EndpointNode
+class HSINode : public EndpointNodeInterface
 {
   UHAL_DERIVEDNODE(HSINode)
 public:
@@ -72,7 +71,7 @@ public:
    *
    * @return     { description_of_the_return_value }
    */
-  uint32_t read_buffer_count() const override; // NOLINT(build/unsigned)
+  uint32_t read_buffer_count() const; // NOLINT(build/unsigned)
 
   /**
    * @brief      Read the contents of the endpoint data buffer.
@@ -90,7 +89,7 @@ public:
    *
    * @return     { description_of_the_return_value }
    */
-  std::string get_data_buffer_table(bool read_all = false, bool print_out = false) const override;
+  std::string get_data_buffer_table(bool read_all = false, bool print_out = false) const;
 
   /**
    * @brief     Configure HSI triggering
@@ -151,11 +150,6 @@ public:
    */
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
   
-  // Hide methods which do not apply at the moment
-private:
-  using EndpointNode::read_clock_frequency;
-  using EndpointNode::read_timestamp;
-  using EndpointNode::read_version;
 };
 
 } // namespace timing

@@ -336,15 +336,15 @@ PartitionNode::get_info(opmonlib::InfoCollector& ic, int /*level*/) const
   getClient().dispatch();
 
 
-  for (uint i = 0; i < g_command_map.size(); ++i) { // NOLINT(build/unsigned)
+  for (auto& cmd: g_command_map) {
     timingfirmwareinfo::TimingFLCmdCounter cmd_counter;
     opmonlib::InfoCollector cmd_counter_ic;
 
-    cmd_counter.accepted = accepted_counters.at(i);
-    cmd_counter.rejected = rejected_counters.at(i);
+    cmd_counter.accepted = accepted_counters.at(cmd.first);
+    cmd_counter.rejected = rejected_counters.at(cmd.first);
 
     cmd_counter_ic.add(cmd_counter);
-    ic.add(g_command_map.at(i), cmd_counter_ic);
+    ic.add(cmd.second, cmd_counter_ic);
   }
 
 }

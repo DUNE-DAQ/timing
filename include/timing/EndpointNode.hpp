@@ -15,7 +15,7 @@
 // PDT Headers
 #include "TimingIssues.hpp"
 #include "timing/FrequencyCounterNode.hpp"
-#include "timing/TimingNode.hpp"
+#include "timing/EndpointNodeInterface.hpp"
 
 #include "timing/timingendpointinfo/InfoNljs.hpp"
 #include "timing/timingendpointinfo/InfoStructs.hpp"
@@ -35,7 +35,7 @@ namespace timing {
 /**
  * @brief      Base class for timing IO nodes.
  */
-class EndpointNode : public TimingNode
+class EndpointNode : public EndpointNodeInterface
 {
   UHAL_DERIVEDNODE(EndpointNode)
 public:
@@ -52,21 +52,21 @@ public:
    *
    * @return     { description_of_the_return_value }
    */
-  virtual void enable(uint32_t partition = 0, uint32_t address = 0) const; // NOLINT(build/unsigned)
+  void enable(uint32_t partition = 0, uint32_t address = 0) const override; // NOLINT(build/unsigned)
 
   /**
    * @brief      Disable the endpoint
    *
    * @return     { description_of_the_return_value }
    */
-  virtual void disable() const;
+  void disable() const override;
 
   /**
    * @brief      Reset the endpoint
    *
    * @return     { description_of_the_return_value }
    */
-  virtual void reset(uint32_t partition = 0, uint32_t address = 0) const; // NOLINT(build/unsigned)
+  void reset(uint32_t partition = 0, uint32_t address = 0) const override; // NOLINT(build/unsigned)
 
   /**
    * @brief      Read the current timestamp word.

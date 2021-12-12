@@ -72,6 +72,25 @@ enum BoardRevision
   kFIBRev1,
 };
 
+enum FixedLengthCommandType
+{
+  TimeSync,  
+  Echo,      
+  SpillStart, 
+  SpillStop,  
+  RunStart,
+  RunStop,   
+  WibCalib,  
+  SSPCalib,   
+  FakeTrig0,  
+  FakeTrig1,
+  FakeTrig2, 
+  FakeTrig3, 
+  BeamTrig,   
+  NoBeamTrig, 
+  ExtFakeTrig
+};
+
 const std::vector<BoardType> g_library_supported_boards = {
     kBoardFMC, kBoardPC059, kBoardTLU, kBoardSim, kBoardFIB
 };
@@ -276,10 +295,10 @@ const std::map<std::string, std::string> g_clock_config_map = {
 };
 
 // NOLINTNEXTLINE(build/unsigned)
-const std::map<uint32_t, std::string> g_command_map = {
-  { 0x0, "TimeSync" },  { 0x1, "Echo" },      { 0x2, "SpillStart" }, { 0x3, "SpillStop" },  { 0x4, "RunStart" },
-  { 0x5, "RunStop" },   { 0x6, "WibCalib" },  { 0x7, "SSPCalib" },   { 0x8, "FakeTrig0" },  { 0x9, "FakeTrig1" },
-  { 0xa, "FakeTrig2" }, { 0xb, "FakeTrig3" }, { 0xc, "BeamTrig" },   { 0xd, "NoBeamTrig" }, { 0xe, "ExtFakeTrig" }
+const std::map<FixedLengthCommandType, std::string> g_command_map = {
+  { TimeSync, "TimeSync" }, { Echo, "Echo" }, { SpillStart, "SpillStart" }, { SpillStop, "SpillStop" }, { RunStart, "RunStart" },
+  { RunStop, "RunStop" }, { WibCalib, "WibCalib" }, { SSPCalib, "SSPCalib" }, { FakeTrig0, "FakeTrig0" }, { FakeTrig1, "FakeTrig1" },
+  { FakeTrig2, "FakeTrig2" }, { FakeTrig3, "FakeTrig3" }, { BeamTrig, "BeamTrig" }, { NoBeamTrig, "NoBeamTrig" }, { ExtFakeTrig, "ExtFakeTrig" }
 };
 
 const uint32_t g_command_number = g_command_map.size(); // NOLINT(build/unsigned)

@@ -21,12 +21,11 @@ namespace dunedaq {
 namespace timing {
 namespace python {
 
-std::map<std::string, uint32_t> swap_commands_map(const std::map<uint32_t, std::string>& command_map) // NOLINT(build/unsigned)
+std::map<std::string, FixedLengthCommandType> swap_commands_map(const std::map<FixedLengthCommandType, std::string>& command_map)
 {
-	std::map<std::string, uint32_t> swapped_map; // NOLINT(build/unsigned)
-
-	for (auto it=command_map.begin(); it != command_map.end(); ++it) {
-		swapped_map.emplace( std::pair<std::string,uint32_t>(it->second, it->first) ); // NOLINT(build/unsigned)
+	std::map<std::string, FixedLengthCommandType> swapped_map;
+	for (auto& cmd: command_map) {
+		swapped_map.emplace( std::pair<std::string,FixedLengthCommandType>(cmd.second, cmd.first) );
 	}
 	return swapped_map;
 }
@@ -78,7 +77,25 @@ register_definitions(py::module& m)
         .value("kDesignBoreas", kDesignBoreas)
         .value("kDesignUnknown", kDesignUnknown)
         .export_values();
-	
+
+    py::enum_<FixedLengthCommandType>(m, "FixedLengthCommandType")
+        .value("TimeSync", TimeSync)
+        .value("Echo", Echo)
+        .value("SpillStart", SpillStart)
+        .value("SpillStop", SpillStop)
+        .value("RunStart", RunStart)
+        .value("RunStop", RunStop)
+        .value("WibCalib", WibCalib)
+        .value("SSPCalib", SSPCalib)
+        .value("FakeTrig0", FakeTrig0)
+        .value("FakeTrig1", FakeTrig1)
+        .value("FakeTrig2", FakeTrig2)
+        .value("FakeTrig3", FakeTrig3)
+        .value("BeamTrig", BeamTrig)
+        .value("NoBeamTrig", NoBeamTrig)
+        .value("ExtFakeTrig", ExtFakeTrig)
+        .export_values();
+
 	m.attr("kBoardNamelMap") = timing::g_board_type_map;
 	m.attr("kCarrierNamelMap") = timing::g_carrier_type_map;
 	m.attr("kDesignNameMap") = timing::g_design_type_map;

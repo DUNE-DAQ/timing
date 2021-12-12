@@ -21,7 +21,7 @@ UHAL_REGISTER_DERIVED_NODE(HSINode)
 
 //-----------------------------------------------------------------------------
 HSINode::HSINode(const uhal::Node& node)
-  : EndpointNode(node)
+  : EndpointNodeInterface(node)
 {}
 //-----------------------------------------------------------------------------
 

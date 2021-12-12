@@ -102,7 +102,7 @@ MasterDesign<IO, MST>::apply_endpoint_delay(uint32_t address,
 //-----------------------------------------------------------------------------
 template<class IO, class MST>
 void
-MasterDesign<IO, MST>::send_fl_cmd(uint32_t command,                  // NOLINT(build/unsigned)
+MasterDesign<IO, MST>::send_fl_cmd(FixedLengthCommandType command,
                                    uint32_t channel,                  // NOLINT(build/unsigned)
                                    uint32_t number_of_commands) const // NOLINT(build/unsigned)
 {

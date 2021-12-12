@@ -74,7 +74,7 @@ public:
   /**
    * @brief     Send a fixed length command
    */
-  virtual void send_fl_cmd(uint32_t command,                       // NOLINT(build/unsigned)
+  virtual void send_fl_cmd(FixedLengthCommandType command,
                            uint32_t channel,                       // NOLINT(build/unsigned)
                            uint32_t number_of_commands = 1) const = 0; // NOLINT(build/unsigned)
 
