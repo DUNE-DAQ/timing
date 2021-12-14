@@ -43,7 +43,7 @@ FLCmdGeneratorNode::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-FLCmdGeneratorNode::send_fl_cmd(uint32_t command, // NOLINT(build/unsigned)
+FLCmdGeneratorNode::send_fl_cmd(FixedLengthCommandType command,
                                 uint32_t channel, // NOLINT(build/unsigned)
                                 const TimestampGeneratorNode& timestamp_gen_node) const
 {

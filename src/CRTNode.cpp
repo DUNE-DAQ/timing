@@ -20,7 +20,7 @@ UHAL_REGISTER_DERIVED_NODE(CRTNode)
 
 //-----------------------------------------------------------------------------
 CRTNode::CRTNode(const uhal::Node& node)
-  : TimingNode(node)
+  : EndpointNodeInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
@@ -30,7 +30,17 @@ CRTNode::~CRTNode() {}
 
 //-----------------------------------------------------------------------------
 void
-CRTNode::enable(uint32_t partition, uint32_t command) const // NOLINT(build/unsigned)
+CRTNode::enable(uint32_t partition, uint32_t /*address*/) const // NOLINT(build/unsigned)
+{
+  getNode("csr.ctrl.tgrp").write(partition);
+  getNode("pulse.ctrl.en").write(0x1);
+  getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+CRTNode::enable(uint32_t partition, FixedLengthCommandType command) const // NOLINT(build/unsigned)
 {
 
   getNode("csr.ctrl.tgrp").write(partition);
@@ -45,6 +55,26 @@ void
 CRTNode::disable() const
 {
   getNode("pulse.ctrl.en").write(0x0);
+  getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+CRTNode::reset(uint32_t partition, uint32_t address) const // NOLINT(build/unsigned)
+{
+  getNode("pulse.ctrl.en").write(0x0);
+  enable(partition, address);
+  getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+CRTNode::reset(uint32_t partition, FixedLengthCommandType command) const // NOLINT(build/unsigned)
+{
+  getNode("pulse.ctrl.en").write(0x0);
+  enable(partition, command);
   getClient().dispatch();
 }
 //-----------------------------------------------------------------------------
