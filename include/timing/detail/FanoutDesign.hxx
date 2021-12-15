@@ -75,6 +75,10 @@ FanoutDesign<IO, MST>::reset_io(int32_t fanout_mode, const std::string& clock_co
   TopDesign<IO>::get_io_node().reset(fanout_mode, clock_config_file);
   // 0 - fanout mode, outgoing data comes from sfp
   // 1 - standalone mode, outgoing data comes from local master
+  if (fanout_mode < 0) {
+    TLOG() << "Fanout mode not supplied, defaulting to: 1 (standalone - built in master)";
+    fanout_mode=1;
+  }
   uhal::Node::getNode("switch.csr.ctrl.master_src").write(fanout_mode);
   uhal::Node::getClient().dispatch();
 }

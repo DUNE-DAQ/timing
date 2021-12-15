@@ -241,11 +241,15 @@ const std::map<std::string, std::string> g_clock_config_map = {
     "devel/pc059_sfp_in_312_mhz-059_0s62-Registers.txt" }, // fanout mode, assuming sfp is the upstream input
   { "kPC059Rev1_fanout_mode1",
     "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" }, // stand-alone mode
+  { "kPC059Rev1_fanout",
+    "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" }, // stand-alone mode
 
   { "kFIBRev1_fanout_mode0",
     "devel/Si5395-RevA-FIB_fanout-65_FA_31-Registers.txt" }, // fanout mode, data and clock from backplane
   { "kFIBRev1_fanout_mode1",
     "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" }, // stand-alone mode
+  { "kFIBRev1_fanout",
+    "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" }, // stand-alone mode  
 
   { "kFIBRev1_ouroboros", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" },
   { "kFIBRev1_ouroboros", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" },
@@ -292,6 +296,7 @@ const std::map<std::string, std::string> g_clock_config_map = {
   { "kPC059Rev1_ouroboros_50_mhz", "SI5345/PDTS0005.txt" },
   { "kPC059Rev1_fanout_mode0_50_mhz", "wr/FANOUT_PLL_WIDEBW_SFPIN.txt" }, // fanout mode
   { "kPC059Rev1_fanout_mode1_50_mhz", "devel/PDTS_PC059_FANOUT.txt" },    // stand-alone mode
+  { "kPC059Rev1_fanout_50_mhz", "devel/PDTS_PC059_FANOUT.txt" },    // stand-alone mode
 };
 
 // NOLINTNEXTLINE(build/unsigned)
