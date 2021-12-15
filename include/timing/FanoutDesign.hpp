@@ -36,7 +36,7 @@ namespace timing {
  * @brief      Class for timing fanout designs.
  */
 template<class IO, class MST>
-class FanoutDesign : public MasterMuxDesign<IO, MST>, public EndpointDesignInterface
+class FanoutDesign : public MasterMuxDesign<IO, MST>, public PlainEndpointDesignInterface
 {
 
 public:

@@ -17,8 +17,9 @@ EndpointDesign<IO>::clone() const
 template<class IO>
 EndpointDesign<IO>::EndpointDesign(const uhal::Node& node)
   : TopDesignInterface(node)
-  , TopDesign<IO>(node)
   , EndpointDesignInterface(node)
+  , TopDesign<IO>(node)
+  , PlainEndpointDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 

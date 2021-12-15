@@ -33,7 +33,7 @@ namespace timing {
  * @brief      Base class for timing endpoint design nodes.
  */
 template<class IO>
-class EndpointDesign : public TopDesign<IO>, public EndpointDesignInterface
+class EndpointDesign : public TopDesign<IO>, public PlainEndpointDesignInterface
 {
 
 public:
@@ -68,7 +68,7 @@ public:
    *
    */
   void validate_firmware_version() const override;
-  
+
   // In leiu of UHAL_DERIVEDNODE
 protected:
   virtual uhal::Node* clone() const;

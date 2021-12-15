@@ -38,7 +38,7 @@ namespace timing {
  */
 template<class IO>
 class OuroborosDesign
-  : virtual public EndpointDesignInterface, public MasterDesign<IO, PDIMasterNode>
+  : public MasterDesign<IO, PDIMasterNode>, public PlainEndpointDesignInterface
 {
 
 public:

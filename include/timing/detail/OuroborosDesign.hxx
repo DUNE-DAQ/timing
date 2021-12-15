@@ -17,9 +17,10 @@ OuroborosDesign<IO>::clone() const
 template<class IO>
 OuroborosDesign<IO>::OuroborosDesign(const uhal::Node& node)
   : TopDesignInterface(node)
-  , EndpointDesignInterface(node)
   , MasterDesignInterface(node)
+  , EndpointDesignInterface(node)
   , MasterDesign<IO, PDIMasterNode>(node)
+  , PlainEndpointDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 

@@ -32,7 +32,7 @@ namespace timing {
  */
 template<class IO>
 class OuroborosMuxDesign
-  : public EndpointDesignInterface, public MasterMuxDesign<IO, PDIMasterNode>
+  : public MasterMuxDesign<IO, PDIMasterNode>, public PlainEndpointDesignInterface
 {
 
 public:

@@ -21,6 +21,7 @@ OuroborosMuxDesign<IO>::OuroborosMuxDesign(const uhal::Node& node)
   , MasterDesignInterface(node)
   , EndpointDesignInterface(node)
   , MasterMuxDesign<IO, PDIMasterNode>(node)
+  , PlainEndpointDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 

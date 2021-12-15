@@ -13,7 +13,7 @@
 #define TIMING_INCLUDE_TIMING_OVERLORDDESIGN_HPP_
 
 // PDT Headers
-#include "timing/EndpointDesign.hpp"
+#include "timing/EndpointDesignInterface.hpp"
 #include "timing/FMCIONode.hpp"
 #include "timing/OverlordDesignInterface.hpp"
 #include "timing/MasterDesign.hpp"
@@ -39,7 +39,7 @@ namespace timing {
  */
 template<class IO>
 class OverlordDesign
-  : public OverlordDesignInterface, public EndpointDesignInterface, public MasterDesign<IO, PDIMasterNode>
+  : public MasterDesign<IO, PDIMasterNode>, public OverlordDesignInterface, public PlainEndpointDesignInterface
 {
 
 public:

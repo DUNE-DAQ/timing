@@ -19,8 +19,9 @@ FanoutDesign<IO, MST>::FanoutDesign(const uhal::Node& node)
   : TopDesignInterface(node)
   , MuxDesignInterface(node)
   , MasterDesignInterface(node)
-  , MasterMuxDesign<IO, MST>(node)
   , EndpointDesignInterface(node)
+  , MasterMuxDesign<IO, MST>(node)
+  , PlainEndpointDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 

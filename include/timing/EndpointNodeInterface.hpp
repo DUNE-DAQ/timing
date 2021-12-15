@@ -67,4 +67,4 @@ public:
 } // namespace timing
 } // namespace dunedaq
 
-#endif // TIMING_INCLUDE_TIMING_ENDPOINTNODE_HPP_
+#endif  // TIMING_INCLUDE_TIMING_ENDPOINTNODEINTERFACE_HPP_
