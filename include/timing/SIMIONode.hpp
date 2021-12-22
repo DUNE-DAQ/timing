@@ -39,6 +39,13 @@ public:
   virtual ~SIMIONode();
 
   /**
+   * @brief      Get the UID address parameter name.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  std::string get_uid_address_parameter_name() const override;
+  
+  /**
    * @brief     Get status string, optionally print.
    */
   std::string get_status(bool print_out = false) const override;
@@ -59,6 +66,12 @@ public:
    * @brief      Reset timing node.
    */
   void reset(const std::string& clock_config_file = "") const override;
+
+  /**
+   * @brief     Reset fanout board
+   */
+  void reset(int32_t fanout_mode = -1, // NOLINT(build/unsigned)
+                     const std::string& clock_config_file = "") const override;
 
   /**
    * @brief      Read the word containing the timing board UID.

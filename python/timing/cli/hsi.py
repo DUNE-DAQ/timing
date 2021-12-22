@@ -5,7 +5,7 @@ import collections
 
 from . import toolbox
 import timing.common.definitions as defs
-from timing.common.definitions import kLibrarySupportedBoards
+from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
 
 from click import echo, style, secho
 from .click_texttable import Texttable
@@ -35,11 +35,12 @@ def hsi(obj, device):
 
     
     echo('Created HSI device')
-
+    lTopDesign = lDevice.getNode('')
     lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
     lDevice.dispatch()
 
-    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards:
+    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards and lBoardInfo['design_type'].value() in kLibrarySupportedDesigns:
+        lTopDesign.validate_firmware_version()
         try:
             echo(lDevice.getNode('io').get_hardware_info())
         except:
@@ -162,7 +163,7 @@ def readback(ctx, obj):
 @hsi.command('readback', short_help='Read the content of the hsi readout buffer.')
 @click.pass_obj
 @click.pass_context
-@click.option('--all/--events', ' /-a', 'readall', default=False, help="Buffer readout mode.\n- events: only completed events are readout.\n- all: the content of the buffer is fully read-out.")
+@click.option('--all/--events', '-a/ ', 'readall', default=False, help="Buffer readout mode.\n- events: only completed events are readout.\n- all: the content of the buffer is fully read-out.")
 def readback(ctx, obj, readall):
     '''
     Read the content of the endpoint master readout buffer.

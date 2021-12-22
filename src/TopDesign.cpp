@@ -7,9 +7,9 @@
  */
 
 #include "timing/BoreasDesign.hpp"
+#include "timing/CRTDesign.hpp"
 #include "timing/EndpointDesign.hpp"
 #include "timing/FanoutDesign.hpp"
-#include "timing/MasterMuxDesign.hpp"
 #include "timing/OuroborosDesign.hpp"
 #include "timing/OuroborosMuxDesign.hpp"
 #include "timing/OverlordDesign.hpp"
@@ -19,9 +19,20 @@ namespace dunedaq {
 namespace timing {
 // In leiu of UHAL_REGISTER_DERIVED_NODE
 
+// CRT
+uhal::RegistrationHelper<CRTDesign<FMCIONode>> CRTDesign_FMCIONode_RegistrationHelper(
+  "CRTDesign<FMCIONode>");
+
 // Endpoint
 uhal::RegistrationHelper<EndpointDesign<FMCIONode>> EndpointDesign_FMCIONode_RegistrationHelper(
   "EndpointDesign<FMCIONode>");
+
+// Master
+uhal::RegistrationHelper<MasterDesign<FMCIONode, PDIMasterNode>>
+  MasterDesign_FMCIONode_PDIMasterNode_RegistrationHelper("MasterDesign<FMCIONode,PDIMasterNode>");
+
+uhal::RegistrationHelper<MasterMuxDesign<PC059IONode, PDIMasterNode>>
+  MasterMuxDesign_PC059IONode_PDIMasterNode_RegistrationHelper("MasterMuxDesign<PC059IONode,PDIMasterNode>");
 
 // Fanout
 uhal::RegistrationHelper<FanoutDesign<PC059IONode, PDIMasterNode>>
@@ -51,6 +62,7 @@ uhal::RegistrationHelper<BoreasDesign<FMCIONode>> BoreasDesign_FMCIONode_Registr
 uhal::RegistrationHelper<BoreasDesign<TLUIONode>> BoreasDesign_TLUIONode_RegistrationHelper("BoreasDesign<TLUIONode>");
 uhal::RegistrationHelper<BoreasDesign<SIMIONode>> BoreasDesign_SIMIONode_RegistrationHelper("BoreasDesign<SIMIONode>");
 
+// Chronos (HSI endpoint)
 uhal::RegistrationHelper<ChronosDesign<FMCIONode>> ChronosDesign_FMCIONode_RegistrationHelper("ChronosDesign<FMCIONode>");
 
 } // namespace timing

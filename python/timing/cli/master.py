@@ -20,14 +20,13 @@ from click import echo, style, secho
 from os.path import join, expandvars, basename
 from timing.core import SI534xSlave, I2CExpanderSlave
 
-kMasterFWMajorRequired = 5
-
-
 from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord
 from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
-from timing.common.definitions import kLibrarySupportedBoards
+from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns, kMasterFWMajorRequired, kMasterFWMinorRequired, kMasterFWPatchRequired
+
+from timing.common.toolbox import format_firmware_version
 # ------------------------------------------------------------------------------
 #    __  ___         __         
 #   /  |/  /__ ____ / /____ ____
@@ -50,45 +49,40 @@ def master(obj, device):
         
     echo('Created device ' + click.style(lDevice.id(), fg='blue'))
 
-    lMaster = lDevice.getNode('master')
-
+    lTopDesign = lDevice.getNode('')
+    
+    lMaster = lDevice.getNode('master')    
     lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
-    lVersion = lMaster.getNode('global.version').read()
     lGenerics = toolbox.readSubNodes(lMaster.getNode('global.config'), False)
     lDevice.dispatch()
 
-    # print({ k:v.value() for k,v in lBoardInfo.items()})
-    # raise SystemExit(0)
+    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards and lBoardInfo['design_type'].value() in kLibrarySupportedDesigns:
+        
+        lVersion = lTopDesign.read_firmware_version()
+        lTopDesign.validate_firmware_version()
 
-    lMajor = (lVersion >> 16) & 0xff
-    lMinor = (lVersion >> 8) & 0xff
-    lPatch = (lVersion >> 0) & 0xff
-    
-    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards:
         try:
             echo(lDevice.getNode('io').get_hardware_info())
         except:
             secho("Failed to retrieve hardware information I2C issue? Initial board reset needed?", fg='yellow')
             e = sys.exc_info()[0]
             secho("Error: {}".format(e), fg='red')
+    else:
+        lVersion = lMaster.getNode('global.version').read()
 
     echo("Master FW rev: {}, partitions: {}, channels: {}".format(
-        style(hex(lVersion), fg='cyan'),
+        style(format_firmware_version(lVersion), fg='cyan'),
         style(str(lGenerics['n_part']), fg='cyan'),
         style(str(lGenerics['n_chan']), fg='cyan'),
     ))
 
-    if lMajor < kMasterFWMajorRequired:
-        secho('ERROR: Incompatible master firmware version. Found {}, required {}'.format(hex(lMajor), hex(kMasterFWMajorRequired)), fg='red')
-        raise click.Abort()
-
     obj.mDevice = lDevice
-    obj.mTopDesign = lDevice.getNode('')
+    obj.mTopDesign = lTopDesign
     obj.mMaster = lMaster
     obj.mIO = lDevice.getNode('io')
 
     obj.mGenerics = { k:v.value() for k,v in lGenerics.items()}
-    obj.mVersion = lVersion.value()
+    obj.mVersion = lVersion
     obj.mBoardType = lBoardInfo['board_type'].value()
     obj.mCarrierType = lBoardInfo['carrier_type'].value()
     obj.mDesignType = lBoardInfo['design_type'].value()
@@ -282,7 +276,7 @@ def stop(obj):
 
 @partition.command('readback', short_help='Read the timing master readout buffer.')
 @click.pass_obj
-@click.option('--events/--all', ' /-a', 'readall', default=False, help="Buffer readout mode.\n- events: only completed events are readout.\n- all: the content of the buffer is fully read-out.")
+@click.option('--all/--events', '-a/ ', 'readall', default=False, help="Buffer readout mode.\n- events: only completed events are readout.\n- all: the content of the buffer is fully read-out.")
 @click.option('--keep-reading', '-k', 'keep', is_flag=True, default=False, help='Continuous buffer readout')
 def readback(obj, readall, keep):
     '''

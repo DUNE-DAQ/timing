@@ -21,7 +21,7 @@ UHAL_REGISTER_DERIVED_NODE(HSINode)
 
 //-----------------------------------------------------------------------------
 HSINode::HSINode(const uhal::Node& node)
-  : EndpointNode(node)
+  : EndpointNodeInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
@@ -211,7 +211,7 @@ HSINode::configure_hsi(uint32_t src,      // NOLINT(build/unsigned)
                        uint32_t fe_mask,  // NOLINT(build/unsigned)
                        uint32_t inv_mask, // NOLINT(build/unsigned)
                        double rate,
-                       uint32_t clock_frequency_hz,
+                       uint32_t clock_frequency_hz, // NOLINT(build/unsigned)
                        bool dispatch) const
 {
 

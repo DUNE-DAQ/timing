@@ -14,6 +14,7 @@
 
 // Timing Headers
 #include "timing/HSINode.hpp"
+#include "timing/HSIDesignInterface.hpp"
 #include "timing/EndpointDesign.hpp"
 
 // uHal Headers
@@ -31,7 +32,7 @@ namespace timing {
  * @brief      Class for timing master with integrated HSI designs.
  */
 template<class IO>
-class ChronosDesign : public EndpointDesign<IO>
+class ChronosDesign : public TopDesign<IO>, public HSIDesignInterface
 {
 
 public:
@@ -43,25 +44,27 @@ public:
    */
   std::string get_status(bool print_out = false) const override;
 
-
   /**
-   * @brief      Get the HSI node.
+   * @brief      Prepare the timing endpoint for data taking.
+   *
+   */
+  void configure() const override;
+  
+  /**
+   * @brief      Read endpoint firmware version.
    *
    * @return     { description_of_the_return_value }
    */
-  virtual const HSINode& get_hsi_node() const { return uhal::Node::getNode<HSINode>("endpoint0"); }
+  uint32_t read_firmware_version() const override { // NOLINT(build/unsigned)
+    // current chronos firmware does not store firmware version
+    return 0;
+  } 
 
   /**
-   * @brief      Configure the HSI node.
+   * @brief      Validate endpoint firmware version.
    *
-   * @return     { description_of_the_return_value }
    */
-  virtual void configure_hsi(uint32_t src,      // NOLINT(build/unsigned)
-                             uint32_t re_mask,  // NOLINT(build/unsigned)
-                             uint32_t fe_mask,  // NOLINT(build/unsigned)
-                             uint32_t inv_mask, // NOLINT(build/unsigned)
-                             double rate,
-                             bool dispatch = true) const;
+  void validate_firmware_version() const override {} // current chronos firmware does not store firmware version
   
   /**
    * @brief    Give info to collector.

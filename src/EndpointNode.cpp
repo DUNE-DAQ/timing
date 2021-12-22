@@ -21,7 +21,7 @@ UHAL_REGISTER_DERIVED_NODE(EndpointNode)
 
 //-----------------------------------------------------------------------------
 EndpointNode::EndpointNode(const uhal::Node& node)
-  : TimingNode(node)
+  : EndpointNodeInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
@@ -111,8 +111,8 @@ EndpointNode::get_status(bool print_out) const
 
   std::vector<std::pair<std::string, std::string>> ept_command_counters;
 
-  for (uint32_t i = 0; i < g_command_number; ++i) { // NOLINT(build/unsigned)
-    ept_command_counters.push_back(std::make_pair(g_command_map.at(i), std::to_string(ept_counters[i])));
+  for (auto& cmd:  g_command_map) { // NOLINT(build/unsigned)
+    ept_command_counters.push_back(std::make_pair(cmd.second, std::to_string(ept_counters[cmd.first])));
   }
 
   status << format_reg_table(ept_summary, "Endpoint summary", { "", "" }) << std::endl;
@@ -262,8 +262,8 @@ EndpointNode::get_info(opmonlib::InfoCollector& ci, int /*level*/) const
   auto counters = getNode("ctrs").readBlock(g_command_number);
   getClient().dispatch();
   
-  for (size_t i(0); i < g_command_number; ++i) {
-    cmd_data[g_command_map.at(i)] = counters.at(i);
+  for (auto& cmd:  g_command_map) {
+    cmd_data[cmd.second] = counters.at(cmd.first);
   }
   timingendpointinfo::from_json(cmd_data, received_fl_commands_counters);
   ci.add(received_fl_commands_counters);

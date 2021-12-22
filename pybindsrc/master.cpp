@@ -30,7 +30,7 @@ register_master(py::module& m)
                 py::arg("coarse_delay"),
                 py::arg("fine_delay"),
                 py::arg("phase_delay"),
-                py::arg("control_sfp") = true,
+                py::arg("measure_rtt") = false,
                 py::arg("control_sfp") = true)
     .def("measure_endpoint_rtt",
          &timing::PDIMasterNode::measure_endpoint_rtt,

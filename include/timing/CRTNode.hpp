@@ -14,6 +14,7 @@
 
 #include "TimingIssues.hpp"
 #include "timing/TimingNode.hpp"
+#include "timing/EndpointNodeInterface.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -28,7 +29,7 @@ namespace timing {
 /**
  * @brief      Base class for timing IO nodes.
  */
-class CRTNode : public TimingNode
+class CRTNode : public EndpointNodeInterface
 {
   UHAL_DERIVEDNODE(CRTNode)
 public:
@@ -45,14 +46,21 @@ public:
    *
    * @return     { description_of_the_return_value }
    */
-  void enable(uint32_t partition, uint32_t command) const; // NOLINT(build/unsigned)
+  void enable(uint32_t partition, FixedLengthCommandType command) const; // NOLINT(build/unsigned)
 
   /**
    * @brief      Disable the crt endpoint
    *
    * @return     { description_of_the_return_value }
    */
-  void disable() const;
+  void disable() const override;
+
+  /**
+   * @brief      Reset the crt endpoint
+   *
+   * @return     { description_of_the_return_value }
+   */
+  void reset(uint32_t partition, FixedLengthCommandType command) const; // NOLINT(build/unsigned)
 
   /**
    * @brief      Read the timestamp of the last pulse.
@@ -60,6 +68,10 @@ public:
    * @return     { description_of_the_return_value }
    */
   uint64_t read_last_pulse_timestamp() const; // NOLINT(build/unsigned)
+
+private:
+  void enable(uint32_t partition = 0, uint32_t address = 0) const override; // NOLINT(build/unsigned)
+  void reset(uint32_t partition = 0, uint32_t address = 0) const override; // NOLINT(build/unsigned)
 };
 
 } // namespace timing

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(timing VERSION 5.7.0)
+project(timing VERSION 6.0.0)
 
 find_package(daq-cmake REQUIRED)
 
@@ -7,7 +7,6 @@ daq_setup_environment()
 
 find_package(ers REQUIRED)     
 find_package(logging REQUIRED)
-find_package(Boost 1.73.0 COMPONENTS regex REQUIRED)
 find_package(pybind11 REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(opmonlib REQUIRED)

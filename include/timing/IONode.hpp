@@ -46,12 +46,18 @@ class IONode : public TimingNode
 public:
   IONode(const uhal::Node& node,
          std::string uid_i2c_bus,
-         std::string uid_i2c_device,
          std::string pll_i2c_bus,
          std::string pll_i2c_device,
          std::vector<std::string> clock_names,
          std::vector<std::string> sfp_i2c_buses);
   virtual ~IONode();
+
+  /**
+   * @brief      Get the UID address parameter name.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  virtual std::string get_uid_address_parameter_name() const = 0;
 
   /**
    * @brief      Read the word identifying the timing board.
@@ -162,9 +168,14 @@ public:
    */
   virtual void reset(const std::string& clock_config_file = "") const = 0;
 
+  /**
+   * @brief     Reset fanout board
+   */
+  virtual void reset(int32_t fanout_mode, // NOLINT(build/unsigned)
+                     const std::string& clock_config_file = "") const = 0;
+
 protected:
   const std::string m_uid_i2c_bus;
-  const std::string m_uid_i2c_device;
   const std::string m_pll_i2c_bus;
   const std::string m_pll_i2c_device;
   const std::vector<std::string> m_clock_names;

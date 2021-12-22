@@ -46,7 +46,7 @@ public:
   /**
    * @brief     Send a fixed length command
    */
-  void send_fl_cmd(uint32_t command, // NOLINT(build/unsigned)
+  void send_fl_cmd(FixedLengthCommandType command,
                    uint32_t channel, // NOLINT(build/unsigned)
                    const TimestampGeneratorNode& timestamp_gen_node) const;
 

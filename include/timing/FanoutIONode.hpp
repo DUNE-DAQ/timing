@@ -36,18 +36,11 @@ class FanoutIONode : public IONode
 public:
   FanoutIONode(const uhal::Node& node,
                std::string uid_i2c_bus,
-               std::string uid_i2c_device,
                std::string pll_i2c_bus,
                std::string pll_i2c_device,
                std::vector<std::string> clock_names,
                std::vector<std::string> sfp_i2c_buses);
   virtual ~FanoutIONode();
-
-  /**
-   * @brief     Reset fanout board
-   */
-  virtual void reset(int32_t fanout_mode, // NOLINT(build/unsigned)
-                     const std::string& clock_config_file = "") const = 0;
 
   /**
    * @brief     Switch the SFP mux channel

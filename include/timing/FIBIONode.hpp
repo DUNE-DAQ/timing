@@ -35,7 +35,14 @@ class FIBIONode : public FanoutIONode {
 public:
     explicit FIBIONode(const uhal::Node& aNode);
     virtual ~FIBIONode();
-
+    
+    /**
+     * @brief      Get the UID address parameter name.
+     *
+     * @return     { description_of_the_return_value }
+     */
+    std::string get_uid_address_parameter_name() const override;
+    
     /**
      * @brief     Get status string, optionally print.
      */

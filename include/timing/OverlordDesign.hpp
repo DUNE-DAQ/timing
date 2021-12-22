@@ -13,8 +13,9 @@
 #define TIMING_INCLUDE_TIMING_OVERLORDDESIGN_HPP_
 
 // PDT Headers
-#include "timing/EndpointDesign.hpp"
+#include "timing/EndpointDesignInterface.hpp"
 #include "timing/FMCIONode.hpp"
+#include "timing/OverlordDesignInterface.hpp"
 #include "timing/MasterDesign.hpp"
 #include "timing/PDIMasterNode.hpp"
 #include "timing/SIMIONode.hpp"
@@ -38,7 +39,7 @@ namespace timing {
  */
 template<class IO>
 class OverlordDesign
-  : public MasterDesign<IO, PDIMasterNode>
+  : public MasterDesign<IO, PDIMasterNode>, public OverlordDesignInterface, public PlainEndpointDesignInterface
 {
 
 public:
@@ -57,30 +58,10 @@ public:
   void configure() const override;
 
   /**
-   * @brief     Reset trigger rx endpoint
-   */
-  const TriggerReceiverNode& get_external_triggers_endpoint_node() const;
-
-  /**
-   * @brief     Reset trigger rx endpoint
-   */
-  void reset_external_triggers_endpoint() const;
-
-  /**
-   * @brief     Enable external triggers
-   */
-  void enable_external_triggers() const;
-
-  /**
-   * @brief     Disable external triggers
-   */
-  void disable_external_triggers() const;
-
-  /**
    * @brief    Give info to collector.
    */  
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
-
+  
   // In leiu of UHAL_DERIVEDNODE
 protected:
   virtual uhal::Node* clone() const;

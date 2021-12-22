@@ -214,6 +214,9 @@ template<typename T>
 std::string
 short_vec_fmt(const std::vector<T>& vec);
 
+std::string
+format_firmware_version(uint32_t firmware_version); // NOLINT(build/unsigned)
+
 } // namespace timing
 } // namespace dunedaq
 

@@ -256,7 +256,7 @@ BoardType
 convert_value_to_board_type(uint32_t board_type) // NOLINT(build/unsigned)
 {
   // not pleasnt, but works for now
-  if (board_type > kBoardFIB) {
+  if (board_type >= kBoardUnknown) {
     throw UnknownBoardType(ERS_HERE, format_reg_value(board_type));
   } else {
     return static_cast<BoardType>(board_type);
@@ -269,7 +269,7 @@ CarrierType
 convert_value_to_carrier_type(uint32_t carrier_type) // NOLINT(build/unsigned)
 {
   // not pleasnt, but works for now
-  if (carrier_type > kCarrierAFC) {
+  if (carrier_type >= kCarrierUnknown) {
     throw UnknownCarrierType(ERS_HERE, format_reg_value(carrier_type));
   } else {
     return static_cast<CarrierType>(carrier_type);
@@ -282,7 +282,7 @@ DesignType
 convert_value_to_design_type(uint32_t design_type) // NOLINT(build/unsigned)
 {
   // not pleasnt, but works for now
-  if (design_type > kDesignBoreas) {
+  if (design_type >= kDesignUnknown) {
     throw UnknownDesignType(ERS_HERE, format_reg_value(design_type));
   } else {
     return static_cast<DesignType>(design_type);
@@ -326,6 +326,20 @@ locate(float xx[], unsigned long n, float x) // NOLINT
   }
 
   return j;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+std::string
+format_firmware_version(uint32_t firmware_version) // NOLINT(build/unsigned)
+{
+  int major_firmware_version = (firmware_version >> 16) & 0xff;
+  int minor_firmware_version = (firmware_version >> 8) & 0xff;
+  int patch_firmware_version = (firmware_version >> 0) & 0xff;
+
+  std::stringstream firmware_version_stream;
+  firmware_version_stream << "v" << major_firmware_version << "." << minor_firmware_version << "." << patch_firmware_version;
+  return firmware_version_stream.str();
 }
 //-----------------------------------------------------------------------------
 

@@ -16,6 +16,7 @@
 #include "TimingIssues.hpp"
 #include "timing/FMCIONode.hpp"
 #include "timing/TopDesign.hpp"
+#include "timing/EndpointDesignInterface.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -32,7 +33,7 @@ namespace timing {
  * @brief      Base class for timing endpoint design nodes.
  */
 template<class IO>
-class EndpointDesign : virtual public TopDesign<IO>
+class EndpointDesign : public TopDesign<IO>, public PlainEndpointDesignInterface
 {
 
 public:
@@ -48,12 +49,25 @@ public:
    * @brief      Prepare the timing endpoint for data taking.
    *
    */
-  void configure() const;
-  
+  void configure() const override;
+
   /**
    * @brief    Give info to collector.
    */  
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
+
+  /**
+   * @brief      Read endpoint firmware version.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  uint32_t read_firmware_version() const override; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Validate endpoint firmware version.
+   *
+   */
+  void validate_firmware_version() const override;
 
   // In leiu of UHAL_DERIVEDNODE
 protected:

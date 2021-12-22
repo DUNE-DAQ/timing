@@ -40,15 +40,28 @@ public:
   virtual ~FMCIONode();
 
   /**
+   * @brief      Get the UID address parameter name.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  std::string get_uid_address_parameter_name() const override;
+
+  /**
    * @brief     Get status string, optionally print.
    */
   std::string get_status(bool print_out = false) const override;
 
   /**
-   * @brief      Reset timing node.
+   * @brief      Reset FMC IO.
    */
   void reset(const std::string& clock_config_file = "") const override;
 
+  /**
+   * @brief     Reset FMC IO.
+   */
+  void reset(int32_t fanout_mode = -1, // NOLINT(build/unsigned)
+                     const std::string& clock_config_file = "") const override;
+  
   /**
    * @brief      Fill hardware monitoring structure.
    */

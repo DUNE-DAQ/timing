@@ -14,8 +14,7 @@
 
 // PDT Headers
 #include "TimingIssues.hpp"
-#include "timing/EndpointNode.hpp"
-#include "timing/TimingNode.hpp"
+#include "timing/TopDesignInterface.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -31,56 +30,72 @@ namespace dunedaq {
 namespace timing {
 
 /**
- * @brief      Base class for timing top design nodes.
+ * @brief      Base class for timing top design nodes with IO class.
  */
 template<class IO>
-class TopDesign : public TimingNode
+class TopDesign : virtual public TopDesignInterface
 {
 public:
-  explicit TopDesign(const uhal::Node& node);
-  virtual ~TopDesign();
-
-  /**
-   * @brief      Reset timing node.
-   */
-  virtual void soft_reset() const;
-
-  /**
-   * @brief      Reset timing node.
-   */
-  virtual void reset(const std::string& clock_config_file = "") const;
+  explicit TopDesign(const uhal::Node& node)
+    : TopDesignInterface(node) {}
+  virtual ~TopDesign() {}
 
   /**
    * @brief      Return the timing IO node.
    *
    * @return     { description_of_the_return_value }
    */
-  virtual const IO& get_io_node() const;
+  virtual const IO& get_io_node() const
+  {
+    return dynamic_cast<const IO&>(*get_io_node_plain());
+  }
+  
+  /**
+   * @brief      Get io node pointer
+   */
+  const IONode* get_io_node_plain() const override
+  { 
+    return dynamic_cast<const IONode*>(&uhal::Node::getNode("io")); 
+  }
+
+  /**
+   * @brief      Reset timing node.
+   */
+  void soft_reset_io() const override
+  {
+    get_io_node().soft_reset();
+  }
+
+  /**
+   * @brief      Reset timing node.
+   */
+  void reset_io(const std::string& clock_config_file = "") const override
+  {
+    get_io_node().reset(clock_config_file);
+  }
+
+  /**
+   * @brief      Reset timing node.
+   */
+  void reset_io(int32_t fanout_mode, // NOLINT(build/unsigned)
+                        const std::string& clock_config_file = "") const override
+  {
+    get_io_node().reset(fanout_mode, clock_config_file);
+  }
 
   /**
    * @brief      Print hardware information
    */
-  virtual std::string get_hardware_info(bool print_out = false) const;
-
-  /**
-   * @brief      Return the timing endpoint node.
-   *
-   * @return     { description_of_the_return_value }
-   */
-  virtual const EndpointNode& get_endpoint_node(uint32_t ept_id) const; // NOLINT(build/unsigned)
-
-  /**
-   * @brief      Return the timing endpoint node.
-   *
-   * @return     { description_of_the_return_value }
-   */
-  virtual uint32_t get_number_of_endpoint_nodes() const; // NOLINT(build/unsigned)
-  
+  std::string get_hardware_info(bool print_out = false) const override
+  {
+    auto info = get_io_node().get_hardware_info();
+    if (print_out)
+      TLOG() << info;
+    return info;
+  }
 };
 
 } // namespace timing
 } // namespace dunedaq
-
-#include "timing/detail/TopDesign.hxx"
 
 #endif // TIMING_INCLUDE_TIMING_TOPDESIGN_HPP_
