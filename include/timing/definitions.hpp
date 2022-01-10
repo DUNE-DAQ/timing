@@ -147,7 +147,7 @@ const std::vector<DesignType> g_library_supported_designs = {
 const std::map<BoardRevision, std::string> g_board_revision_map = {
   { kFMCRev1, "kFMCRev1" },     { kFMCRev2, "kFMCRev2" }, { kFMCRev3, "kFMCRev3" },
   { kPC059Rev1, "kPC059Rev1" }, { kTLURev1, "kTLURev1" }, { kSIMRev1, "kSIMRev1" },
-  { kFIBRev1, "kFIBRev1" }, { kFMCRev4, "kFMCRev4" }, { kFIBRev1, "kMIBRev1" }
+  { kFIBRev1, "kFIBRev1" }, { kFMCRev4, "kFMCRev4" }, { kMIBRev1, "kMIBRev1" }
 };
 
 // NOLINTNEXTLINE(build/unsigned)
