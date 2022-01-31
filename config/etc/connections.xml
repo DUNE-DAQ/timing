@@ -46,7 +46,8 @@
   <connection id="BOREAS_FMC_WR"     uri="ipbusudp-2.0://10.11.34.119:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/boreas_fmc/top_fmc.xml" />  
   <connection id="BOREAS_FMC_WR_CH"  uri="chtcp-2.0://np04-srv-012.cern.ch:10203?target=10.11.34.119:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/boreas_fmc/top_fmc.xml" />
 
-  <connection id="BOREAS_TLU"        uri="ipbusudp-2.0://192.168.200.64:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/boreas_tlu/top_tlu.xml" />
+  <connection id="BOREAS_TLU"         uri="ipbusudp-2.0://192.168.200.64:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/boreas_tlu/top_tlu.xml" />
+  <connection id="BOREAS_TLU_ICEBERG" uri="ipbusudp-2.0://192.168.121.10:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/boreas_tlu/top_tlu.xml" />
 
   <connection id="SIM"                  uri="ipbusudp-2.0://192.168.201.16:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/ouroboros_sim/top_sim.xml" />
   <connection id="SIM_UDP"              uri="ipbusudp-2.0://localhost:50010" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/ouroboros_sim/top_sim.xml" />
