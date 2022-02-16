@@ -16,7 +16,7 @@ from os.path import join, expandvars
 from timing.core import SI534xSlave, I2CExpanderSlave
 
 
-from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
+from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardMIB
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
 
@@ -97,12 +97,12 @@ def uuid(obj):
     lBoardType = obj.mBoardType
 
     # Detect the on-board eprom and read the board UID
-    if lBoardType in [kBoardPC059, kBoardTLU]:
+    if lBoardType in [kBoardPC059, kBoardTLU, kBoardMIB]:
         lUID = lDevice.getNode('io.i2c')
     else:
         lUID = lDevice.getNode('io.uid_i2c')
 
-    lPROMSlave = 'UID_PROM' if lBoardType == kBoardTLU else 'FMC_UID_PROM'
+    lPROMSlave = 'UID_PROM' if lBoardType in [kBoardTLU,kBoardMIB] else 'FMC_UID_PROM'
     lValues = lUID.get_slave(lPROMSlave).read_i2cArray(0xfa, 6)
     lUniqueID = 0x0
     for lVal in lValues:
@@ -153,7 +153,7 @@ def sfp_status(obj):
         lNodes = ['io.sfp_i2c','io.uid_i2c','io.pll_i2c']
     elif lBoardType == kBoardPC059:
         lNodes = ['io.i2c', 'io.usfp_i2c']
-    elif lBoardType == kBoardTLU:
+    elif lBoardType in [kBoardTLU, kBoardMIB]:
         lNodes = ['io.i2c']
     
     # if lBoardType == kBoardPC059:

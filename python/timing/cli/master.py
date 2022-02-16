@@ -69,6 +69,7 @@ def master(obj, device):
             secho("Error: {}".format(e), fg='red')
     else:
         lVersion = lMaster.getNode('global.version').read()
+        lDevice.dispatch()
 
     echo("Master FW rev: {}, partitions: {}, channels: {}".format(
         style(format_firmware_version(lVersion), fg='cyan'),

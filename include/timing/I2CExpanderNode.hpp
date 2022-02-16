@@ -85,25 +85,6 @@ private:
   void ensure_valid_bank_id(uint8_t bank_id) const; // NOLINT(build/unsigned)
 };
 
-/**
- * @class      I2CExpanderNode
- *
- * @brief      uhal::Node implementing single I2C Master Slave connection to
- *             control SFP expander chips.
- * @author     Alessandro Thea
- * @date       April 2018
- */
-class I2CExpanderNode
-  : public I2CMasterNode
-  , public I2CExpanderSlave
-{
-  UHAL_DERIVEDNODE(I2CExpanderNode)
-public:
-  explicit I2CExpanderNode(const uhal::Node& node);
-  I2CExpanderNode(const I2CExpanderNode& node);
-  virtual ~I2CExpanderNode();
-};
-
 } // namespace timing
 } // namespace dunedaq
 

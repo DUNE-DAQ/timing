@@ -71,11 +71,12 @@ def io(obj, device):
 @io.command('reset', short_help="Perform a hard reset on the timing master.")
 @click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
 @click.option('--fanout-mode', 'fanout', type=click.IntRange(0, 1), default=0, help='Configures the board in fanout mode (pc059 only)')
-@click.option('--sfp-mux-sel', 'sfpmuxsel', type=toolbox.IntRange(0x0,0x7), default=0, help='Configures the sfp cdr mux on the fib')
+@click.option('--sfp-mux-sel', 'sfpmuxsel', type=toolbox.IntRange(0x0,0x7), default=0, help='Configures the sfp cdr mux on the fib (downstream) or mib (upstream)')
+@click.option('--amc-mux-sel', 'amcmuxsel', type=toolbox.IntRange(0x1,0xc), default=1, help='Configures the amc mux on the mib (downstream)')
 @click.option('--force-pll-cfg', 'forcepllcfg', type=click.Path(exists=True))
 @click.pass_obj
 @click.pass_context
-def reset(ctx, obj, soft, fanout, forcepllcfg, sfpmuxsel):
+def reset(ctx, obj, soft, fanout, sfpmuxsel, amcmuxsel, forcepllcfg):
     '''
     Perform a hard reset on the timing master, including
 
@@ -116,10 +117,24 @@ def reset(ctx, obj, soft, fanout, forcepllcfg, sfpmuxsel):
                 secho("local master: standalone mode", fg='green')
 
             lIO.reset(fanout, lPLLConfigFilePath)
-            lDevice.getNode('switch.csr.ctrl.master_src').write(fanout)
+            lDevice.getNode('switch').configure_master_source(fanout)
             
-            lIO.switch_sfp_mux_channel(sfpmuxsel)           
-            secho("Active sfp mux " + hex(sfpmuxsel), fg='cyan')
+            if lBoardType == kBoardMIB:
+                # output to "all" AMCs on
+                lDevice.getNode("switch.csr.ctrl.amc_out").write(0xfff)
+                
+                lDevice.getNode("switch.csr.ctrl.usfp_src").write(sfpmuxsel)
+                echo("upstream sfp {} enabled".format(sfpmuxsel))
+
+                amc_in_bit = 0x1 << (amcmuxsel-1)
+                lDevice.getNode("switch.csr.ctrl.amc_in").write(amc_in_bit)
+                echo("downstream amc {} enabled".format(amcmuxsel))
+
+                lDevice.dispatch()
+
+            if lBoardType in [ kBoardPC059, kBoardFIB ]:
+                lIO.switch_sfp_mux_channel(sfpmuxsel)
+                secho("Active sfp mux " + hex(sfpmuxsel), fg='cyan')
         else:
             lIO.reset(lPLLConfigFilePath)            
     
@@ -128,11 +143,6 @@ def reset(ctx, obj, soft, fanout, forcepllcfg, sfpmuxsel):
     else:
         secho("Board identifier {} not supported by timing library".format(lBoardType), fg='yellow')
         # board not supported by library, do reset here
-        if lBoardType == kBoardMIB:
-            
-            # MIB reset reg writes here
-
-            secho('MIB reset done', fg='green')
 # ------------------------------------------------------------------------------
 
 
@@ -176,11 +186,6 @@ def status(ctx, obj, verbose):
     else:
         secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
         # do status printing here
-        if lBoardType == kBoardMIB:
-            
-            # MIB status reg reads here
-
-            secho('MIB status', fg='green')
 # ------------------------------------------------------------------------------
 
 

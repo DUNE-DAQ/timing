@@ -1,0 +1,11 @@
+<node id="mib_sw" description="mib switchyard control register" fwinfo="endpoint" class="SwitchyardNode">
+		<node id="csr" address="0x0" description="ctrl/stat register" fwinfo="endpoint;width=1">
+				<node id="ctrl" address="0x0">
+					<node id="master_src" mask="0x1"/>
+					<node id="ep_src" mask="0x2"/>
+					<node id="usfp_src" mask="0x4"/>
+					<node id="amc_in" mask="0xFFF0"/>
+					<node id="amc_out" mask="0xFFF0000"/>
+				</node>
+		</node>
+</node>

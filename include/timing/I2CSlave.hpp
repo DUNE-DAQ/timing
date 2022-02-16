@@ -24,6 +24,7 @@
 #include "TimingIssues.hpp"
 
 #include "ers/Issue.hpp"
+#include "opmonlib/InfoCollector.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -76,6 +77,11 @@ public:
   bool ping() const;
 
   std::string get_master_id() const;
+
+  /**
+   * @brief    Give info to collector.
+   */
+  virtual void get_info(opmonlib::InfoCollector& /*ci*/, int /*level*/) const {}
 
 protected:
   // Private constructor, accessible to I2CMaster
