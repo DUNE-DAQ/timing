@@ -262,16 +262,22 @@ def sfpstatus(ctx, obj, sfp_id):
         if sfp_id is not None:
             echo(lIO.get_sfp_status(sfp_id))
         else:
-            if lBoardType == kBoardFMC or lBoardType == kBoardTLU:
+            if lBoardType in [kBoardFMC , kBoardTLU]:
                 echo(lIO.get_sfp_status(0))
-            elif lBoardType in [ kBoardPC059, kBoardFIB ]:
+            elif lBoardType in [ kBoardPC059, kBoardFIB, kBoardMIB ]:
                 # PC059 sfp id 0 is upstream sfp
-                lSFPIDRange = 9 if lBoardType == kBoardPC059 else 8
+                if lBoardType == kBoardPC059:
+                    lSFPIDRange = 9
+                elif lBoardType == kBoardFIB:
+                    lSFPIDRange = 8
+                elif lBoardType == kBoardMIB:
+                    lSFPIDRange = 3
                 for i in range(lSFPIDRange):
                     try:
                         echo(lIO.get_sfp_status(i))
                         #echo()
                     except:
+                        secho(f"SFP {i} status gather failed\n", fg='red')
                         pass
 
     else:

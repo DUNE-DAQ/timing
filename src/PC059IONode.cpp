@@ -261,6 +261,7 @@ PC059IONode::get_info(opmonlib::InfoCollector& ci, int level) const
         sfp->get_info(sfp_data);
       } catch (timing::SFPUnreachable& e) {
         ers::warning(e);
+        continue;
       }
 
       opmonlib::InfoCollector sfp_ic;

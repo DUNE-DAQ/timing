@@ -17,7 +17,7 @@ UHAL_REGISTER_DERIVED_NODE(MIBIONode)
 
 //-----------------------------------------------------------------------------
 MIBIONode::MIBIONode(const uhal::Node& node)
-  : IONode(node, "i2c", "i2c", { "PLL" }, { "PLL", "CDR 0", "CDR 1" }, { "sfp_i2c" })
+  : IONode(node, "i2c", "i2c", { "PLL" }, { "PLL", "CDR 0", "CDR 1" }, { "i2c" })
 {
 }
 //-----------------------------------------------------------------------------
@@ -51,17 +51,34 @@ MIBIONode::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
+MIBIONode::configure_pll(const std::string& clock_config_file) const
+{
+  // enable pll channel (#3) only
+  auto i2c_switch = get_i2c_device<I2C9546SwitchSlave>("i2c", "TCA9546_Switch");
+  i2c_switch->set_channels_states(8);
+  IONode::configure_pll(clock_config_file);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+std::string
+MIBIONode::get_pll_status(bool print_out) const
+{
+  // enable pll channel (#3) only
+  auto i2c_switch = get_i2c_device<I2C9546SwitchSlave>("i2c", "TCA9546_Switch");
+  i2c_switch->set_channels_states(8);
+  return IONode::get_pll_status(print_out);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
 MIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) const
 {
   
   write_soft_reset_register();
 
   millisleep(1000);
-
-  auto i2c_switch = get_i2c_device<I2C9546SwitchSlave>("i2c", "TCA9546_Switch");
-
-  // enable pll channel (#3) only
-  i2c_switch->set_channels_states(8);
   
   // Find the right pll config file
   std::string clock_config_path = get_full_clock_config_file_path(clock_config_file, fanout_mode);
@@ -84,6 +101,53 @@ void
 MIBIONode::reset(const std::string& clock_config_file) const
 {
   reset(-1, clock_config_file);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+std::string
+MIBIONode::get_sfp_status(uint32_t sfp_id, bool print_out) const { // NOLINT(build/unsigned)
+  std::stringstream status;
+  
+  validate_sfp_id(sfp_id);
+
+  // enable i2c path for sfp
+  auto i2c_switch = get_i2c_device<I2C9546SwitchSlave>("i2c", "TCA9546_Switch");
+  i2c_switch->set_channels_states(1UL << sfp_id);
+
+  auto sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
+
+  status << "SFP " << sfp_id << ":" << std::endl;
+  
+  try
+  {
+    status << sfp->get_status();
+  }
+  catch(...)
+  {
+    i2c_switch->set_channels_states(8);
+    throw;
+  }
+
+  i2c_switch->set_channels_states(8);
+
+  if (print_out)
+    TLOG() << status.str();
+
+  return status.str();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+MIBIONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const { // NOLINT(build/unsigned)
+  validate_sfp_id(sfp_id);
+
+  auto i2c_switch = get_i2c_device<I2C9546SwitchSlave>("i2c", "TCA9546_Switch");
+  i2c_switch->set_channels_states(1UL << sfp_id);
+  auto sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
+  sfp->switch_soft_tx_control_bit(turn_on);
+  i2c_switch->set_channels_states(8);
 }
 //-----------------------------------------------------------------------------
 
@@ -117,33 +181,52 @@ MIBIONode::get_info(timinghardwareinfo::TimingMIBMonitorData& mon_data) const
 void
 MIBIONode::get_info(opmonlib::InfoCollector& ci, int level) const
 {
-  if (level >= 2) {
-    timinghardwareinfo::TimingPLLMonitorData pll_mon_data;
-    this->get_pll()->get_info(pll_mon_data);
-    ci.add(pll_mon_data);
-
     auto i2c_switch = get_i2c_device<I2C9546SwitchSlave>("i2c", "TCA9546_Switch");
+
+  if (level >= 2) {
+    i2c_switch->set_channels_states(8);
+
+    timinghardwareinfo::TimingPLLMonitorData pll_mon_data;
+    get_pll()->get_info(pll_mon_data);
+    ci.add(pll_mon_data);
     
     for (uint i=0; i < 3; ++i)
     {
       opmonlib::InfoCollector sfp_ic;
       
       // enable i2c path for sfp
-      i2c_switch->enable_channel(i);
+      i2c_switch->set_channels_states(1UL << i);
 
       auto sfp = this->get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
-      sfp->get_info(sfp_ic, level);
-
-      // disable i2c path for sfp
-      i2c_switch->disable_channel(i);
       
+      try
+      {
+        sfp->get_info(sfp_ic, level);
+        
+      }
+      catch (timing::SFPUnreachable& e)
+      {
+        ers::warning(e);
+        continue;
+      }
       ci.add("sfp_"+std::to_string(i),sfp_ic);
     }
+    i2c_switch->set_channels_states(8);
   }
   if (level >= 1) {
     timinghardwareinfo::TimingMIBMonitorData mon_data;
     this->get_info(mon_data);
     ci.add(mon_data);
+  }
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+MIBIONode::validate_sfp_id(uint32_t sfp_id) const { // NOLINT(build/unsigned)
+  // on this board we have 3 downstream SFPs
+  if (sfp_id > 2) {
+        throw InvalidSFPId(ERS_HERE, format_reg_value(sfp_id));
   }
 }
 //-----------------------------------------------------------------------------

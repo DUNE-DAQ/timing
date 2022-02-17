@@ -53,6 +53,16 @@ public:
   std::string get_status(bool print_out = false) const override;
 
   /**
+   * @brief      Configure clock chip.
+   */
+  void configure_pll(const std::string& clock_config_file = "") const override;
+  
+  /**
+   * @brief      Print status of on-board PLL.
+   */
+  std::string get_pll_status(bool print_out = false) const override;
+
+  /**
    * @brief      Reset FMC IO.
    */
   void reset(const std::string& clock_config_file = "") const override;
@@ -62,6 +72,17 @@ public:
    */
   void reset(int32_t fanout_mode = -1, // NOLINT(build/unsigned)
                      const std::string& clock_config_file = "") const override;
+  
+  /**
+   * @brief      Print status of on-board SFP.
+   */
+  std::string get_sfp_status(uint32_t sfp_id, bool print_out = false) const override; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      control tx laser of on-board SFP softly (I2C command)
+   */
+  void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
+
   /**
    * @brief      Fill hardware monitoring structure.
    */
@@ -71,6 +92,9 @@ public:
    * @brief    Give info to collector.
    */
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
+
+private:
+  void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)
 };
 
 } // namespace timing
