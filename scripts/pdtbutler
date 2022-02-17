@@ -55,7 +55,7 @@ CONTEXT_SETTINGS = {
 )
 @click.pass_context
 @click.option('-c', '--connections', help='Path to uhal connection file(s)')
-@click.option('-t', '--timeout', default=None, help='uhal timeout (sec)')
+@click.option('-t', '--timeout', default=None, type=int, help='uhal timeout (sec)')
 @click.option('-v', '--verbose', count=True, default=2)
 @click.option('-g', '--gdb', is_flag=True)
 def cli(ctx, connections, timeout, verbose, gdb):
