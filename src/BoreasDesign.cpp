@@ -1,42 +1,43 @@
+/**
+ * @file BoreasDesign.cpp
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
+
+#include "timing/BoreasDesign.hpp"
+
 #include <sstream>
 #include <string>
 
 namespace dunedaq::timing {
 
-// In leiu of UHAL_REGISTER_DERIVED_NODE
-//-----------------------------------------------------------------------------
-template<class IO>
-uhal::Node*
-ChronosDesign<IO>::clone() const
-{
-  return new ChronosDesign<IO>(static_cast<const ChronosDesign<IO>&>(*this));
-}
-//-----------------------------------------------------------------------------
+UHAL_REGISTER_DERIVED_NODE(BoreasDesign)
 
 //-----------------------------------------------------------------------------
-template<class IO>
-ChronosDesign<IO>::ChronosDesign(const uhal::Node& node)
+BoreasDesign::BoreasDesign(const uhal::Node& node)
   : TopDesignInterface(node)
+  , MasterDesignInterface(node)
   , EndpointDesignInterface(node)
-  , TopDesign<IO>(node)
+  , MasterDesign<PDIMasterNode>(node)
   , HSIDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO>
-ChronosDesign<IO>::~ChronosDesign()
+BoreasDesign::~BoreasDesign()
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO>
 std::string
-ChronosDesign<IO>::get_status(bool print_out) const
+BoreasDesign::get_status(bool print_out) const
 {
   std::stringstream status;
-  status << TopDesign<IO>::get_io_node().get_pll_status();
-  status << this->get_hsi_node().get_status();
+  status << get_io_node_plain()->get_pll_status();
+  status << MasterDesign<PDIMasterNode>::get_master_node().get_status();
+  status << get_hsi_node().get_status();
   if (print_out)
     TLOG() << status.str();
   return status.str();
@@ -44,26 +45,35 @@ ChronosDesign<IO>::get_status(bool print_out) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO>
 void
-ChronosDesign<IO>::configure() const
+BoreasDesign::configure() const
 {
+
   // Hard resets
-  this->reset_io();
+  reset_io();
+
+  // Set timestamp to current time
+  sync_timestamp();
+
+  // configure hsi
+  // get_his_node().
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO>
 void
-ChronosDesign<IO>::get_info(opmonlib::InfoCollector& ci, int level) const
-{  
+BoreasDesign::get_info(opmonlib::InfoCollector& ci, int level) const
+{ 
+  opmonlib::InfoCollector master_collector;
+  get_master_node().get_info(master_collector, level);
+  ci.add("master", master_collector);
+
   opmonlib::InfoCollector hardware_collector;
-  this->get_io_node().get_info(hardware_collector, level);
+  get_io_node_plain()->get_info(hardware_collector, level);
   ci.add("io", hardware_collector);
 
   opmonlib::InfoCollector hsi_collector;
-  this->get_hsi_node().get_info(hsi_collector, level);
+  get_hsi_node().get_info(hsi_collector, level);
   ci.add("hsi", hsi_collector);
 }
 //-----------------------------------------------------------------------------

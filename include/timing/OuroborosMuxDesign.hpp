@@ -15,6 +15,7 @@
 // PDT Headers
 #include "timing/MasterMuxDesign.hpp"
 #include "timing/EndpointDesignInterface.hpp"
+#include "timing/PDIMasterNode.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -28,13 +29,12 @@ namespace dunedaq {
 namespace timing {
 
 /**
- * @brief      Class for PDI timing master design (known as overlord).
+ * @brief      Class for PDI ouroboros timing master design 
  */
-template<class IO>
 class OuroborosMuxDesign
-  : public MasterMuxDesign<IO, PDIMasterNode>, public PlainEndpointDesignInterface
+  : public MasterMuxDesign<PDIMasterNode>, public PlainEndpointDesignInterface
 {
-
+  UHAL_DERIVEDNODE(OuroborosMuxDesign)
 public:
   explicit OuroborosMuxDesign(const uhal::Node& node);
   virtual ~OuroborosMuxDesign();
@@ -54,16 +54,9 @@ public:
    * @brief    Give info to collector.
    */  
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
-  
-  // In leiu of UHAL_DERIVEDNODE
-protected:
-  virtual uhal::Node* clone() const;
-  //
 };
 
 } // namespace timing
 } // namespace dunedaq
-
-#include "timing/detail/OuroborosMuxDesign.hxx"
 
 #endif // TIMING_INCLUDE_TIMING_OUROBOROSMUXDESIGN_HPP_

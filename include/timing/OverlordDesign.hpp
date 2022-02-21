@@ -14,12 +14,9 @@
 
 // PDT Headers
 #include "timing/EndpointDesignInterface.hpp"
-#include "timing/FMCIONode.hpp"
 #include "timing/OverlordDesignInterface.hpp"
 #include "timing/MasterDesign.hpp"
 #include "timing/PDIMasterNode.hpp"
-#include "timing/SIMIONode.hpp"
-#include "timing/TLUIONode.hpp"
 #include "timing/TriggerReceiverNode.hpp"
 
 // uHal Headers
@@ -37,11 +34,10 @@ namespace timing {
 /**
  * @brief      Class for PDI timing master design (known as overlord).
  */
-template<class IO>
 class OverlordDesign
-  : public MasterDesign<IO, PDIMasterNode>, public OverlordDesignInterface, public PlainEndpointDesignInterface
+  : public MasterDesign<PDIMasterNode>, public OverlordDesignInterface, public PlainEndpointDesignInterface
 {
-
+  UHAL_DERIVEDNODE(OverlordDesign)
 public:
   explicit OverlordDesign(const uhal::Node& node);
   virtual ~OverlordDesign();
@@ -61,16 +57,9 @@ public:
    * @brief    Give info to collector.
    */  
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
-  
-  // In leiu of UHAL_DERIVEDNODE
-protected:
-  virtual uhal::Node* clone() const;
-  //
 };
 
 } // namespace timing
 } // namespace dunedaq
-
-#include "timing/detail/OverlordDesign.hxx"
 
 #endif // TIMING_INCLUDE_TIMING_OVERLORDDESIGN_HPP_

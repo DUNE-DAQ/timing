@@ -32,7 +32,6 @@ namespace timing {
 /**
  * @brief      Base class for timing top design nodes with IO class.
  */
-template<class IO>
 class TopDesign : virtual public TopDesignInterface
 {
 public:
@@ -40,16 +39,6 @@ public:
     : TopDesignInterface(node) {}
   virtual ~TopDesign() {}
 
-  /**
-   * @brief      Return the timing IO node.
-   *
-   * @return     { description_of_the_return_value }
-   */
-  virtual const IO& get_io_node() const
-  {
-    return dynamic_cast<const IO&>(*get_io_node_plain());
-  }
-  
   /**
    * @brief      Get io node pointer
    */
@@ -63,7 +52,7 @@ public:
    */
   void soft_reset_io() const override
   {
-    get_io_node().soft_reset();
+    get_io_node_plain()->soft_reset();
   }
 
   /**
@@ -71,7 +60,7 @@ public:
    */
   void reset_io(const std::string& clock_config_file = "") const override
   {
-    get_io_node().reset(clock_config_file);
+    get_io_node_plain()->reset(clock_config_file);
   }
 
   /**
@@ -80,7 +69,7 @@ public:
   void reset_io(int32_t fanout_mode, // NOLINT(build/unsigned)
                         const std::string& clock_config_file = "") const override
   {
-    get_io_node().reset(fanout_mode, clock_config_file);
+    get_io_node_plain()->reset(fanout_mode, clock_config_file);
   }
 
   /**
@@ -88,7 +77,7 @@ public:
    */
   std::string get_hardware_info(bool print_out = false) const override
   {
-    auto info = get_io_node().get_hardware_info();
+    auto info = get_io_node_plain()->get_hardware_info();
     if (print_out)
       TLOG() << info;
     return info;

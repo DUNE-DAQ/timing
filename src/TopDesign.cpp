@@ -6,64 +6,47 @@
  * received with this code.
  */
 
-#include "timing/BoreasDesign.hpp"
-#include "timing/CRTDesign.hpp"
-#include "timing/EndpointDesign.hpp"
+#include "timing/PDIMasterNode.hpp"
+
+//#include "timing/BoreasDesign.hpp"
+//#include "timing/ChronosDesign.hpp"
+//#include "timing/CRTDesign.hpp"
+//#include "timing/EndpointDesign.hpp"
+#include "timing/MasterDesign.hpp"
+#include "timing/MasterMuxDesign.hpp"
 #include "timing/FanoutDesign.hpp"
-#include "timing/OuroborosDesign.hpp"
-#include "timing/OuroborosMuxDesign.hpp"
-#include "timing/OverlordDesign.hpp"
-#include "timing/ChronosDesign.hpp"
+//#include "timing/OuroborosDesign.hpp"
+//#include "timing/OuroborosMuxDesign.hpp"
+//#include "timing/OverlordDesign.hpp"
 
 namespace dunedaq {
 namespace timing {
 // In leiu of UHAL_REGISTER_DERIVED_NODE
 
 // CRT
-uhal::RegistrationHelper<CRTDesign<FMCIONode>> CRTDesign_FMCIONode_RegistrationHelper(
-  "CRTDesign<FMCIONode>");
+//uhal::RegistrationHelper<CRTDesign> CRTDesign_RegistrationHelper("CRTDesign");
 
 // Endpoint
-uhal::RegistrationHelper<EndpointDesign<FMCIONode>> EndpointDesign_FMCIONode_RegistrationHelper(
-  "EndpointDesign<FMCIONode>");
+//uhal::RegistrationHelper<EndpointDesign> EndpointDesign_RegistrationHelper("EndpointDesign");
 
 // Master
-uhal::RegistrationHelper<MasterDesign<FMCIONode, PDIMasterNode>>
-  MasterDesign_FMCIONode_PDIMasterNode_RegistrationHelper("MasterDesign<FMCIONode,PDIMasterNode>");
-
-uhal::RegistrationHelper<MasterMuxDesign<PC059IONode, PDIMasterNode>>
-  MasterMuxDesign_PC059IONode_PDIMasterNode_RegistrationHelper("MasterMuxDesign<PC059IONode,PDIMasterNode>");
-
+uhal::RegistrationHelper<MasterDesign<PDIMasterNode>> MasterDesign_PDIMasterNode_RegistrationHelper("MasterDesign<PDIMasterNode>");
+uhal::RegistrationHelper<MasterMuxDesign<PDIMasterNode>> MasterMuxDesign_PDIMasterNode_RegistrationHelper("MasterMuxDesign<PDIMasterNode>");
 // Fanout
-uhal::RegistrationHelper<FanoutDesign<PC059IONode, PDIMasterNode>>
-  FanoutDesign_PC059IONode_PDIMasterNode_RegistrationHelper("FanoutDesign<PC059IONode,PDIMasterNode>");
-
-uhal::RegistrationHelper<FanoutDesign<FIBIONode, PDIMasterNode>>
-  FanoutDesign_FIBIONode_PDIMasterNode_RegistrationHelper("FanoutDesign<FIBIONode,PDIMasterNode>");
+uhal::RegistrationHelper<FanoutDesign<PDIMasterNode>> FanoutDesign_PDIMasterNode_RegistrationHelper("FanoutDesign<PDIMasterNode>");
 
 // Ouroboros (master with endpoint)
-uhal::RegistrationHelper<OuroborosDesign<SIMIONode>> OuroborosDesign_SIMIONode_RegistrationHelper(
-  "OuroborosDesign<SIMIONode>");
-uhal::RegistrationHelper<OuroborosDesign<FMCIONode>> OuroborosDesign_FMCIONode_RegistrationHelper(
-  "OuroborosDesign<FMCIONode>");
-uhal::RegistrationHelper<OuroborosMuxDesign<PC059IONode>> OuroborosMuxDesign_PC059IONode_RegistrationHelper(
-  "OuroborosMuxDesign<PC059IONode>");
-uhal::RegistrationHelper<OuroborosMuxDesign<FIBIONode>> OuroborosMuxDesign_FIBIONode_RegistrationHelper(
-  "OuroborosMuxDesign<FIBIONode>");
+//uhal::RegistrationHelper<OuroborosDesign> OuroborosDesign_RegistrationHelper("OuroborosDesign");
+
+//uhal::RegistrationHelper<OuroborosMuxDesign> OuroborosMuxDesign_RegistrationHelper("OuroborosMuxDesign");
 
 // Overlord (master with trigger message receiver)
-uhal::RegistrationHelper<OverlordDesign<TLUIONode>> OverlordDesign_TLUIONode_RegistrationHelper(
-  "OverlordDesign<TLUIONode>");
-uhal::RegistrationHelper<OverlordDesign<FMCIONode>> OverlordDesign_FMCIONode_RegistrationHelper(
-  "OverlordDesign<FMCIONode>");
+//uhal::RegistrationHelper<OverlordDesign> OverlordDesign_RegistrationHelper("OverlordDesign");
 
 // Boreas (master with HSI)
-uhal::RegistrationHelper<BoreasDesign<FMCIONode>> BoreasDesign_FMCIONode_RegistrationHelper("BoreasDesign<FMCIONode>");
-uhal::RegistrationHelper<BoreasDesign<TLUIONode>> BoreasDesign_TLUIONode_RegistrationHelper("BoreasDesign<TLUIONode>");
-uhal::RegistrationHelper<BoreasDesign<SIMIONode>> BoreasDesign_SIMIONode_RegistrationHelper("BoreasDesign<SIMIONode>");
+//uhal::RegistrationHelper<BoreasDesign> BoreasDesign_RegistrationHelper("BoreasDesign");
 
-// Chronos (HSI endpoint)
-uhal::RegistrationHelper<ChronosDesign<FMCIONode>> ChronosDesign_FMCIONode_RegistrationHelper("ChronosDesign<FMCIONode>");
+//uhal::RegistrationHelper<ChronosDesign> ChronosDesign_RegistrationHelper("ChronosDesign");
 
 } // namespace timing
 } // namespace dunedaq

@@ -31,10 +31,9 @@ namespace timing {
 /**
  * @brief      Class for timing master with integrated HSI designs.
  */
-template<class IO>
-class ChronosDesign : public TopDesign<IO>, public HSIDesignInterface
+class ChronosDesign : public TopDesign, public HSIDesignInterface
 {
-
+  UHAL_DERIVEDNODE(ChronosDesign)
 public:
   explicit ChronosDesign(const uhal::Node& node);
   virtual ~ChronosDesign();
@@ -70,16 +69,9 @@ public:
    * @brief    Give info to collector.
    */  
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
-
-  // In leiu of UHAL_DERIVEDNODE
-protected:
-  virtual uhal::Node* clone() const;
-  //
 };
 
 } // namespace timing
 } // namespace dunedaq
-
-#include "timing/detail/ChronosDesign.hxx"
 
 #endif // TIMING_INCLUDE_TIMING_CHRONOSDESIGN_HPP_

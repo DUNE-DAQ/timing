@@ -14,7 +14,7 @@
 
 // PDT Headers
 #include "timing/MuxDesignInterface.hpp"
-#include "timing/OuroborosDesign.hpp"
+#include "timing/MasterDesign.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -31,9 +31,9 @@ namespace timing {
 /**
  * @brief      Class for PDI timing master design on mux board
  */
-template<class IO, class MST>
+template<class MST>
 class MasterMuxDesign
-  : virtual public MuxDesignInterface, public MasterDesign<IO, MST>
+  : virtual public MuxDesignInterface, public MasterDesign<MST>
 {
 
 public:

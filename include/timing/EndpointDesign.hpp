@@ -32,10 +32,9 @@ namespace timing {
 /**
  * @brief      Base class for timing endpoint design nodes.
  */
-template<class IO>
-class EndpointDesign : public TopDesign<IO>, public PlainEndpointDesignInterface
+class EndpointDesign : public TopDesign, public PlainEndpointDesignInterface
 {
-
+  UHAL_DERIVEDNODE(EndpointDesign)
 public:
   explicit EndpointDesign(const uhal::Node& node);
   virtual ~EndpointDesign();
@@ -68,16 +67,9 @@ public:
    *
    */
   void validate_firmware_version() const override;
-
-  // In leiu of UHAL_DERIVEDNODE
-protected:
-  virtual uhal::Node* clone() const;
-  //
 };
 
 } // namespace timing
 } // namespace dunedaq
-
-#include "timing/detail/EndpointDesign.hxx"
 
 #endif // TIMING_INCLUDE_TIMING_ENDPOINTDESIGN_HPP_
