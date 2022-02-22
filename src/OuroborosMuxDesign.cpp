@@ -1,44 +1,45 @@
+/**
+ * @file OuroborosMuxDesign.cpp
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
+
+#include "timing/OuroborosMuxDesign.hpp"
+
 #include <sstream>
 #include <string>
 
 namespace dunedaq::timing {
 
-// In leiu of UHAL_REGISTER_DERIVED_NODE
-//-----------------------------------------------------------------------------
-template<class IO>
-uhal::Node*
-BoreasDesign<IO>::clone() const
-{
-  return new BoreasDesign<IO>(static_cast<const BoreasDesign<IO>&>(*this));
-}
-//-----------------------------------------------------------------------------
+UHAL_REGISTER_DERIVED_NODE(OuroborosMuxDesign)
 
 //-----------------------------------------------------------------------------
-template<class IO>
-BoreasDesign<IO>::BoreasDesign(const uhal::Node& node)
+OuroborosMuxDesign::OuroborosMuxDesign(const uhal::Node& node)
   : TopDesignInterface(node)
+  , MuxDesignInterface(node)
   , MasterDesignInterface(node)
   , EndpointDesignInterface(node)
-  , MasterDesign<IO, PDIMasterNode>(node)
-  , HSIDesignInterface(node)
+  , MasterMuxDesign<PDIMasterNode>(node)
+  , PlainEndpointDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO>
-BoreasDesign<IO>::~BoreasDesign()
+OuroborosMuxDesign::~OuroborosMuxDesign()
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO>
 std::string
-BoreasDesign<IO>::get_status(bool print_out) const
+OuroborosMuxDesign::get_status(bool print_out) const
 {
   std::stringstream status;
-  status << TopDesign<IO>::get_io_node().get_pll_status();
-  status << MasterDesign<IO, PDIMasterNode>::get_master_node().get_status();
-  status << this->get_hsi_node().get_status();
+  status << get_io_node_plain()->get_pll_status();
+  status << this->get_master_node().get_status();
+  status << this->get_endpoint_node(0).get_status();
+  // mux status
   if (print_out)
     TLOG() << status.str();
   return status.str();
@@ -46,9 +47,8 @@ BoreasDesign<IO>::get_status(bool print_out) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO>
 void
-BoreasDesign<IO>::configure() const
+OuroborosMuxDesign::configure() const
 {
 
   // Hard resets
@@ -57,27 +57,26 @@ BoreasDesign<IO>::configure() const
   // Set timestamp to current time
   this->sync_timestamp();
 
-  // configure hsi
-  // this->get_his_node().
+  // Enable spill interface
+  MasterDesign<PDIMasterNode>::get_master_node().enable_spill_interface();
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO>
 void
-BoreasDesign<IO>::get_info(opmonlib::InfoCollector& ci, int level) const
+OuroborosMuxDesign::get_info(opmonlib::InfoCollector& ci, int level) const
 { 
   opmonlib::InfoCollector master_collector;
   this->get_master_node().get_info(master_collector, level);
   ci.add("master", master_collector);
 
   opmonlib::InfoCollector hardware_collector;
-  this->get_io_node().get_info(hardware_collector, level);
+  get_io_node_plain()->get_info(hardware_collector, level);
   ci.add("io", hardware_collector);
 
-  opmonlib::InfoCollector hsi_collector;
-  this->get_hsi_node().get_info(hsi_collector, level);
-  ci.add("hsi", hsi_collector);
+  opmonlib::InfoCollector endpoint_collector;
+  this->get_endpoint_node(0).get_info(endpoint_collector, level);
+  ci.add("master", endpoint_collector);
 }
 //-----------------------------------------------------------------------------
 }

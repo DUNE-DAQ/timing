@@ -32,10 +32,9 @@ namespace timing {
 /**
  * @brief      Class for timing master with integrated HSI designs.
  */
-template<class IO>
-class BoreasDesign : public MasterDesign<IO, PDIMasterNode>, public HSIDesignInterface
+class BoreasDesign : public MasterDesign<PDIMasterNode>, public HSIDesignInterface
 {
-
+  UHAL_DERIVEDNODE(BoreasDesign)
 public:
   explicit BoreasDesign(const uhal::Node& node);
   virtual ~BoreasDesign();
@@ -55,16 +54,9 @@ public:
    * @brief    Give info to collector.
    */  
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
-
-  // In leiu of UHAL_DERIVEDNODE
-protected:
-  virtual uhal::Node* clone() const;
-  //
 };
 
 } // namespace timing
 } // namespace dunedaq
-
-#include "timing/detail/BoreasDesign.hxx"
 
 #endif // TIMING_INCLUDE_TIMING_BOREASDESIGN_HPP_

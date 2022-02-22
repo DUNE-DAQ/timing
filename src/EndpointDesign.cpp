@@ -1,45 +1,44 @@
+/**
+ * @file EndpointDesign.cpp
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
+
+#include "timing/EndpointDesign.hpp"
+
 #include <sstream>
 #include <string>
 
 namespace dunedaq::timing {
 
-// In leiu of UHAL_REGISTER_DERIVED_NODE
-//-----------------------------------------------------------------------------
-template<class IO>
-uhal::Node*
-EndpointDesign<IO>::clone() const
-{
-  return new EndpointDesign<IO>(static_cast<const EndpointDesign<IO>&>(*this));
-}
-//-----------------------------------------------------------------------------
+UHAL_REGISTER_DERIVED_NODE(EndpointDesign)
 
 //-----------------------------------------------------------------------------
-template<class IO>
-EndpointDesign<IO>::EndpointDesign(const uhal::Node& node)
+EndpointDesign::EndpointDesign(const uhal::Node& node)
   : TopDesignInterface(node)
   , EndpointDesignInterface(node)
-  , TopDesign<IO>(node)
+  , TopDesign(node)
   , PlainEndpointDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO>
-EndpointDesign<IO>::~EndpointDesign()
+EndpointDesign::~EndpointDesign()
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO>
 std::string
-EndpointDesign<IO>::get_status(bool print_out) const
+EndpointDesign::get_status(bool print_out) const
 {
   std::stringstream status;
-  status << TopDesign<IO>::get_io_node().get_pll_status();
-  uint32_t number_of_endpoint_nodes = EndpointDesign<IO>::get_number_of_endpoint_nodes();
+  status << TopDesign::get_io_node_plain()->get_pll_status();
+  uint32_t number_of_endpoint_nodes = EndpointDesign::get_number_of_endpoint_nodes();
   for (uint32_t i = 0; i < number_of_endpoint_nodes; ++i) {
     status << "Endpoint node " << i << " status" << std::endl;
-    status << this->get_endpoint_node(i).get_status();
+    status << get_endpoint_node(i).get_status();
   }
   if (print_out)
     TLOG() << status.str();
@@ -48,43 +47,39 @@ EndpointDesign<IO>::get_status(bool print_out) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO>
 void
-EndpointDesign<IO>::configure() const
+EndpointDesign::configure() const
 {
   // Hard resets
-  this->reset_io();
+  reset_io();
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO>
 void
-EndpointDesign<IO>::get_info(opmonlib::InfoCollector& ci, int level) const
+EndpointDesign::get_info(opmonlib::InfoCollector& ci, int level) const
 { 
   opmonlib::InfoCollector endpoint_collector;
-  this->get_endpoint_node(0).get_info(endpoint_collector, level);
+  get_endpoint_node(0).get_info(endpoint_collector, level);
   ci.add("endpoint", endpoint_collector);
 
   opmonlib::InfoCollector hardware_collector;
-  this->get_io_node().get_info(hardware_collector, level);
+  get_io_node_plain()->get_info(hardware_collector, level);
   ci.add("io", hardware_collector);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO>
 uint32_t
-EndpointDesign<IO>::read_firmware_version() const
+EndpointDesign::read_firmware_version() const
 {
-  return this->get_endpoint_node(0).read_version();
+  return get_endpoint_node(0).read_version();
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO>
 void
-EndpointDesign<IO>::validate_firmware_version() const
+EndpointDesign::validate_firmware_version() const
 {
   auto firmware_version = read_firmware_version();
   

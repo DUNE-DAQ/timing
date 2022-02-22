@@ -31,10 +31,9 @@ namespace timing {
 /**
  * @brief      Class for timing master with integrated HSI designs.
  */
-template<class IO>
-class CRTDesign : public TopDesign<IO>, public CRTDesignInterface
+class CRTDesign : public TopDesign, public CRTDesignInterface
 {
-
+  UHAL_DERIVEDNODE(CRTDesign)
 public:
   explicit CRTDesign(const uhal::Node& node);
   virtual ~CRTDesign();
@@ -65,16 +64,10 @@ public:
    *
    */
   void validate_firmware_version() const override {} // current crt firmware does not store firmware version
-  
-  // In leiu of UHAL_DERIVEDNODE
-protected:
-  virtual uhal::Node* clone() const;
   //
 };
 
 } // namespace timing
 } // namespace dunedaq
-
-#include "timing/detail/CRTDesign.hxx"
 
 #endif // TIMING_INCLUDE_TIMING_CRTDESIGN_HPP_

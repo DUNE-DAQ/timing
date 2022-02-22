@@ -13,14 +13,9 @@
 #define TIMING_INCLUDE_TIMING_OUROBOROSDESIGN_HPP_
 
 // PDT Headers
-#include "timing/EndpointDesign.hpp"
-#include "timing/FMCIONode.hpp"
-#include "timing/MasterDesign.hpp"
 #include "timing/EndpointDesignInterface.hpp"
+#include "timing/MasterDesign.hpp"
 #include "timing/PDIMasterNode.hpp"
-#include "timing/SIMIONode.hpp"
-#include "timing/TLUIONode.hpp"
-#include "timing/TriggerReceiverNode.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -36,11 +31,10 @@ namespace timing {
 /**
  * @brief      Class for PDI timing master design (known as overlord).
  */
-template<class IO>
 class OuroborosDesign
-  : public MasterDesign<IO, PDIMasterNode>, public PlainEndpointDesignInterface
+  : public MasterDesign<PDIMasterNode>, public PlainEndpointDesignInterface
 {
-
+  UHAL_DERIVEDNODE(OuroborosDesign)
 public:
   explicit OuroborosDesign(const uhal::Node& node);
   virtual ~OuroborosDesign();
@@ -60,16 +54,9 @@ public:
    * @brief    Give info to collector.
    */  
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
-
-  // In leiu of UHAL_DERIVEDNODE
-protected:
-  virtual uhal::Node* clone() const;
-  //
 };
 
 } // namespace timing
 } // namespace dunedaq
-
-#include "timing/detail/OuroborosDesign.hxx"
 
 #endif // TIMING_INCLUDE_TIMING_OUROBOROSDESIGN_HPP_

@@ -47,7 +47,7 @@ public:
   
 
   template<class IO>
-  const IO* get_io_node_plain() const
+  const IO* get_io_node() const
   { 
     return dynamic_cast<const IO*>(get_io_node_plain()); 
   }

@@ -15,9 +15,6 @@
 // PDT Headers
 #include "timing/MasterMuxDesign.hpp"
 #include "timing/EndpointDesignInterface.hpp"
-#include "timing/PC059IONode.hpp"
-#include "timing/FIBIONode.hpp"
-#include "timing/PDIMasterNode.hpp"
 
 #include "TimingIssues.hpp"
 
@@ -35,8 +32,8 @@ namespace timing {
 /**
  * @brief      Class for timing fanout designs.
  */
-template<class IO, class MST>
-class FanoutDesign : public MasterMuxDesign<IO, MST>, public PlainEndpointDesignInterface
+template<class MST>
+class FanoutDesign : public MasterMuxDesign<MST>, public PlainEndpointDesignInterface
 {
 
 public:

@@ -1,42 +1,41 @@
+/**
+ * @file CRTDesign.cpp
+ *
+ * This is part of the DUNE DAQ Software Suite, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
+
+#include "timing/CRTDesign.hpp"
+
 #include <sstream>
 #include <string>
 
 namespace dunedaq::timing {
 
-// In leiu of UHAL_REGISTER_DERIVED_NODE
-//-----------------------------------------------------------------------------
-template<class IO>
-uhal::Node*
-CRTDesign<IO>::clone() const
-{
-  return new CRTDesign<IO>(static_cast<const CRTDesign<IO>&>(*this));
-}
-//-----------------------------------------------------------------------------
+UHAL_REGISTER_DERIVED_NODE(CRTDesign)
 
 //-----------------------------------------------------------------------------
-template<class IO>
-CRTDesign<IO>::CRTDesign(const uhal::Node& node)
+CRTDesign::CRTDesign(const uhal::Node& node)
   : TopDesignInterface(node)
   , EndpointDesignInterface(node)
-  , TopDesign<IO>(node)
+  , TopDesign(node)
   , CRTDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO>
-CRTDesign<IO>::~CRTDesign()
+CRTDesign::~CRTDesign()
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO>
 std::string
-CRTDesign<IO>::get_status(bool print_out) const
+CRTDesign::get_status(bool print_out) const
 {
   std::stringstream status;
-  status << this->get_io_node().get_pll_status();
-  status << this->get_crt_node().get_status();
+  status << get_io_node_plain()->get_pll_status();
+  status << get_crt_node().get_status();
   if (print_out)
     TLOG() << status.str();
   return status.str();
@@ -44,12 +43,11 @@ CRTDesign<IO>::get_status(bool print_out) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO>
 void
-CRTDesign<IO>::configure() const
+CRTDesign::configure() const
 {
   // Hard resets
-  this->reset_io();
+  reset_io();
 }
 //-----------------------------------------------------------------------------
 
