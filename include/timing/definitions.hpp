@@ -258,9 +258,8 @@ const std::map<std::string, std::string> g_clock_config_map = {
   { "kFIBRev1_fanout",
     "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" }, // stand-alone mode  
   
-  // TODO
-  //{ "kMIBRev1_fanout_mode0",
-  //  "devel/Si5395-RevA-MIB_62_1-Registers.txt" }, // fanout mode, data and clock from an upstream sfp
+  { "kMIBRev1_fanout_mode0",
+    "devel/Si5395-RevA-MIB_62_0-Registers.txt" }, // fanout mode, data and clock from upstream sfp 0 (in thie case)
   { "kMIBRev1_fanout_mode1",
     "devel/Si5395-RevA-MIB_62_1-Registers.txt" }, // stand-alone mode
 
