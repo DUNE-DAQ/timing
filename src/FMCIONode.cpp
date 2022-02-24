@@ -87,6 +87,11 @@ FMCIONode::reset(const std::string& clock_config_file) const
   // Upload config file to PLL
   configure_pll(clock_config_path);
 
+  // Reset mmcm
+  getNode("csr.ctrl.rst").write(0x1);
+  getNode("csr.ctrl.rst").write(0x0);
+  getClient().dispatch();
+
   // Enable sfp tx laser
   getNode("csr.ctrl.sfp_tx_dis").write(0x0);
 

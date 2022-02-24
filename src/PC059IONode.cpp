@@ -85,6 +85,11 @@ PC059IONode::reset(int32_t fanout_mode, const std::string& clock_config_file) co
   // Upload config file to PLL
   configure_pll(clock_config_path);
 
+  // Reset mmcm
+  getNode("csr.ctrl.rst").write(0x1);
+  getNode("csr.ctrl.rst").write(0x0);
+  getClient().dispatch();
+
   getNode("csr.ctrl.mux").write(0);
   getClient().dispatch();
 
@@ -256,6 +261,7 @@ PC059IONode::get_info(opmonlib::InfoCollector& ci, int level) const
         sfp->get_info(sfp_data);
       } catch (timing::SFPUnreachable& e) {
         ers::warning(e);
+        continue;
       }
 
       opmonlib::InfoCollector sfp_ic;

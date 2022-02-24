@@ -84,6 +84,11 @@ TLUIONode::reset(const std::string& clock_config_file) const
   auto si_chip = get_pll();
   si_chip->write_i2cArray(0x113, { 0x9, 0x33 });
 
+  // Reset mmcm
+  getNode("csr.ctrl.rst").write(0x1);
+  getNode("csr.ctrl.rst").write(0x0);
+  getClient().dispatch();
+
   // configure tlu io expanders
   auto ic_6 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "Expander1");
   auto ic_7 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "Expander2");

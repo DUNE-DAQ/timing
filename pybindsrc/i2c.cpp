@@ -132,9 +132,9 @@ register_i2c(py::module& m)
     .def("read_inputs", &timing::I2CExpanderSlave::read_inputs)
     .def("debug", &timing::I2CExpanderSlave::debug);
 
-  // Wrap I2CExpanderNode
-  py::class_<timing::I2CExpanderNode, timing::I2CExpanderSlave, timing::I2CMasterNode>(m, "I2CExpanderNode")
-    .def(py::init<const uhal::Node&>());
+//  // Wrap I2CExpanderNode
+//  py::class_<timing::I2CExpanderNode, timing::I2CExpanderSlave, timing::I2CMasterNode>(m, "I2CExpanderNode")
+//    .def(py::init<const uhal::Node&>());
 
   // Wrap DACSlave
   py::class_<timing::DACSlave, timing::I2CSlave>(m, "DACSlave")

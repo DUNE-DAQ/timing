@@ -21,9 +21,6 @@
 namespace dunedaq {
 namespace timing {
 
-// uHAL Node registation
-UHAL_REGISTER_DERIVED_NODE(I2CExpanderNode)
-
 //-----------------------------------------------------------------------------
 I2CExpanderSlave::I2CExpanderSlave(const I2CMasterNode* i2c_master, uint8_t address) // NOLINT(build/unsigned)
   : I2CSlave(i2c_master, address)
@@ -107,24 +104,6 @@ I2CExpanderSlave::debug() const
   }
   return values;
 }
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-I2CExpanderNode::I2CExpanderNode(const uhal::Node& node)
-  : I2CMasterNode(node)
-  , I2CExpanderSlave(this, this->get_slave_address("i2caddr"))
-{}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-I2CExpanderNode::I2CExpanderNode(const I2CExpanderNode& node)
-  : I2CMasterNode(node)
-  , I2CExpanderSlave(this, this->get_slave_address("i2caddr"))
-{}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-I2CExpanderNode::~I2CExpanderNode() {}
 //-----------------------------------------------------------------------------
 
 } // namespace timing

@@ -441,6 +441,14 @@ I2CSFPSlave::get_info(timinghardwareinfo::TimingSFPMonitorData& mon_data) const
 
   mon_data.data_valid = true;
 }
+
+void
+I2CSFPSlave::get_info(opmonlib::InfoCollector& ci, int /*level*/) const
+{
+  timinghardwareinfo::TimingSFPMonitorData sfp_mon_data;
+  get_info(sfp_mon_data);
+  ci.add(sfp_mon_data);
+}
 //-----------------------------------------------------------------------------
 
 // uHAL Node registation
@@ -449,14 +457,14 @@ UHAL_REGISTER_DERIVED_NODE(I2CSFPNode)
 //-----------------------------------------------------------------------------
 I2CSFPNode::I2CSFPNode(const uhal::Node& node)
   : I2CMasterNode(node)
-  , I2CSFPSlave(this, this->get_slave_address("i2caddr"))
+  , I2CSFPSlave(this, this->get_slave_address("SFP_EEProm"))
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 I2CSFPNode::I2CSFPNode(const I2CSFPNode& node)
   : I2CMasterNode(node)
-  , I2CSFPSlave(this, this->get_slave_address("i2caddr"))
+  , I2CSFPSlave(this, this->get_slave_address("SFP_EEProm"))
 {}
 //-----------------------------------------------------------------------------
 

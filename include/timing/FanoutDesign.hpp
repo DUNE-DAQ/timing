@@ -15,6 +15,7 @@
 // PDT Headers
 #include "timing/MasterMuxDesign.hpp"
 #include "timing/EndpointDesignInterface.hpp"
+#include "timing/SwitchyardNode.hpp"
 
 #include "TimingIssues.hpp"
 
