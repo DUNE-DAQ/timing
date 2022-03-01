@@ -131,7 +131,7 @@ register_io(py::module& m)
       .def("configure_master_source", &timing::SwitchyardNode::configure_master_source, py::arg("master_source"), py::arg("dispatch") = true)
       .def("configure_endpoint_source", &timing::SwitchyardNode::configure_endpoint_source, py::arg("endpoint_source"), py::arg("dispatch") = true);
 
-}
+} // NOLINT
 
 } // namespace python
 } // namespace timing

@@ -46,8 +46,8 @@ void
 I2C9546SwitchSlave::enable_channel(uint8_t channel) const // NOLINT(build/unsigned)
 {
   this->ensure_valid_channel(channel);
-  std::vector<uint8_t> enable_byte = this->read_i2cPrimitive(1);
-  uint8_t new_enable_byte = enable_byte.at(0) | (1UL << channel);
+  std::vector<uint8_t> enable_byte = this->read_i2cPrimitive(1); // NOLINT(build/unsigned)
+  uint8_t new_enable_byte = enable_byte.at(0) | (1UL << channel); // NOLINT(build/unsigned)
   this->write_i2cPrimitive({new_enable_byte});
 }
 //-----------------------------------------------------------------------------
@@ -57,8 +57,8 @@ void
 I2C9546SwitchSlave::disable_channel(uint8_t channel) const // NOLINT(build/unsigned)
 {
   this->ensure_valid_channel(channel);
-  std::vector<uint8_t> enable_byte = this->read_i2cPrimitive(1);
-  uint8_t new_enable_byte = enable_byte.at(0) & ~(1UL << channel);
+  std::vector<uint8_t> enable_byte = this->read_i2cPrimitive(1); // NOLINT(build/unsigned)
+  uint8_t new_enable_byte = enable_byte.at(0) & ~(1UL << channel); // NOLINT(build/unsigned)
   this->write_i2cPrimitive({new_enable_byte});
 }
 //-----------------------------------------------------------------------------
@@ -67,7 +67,7 @@ I2C9546SwitchSlave::disable_channel(uint8_t channel) const // NOLINT(build/unsig
 uint8_t                                               // NOLINT(build/unsigned)
 I2C9546SwitchSlave::read_channels_states() const
 {
-  std::vector<uint8_t> enable_byte = this->read_i2cPrimitive(1);
+  std::vector<uint8_t> enable_byte = this->read_i2cPrimitive(1); // NOLINT(build/unsigned)
   return enable_byte.at(0);
 }
 //-----------------------------------------------------------------------------

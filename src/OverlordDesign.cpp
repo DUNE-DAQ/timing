@@ -85,4 +85,4 @@ OverlordDesign::get_info(opmonlib::InfoCollector& ci, int level) const
 }
 //-----------------------------------------------------------------------------
 
-}
+} // namespace dunedaq::timing  

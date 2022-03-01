@@ -77,4 +77,4 @@ BoreasDesign::get_info(opmonlib::InfoCollector& ci, int level) const
   ci.add("hsi", hsi_collector);
 }
 //-----------------------------------------------------------------------------
-}
+} // namespace dunedaq::timing

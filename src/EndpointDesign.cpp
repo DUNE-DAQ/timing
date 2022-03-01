@@ -35,8 +35,8 @@ EndpointDesign::get_status(bool print_out) const
 {
   std::stringstream status;
   status << TopDesign::get_io_node_plain()->get_pll_status();
-  uint32_t number_of_endpoint_nodes = EndpointDesign::get_number_of_endpoint_nodes();
-  for (uint32_t i = 0; i < number_of_endpoint_nodes; ++i) {
+  size_t number_of_endpoint_nodes = EndpointDesign::get_number_of_endpoint_nodes(); 
+  for (size_t i = 0; i < number_of_endpoint_nodes; ++i) {
     status << "Endpoint node " << i << " status" << std::endl;
     status << get_endpoint_node(i).get_status();
   }
@@ -70,7 +70,7 @@ EndpointDesign::get_info(opmonlib::InfoCollector& ci, int level) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-uint32_t
+uint32_t // NOLINT(build/unsigned)
 EndpointDesign::read_firmware_version() const
 {
   return get_endpoint_node(0).read_version();
@@ -95,4 +95,4 @@ EndpointDesign::validate_firmware_version() const
     ers::warning(IncompatiblePatchEndpointFirmwareVersion(ERS_HERE, patch_firmware_version, g_required_patch_endpoint_firmware_version));
 }
 //-----------------------------------------------------------------------------
-}
+} // namespace dunedaq::timing  

@@ -77,4 +77,4 @@ OuroborosDesign::get_info(opmonlib::InfoCollector& ci, int level) const
   ci.add("endpoint", endpoint_collector);
 }
 //-----------------------------------------------------------------------------
-}
+} // namespace dunedaq::timing  
