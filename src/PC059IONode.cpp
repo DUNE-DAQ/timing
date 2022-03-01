@@ -238,20 +238,28 @@ PC059IONode::get_info(timinghardwareinfo::TimingPC059MonitorData& mon_data) cons
 void
 PC059IONode::get_info(opmonlib::InfoCollector& ci, int level) const
 {
-  if (level >= 2) {
+  if (level >= 2)
+  {
     timinghardwareinfo::TimingPLLMonitorData pll_mon_data;
     this->get_pll()->get_info(pll_mon_data);
     ci.add(pll_mon_data);
 
     timinghardwareinfo::TimingSFPMonitorData upstream_sfp_mon_data;
     auto upstream_sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
-    upstream_sfp->get_info(upstream_sfp_mon_data);
-    opmonlib::InfoCollector upstream_sfp_ic;
-    upstream_sfp_ic.add(upstream_sfp_mon_data);
-    ci.add("upstream_sfp", upstream_sfp_ic);
+    try {
+      upstream_sfp->get_info(upstream_sfp_mon_data);
+      opmonlib::InfoCollector upstream_sfp_ic;
+      upstream_sfp_ic.add(upstream_sfp_mon_data);
+      ci.add("upstream_sfp", upstream_sfp_ic);
+    }
+    catch (timing::SFPUnreachable& e) {
+      // It is valid that an SFP may not be installed, currently no good way of knowing whether they it should be
+      TLOG_DEBUG(2) << "Failed to communicate with upstream SFP on i2c bus" << m_sfp_i2c_buses.at(0);
+    }
+
 
     for (uint sfp_id=0; sfp_id < 8; ++sfp_id) {
-      TLOG_DEBUG(0) << "checking sfp: " << sfp_id;
+      TLOG_DEBUG(5) << "checking sfp: " << sfp_id;
       switch_sfp_i2c_mux_channel(sfp_id);
       
       auto sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(1), "SFP_EEProm");
@@ -260,7 +268,8 @@ PC059IONode::get_info(opmonlib::InfoCollector& ci, int level) const
       try {
         sfp->get_info(sfp_data);
       } catch (timing::SFPUnreachable& e) {
-        ers::warning(e);
+        // It is valid that an SFP may not be installed, currently no good way of knowing whether they it should be
+        TLOG_DEBUG(2) << "Failed to communicate with downstream SFP: " << sfp_id << " on i2c bus" << m_sfp_i2c_buses.at(1);
         continue;
       }
 
