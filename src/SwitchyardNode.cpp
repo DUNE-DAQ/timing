@@ -43,7 +43,7 @@ SwitchyardNode::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-SwitchyardNode::configure_master_source(uint8_t master_source, bool dispatch) const
+SwitchyardNode::configure_master_source(uint8_t master_source, bool dispatch) const // NOLINT(build/unsigned)
 {
   getNode("csr.ctrl.master_src").write(master_source);
   if (dispatch)
