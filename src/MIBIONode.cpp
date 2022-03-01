@@ -202,11 +202,11 @@ MIBIONode::get_info(opmonlib::InfoCollector& ci, int level) const
       try
       {
         sfp->get_info(sfp_ic, level);
-        
       }
       catch (timing::SFPUnreachable& e)
       {
-        ers::warning(e);
+        // It is valid that an SFP may not be installed, currently no good way of knowing whether they it should be
+        TLOG_DEBUG(2) << "Failed to communicate with SFP " << i <<  " on I2C switch channel " << (1UL << i) << " on i2c bus" << m_sfp_i2c_buses.at(0);
         continue;
       }
       ci.add("sfp_"+std::to_string(i),sfp_ic);
