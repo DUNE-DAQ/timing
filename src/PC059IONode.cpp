@@ -131,7 +131,7 @@ PC059IONode::switch_sfp_mux_channel(uint32_t sfp_id) const // NOLINT(build/unsig
   getNode("csr.ctrl.mux").write(sfp_id);
   getClient().dispatch();
 
-  TLOG_DEBUG(0) << "SFP input mux set to " << format_reg_value(read_active_sfp_mux_channel());
+  TLOG_DEBUG(3) << "SFP input mux set to " << format_reg_value(read_active_sfp_mux_channel());
 }
 //-----------------------------------------------------------------------------
 
@@ -158,7 +158,7 @@ PC059IONode::switch_sfp_i2c_mux_channel(uint32_t sfp_id) const // NOLINT(build/u
 
   uint8_t channel_select_byte = 1UL << sfp_id; // NOLINT(build/unsigned)
   getNode<I2CMasterNode>(m_pll_i2c_bus).get_slave("SFP_Switch").write_i2cPrimitive({ channel_select_byte });
-  TLOG_DEBUG(0) << "PC059 SFP I2C mux set to " << format_reg_value(sfp_id);
+  TLOG_DEBUG(3) << "PC059 SFP I2C mux set to " << format_reg_value(sfp_id);
 }
 //-----------------------------------------------------------------------------
 
