@@ -35,7 +35,7 @@ uint8_t // NOLINT(build/unsigned)
 SIChipSlave::read_page() const
 {
 
-  TLOG_DEBUG(2) << "<- Reading page ";
+  TLOG_DEBUG(7) << "<- Reading page ";
 
   // Read from the page address (0x1?)
   return read_i2c(0x1);
@@ -49,7 +49,7 @@ SIChipSlave::switch_page(uint8_t page) const // NOLINT(build/unsigned)
 
   // Prepare a data block with address and new page
   // std::vector<uint8_t> lData = {0x1, page};// NOLINT(build/unsigned)
-  TLOG_DEBUG(2) << "-> Switching to page " << format_reg_value((uint32_t)page); // NOLINT(build/unsigned)
+  TLOG_DEBUG(7) << "-> Switching to page " << format_reg_value((uint32_t)page); // NOLINT(build/unsigned)
   write_i2c(0x1, page);
 }
 //-----------------------------------------------------------------------------
@@ -79,7 +79,7 @@ SIChipSlave::read_clock_register(uint16_t address) const // NOLINT(build/unsigne
   debug_stream << std::showbase << std::hex << "Read Address " << (uint32_t)address // NOLINT(build/unsigned)
                << " reg: " << (uint32_t)reg_address                                    // NOLINT(build/unsigned)
                << " page: " << (uint32_t)page_address;                                 // NOLINT(build/unsigned)
-  TLOG_DEBUG(2) << debug_stream.str();
+  TLOG_DEBUG(6) << debug_stream.str();
   // Change page only when required.
   // (The SI5344 don't like to have the page register id to be written all the time.)
   uint8_t current_address = read_page(); // NOLINT(build/unsigned)
@@ -104,7 +104,7 @@ SIChipSlave::write_clock_register(uint16_t address, uint8_t data) const // NOLIN
   debug_stream << std::showbase << std::hex << "Write Address " << (uint32_t)address // NOLINT(build/unsigned)
                << " reg: " << (uint32_t)reg_address                                     // NOLINT(build/unsigned)
                << " page: " << (uint32_t)page_address;                                  // NOLINT(build/unsigned)
-  TLOG_DEBUG(2) << debug_stream.str();
+  TLOG_DEBUG(6) << debug_stream.str();
   // Change page only when required.
   // (The SI5344 don't like to have the page register id to be written all the time.)
   uint8_t current_address = read_page(); // NOLINT(build/unsigned)

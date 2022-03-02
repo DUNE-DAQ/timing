@@ -76,7 +76,7 @@ OuroborosMuxDesign::get_info(opmonlib::InfoCollector& ci, int level) const
 
   opmonlib::InfoCollector endpoint_collector;
   this->get_endpoint_node(0).get_info(endpoint_collector, level);
-  ci.add("master", endpoint_collector);
+  ci.add("endpoint", endpoint_collector);
 }
 //-----------------------------------------------------------------------------
 } // namespace dunedaq::timing  

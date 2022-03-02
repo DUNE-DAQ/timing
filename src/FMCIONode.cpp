@@ -155,8 +155,13 @@ FMCIONode::get_info(opmonlib::InfoCollector& ci, int level) const
 
     timinghardwareinfo::TimingSFPMonitorData sfp_mon_data;
     auto sfp = this->get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
-    sfp->get_info(sfp_mon_data);
-    ci.add(sfp_mon_data);
+    try {
+      sfp->get_info(sfp_mon_data);
+      ci.add(sfp_mon_data);
+    } catch (timing::SFPUnreachable& e) {
+      // It is valid that an SFP may not be installed, currently no good way of knowing whether they it should be
+      TLOG_DEBUG(2) << "Failed to communicate with SFP on i2c bus" << m_sfp_i2c_buses.at(0);
+    }
   }
   if (level >= 1) {
     timinghardwareinfo::TimingFMCMonitorData mon_data;
