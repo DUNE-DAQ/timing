@@ -6,11 +6,15 @@
   <connection id="SECONDARY"         uri="ipbusudp-2.0://192.168.200.17:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/ouroboros_fmc/top.xml" />
   <connection id="TERTIARY"          uri="ipbusudp-2.0://192.168.200.32:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/ouroboros_pc059/top_pc059.xml" />
 
+  <connection id="TERTIARY_CH"       uri="chtcp-2.0://np04-srv-012.cern.ch:10203?target=192.168.200.32:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/ouroboros_pc059/top_pc059.xml" />
+
   <connection id="SECONDARY_EPT"     uri="ipbusudp-2.0://192.168.200.17:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/endpoint_fmc/top.xml" />
   <connection id="TERTIARY_FO"       uri="ipbusudp-2.0://192.168.200.32:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/fanout_pc059/top.xml" />
   <connection id="CRT_EPT"           uri="ipbusudp-2.0://192.168.200.16:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/crt_fmc/top.xml" />
 
   <connection id="PROD_MASTER"       uri="ipbusudp-2.0://192.168.200.64:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/overlord_tlu/top_tlu.xml" />
+  <connection id="PROD_MASTER_CH"    uri="chtcp-2.0://np04-srv-012.cern.ch:10203?target=192.168.200.64:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/overlord_tlu/top_tlu.xml" />
+
   <connection id="PROD_MASTER_VDC"   uri="ipbusudp-2.0://10.73.137.84:50001"   address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/boreas_tlu/top_tlu.xml" />
   <connection id="PROD_MASTER_VDC_CH" uri="chtcp-2.0://np04-srv-012.cern.ch:10203?target=10.73.137.84:50001"   address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/boreas_tlu/top_tlu.xml" />
   
@@ -18,6 +22,9 @@
   <connection id="PROD_FANOUT_1"     uri="ipbusudp-2.0://192.168.200.66:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/fanout_pc059/top.xml" />
   <connection id="PROD_FANOUT_2"     uri="ipbusudp-2.0://192.168.200.67:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/fanout_pc059/top.xml" />
 
+  <connection id="PROD_FANOUT_0_CH"  uri="chtcp-2.0://np04-srv-012.cern.ch:10203?target=192.168.200.65:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/fanout_pc059/top.xml" />
+  <connection id="PROD_FANOUT_1_CH"  uri="chtcp-2.0://np04-srv-012.cern.ch:10203?target=192.168.200.66:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/fanout_pc059/top.xml" />
+  <connection id="PROD_FANOUT_2_CH"  uri="chtcp-2.0://np04-srv-012.cern.ch:10203?target=192.168.200.67:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/fanout_pc059/top.xml" />
 
   <!-- Tunnels -->
   <connection id="PRIMARY_TUN"       uri="chtcp-2.0://localhost:60708?target=192.168.200.16:50001" address_table="file:///${TIMING_SHARE}/config/etc/addrtab/v610/ouroboros_fmc/top.xml" />  
