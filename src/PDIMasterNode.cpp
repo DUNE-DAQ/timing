@@ -43,6 +43,39 @@ PDIMasterNode::get_status(bool print_out) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+uint64_t // NOLINT(build/unsigned)
+MasterNode::read_timestamp() const
+{
+  return getNode<TimestampGeneratorNode>("tstamp").read_timestamp();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+MasterNode::set_timestamp(uint64_t timestamp) const // NOLINT(build/unsigned)
+{
+  getNode<TimestampGeneratorNode>("tstamp").set_timestamp(timestamp);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+PDIMasterNode::sync_timestamp(uint32_t clock_frequency_hz) const // NOLINT(build/unsigned)
+{
+  const uint64_t old_timestamp = read_timestamp(); // NOLINT(build/unsigned)
+  TLOG() << "Reading old timestamp: " << format_reg_value(old_timestamp) << ", " << format_timestamp(old_timestamp, clock_frequency_hz);
+
+  const uint64_t now_timestamp = get_seconds_since_epoch() * clock_frequency_hz; // NOLINT(build/unsigned)
+  TLOG() << "Setting new timestamp: " << format_reg_value(now_timestamp) << ", " << format_timestamp(now_timestamp, clock_frequency_hz);
+
+  set_timestamp(now_timestamp);
+
+  const uint64_t new_timestamp = read_timestamp(); // NOLINT(build/unsigned)
+  TLOG() << "Reading new timestamp: " << format_reg_value(new_timestamp) << ", " << format_timestamp(new_timestamp, clock_frequency_hz);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 std::string
 PDIMasterNode::get_status_with_date(uint32_t clock_frequency_hz, bool print_out) const // NOLINT(build/unsigned)
 {
@@ -145,61 +178,15 @@ PDIMasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsig
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
-void
-PDIMasterNode::send_fl_cmd(FixedLengthCommandType command,
-                           uint32_t channel,                  // NOLINT(build/unsigned)
-                           uint32_t number_of_commands) const // NOLINT(build/unsigned)
+const PartitionNode&
+PDIMasterNode::get_partition_node(uint32_t partition_id) const // NOLINT(build/unsigned)
 {
-  for (uint32_t i = 0; i < number_of_commands; i++) { // NOLINT(build/unsigned)
-    getNode<FLCmdGeneratorNode>("scmd_gen").send_fl_cmd(command, channel, getNode<TimestampGeneratorNode>("tstamp"));
-  }
+  const std::string node_name = "partition" + std::to_string(partition_id);
+  return getNode<PartitionNode>(node_name);
 }
 //-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
-PDIMasterNode::enable_fake_trigger(uint32_t channel, double rate, bool poisson, uint32_t clock_frequency_hz) const // NOLINT(build/unsigned)
-{
-
-  // Configures the internal command generator to produce triggers at a defined frequency.
-  // Rate =  (clock_frequency_hz / 2^(d+8)) / p where n in [0,15] and p in [1,256]
-
-  // DIVIDER (int): Frequency divider.
-
-  // The division from clock_frequency_hz to the desired rate is done in three steps:
-  // a) A pre-division by 256
-  // b) Division by a power of two set by n = 2 ^ rate_div_d (ranging from 2^0 -> 2^15)
-  // c) 1-in-n prescaling set by n = rate_div_p
-
-  FakeTriggerConfig fake_trigger_config(rate, clock_frequency_hz);
-
-  fake_trigger_config.print();
-  std::stringstream trig_stream;
-  trig_stream << "> Trigger rate for FakeTrig" << channel << " (" << std::showbase << std::hex << 0x8 + channel
-              << ") set to " << std::setprecision(3) << std::scientific << fake_trigger_config.actual_rate << " Hz";
-  TLOG() << trig_stream.str();
-
-  std::stringstream trigger_mode_stream;
-  trigger_mode_stream << "> Trigger mode: ";
-
-  if (poisson) {
-    trigger_mode_stream << "poisson";
-  } else {
-    trigger_mode_stream << "periodic";
-  }
-  TLOG() << trigger_mode_stream.str();
-  getNode<FLCmdGeneratorNode>("scmd_gen").enable_fake_trigger(channel, fake_trigger_config.divisor, fake_trigger_config.prescale, poisson);
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
-PDIMasterNode::disable_fake_trigger(uint32_t channel) const // NOLINT(build/unsigned)
-{
-  getNode<FLCmdGeneratorNode>("scmd_gen").disable_fake_trigger(channel);
-}
-//------------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void
@@ -222,23 +209,6 @@ bool
 PDIMasterNode::read_in_spill() const
 {
   return getNode<SpillInterfaceNode>("spill").read_in_spill();
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
-PDIMasterNode::sync_timestamp(uint32_t clock_frequency_hz) const // NOLINT(build/unsigned)
-{
-  const uint64_t old_timestamp = read_timestamp(); // NOLINT(build/unsigned)
-  TLOG() << "Reading old timestamp: " << format_reg_value(old_timestamp) << ", " << format_timestamp(old_timestamp, clock_frequency_hz);
-
-  const uint64_t now_timestamp = get_seconds_since_epoch() * clock_frequency_hz; // NOLINT(build/unsigned)
-  TLOG() << "Setting new timestamp: " << format_reg_value(now_timestamp) << ", " << format_timestamp(now_timestamp, clock_frequency_hz);
-
-  set_timestamp(now_timestamp);
-
-  const uint64_t new_timestamp = read_timestamp(); // NOLINT(build/unsigned)
-  TLOG() << "Reading new timestamp: " << format_reg_value(new_timestamp) << ", " << format_timestamp(new_timestamp, clock_frequency_hz);
 }
 //-----------------------------------------------------------------------------
 

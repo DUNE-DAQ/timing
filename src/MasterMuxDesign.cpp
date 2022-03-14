@@ -1,3 +1,5 @@
+#include "timing/MasterMuxDesign.hpp"
+
 #include <sstream>
 #include <string>
 
@@ -7,36 +9,33 @@ namespace dunedaq::timing {
 //-----------------------------------------------------------------------------
 //template<class MST>
 //uhal::Node*
-//MasterMuxDesign<MST>::clone() const
+//MasterMuxDesign::clone() const
 //{
-//  return new MasterMuxDesign<MST>(static_cast<const MasterMuxDesign<MST>&>(*this));
+//  return new MasterMuxDesign(static_cast<const MasterMuxDesign&>(*this));
 //}
 ////-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class MST>
-MasterMuxDesign<MST>::MasterMuxDesign(const uhal::Node& node)
+MasterMuxDesign::MasterMuxDesign(const uhal::Node& node)
   : TopDesignInterface(node)
   , MuxDesignInterface(node)
   , MasterDesignInterface(node)
-  , MasterDesign<MST>(node)
+  , MasterDesign(node)
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class MST>
-MasterMuxDesign<MST>::~MasterMuxDesign()
+MasterMuxDesign::~MasterMuxDesign()
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class MST>
 std::string
-MasterMuxDesign<MST>::get_status(bool print_out) const
+MasterMuxDesign::get_status(bool print_out) const
 {
   std::stringstream status;
   status << get_io_node_plain()->get_pll_status();
-  status << this->get_master_node().get_status();
+  status << get_master_node_plain()->get_status();
   // TODO mux specific status
   if (print_out)
     TLOG() << status.str();
@@ -45,9 +44,8 @@ MasterMuxDesign<MST>::get_status(bool print_out) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class MST>
 uint32_t
-MasterMuxDesign<MST>::measure_endpoint_rtt(uint32_t address, bool control_sfp, int sfp_mux) const
+MasterMuxDesign::measure_endpoint_rtt(uint32_t address, bool control_sfp, int sfp_mux) const
 {
 
   if (sfp_mux > -1) {
@@ -60,15 +58,14 @@ MasterMuxDesign<MST>::measure_endpoint_rtt(uint32_t address, bool control_sfp, i
     uint32_t rtt = this->get_master_node().measure_endpoint_rtt(address, control_sfp);
     return rtt;
   } else {
-    return this->get_master_node().measure_endpoint_rtt(address, control_sfp);
+    return this->get_master_node_plain()->measure_endpoint_rtt(address, control_sfp);
   }
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class MST>
 void
-MasterMuxDesign<MST>::apply_endpoint_delay(uint32_t address,
+MasterMuxDesign::apply_endpoint_delay(uint32_t address,
                                                uint32_t coarse_delay,
                                                uint32_t fine_delay,
                                                uint32_t phase_delay,
@@ -94,21 +91,19 @@ MasterMuxDesign<MST>::apply_endpoint_delay(uint32_t address,
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class MST>
 void
 MasterMuxDesign<MST>::switch_downstream_mux_channel(uint32_t sfp_id, bool wait_for_rtt_ept_lock) const
 {
   TopDesignInterface::get_io_node<timing::FanoutIONode>()->switch_downstream_mux_channel(sfp_id);
   if (wait_for_rtt_ept_lock) {
-    this->get_master_node().enable_upstream_endpoint();
+    this->get_master_node_plain()->enable_upstream_endpoint();
   }
 }
 //-----------------------------------------------------------------------------
 
-
-template<class MST>
+//-----------------------------------------------------------------------------
 std::vector<uint32_t>
-MasterMuxDesign<MST>::scan_sfp_mux() const 
+MasterMuxDesign::scan_sfp_mux() const 
 {
   std::vector<uint32_t> locked_channels;
 
@@ -135,5 +130,5 @@ MasterMuxDesign<MST>::scan_sfp_mux() const
   }
   return locked_channels;
 }
-
+//-----------------------------------------------------------------------------
 }
