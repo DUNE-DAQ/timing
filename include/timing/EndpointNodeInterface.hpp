@@ -38,8 +38,8 @@ namespace timing {
 class EndpointNodeInterface : public TimingNode
 {
 public:
-  explicit EndpointNodeInterface(const uhal::Node& node) : TimingNode(node) {}
-  virtual ~EndpointNodeInterface() {}
+  explicit EndpointNodeInterface(const uhal::Node& node);
+  virtual ~EndpointNodeInterface();
 
   /**
    * @brief      Enable the endpoint
@@ -61,6 +61,20 @@ public:
    * @return     { description_of_the_return_value }
    */
   virtual void reset(uint32_t partition = 0, uint32_t address = 0) const = 0; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Get endpoint ready flag
+   *
+   * @return     { description_of_the_return_value }
+   */
+  virtual bool endpoint_ready() const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Get endpoint state
+   *
+   * @return     { description_of_the_return_value }
+   */
+  virtual uint32_t read_endpoint_state() const; // NOLINT(build/unsigned)
 
 };
 

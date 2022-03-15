@@ -216,10 +216,10 @@ ERS_DECLARE_ISSUE(timing,                      ///< Namespace
                   ((double)trig_rate)((uint)ps)                     ///< Message parameters // NOLINT
 )
 
-ERS_DECLARE_ISSUE(timing,                                                               ///< Namespace
-                  UpstreamEndpointFailedToLock,                                         ///< Issue class name
-                  " Failed to bring up the RTT endpoint. Current state: " << ept_state, ///< Message
-                  ((std::string)ept_state)                                              ///< Message parameters
+ERS_DECLARE_ISSUE(timing,                                                                 ///< Namespace
+                  EndpointNotReady,                                                       ///< Issue class name
+                  ept_description << " endpoint not ready. Current state: 0x" << std::hex << ept_state, ///< Message
+                  ((std::string)ept_description)((uint32_t)ept_state)                  ///< Message parameters
 )
 
 ERS_DECLARE_ISSUE(timing, HSIBufferIssue, "HSI buffer in state: " << buffer_state, ((std::string)buffer_state))
@@ -268,7 +268,7 @@ ERS_DECLARE_ISSUE(timing,                                                       
 ERS_DECLARE_ISSUE(timing,                                                                       ///< Namespace
                   FailedToUpdateHSIRandomRate,                                                  ///< Issue class name
                   "  Random bit 0 trigger rate for HSI not updated!",                           ///< Message
-                  ERS_EMPTY)    
+                  ERS_EMPTY)                                                                    //< Message parameters
 } // namespace dunedaq
 
 #endif // TIMING_INCLUDE_TIMING_TIMINGISSUES_HPP_
