@@ -100,7 +100,7 @@ PDIMasterNode::measure_endpoint_rtt(uint32_t address, bool control_sfp) const //
   {
     global.enable_upstream_endpoint();
   }
-  catch (const timing::UpstreamEndpointFailedToLock& e)
+  catch (const timing::EndpointNotReady& e)
   {
     if (control_sfp) {
       vl_cmd_node.switch_endpoint_sfp(address, false);
@@ -146,7 +146,7 @@ PDIMasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsig
     {
       global.enable_upstream_endpoint();
     }
-    catch (const timing::UpstreamEndpointFailedToLock& e)
+    catch (const timing::EndpointNotReady& e)
     {
       if (control_sfp) {
         vl_cmd_node.switch_endpoint_sfp(address, false);
@@ -167,7 +167,7 @@ PDIMasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsig
     {
       global.enable_upstream_endpoint();
     }
-    catch (const timing::UpstreamEndpointFailedToLock& e)
+    catch (const timing::EndpointNotReady& e)
     {
       if (control_sfp)
       {
