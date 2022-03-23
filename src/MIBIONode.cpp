@@ -90,6 +90,11 @@ MIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) cons
   // Reset mmcm
   getNode("csr.ctrl.rst").write(0x1);
   getNode("csr.ctrl.rst").write(0x0);
+
+  getNode("io_select.csr.ctrl.amc_out").write(0xfff);
+  getNode("io_select.csr.ctrl.amc_in").write(0x0);
+  getNode("io_select.csr.ctrl.usfp_src").write(0x0);
+
   getClient().dispatch();
 
   TLOG() << "Reset done";
