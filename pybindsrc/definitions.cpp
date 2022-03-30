@@ -40,6 +40,7 @@ register_definitions(py::module& m)
         .value("kBoardMicrozed", kBoardMicrozed)
         .value("kBoardTLU", kBoardTLU)
         .value("kBoardFIB", kBoardFIB)
+        .value("kBoardMIB", kBoardMIB)
         .value("kBoardUnknown", kBoardUnknown)
         .export_values();
 
@@ -52,6 +53,7 @@ register_definitions(py::module& m)
         .value("kTLURev1", kTLURev1)
         .value("kSIMRev1", kSIMRev1)
         .value("kFIBRev1", kFIBRev1)
+        .value("kMIBRev1", kMIBRev1)
         .export_values();
 
     py::enum_<CarrierType>(m, "CarrierType")
@@ -61,6 +63,7 @@ register_definitions(py::module& m)
         .value("kCarrierATFC", kCarrierATFC)
         .value("kCarrierAFC", kCarrierAFC)
         .value("kCarrierNexusVideo", kCarrierNexusVideo)
+        .value("kCarrierTrenzTE0712", kCarrierTrenzTE0712)
         .value("kCarrierUnknown", kCarrierUnknown)
         .export_values();
 

@@ -16,9 +16,9 @@ from click import echo, style, secho
 from os.path import join, expandvars, basename
 from timing.core import SI534xSlave, I2CExpanderSlave, DACSlave
 
-from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB
-from timing.common.definitions import kFMCRev1, kFMCRev2, kFMCRev3, kFMCRev4, kPC059Rev1, kTLURev1, kSIMRev1, kFIBRev1
-from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed, kCarrierNexusVideo
+from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB, kBoardMIB
+from timing.common.definitions import kFMCRev1, kFMCRev2, kFMCRev3, kFMCRev4, kPC059Rev1, kTLURev1, kSIMRev1, kFIBRev1, kMIBRev1
+from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed, kCarrierNexusVideo, kCarrierTrenzTE0712
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignChronos, kDesignBoreas, kDesignTest
 from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap, kUIDRevisionMap, kClockConfigMap
 from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
@@ -71,11 +71,12 @@ def io(obj, device):
 @io.command('reset', short_help="Perform a hard reset on the timing master.")
 @click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
 @click.option('--fanout-mode', 'fanout', type=click.IntRange(0, 1), default=0, help='Configures the board in fanout mode (pc059 only)')
-@click.option('--sfp-mux-sel', 'sfpmuxsel', type=toolbox.IntRange(0x0,0x7), default=0, help='Configures the sfp cdr mux on the fib')
+@click.option('--sfp-mux-sel', 'sfpmuxsel', type=toolbox.IntRange(0x0,0x7), default=0, help='Configures the sfp cdr mux on the fib (downstream) or mib (upstream)')
+@click.option('--amc-mux-sel', 'amcmuxsel', type=toolbox.IntRange(0x1,0xc), default=1, help='Configures the amc mux on the mib (downstream)')
 @click.option('--force-pll-cfg', 'forcepllcfg', type=click.Path(exists=True))
 @click.pass_obj
 @click.pass_context
-def reset(ctx, obj, soft, fanout, forcepllcfg, sfpmuxsel):
+def reset(ctx, obj, soft, fanout, sfpmuxsel, amcmuxsel, forcepllcfg):
     '''
     Perform a hard reset on the timing master, including
 
@@ -116,17 +117,31 @@ def reset(ctx, obj, soft, fanout, forcepllcfg, sfpmuxsel):
                 secho("local master: standalone mode", fg='green')
 
             lIO.reset(fanout, lPLLConfigFilePath)
-            lDevice.getNode('switch.csr.ctrl.master_src').write(fanout)
+            lDevice.getNode('switch').configure_master_source(fanout)
             
-            lIO.switch_sfp_mux_channel(sfpmuxsel)           
-            secho("Active sfp mux " + hex(sfpmuxsel), fg='cyan')
+            if lBoardType == kBoardMIB:
+                # output to "all" AMCs on
+                lDevice.getNode("switch.csr.ctrl.amc_out").write(0xfff)
+                
+                lDevice.getNode("switch.csr.ctrl.usfp_src").write(sfpmuxsel)
+                echo("upstream sfp {} enabled".format(sfpmuxsel))
+
+                amc_in_bit = 0x1 << (amcmuxsel-1)
+                lDevice.getNode("switch.csr.ctrl.amc_in").write(amc_in_bit)
+                echo("downstream amc {} enabled".format(amcmuxsel))
+
+                lDevice.dispatch()
+
+            if lBoardType in [ kBoardPC059, kBoardFIB ]:
+                lIO.switch_sfp_mux_channel(sfpmuxsel)
+                secho("Active sfp mux " + hex(sfpmuxsel), fg='cyan')
         else:
             lIO.reset(lPLLConfigFilePath)            
     
         ctx.invoke(clkstatus)
 
     else:
-        secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
+        secho("Board identifier {} not supported by timing library".format(lBoardType), fg='yellow')
         # board not supported by library, do reset here
 # ------------------------------------------------------------------------------
 
@@ -146,6 +161,11 @@ def freq(obj):
     else:
         secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
         # do freq measurement here
+        if lBoardType == kBoardMIB:
+            
+            # MIB clock freq meas reg ops here
+
+            secho('MIB clock freqs', fg='green')
 # ------------------------------------------------------------------------------
 
 
@@ -242,16 +262,22 @@ def sfpstatus(ctx, obj, sfp_id):
         if sfp_id is not None:
             echo(lIO.get_sfp_status(sfp_id))
         else:
-            if lBoardType == kBoardFMC or lBoardType == kBoardTLU:
+            if lBoardType in [kBoardFMC , kBoardTLU]:
                 echo(lIO.get_sfp_status(0))
-            elif lBoardType in [ kBoardPC059, kBoardFIB ]:
+            elif lBoardType in [ kBoardPC059, kBoardFIB, kBoardMIB ]:
                 # PC059 sfp id 0 is upstream sfp
-                lSFPIDRange = 9 if lBoardType == kBoardPC059 else 8
+                if lBoardType == kBoardPC059:
+                    lSFPIDRange = 9
+                elif lBoardType == kBoardFIB:
+                    lSFPIDRange = 8
+                elif lBoardType == kBoardMIB:
+                    lSFPIDRange = 3
                 for i in range(lSFPIDRange):
                     try:
                         echo(lIO.get_sfp_status(i))
                         #echo()
                     except:
+                        secho(f"SFP {i} status gather failed\n", fg='red')
                         pass
 
     else:

@@ -69,6 +69,7 @@ def master(obj, device):
             secho("Error: {}".format(e), fg='red')
     else:
         lVersion = lMaster.getNode('global.version').read()
+        lDevice.dispatch()
 
     echo("Master FW rev: {}, partitions: {}, channels: {}".format(
         style(format_firmware_version(lVersion), fg='cyan'),
@@ -177,10 +178,11 @@ def partstatus(obj, watch, period):
 # ------------------------------------------------------------------------------
 @partition.command('configure', short_help='Prepares partition for data taking.')
 @click.option('--trgmask', '-m', type=str, callback=lambda c, p, v: int(v, 16), default='0xf', help='Trigger mask (in hex).')
+@click.option('--fakemask', '-f', type=str, help='Fake mask (in hex).')
 @click.option('--spill-gate/--no-spill-gate', 'spillgate', default=True, help='Enable the spill gate')
 @click.option('--rate-ctrl/--no-rate-ctrl', 'ratectrl', default=True, help='Enable rate control')
 @click.pass_obj
-def configure(obj, trgmask, spillgate, ratectrl):
+def configure(obj, trgmask, fakemask, spillgate, ratectrl):
     '''
     Configures partition for data taking
 
@@ -198,7 +200,10 @@ def configure(obj, trgmask, spillgate, ratectrl):
     lPartId = obj.mPartitionId
     lPartNode = obj.mPartitionNode
 
-    lFakeMask = (0x1 << lPartId)
+    if fakemask is None:
+        lFakeMask = (0x1 << lPartId)
+    else:
+        lFakeMask = int(fakemask, 16)
     lTrgMask = (trgmask << 4) | lFakeMask;
 
     echo()

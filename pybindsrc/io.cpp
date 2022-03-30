@@ -12,6 +12,8 @@
 #include "timing/FIBIONode.hpp"
 #include "timing/SIMIONode.hpp"
 #include "timing/TLUIONode.hpp"
+#include "timing/MIBIONode.hpp"
+#include "timing/SwitchyardNode.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -107,7 +109,29 @@ register_io(py::module& m)
     .def("get_hardware_info", &timing::SIMIONode::get_hardware_info, py::arg("print_out") = false)
     .def("get_sfp_status", &timing::SIMIONode::get_sfp_status, py::arg("sfp_id"), py::arg("print_out") = false)
     .def("switch_sfp_soft_tx_control_bit", &timing::SIMIONode::switch_sfp_soft_tx_control_bit);
-}
+
+  py::class_<timing::MIBIONode, timing::IONode, uhal::Node>(m, "MIBIONode")
+    .def(py::init<const uhal::Node&>())
+    .def<void (timing::MIBIONode::*)(const std::string&) const>(
+      "reset", &timing::MIBIONode::reset, py::arg("clock_config_file") = "")
+    .def<void (timing::MIBIONode::*)(int32_t, const std::string&) const>(
+      "reset", &timing::MIBIONode::reset, py::arg("fanout_mode"), py::arg("clock_config_file") = "")
+    .def("soft_reset", &timing::MIBIONode::soft_reset)
+    .def("read_firmware_frequency", &timing::MIBIONode::read_firmware_frequency)
+    .def("get_clock_frequencies_table", &timing::MIBIONode::get_clock_frequencies_table, py::arg("print_out") = false)
+    .def("get_status", &timing::MIBIONode::get_status, py::arg("print_out") = false)
+    .def("get_pll_status", &timing::MIBIONode::get_pll_status, py::arg("print_out") = false)
+    .def("get_pll", &timing::MIBIONode::get_pll)
+    .def("get_hardware_info", &timing::MIBIONode::get_hardware_info, py::arg("print_out") = false)
+    .def("get_sfp_status", &timing::MIBIONode::get_sfp_status, py::arg("sfp_id"), py::arg("print_out") = false)
+    .def("switch_sfp_soft_tx_control_bit", &timing::MIBIONode::switch_sfp_soft_tx_control_bit);
+
+    py::class_<timing::SwitchyardNode, uhal::Node>(m, "SwitchyardNode")
+      .def("get_status", &timing::SwitchyardNode::get_status, py::arg("print_out") = false)
+      .def("configure_master_source", &timing::SwitchyardNode::configure_master_source, py::arg("master_source"), py::arg("dispatch") = true)
+      .def("configure_endpoint_source", &timing::SwitchyardNode::configure_endpoint_source, py::arg("endpoint_source"), py::arg("dispatch") = true);
+
+} // NOLINT
 
 } // namespace python
 } // namespace timing

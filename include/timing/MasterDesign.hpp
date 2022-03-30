@@ -30,8 +30,8 @@ namespace timing {
 /**
  * @brief      Base class for timing master designs.
  */
-template<class IO, class MST>
-class MasterDesign : public TopDesign<IO>, virtual public MasterDesignInterface
+template<class MST>
+class MasterDesign : public TopDesign, virtual public MasterDesignInterface
 {
 
 public:

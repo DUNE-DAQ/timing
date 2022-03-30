@@ -34,6 +34,7 @@ enum BoardType
   kBoardMicrozed,
   kBoardTLU,
   kBoardFIB,
+  kBoardMIB,
   kBoardUnknown
 };
 enum CarrierType
@@ -44,6 +45,7 @@ enum CarrierType
   kCarrierATFC,
   kCarrierAFC,
   kCarrierNexusVideo,
+  kCarrierTrenzTE0712, // include fpga part number?
   kCarrierUnknown
 };
 enum DesignType
@@ -70,6 +72,7 @@ enum BoardRevision
   kTLURev1,
   kSIMRev1,
   kFIBRev1,
+  kMIBRev1,
 };
 
 enum FixedLengthCommandType
@@ -92,18 +95,18 @@ enum FixedLengthCommandType
 };
 
 const std::vector<BoardType> g_library_supported_boards = {
-    kBoardFMC, kBoardPC059, kBoardTLU, kBoardSim, kBoardFIB
+    kBoardFMC, kBoardPC059, kBoardTLU, kBoardSim, kBoardFIB, kBoardMIB
 };
 
 const uint32_t g_event_size = 6;             // NOLINT(build/unsigned)
 const uint32_t g_hsi_event_size = 5;         // NOLINT(build/unsigned)
 
 const int g_required_major_master_firmware_version = 6;
-const int g_required_minor_master_firmware_version = 2;
+const int g_required_minor_master_firmware_version = 3;
 const int g_required_patch_master_firmware_version = 0;
 
 const int g_required_major_endpoint_firmware_version = 6;
-const int g_required_minor_endpoint_firmware_version = 2;
+const int g_required_minor_endpoint_firmware_version = 3;
 const int g_required_patch_endpoint_firmware_version = 0;
 
 const std::map<BoardType, std::string> g_board_type_map = { { kBoardFMC, "fmc" },
@@ -111,7 +114,8 @@ const std::map<BoardType, std::string> g_board_type_map = { { kBoardFMC, "fmc" }
                                                             { kBoardPC059, "pc059" },
                                                             { kBoardMicrozed, "microzed" },
                                                             { kBoardTLU, "tlu" },
-                                                            { kBoardFIB, "fib" }, };
+                                                            { kBoardFIB, "fib" }, 
+                                                            { kBoardMIB, "mib" }, };
 
 const std::map<CarrierType, std::string> g_carrier_type_map = { { kCarrierEnclustraA35, "enclustra-a35" },
                                                                 { kCarrierKC705, "kc705" },
@@ -119,6 +123,7 @@ const std::map<CarrierType, std::string> g_carrier_type_map = { { kCarrierEnclus
                                                                 { kCarrierATFC, "atfc" },
                                                                 { kCarrierAFC, "afc" },
                                                                 { kCarrierNexusVideo, "nexus-video" },
+                                                                { kCarrierTrenzTE0712, "trenz-te0712" },
 
 };
 
@@ -142,7 +147,7 @@ const std::vector<DesignType> g_library_supported_designs = {
 const std::map<BoardRevision, std::string> g_board_revision_map = {
   { kFMCRev1, "kFMCRev1" },     { kFMCRev2, "kFMCRev2" }, { kFMCRev3, "kFMCRev3" },
   { kPC059Rev1, "kPC059Rev1" }, { kTLURev1, "kTLURev1" }, { kSIMRev1, "kSIMRev1" },
-  { kFIBRev1, "kFIBRev1" }, { kFMCRev4, "kFMCRev4" },
+  { kFIBRev1, "kFIBRev1" }, { kFMCRev4, "kFMCRev4" }, { kMIBRev1, "kMIBRev1" }
 };
 
 // NOLINTNEXTLINE(build/unsigned)
@@ -194,6 +199,9 @@ const std::map<uint64_t, BoardRevision> g_board_uid_revision_map = {
   { 0xd880395de452, kFMCRev4 },
   { 0xd880395da48e, kFMCRev4 },
   { 0xd880395dbcee, kFMCRev4 },
+  { 0x5410ecbb6845, kTLURev1 },
+  { 0x801f12ee6739, kMIBRev1 },
+  { 0x801f12f5e183, kFIBRev1 },
 };
 
 const std::map<std::string, std::string> g_clock_config_map = {
@@ -250,6 +258,11 @@ const std::map<std::string, std::string> g_clock_config_map = {
     "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" }, // stand-alone mode
   { "kFIBRev1_fanout",
     "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" }, // stand-alone mode  
+  
+  { "kMIBRev1_fanout_mode0",
+    "devel/Si5395-RevA-MIB_62_0-Registers.txt" }, // fanout mode, data and clock from upstream sfp 0 (in thie case)
+  { "kMIBRev1_fanout_mode1",
+    "devel/Si5395-RevA-MIB_62_1-Registers.txt" }, // stand-alone mode
 
   { "kFIBRev1_ouroboros", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" },
   { "kFIBRev1_ouroboros", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" },

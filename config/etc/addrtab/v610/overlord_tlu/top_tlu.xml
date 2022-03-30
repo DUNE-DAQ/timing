@@ -1,4 +1,4 @@
-<node id="TOP" class="OverlordDesign<TLUIONode>">
+<node id="TOP" class="OverlordDesign">
     <node id="io" address="0x0" module="file://pdts_tlu_io.xml"/>
     <node id="master" address="0x400" module="file://pdts_master.xml"/>
     <node id="trig_rx" address="0x800" module="file://pdts_trig_rx.xml"/>

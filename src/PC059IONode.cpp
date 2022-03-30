@@ -85,6 +85,11 @@ PC059IONode::reset(int32_t fanout_mode, const std::string& clock_config_file) co
   // Upload config file to PLL
   configure_pll(clock_config_path);
 
+  // Reset mmcm
+  getNode("csr.ctrl.rst").write(0x1);
+  getNode("csr.ctrl.rst").write(0x0);
+  getClient().dispatch();
+
   getNode("csr.ctrl.mux").write(0);
   getClient().dispatch();
 
@@ -126,7 +131,7 @@ PC059IONode::switch_sfp_mux_channel(uint32_t sfp_id) const // NOLINT(build/unsig
   getNode("csr.ctrl.mux").write(sfp_id);
   getClient().dispatch();
 
-  TLOG_DEBUG(0) << "SFP input mux set to " << format_reg_value(read_active_sfp_mux_channel());
+  TLOG_DEBUG(3) << "SFP input mux set to " << format_reg_value(read_active_sfp_mux_channel());
 }
 //-----------------------------------------------------------------------------
 
@@ -153,7 +158,7 @@ PC059IONode::switch_sfp_i2c_mux_channel(uint32_t sfp_id) const // NOLINT(build/u
 
   uint8_t channel_select_byte = 1UL << sfp_id; // NOLINT(build/unsigned)
   getNode<I2CMasterNode>(m_pll_i2c_bus).get_slave("SFP_Switch").write_i2cPrimitive({ channel_select_byte });
-  TLOG_DEBUG(0) << "PC059 SFP I2C mux set to " << format_reg_value(sfp_id);
+  TLOG_DEBUG(3) << "PC059 SFP I2C mux set to " << format_reg_value(sfp_id);
 }
 //-----------------------------------------------------------------------------
 
@@ -233,20 +238,28 @@ PC059IONode::get_info(timinghardwareinfo::TimingPC059MonitorData& mon_data) cons
 void
 PC059IONode::get_info(opmonlib::InfoCollector& ci, int level) const
 {
-  if (level >= 2) {
+  if (level >= 2)
+  {
     timinghardwareinfo::TimingPLLMonitorData pll_mon_data;
     this->get_pll()->get_info(pll_mon_data);
     ci.add(pll_mon_data);
 
     timinghardwareinfo::TimingSFPMonitorData upstream_sfp_mon_data;
     auto upstream_sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
-    upstream_sfp->get_info(upstream_sfp_mon_data);
-    opmonlib::InfoCollector upstream_sfp_ic;
-    upstream_sfp_ic.add(upstream_sfp_mon_data);
-    ci.add("upstream_sfp", upstream_sfp_ic);
+    try {
+      upstream_sfp->get_info(upstream_sfp_mon_data);
+      opmonlib::InfoCollector upstream_sfp_ic;
+      upstream_sfp_ic.add(upstream_sfp_mon_data);
+      ci.add("upstream_sfp", upstream_sfp_ic);
+    }
+    catch (timing::SFPUnreachable& e) {
+      // It is valid that an SFP may not be installed, currently no good way of knowing whether they it should be
+      TLOG_DEBUG(2) << "Failed to communicate with upstream SFP on i2c bus" << m_sfp_i2c_buses.at(0);
+    }
+
 
     for (uint sfp_id=0; sfp_id < 8; ++sfp_id) {
-      TLOG_DEBUG(0) << "checking sfp: " << sfp_id;
+      TLOG_DEBUG(5) << "checking sfp: " << sfp_id;
       switch_sfp_i2c_mux_channel(sfp_id);
       
       auto sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(1), "SFP_EEProm");
@@ -255,7 +268,9 @@ PC059IONode::get_info(opmonlib::InfoCollector& ci, int level) const
       try {
         sfp->get_info(sfp_data);
       } catch (timing::SFPUnreachable& e) {
-        ers::warning(e);
+        // It is valid that an SFP may not be installed, currently no good way of knowing whether they it should be
+        TLOG_DEBUG(2) << "Failed to communicate with downstream SFP: " << sfp_id << " on i2c bus" << m_sfp_i2c_buses.at(1);
+        continue;
       }
 
       opmonlib::InfoCollector sfp_ic;

@@ -5,34 +5,34 @@ namespace dunedaq::timing {
 
 // In leiu of UHAL_REGISTER_DERIVED_NODE
 //-----------------------------------------------------------------------------
-//template<class IO, class MST>
+//template<class MST>
 //uhal::Node*
-//MasterMuxDesign<IO,MST>::clone() const
+//MasterMuxDesign<MST>::clone() const
 //{
-//  return new MasterMuxDesign<IO,MST>(static_cast<const MasterMuxDesign<IO,MST>&>(*this));
+//  return new MasterMuxDesign<MST>(static_cast<const MasterMuxDesign<MST>&>(*this));
 //}
 ////-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO, class MST>
-MasterMuxDesign<IO,MST>::MasterMuxDesign(const uhal::Node& node)
+template<class MST>
+MasterMuxDesign<MST>::MasterMuxDesign(const uhal::Node& node)
   : TopDesignInterface(node)
   , MuxDesignInterface(node)
   , MasterDesignInterface(node)
-  , MasterDesign<IO, MST>(node)
+  , MasterDesign<MST>(node)
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO, class MST>
-MasterMuxDesign<IO,MST>::~MasterMuxDesign()
+template<class MST>
+MasterMuxDesign<MST>::~MasterMuxDesign()
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO, class MST>
+template<class MST>
 std::string
-MasterMuxDesign<IO,MST>::get_status(bool print_out) const
+MasterMuxDesign<MST>::get_status(bool print_out) const
 {
   std::stringstream status;
   status << get_io_node_plain()->get_pll_status();
@@ -45,9 +45,9 @@ MasterMuxDesign<IO,MST>::get_status(bool print_out) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO, class MST>
+template<class MST>
 uint32_t
-MasterMuxDesign<IO,MST>::measure_endpoint_rtt(uint32_t address, bool control_sfp, int sfp_mux) const
+MasterMuxDesign<MST>::measure_endpoint_rtt(uint32_t address, bool control_sfp, int sfp_mux) const
 {
 
   if (sfp_mux > 0) {
@@ -57,7 +57,7 @@ MasterMuxDesign<IO,MST>::measure_endpoint_rtt(uint32_t address, bool control_sfp
     }
 
     // set fanout rtt mux channel, and do not wait for fanout rtt ept to be in a good state
-    this->switch_sfp_mux_channel(sfp_mux, false);
+    switch_sfp_mux_channel(sfp_mux, false);
 
     // sleep for a short time, otherwise the rtt endpoint will not get state to 0x8 in time
     millisleep(200);
@@ -76,9 +76,9 @@ MasterMuxDesign<IO,MST>::measure_endpoint_rtt(uint32_t address, bool control_sfp
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO, class MST>
+template<class MST>
 void
-MasterMuxDesign<IO,MST>::apply_endpoint_delay(uint32_t address,
+MasterMuxDesign<MST>::apply_endpoint_delay(uint32_t address,
                                                uint32_t coarse_delay,
                                                uint32_t fine_delay,
                                                uint32_t phase_delay,
@@ -96,7 +96,7 @@ MasterMuxDesign<IO,MST>::apply_endpoint_delay(uint32_t address,
 
     // set fanout rtt mux channel, and wait for fanout rtt ept to be in a good state, don't bother waiting for a good
     // rtt endpoint, the next method call takes care of that
-    this->switch_sfp_mux_channel(sfp_mux, false);
+    switch_sfp_mux_channel(sfp_mux, false);
   }
 
   this->get_master_node().apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay, measure_rtt, false);
@@ -111,11 +111,11 @@ MasterMuxDesign<IO,MST>::apply_endpoint_delay(uint32_t address,
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class IO, class MST>
+template<class MST>
 void
-MasterMuxDesign<IO,MST>::switch_sfp_mux_channel(uint32_t sfp_id, bool wait_for_rtt_ept_lock) const
+MasterMuxDesign<MST>::switch_sfp_mux_channel(uint32_t sfp_id, bool wait_for_rtt_ept_lock) const
 {
-  TopDesignInterface::get_io_node_plain<timing::FanoutIONode>()->switch_sfp_mux_channel(sfp_id);
+  TopDesignInterface::get_io_node<timing::FanoutIONode>()->switch_sfp_mux_channel(sfp_id);
   if (wait_for_rtt_ept_lock) {
     this->get_master_node().enable_upstream_endpoint();
   }
@@ -123,9 +123,9 @@ MasterMuxDesign<IO,MST>::switch_sfp_mux_channel(uint32_t sfp_id, bool wait_for_r
 //-----------------------------------------------------------------------------
 
 
-template<class IO, class MST>
+template<class MST>
 std::vector<uint32_t>
-MasterMuxDesign<IO,MST>::scan_sfp_mux() const 
+MasterMuxDesign<MST>::scan_sfp_mux() const 
 {
   std::vector<uint32_t> locked_channels;
 
@@ -135,7 +135,7 @@ MasterMuxDesign<IO,MST>::scan_sfp_mux() const
     TLOG_DEBUG(0) << "Scanning slot " << i;
 
     try {
-      this->switch_sfp_mux_channel(i, true);
+      switch_sfp_mux_channel(i, true);
     } catch (...) {
       TLOG_DEBUG(0) << "Slot " << i << " not locked";
     }

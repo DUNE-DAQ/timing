@@ -163,9 +163,12 @@ PartitionNode::reset() const
 {
   // Disable partition
   getNode("csr.ctrl.part_en").write(0);
-
+  // disable trigger
+  getNode("csr.ctrl.trig_en").write(0);
   // Disable buffer in partition 0
   getNode("csr.ctrl.buf_en").write(0);
+  // stop run
+  getNode("csr.ctrl.run_req").write(0);
   // Reset trigger counter
   getNode("csr.ctrl.trig_ctr_rst").write(1);
   // Release trigger counter

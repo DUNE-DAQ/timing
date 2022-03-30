@@ -1,8 +1,8 @@
 /**
  * @file MuxDesignInterface.hpp
  *
- * MasterDesign is a base class providing an interface
- * to for top level master firmware designs on boards with muxes.
+ * MuxDesignInterface is a base class providing an interface
+ * to for top level firmware designs on boards with muxes.
  *
  * This is part of the DUNE DAQ Software Suite, copyright 2020.
  * Licensing/copyright details are in the COPYING file that you should have
@@ -13,10 +13,8 @@
 #define TIMING_INCLUDE_TIMING_MUXDESIGNINTERFACE_HPP_
 
 // PDT Headers
-#include "timing/MasterDesign.hpp"
-#include "timing/PC059IONode.hpp"
-#include "timing/PDIMasterNode.hpp"
-
+#include "timing/TopDesignInterface.hpp"
+#include "timing/FanoutIONode.hpp"
 #include "TimingIssues.hpp"
 
 // uHal Headers
@@ -52,7 +50,7 @@ public:
    */
   virtual uint32_t read_active_sfp_mux_channel() const // NOLINT(build/unsigned)
   {
-    return TopDesignInterface::get_io_node_plain<timing::FanoutIONode>()->read_active_sfp_mux_channel();
+    return TopDesignInterface::get_io_node<timing::FanoutIONode>()->read_active_sfp_mux_channel();
   }
 
   /**
