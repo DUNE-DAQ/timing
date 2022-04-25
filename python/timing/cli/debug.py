@@ -24,7 +24,7 @@ from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignN
 # ------------------------------------------------------------------------------
 @click.group('debug', invoke_without_command=True)
 @click.pass_obj
-@click.argument('device', callback=toolbox.validate_device, autocompletion=toolbox.completeDevices)
+@click.argument('device', callback=toolbox.validate_device, shell_complete=toolbox.completeDevices)
 def debug(obj, device):
     '''
     Timing master commands.
