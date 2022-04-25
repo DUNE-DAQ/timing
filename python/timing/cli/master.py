@@ -36,7 +36,7 @@ from timing.common.toolbox import format_firmware_version
 
 @click.group('mst', invoke_without_command=True)
 @click.pass_obj
-@click.argument('device', callback=toolbox.validate_device, autocompletion=toolbox.completeDevices)
+@click.argument('device', callback=toolbox.validate_device, shell_complete=toolbox.completeDevices)
 def master(obj, device):
     '''
     Timing master commands.

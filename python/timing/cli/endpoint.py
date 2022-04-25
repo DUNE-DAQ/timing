@@ -20,7 +20,7 @@ import time
 #              /_/                     
 @click.group('ept', invoke_without_command=True)
 @click.pass_obj
-@click.argument('device', callback=toolbox.validate_device, autocompletion=toolbox.completeDevices)
+@click.argument('device', callback=toolbox.validate_device, shell_complete=toolbox.completeDevices)
 @click.argument('ids', callback=toolbox.split_ints)
 def endpoint(obj, device, ids):
     '''
