@@ -32,7 +32,7 @@ from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupported
 
 @click.group('io', invoke_without_command=True)
 @click.pass_obj
-@click.argument('device', callback=toolbox.validate_device, autocompletion=toolbox.completeDevices)
+@click.argument('device', callback=toolbox.validate_device, shell_complete=toolbox.completeDevices)
 def io(obj, device):
     '''
     Timing master commands.
