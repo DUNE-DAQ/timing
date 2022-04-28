@@ -80,6 +80,16 @@ public:
     void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
 
     /**
+    * @brief      Read frequencies of on-board clocks.
+    */
+    virtual std::vector<double> read_clock_frequencies() const override;
+
+    /**
+    * @brief      Print frequencies of on-board clocks.
+    */
+    virtual std::string get_clock_frequencies_table(bool print_out = false) const override;
+
+    /**
      * @brief      reset on-board PLL using I2C IO expanders
      */
     void reset_pll() const;

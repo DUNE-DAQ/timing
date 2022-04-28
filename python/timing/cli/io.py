@@ -120,18 +120,17 @@ def reset(ctx, obj, soft, fanout, sfpmuxsel, amcmuxsel, forcepllcfg):
             lDevice.getNode('switch').configure_master_source(fanout)
             
             if lBoardType == kBoardMIB:
-                pass
                 # output to "all" AMCs on
 #                lDevice.getNode("switch.csr.ctrl.amc_out").write(0xfff)
 #                
 #                lDevice.getNode("switch.csr.ctrl.usfp_src").write(sfpmuxsel)
 #                echo("upstream sfp {} enabled".format(sfpmuxsel))
 #
-#                amc_in_bit = 0x1 << (amcmuxsel-1)
-#                lDevice.getNode("switch.csr.ctrl.amc_in").write(amc_in_bit)
-#                echo("downstream amc {} enabled".format(amcmuxsel))
-#
-#                lDevice.dispatch()
+                amc_in_bit = 0x1 << (amcmuxsel-1)
+                lIO.getNode("io_select.csr.ctrl.amc_in").write(amc_in_bit)
+                echo("downstream amc (in) {} enabled".format(amcmuxsel))
+
+                lDevice.dispatch()
 
             if lBoardType in [ kBoardPC059, kBoardFIB ]:
                 lIO.switch_sfp_mux_channel(sfpmuxsel)
