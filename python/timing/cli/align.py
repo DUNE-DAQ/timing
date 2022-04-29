@@ -9,7 +9,7 @@ import timing.cli.toolbox as toolbox
 import timing.common.definitions as defs
 
 from click import echo, style, secho
-from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB
+from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB, kBoardMIB
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout
 from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
@@ -114,7 +114,7 @@ def scanmux(obj):
 
 # ------------------------------------------------------------------------------
 @align.command('switch-n-lock', short_help="Wait for RTT endpoint to become ready")
-@click.option('--mux', '-m', type=click.IntRange(0,7), help='Mux select (fanout only)')
+@click.option('--mux', '-m', type=click.IntRange(0,12), help='Mux select (fanout only)')
 @click.pass_obj
 def switchnlock(obj, mux):
     
@@ -130,5 +130,10 @@ def switchnlock(obj, mux):
         else:
             raise RuntimeError('MUX board: please supply an SFP mux channel')
     else:
+        if lBoardType == kBoardMIB:
+            amc_in_bit = 0x1 << (mux-1)
+            obj.mIO.getNode("io_select.csr.ctrl.amc_in").write(amc_in_bit)
+            echo("downstream amc (in) {} enabled".format(mux))
+            lDevice.dispatch()
         lMaster.enable_upstream_endpoint()
 # ------------------------------------------------------------------------------
