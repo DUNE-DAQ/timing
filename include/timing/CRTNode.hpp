@@ -12,8 +12,7 @@
 #ifndef TIMING_INCLUDE_TIMING_CRTNODE_HPP_
 #define TIMING_INCLUDE_TIMING_CRTNODE_HPP_
 
-#include "TimingIssues.hpp"
-#include "timing/TimingNode.hpp"
+#include "timing/definitions.hpp"
 #include "timing/EndpointNodeInterface.hpp"
 
 // uHal Headers

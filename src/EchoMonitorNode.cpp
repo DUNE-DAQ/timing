@@ -8,6 +8,8 @@
 
 #include "timing/EchoMonitorNode.hpp"
 
+#include "timing/TimingIssues.hpp"
+#include "timing/toolbox.hpp"
 #include "logging/Logging.hpp"
 
 #include <string>

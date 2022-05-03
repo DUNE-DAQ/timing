@@ -8,6 +8,8 @@
 
 #include "timing/PartitionNode.hpp"
 
+#include "timing/definitions.hpp"
+#include "timing/toolbox.hpp"
 #include "logging/Logging.hpp"
 
 #include <chrono>
