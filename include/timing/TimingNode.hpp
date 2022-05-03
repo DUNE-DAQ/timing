@@ -12,13 +12,9 @@
 #ifndef TIMING_INCLUDE_TIMING_TIMINGNODE_HPP_
 #define TIMING_INCLUDE_TIMING_TIMINGNODE_HPP_
 
-// timing Headers
-#include "TimingIssues.hpp"
-#include "timing/definitions.hpp"
-#include "timing/toolbox.hpp"
-
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
+
 #include "opmonlib/InfoCollector.hpp"
 #include "ers/Issue.hpp"
 

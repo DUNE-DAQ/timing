@@ -8,6 +8,7 @@
 
 #include "timing/PDIMasterNode.hpp"
 
+#include "timing/toolbox.hpp"
 #include "logging/Logging.hpp"
 
 #include <string>

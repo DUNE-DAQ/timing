@@ -8,6 +8,8 @@
 
 #include "timing/EndpointNode.hpp"
 
+#include "timing/definitions.hpp"
+#include "timing/toolbox.hpp"
 #include "logging/Logging.hpp"
 
 #include <string>

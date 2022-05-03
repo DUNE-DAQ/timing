@@ -8,6 +8,7 @@
 
 #include "timing/TriggerReceiverNode.hpp"
 
+#include "timing/toolbox.hpp"
 #include "logging/Logging.hpp"
 
 #include <string>
