@@ -57,7 +57,7 @@ MasterMuxDesign<MST>::measure_endpoint_rtt(uint32_t address, bool control_sfp, i
     }
 
     // set fanout rtt mux channel, and do not wait for fanout rtt ept to be in a good state
-    switch_sfp_mux_channel(sfp_mux, false);
+    switch_downstream_mux_channel(sfp_mux, false);
 
     // sleep for a short time, otherwise the rtt endpoint will not get state to 0x8 in time
     millisleep(200);
@@ -96,7 +96,7 @@ MasterMuxDesign<MST>::apply_endpoint_delay(uint32_t address,
 
     // set fanout rtt mux channel, and wait for fanout rtt ept to be in a good state, don't bother waiting for a good
     // rtt endpoint, the next method call takes care of that
-    switch_sfp_mux_channel(sfp_mux, false);
+    switch_downstream_mux_channel(sfp_mux, false);
   }
 
   this->get_master_node().apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay, measure_rtt, false);
@@ -113,9 +113,9 @@ MasterMuxDesign<MST>::apply_endpoint_delay(uint32_t address,
 //-----------------------------------------------------------------------------
 template<class MST>
 void
-MasterMuxDesign<MST>::switch_sfp_mux_channel(uint32_t sfp_id, bool wait_for_rtt_ept_lock) const
+MasterMuxDesign<MST>::switch_downstream_mux_channel(uint32_t sfp_id, bool wait_for_rtt_ept_lock) const
 {
-  TopDesignInterface::get_io_node<timing::FanoutIONode>()->switch_sfp_mux_channel(sfp_id);
+  TopDesignInterface::get_io_node<timing::FanoutIONode>()->switch_downstream_mux_channel(sfp_id);
   if (wait_for_rtt_ept_lock) {
     this->get_master_node().enable_upstream_endpoint();
   }
@@ -135,7 +135,7 @@ MasterMuxDesign<MST>::scan_sfp_mux() const
     TLOG_DEBUG(0) << "Scanning slot " << i;
 
     try {
-      switch_sfp_mux_channel(i, true);
+      switch_downstream_mux_channel(i, true);
     } catch (...) {
       TLOG_DEBUG(0) << "Slot " << i << " not locked";
     }

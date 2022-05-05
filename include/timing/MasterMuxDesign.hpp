@@ -68,7 +68,7 @@ public:
   /**
    * @brief     Switch the SFP mux channel
    */
-  void switch_sfp_mux_channel(uint32_t sfp_id, bool wait_for_rtt_ept_lock) const override; // NOLINT(build/unsigned)
+  void switch_downstream_mux_channel(uint32_t sfp_id, bool wait_for_rtt_ept_lock) const override; // NOLINT(build/unsigned)
 
   /**
    * @brief     Scan SFP for alive timing transmitters

@@ -59,8 +59,8 @@ register_io(py::module& m)
     .def("get_hardware_info", &timing::PC059IONode::get_hardware_info, py::arg("print_out") = false)
     .def("get_sfp_status", &timing::PC059IONode::get_sfp_status, py::arg("sfp_id"), py::arg("print_out") = false)
     .def("switch_sfp_soft_tx_control_bit", &timing::PC059IONode::switch_sfp_soft_tx_control_bit)
-    .def("switch_sfp_mux_channel", &timing::PC059IONode::switch_sfp_mux_channel)
-    .def("read_active_sfp_mux_channel", &timing::PC059IONode::read_active_sfp_mux_channel);
+    .def("switch_downstream_mux_channel", &timing::PC059IONode::switch_downstream_mux_channel, py::arg("mux_channel"))
+    .def("read_active_downstream_mux_channel", &timing::PC059IONode::read_active_downstream_mux_channel);
 
     py::class_<timing::FIBIONode, timing::IONode, uhal::Node>(m, "FIBIONode")
     .def(py::init<const uhal::Node&>())
@@ -76,8 +76,8 @@ register_io(py::module& m)
     .def("get_hardware_info", &timing::FIBIONode::get_hardware_info, py::arg("print_out") = false)
     .def("get_sfp_status", &timing::FIBIONode::get_sfp_status, py::arg("sfp_id"), py::arg("print_out") = false)
     .def("switch_sfp_soft_tx_control_bit", &timing::FIBIONode::switch_sfp_soft_tx_control_bit)
-    .def("switch_sfp_mux_channel", &timing::FIBIONode::switch_sfp_mux_channel)
-    .def("read_active_sfp_mux_channel", &timing::FIBIONode::read_active_sfp_mux_channel);
+    .def("switch_downstream_mux_channel", &timing::FIBIONode::switch_downstream_mux_channel, py::arg("mux_channel"))
+    .def("read_active_downstream_mux_channel", &timing::FIBIONode::read_active_downstream_mux_channel);
 
   py::class_<timing::TLUIONode, timing::IONode, uhal::Node>(m, "TLUIONode")
     .def(py::init<const uhal::Node&>())
@@ -124,7 +124,9 @@ register_io(py::module& m)
     .def("get_pll", &timing::MIBIONode::get_pll)
     .def("get_hardware_info", &timing::MIBIONode::get_hardware_info, py::arg("print_out") = false)
     .def("get_sfp_status", &timing::MIBIONode::get_sfp_status, py::arg("sfp_id"), py::arg("print_out") = false)
-    .def("switch_sfp_soft_tx_control_bit", &timing::MIBIONode::switch_sfp_soft_tx_control_bit);
+    .def("switch_sfp_soft_tx_control_bit", &timing::MIBIONode::switch_sfp_soft_tx_control_bit)
+    .def("switch_downstream_mux_channel", &timing::MIBIONode::switch_downstream_mux_channel, py::arg("mux_channel"))
+    .def("read_active_downstream_mux_channel", &timing::MIBIONode::read_active_downstream_mux_channel);
 
     py::class_<timing::SwitchyardNode, uhal::Node>(m, "SwitchyardNode")
       .def("get_status", &timing::SwitchyardNode::get_status, py::arg("print_out") = false)

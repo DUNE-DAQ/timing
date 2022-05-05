@@ -148,18 +148,18 @@ FIBIONode::reset(const std::string& clock_config_file) const {
 
 //-----------------------------------------------------------------------------
 void
-FIBIONode::switch_sfp_mux_channel(uint32_t sfp_id) const { // NOLINT(build/unsigned)
-	validate_sfp_id(sfp_id);
-	getNode("csr.ctrl.inmux").write(sfp_id);
+FIBIONode::switch_downstream_mux_channel(uint32_t mux_channel) const { // NOLINT(build/unsigned)
+	validate_sfp_id(mux_channel);
+	getNode("csr.ctrl.inmux").write(mux_channel);
 	getClient().dispatch();	
-	TLOG_DEBUG(0) << "SFP input mux set to " << read_active_sfp_mux_channel();
+	TLOG_DEBUG(0) << "SFP input mux set to " << read_active_downstream_mux_channel();
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 uint32_t // NOLINT(build/unsigned)
-FIBIONode::read_active_sfp_mux_channel() const {
+FIBIONode::read_active_downstream_mux_channel() const {
 	auto active_sfp_mux_channel = getNode("csr.ctrl.inmux").read();
 	getClient().dispatch();
 	return active_sfp_mux_channel.value();

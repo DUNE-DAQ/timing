@@ -61,13 +61,12 @@ public:
     /**
      * @brief     Switch the SFP mux channel
      */
-    void switch_sfp_mux_channel(uint32_t sfp_id) const override; // NOLINT(build/unsigned)
+    void switch_downstream_mux_channel(uint32_t mux_channel) const override; // NOLINT(build/unsigned)
 
     /**
      * @brief     Read the active SFP mux channel
      */
-    uint32_t read_active_sfp_mux_channel() const override; // NOLINT(build/unsigned)
-
+    uint32_t read_active_downstream_mux_channel() const override; // NOLINT(build/unsigned)
 
     /**
      * @brief      Print status of on-board SFP.

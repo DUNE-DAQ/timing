@@ -124,16 +124,11 @@ def switchnlock(obj, mux):
     lMaster = obj.mMaster
     
     # or a different type of fanout board
-    if lBoardType in [kBoardPC059, kBoardFIB]:
+    if lBoardType in [kBoardPC059, kBoardFIB, kBoardMIB]:
         if mux is not None:
-            lTopDesign.switch_sfp_mux_channel(mux, True)
+            lTopDesign.switch_downstream_mux_channel(mux, True)
         else:
-            raise RuntimeError('MUX board: please supply an SFP mux channel')
+            raise RuntimeError('MUX board: please supply an downstream mux channel')
     else:
-        if lBoardType == kBoardMIB:
-            amc_in_bit = 0x1 << (mux-1)
-            obj.mIO.getNode("io_select.csr.ctrl.amc_in").write(amc_in_bit)
-            echo("downstream amc (in) {} enabled".format(mux))
-            lDevice.dispatch()
         lMaster.enable_upstream_endpoint()
 # ------------------------------------------------------------------------------
