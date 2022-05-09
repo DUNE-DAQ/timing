@@ -14,7 +14,7 @@ from timing.core import SI534xSlave, I2CExpanderSlave, DACSlave
 from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from timing.common.definitions import kDesignOverlord, kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout
-from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
+from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap
 
 from os.path import join, expandvars, basename
 
@@ -63,8 +63,8 @@ class MasterShell(object):
     def identify(self):
         echo("design '{}' on board '{}' on carrier '{}'".format(
             style(kDesignNameMap[self.info.designType], fg='blue'),
-            style(kBoardNamelMap[self.info.boardType], fg='blue'),
-            style(kCarrierNamelMap[self.info.carrierType], fg='blue')
+            style(kBoardNameMap[self.info.boardType], fg='blue'),
+            style(kCarrierNameMap[self.info.carrierType], fg='blue')
         ))
         echo("Master FW rev: {}, partitions: {}, channels: {}".format(
             style(hex(self.masterCtx.version[0]), fg='cyan'),

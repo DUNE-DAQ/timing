@@ -12,7 +12,7 @@ from click import echo, style, secho
 from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB, kBoardMIB
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout
-from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
+from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap
 from timing.common.definitions import kLibrarySupportedBoards
 
 from .master import master

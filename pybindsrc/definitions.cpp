@@ -99,8 +99,8 @@ register_definitions(py::module& m)
         .value("ExtFakeTrig", ExtFakeTrig)
         .export_values();
 
-	m.attr("kBoardNamelMap") = timing::g_board_type_map;
-	m.attr("kCarrierNamelMap") = timing::g_carrier_type_map;
+	m.attr("kBoardNameMap") = timing::g_board_type_map;
+	m.attr("kCarrierNameMap") = timing::g_carrier_type_map;
 	m.attr("kDesignNameMap") = timing::g_design_type_map;
 	m.attr("kBoardRevisionMap") = timing::g_board_revision_map;
 	m.attr("kUIDRevisionMap") = timing::g_board_uid_revision_map;

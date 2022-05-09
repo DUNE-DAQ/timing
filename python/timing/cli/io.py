@@ -20,7 +20,7 @@ from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardM
 from timing.common.definitions import kFMCRev1, kFMCRev2, kFMCRev3, kFMCRev4, kPC059Rev1, kTLURev1, kSIMRev1, kFIBRev1, kMIBRev1
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed, kCarrierNexusVideo, kCarrierTrenzTE0712
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignChronos, kDesignBoreas, kDesignTest
-from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap, kUIDRevisionMap, kClockConfigMap
+from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap, kUIDRevisionMap, kClockConfigMap
 from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
 
 # ------------------------------------------------------------------------------
@@ -53,8 +53,8 @@ def io(obj, device):
 
     echo("Design '{}' on board '{}' on carrier '{}' with frequency {} MHz".format(
         style(kDesignNameMap[lBoardInfo['design_type'].value()], fg='blue'),
-        style(kBoardNamelMap[lBoardInfo['board_type'].value()], fg='blue'),
-        style(kCarrierNamelMap[lBoardInfo['carrier_type'].value()], fg='blue'),
+        style(kBoardNameMap[lBoardInfo['board_type'].value()], fg='blue'),
+        style(kCarrierNameMap[lBoardInfo['carrier_type'].value()], fg='blue'),
         style(str(lBoardInfo['clock_frequency'].value()/1e6), fg='blue')
     ))
 
@@ -309,7 +309,7 @@ def switchsfptx(ctx, obj, sfp_id, on):
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-@io.command('switch-downstream-mux', short_help="Wait for RTT endpoint to become ready")
+@io.command('switch-downstream-mux', short_help="Switch downstream mux")
 @click.argument('mux', type=int)
 @click.pass_obj
 def switchdownstreammux(obj, mux):
@@ -324,5 +324,22 @@ def switchdownstreammux(obj, mux):
         lIO.switch_downstream_mux_channel(mux)
 
     else:
-        raise RuntimeError('Board {} does not have a downstream mux!'.format(lBoardType))
+        raise RuntimeError('Board {} does not have a downstream mux!'.format(kBoardNameMap[lBoardType]))
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@io.command('switch-upstream-mux', short_help="Switch upstream mux")
+@click.argument('mux', type=int)
+@click.pass_obj
+def switchupstreammux(obj, mux):
+    
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+    lIO = lDevice.getNode('io')
+
+    if lBoardType == kBoardMIB:
+        echo("Setting upstream mux channel: {}".format(mux))
+        lIO.switch_downstream_mux_channel(mux)
+    else:
+        raise RuntimeError('Board {} does not have/support an upstream mux!'.format(kBoardNameMap[lBoardType]))
 # ------------------------------------------------------------------------------

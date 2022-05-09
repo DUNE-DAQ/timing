@@ -126,7 +126,9 @@ register_io(py::module& m)
     .def("get_sfp_status", &timing::MIBIONode::get_sfp_status, py::arg("sfp_id"), py::arg("print_out") = false)
     .def("switch_sfp_soft_tx_control_bit", &timing::MIBIONode::switch_sfp_soft_tx_control_bit)
     .def("switch_downstream_mux_channel", &timing::MIBIONode::switch_downstream_mux_channel, py::arg("mux_channel"))
-    .def("read_active_downstream_mux_channel", &timing::MIBIONode::read_active_downstream_mux_channel);
+    .def("read_active_downstream_mux_channel", &timing::MIBIONode::read_active_downstream_mux_channel)
+    .def("switch_upstream_mux_channel", &timing::MIBIONode::switch_upstream_mux_channel, py::arg("mux_channel"))
+    .def("read_active_upstream_mux_channel", &timing::MIBIONode::read_active_upstream_mux_channel);
 
     py::class_<timing::SwitchyardNode, uhal::Node>(m, "SwitchyardNode")
       .def("get_status", &timing::SwitchyardNode::get_status, py::arg("print_out") = false)

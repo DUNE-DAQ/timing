@@ -83,6 +83,16 @@ public:
   uint32_t read_active_downstream_mux_channel() const override; // NOLINT(build/unsigned)
   
   /**
+   * @brief     Switch the SFP mux channel
+   */
+  void switch_upstream_mux_channel(uint32_t mux_channel) const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief     Read the active SFP mux channel
+   */
+  uint32_t read_active_upstream_mux_channel() const; // NOLINT(build/unsigned)
+
+  /**
    * @brief      Print status of on-board SFP.
    */
   std::string get_sfp_status(uint32_t sfp_id, bool print_out = false) const override; // NOLINT(build/unsigned)
@@ -104,6 +114,7 @@ public:
 
 private:
   void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)
+  void validate_amc_slot(uint32_t amc_slot) const; // NOLINT(build/unsigned)
 };
 
 } // namespace timing

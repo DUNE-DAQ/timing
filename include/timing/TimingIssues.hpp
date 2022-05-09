@@ -269,6 +269,12 @@ ERS_DECLARE_ISSUE(timing,                                                       
                   FailedToUpdateHSIRandomRate,                                                  ///< Issue class name
                   "  Random bit 0 trigger rate for HSI not updated!",                           ///< Message
                   ERS_EMPTY)                                                                    //< Message parameters
+
+ERS_DECLARE_ISSUE(timing,                          ///< Namespace
+                  InvalidAMCSlot,                  ///< Issue class name
+                  " Invalid AMC slot: " << amc_slot, ///< Message
+                  ((std::string)amc_slot)          ///< Message parameters
+)
 } // namespace dunedaq
 
 #endif // TIMING_INCLUDE_TIMING_TIMINGISSUES_HPP_
