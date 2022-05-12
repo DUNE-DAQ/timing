@@ -144,7 +144,7 @@ TimingSystemWithFanoutManager<MST_TOP, EPT_TOP, FAN_TOP>::measure_endpoint_rtt(u
 
   // set fanout rtt mux channel, and wait for fanout rtt ept to be in a good state
   if (aFanout >= 0)
-    getFanout(aFanout).switch_sfp_mux_channel(aMux, true);
+    getFanout(aFanout).switch_downstream_mux_channel(aMux, true);
 
   // gets master rtt ept in a good state, and sends echo command (due to second argument endpoint sfp is not controlled
   // in this call, already done above)

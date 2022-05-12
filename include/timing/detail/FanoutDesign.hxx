@@ -80,16 +80,6 @@ FanoutDesign<MST>::reset_io(int32_t fanout_mode, const std::string& clock_config
     fanout_mode=1;
   }
   uhal::Node::getNode<SwitchyardNode>("switch").configure_master_source(fanout_mode);
-
-  // temporary? 
-  // TODO : discuss MIB firmware interface
-  if (convert_value_to_board_type(get_io_node_plain()->read_board_type()) == kBoardMIB)
-  {
-    getNode("switch.csr.ctrl.amc_out").write(0xfff);
-    getNode("switch.csr.ctrl.amc_in").write(0x0);
-    getNode("switch.csr.ctrl.usfp_src").write(0x0);
-    uhal::Node::getClient().dispatch();
-  }
 }
 //-----------------------------------------------------------------------------
 

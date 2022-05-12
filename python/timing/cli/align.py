@@ -9,10 +9,10 @@ import timing.cli.toolbox as toolbox
 import timing.common.definitions as defs
 
 from click import echo, style, secho
-from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB
+from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB, kBoardMIB
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout
-from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
+from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap
 from timing.common.definitions import kLibrarySupportedBoards
 
 from .master import master
@@ -114,7 +114,7 @@ def scanmux(obj):
 
 # ------------------------------------------------------------------------------
 @align.command('switch-n-lock', short_help="Wait for RTT endpoint to become ready")
-@click.option('--mux', '-m', type=click.IntRange(0,7), help='Mux select (fanout only)')
+@click.option('--mux', '-m', type=click.IntRange(0,12), help='Mux select (fanout only)')
 @click.pass_obj
 def switchnlock(obj, mux):
     
@@ -124,11 +124,11 @@ def switchnlock(obj, mux):
     lMaster = obj.mMaster
     
     # or a different type of fanout board
-    if lBoardType in [kBoardPC059, kBoardFIB]:
+    if lBoardType in [kBoardPC059, kBoardFIB, kBoardMIB]:
         if mux is not None:
-            lTopDesign.switch_sfp_mux_channel(mux, True)
+            lTopDesign.switch_downstream_mux_channel(mux, True)
         else:
-            raise RuntimeError('MUX board: please supply an SFP mux channel')
+            raise RuntimeError('MUX board: please supply an downstream mux channel')
     else:
         lMaster.enable_upstream_endpoint()
 # ------------------------------------------------------------------------------

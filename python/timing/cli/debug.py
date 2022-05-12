@@ -18,7 +18,7 @@ from timing.core import SI534xSlave, I2CExpanderSlave
 
 from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardMIB
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
-from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap
+from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap
 
 
 # ------------------------------------------------------------------------------
@@ -45,8 +45,8 @@ def debug(obj, device):
 
     echo("Design '{}' on board '{}' on carrier '{}'".format(
         style(kDesignNameMap[lBoardInfo['design_type'].value()], fg='blue'),
-        style(kBoardNamelMap[lBoardInfo['board_type'].value()], fg='blue'),
-        style(kCarrierNamelMap[lBoardInfo['carrier_type'].value()], fg='blue')
+        style(kBoardNameMap[lBoardInfo['board_type'].value()], fg='blue'),
+        style(kCarrierNameMap[lBoardInfo['carrier_type'].value()], fg='blue')
     ))
 
     obj.mDevice = lDevice
@@ -119,7 +119,7 @@ def sfpexpander(obj):
     lBoardType = obj.mBoardType
 
     if lBoardType != kBoardPC059:
-        secho('No SFP expander on {}'.format(kBoardNamelMap[lBoardInfo['board_type'].value()]))
+        secho('No SFP expander on {}'.format(kBoardNameMap[lBoardInfo['board_type'].value()]))
         return
     lI2CBusNode = lDevice.getNode("io.i2c")
     lSFPExp = I2CExpanderSlave(lI2CBusNode, lI2CBusNode.get_slave('SFPExpander').get_i2c_address())
@@ -216,7 +216,7 @@ def sfp_status(obj):
         lSFPNodeName = 'io.usfp_i2c'
         lSFPLabel = 'USFP'
     else:
-        secho('No SFP on {}'.format(kBoardNamelMap[lBoardType]))
+        secho('No SFP on {}'.format(kBoardNameMap[lBoardType]))
         return
 
     lI2CBusNode = lDevice.getNode(lSFPNodeName)

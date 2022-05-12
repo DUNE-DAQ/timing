@@ -43,14 +43,14 @@ public:
   /**
    * @brief     Switch the SFP mux channel
    */
-  virtual void switch_sfp_mux_channel(uint32_t sfp_id, bool /*wait_for_rtt_ept_lock*/) const = 0;// NOLINT(build/unsigned)
+  virtual void switch_downstream_mux_channel(uint32_t sfp_id, bool /*wait_for_rtt_ept_lock*/) const = 0;// NOLINT(build/unsigned)
 
   /**
    * @brief     Read the active SFP mux channel
    */
-  virtual uint32_t read_active_sfp_mux_channel() const // NOLINT(build/unsigned)
+  virtual uint32_t read_active_downstream_mux_channel() const // NOLINT(build/unsigned)
   {
-    return TopDesignInterface::get_io_node<timing::FanoutIONode>()->read_active_sfp_mux_channel();
+    return TopDesignInterface::get_io_node<timing::FanoutIONode>()->read_active_downstream_mux_channel();
   }
 
   /**

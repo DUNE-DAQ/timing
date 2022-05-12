@@ -5,5 +5,5 @@
     <node id="endpoint1" address="0x1100" module="file://pdts_endpoint_wrapper.xml"/>
     <node id="endpoint2" address="0x1200" module="file://pdts_endpoint_wrapper.xml"/>
     <node id="endpoint3" address="0x1300" module="file://pdts_endpoint_wrapper.xml"/>
-    <node id="switch" address="0x1500" module="file://pdts_mib_sw.xml"/>
+    <node id="switch"    address="0x1500" module="file://switchyard.xml"/>
 </node>

@@ -20,7 +20,7 @@ from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardM
 from timing.common.definitions import kFMCRev1, kFMCRev2, kFMCRev3, kFMCRev4, kPC059Rev1, kTLURev1, kSIMRev1, kFIBRev1, kMIBRev1
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed, kCarrierNexusVideo, kCarrierTrenzTE0712
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignChronos, kDesignBoreas, kDesignTest
-from timing.common.definitions import kBoardNamelMap, kCarrierNamelMap, kDesignNameMap, kUIDRevisionMap, kClockConfigMap
+from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap, kUIDRevisionMap, kClockConfigMap
 from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
 
 # ------------------------------------------------------------------------------
@@ -53,8 +53,8 @@ def io(obj, device):
 
     echo("Design '{}' on board '{}' on carrier '{}' with frequency {} MHz".format(
         style(kDesignNameMap[lBoardInfo['design_type'].value()], fg='blue'),
-        style(kBoardNamelMap[lBoardInfo['board_type'].value()], fg='blue'),
-        style(kCarrierNamelMap[lBoardInfo['carrier_type'].value()], fg='blue'),
+        style(kBoardNameMap[lBoardInfo['board_type'].value()], fg='blue'),
+        style(kCarrierNameMap[lBoardInfo['carrier_type'].value()], fg='blue'),
         style(str(lBoardInfo['clock_frequency'].value()/1e6), fg='blue')
     ))
 
@@ -71,12 +71,11 @@ def io(obj, device):
 @io.command('reset', short_help="Perform a hard reset on the timing master.")
 @click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
 @click.option('--fanout-mode', 'fanout', type=click.IntRange(0, 1), default=0, help='Configures the board in fanout mode (pc059 only)')
-@click.option('--sfp-mux-sel', 'sfpmuxsel', type=toolbox.IntRange(0x0,0x7), default=0, help='Configures the sfp cdr mux on the fib (downstream) or mib (upstream)')
-@click.option('--amc-mux-sel', 'amcmuxsel', type=toolbox.IntRange(0x1,0xc), default=1, help='Configures the amc mux on the mib (downstream)')
+@click.option('--downstream-mux-sel', 'downstream_mux_sel', type=int, default=0, help='Configures the downstream mux on the fib/mib/pc059')
 @click.option('--force-pll-cfg', 'forcepllcfg', type=click.Path(exists=True))
 @click.pass_obj
 @click.pass_context
-def reset(ctx, obj, soft, fanout, sfpmuxsel, amcmuxsel, forcepllcfg):
+def reset(ctx, obj, soft, fanout, downstream_mux_sel, forcepllcfg):
     '''
     Perform a hard reset on the timing master, including
 
@@ -119,22 +118,9 @@ def reset(ctx, obj, soft, fanout, sfpmuxsel, amcmuxsel, forcepllcfg):
             lIO.reset(fanout, lPLLConfigFilePath)
             lDevice.getNode('switch').configure_master_source(fanout)
             
-            if lBoardType == kBoardMIB:
-                # output to "all" AMCs on
-                lDevice.getNode("switch.csr.ctrl.amc_out").write(0xfff)
-                
-                lDevice.getNode("switch.csr.ctrl.usfp_src").write(sfpmuxsel)
-                echo("upstream sfp {} enabled".format(sfpmuxsel))
-
-                amc_in_bit = 0x1 << (amcmuxsel-1)
-                lDevice.getNode("switch.csr.ctrl.amc_in").write(amc_in_bit)
-                echo("downstream amc {} enabled".format(amcmuxsel))
-
-                lDevice.dispatch()
-
-            if lBoardType in [ kBoardPC059, kBoardFIB ]:
-                lIO.switch_sfp_mux_channel(sfpmuxsel)
-                secho("Active sfp mux " + hex(sfpmuxsel), fg='cyan')
+            if lBoardType in [ kBoardPC059, kBoardFIB, kBoardMIB ]:
+                lIO.switch_downstream_mux_channel(downstream_mux_sel)
+                secho("Active downstream mux " + hex(downstream_mux_sel), fg='cyan')
         else:
             lIO.reset(lPLLConfigFilePath)            
     
@@ -204,7 +190,7 @@ def clkstatus(ctx, obj, verbose):
     ctx.invoke(status)
 
     if lBoardType in [kBoardPC059, kBoardFIB]:
-        mux_fib = lIO.read_active_sfp_mux_channel()
+        mux_fib = lIO.read_active_downstream_mux_channel()
         secho("Active sfp mux {} ".format(mux_fib))
 
     echo()
@@ -320,4 +306,40 @@ def switchsfptx(ctx, obj, sfp_id, on):
     else:
         secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
         # do sfp switch here
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@io.command('switch-downstream-mux', short_help="Switch downstream mux")
+@click.argument('mux', type=int)
+@click.pass_obj
+def switchdownstreammux(obj, mux):
+    
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+    lIO = lDevice.getNode('io')
+
+    if lBoardType in [kBoardPC059, kBoardFIB, kBoardMIB]:
+        
+        echo("Setting downstream mux channel: {}".format(mux))
+        lIO.switch_downstream_mux_channel(mux)
+
+    else:
+        raise RuntimeError('Board {} does not have a downstream mux!'.format(kBoardNameMap[lBoardType]))
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@io.command('switch-upstream-mux', short_help="Switch upstream mux")
+@click.argument('mux', type=int)
+@click.pass_obj
+def switchupstreammux(obj, mux):
+    
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+    lIO = lDevice.getNode('io')
+
+    if lBoardType == kBoardMIB:
+        echo("Setting upstream mux channel: {}".format(mux))
+        lIO.switch_downstream_mux_channel(mux)
+    else:
+        raise RuntimeError('Board {} does not have/support an upstream mux!'.format(kBoardNameMap[lBoardType]))
 # ------------------------------------------------------------------------------

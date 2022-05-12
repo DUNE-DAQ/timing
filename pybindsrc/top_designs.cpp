@@ -104,7 +104,7 @@ register_top_designs(py::module& m)
          py::arg("channel"),
          py::arg("rate"),
          py::arg("poisson"))
-    .def("switch_sfp_mux_channel", &timing::FanoutDesign<PDIMasterNode>::switch_sfp_mux_channel)
+    .def("switch_downstream_mux_channel", &timing::FanoutDesign<PDIMasterNode>::switch_downstream_mux_channel)
     .def("apply_endpoint_delay", 
           &timing::FanoutDesign<PDIMasterNode>::apply_endpoint_delay,
           py::arg("address"),
@@ -132,7 +132,7 @@ register_top_designs(py::module& m)
          py::arg("channel"),
          py::arg("rate"),
          py::arg("poisson"))
-    .def("switch_sfp_mux_channel", &timing::OuroborosMuxDesign::switch_sfp_mux_channel)
+    .def("switch_downstream_mux_channel", &timing::OuroborosMuxDesign::switch_downstream_mux_channel)
     .def("apply_endpoint_delay", 
           &timing::OuroborosMuxDesign::apply_endpoint_delay,
           py::arg("address"),

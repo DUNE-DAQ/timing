@@ -32,7 +32,7 @@ namespace timing {
 /**
  * @brief      Class for the timing FMC board.
  */
-class MIBIONode : public IONode
+class MIBIONode : public FanoutIONode
 {
   UHAL_DERIVEDNODE(MIBIONode)
 
@@ -72,7 +72,26 @@ public:
    */
   void reset(int32_t fanout_mode = -1, // NOLINT(build/unsigned)
                      const std::string& clock_config_file = "") const override;
+  /**
+   * @brief     Switch the SFP mux channel
+   */
+  void switch_downstream_mux_channel(uint32_t mux_channel) const override; // NOLINT(build/unsigned)
+
+  /**
+   * @brief     Read the active SFP mux channel
+   */
+  uint32_t read_active_downstream_mux_channel() const override; // NOLINT(build/unsigned)
   
+  /**
+   * @brief     Switch the SFP mux channel
+   */
+  void switch_upstream_mux_channel(uint32_t mux_channel) const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief     Read the active SFP mux channel
+   */
+  uint32_t read_active_upstream_mux_channel() const; // NOLINT(build/unsigned)
+
   /**
    * @brief      Print status of on-board SFP.
    */
@@ -95,6 +114,7 @@ public:
 
 private:
   void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)
+  void validate_amc_slot(uint32_t amc_slot) const; // NOLINT(build/unsigned)
 };
 
 } // namespace timing

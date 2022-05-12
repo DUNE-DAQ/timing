@@ -9,6 +9,7 @@
 #include "timing/MIBIONode.hpp"
 
 #include <string>
+#include <math.h>
 
 namespace dunedaq {
 namespace timing {
@@ -17,7 +18,7 @@ UHAL_REGISTER_DERIVED_NODE(MIBIONode)
 
 //-----------------------------------------------------------------------------
 MIBIONode::MIBIONode(const uhal::Node& node)
-  : IONode(node, "i2c", "i2c", { "PLL" }, { "PLL", "CDR 0", "CDR 1" }, { "i2c" })
+  : FanoutIONode(node, "i2c", "i2c", { "PLL" }, { "PLL", "CDR 0", "CDR 1" }, { "i2c" })
 {
 }
 //-----------------------------------------------------------------------------
@@ -90,6 +91,11 @@ MIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) cons
   // Reset mmcm
   getNode("csr.ctrl.rst").write(0x1);
   getNode("csr.ctrl.rst").write(0x0);
+
+  getNode("io_select.csr.ctrl.amc_out").write(0xfff);
+  getNode("io_select.csr.ctrl.amc_in").write(0x0);
+  getNode("io_select.csr.ctrl.usfp_src").write(0x0);
+
   getClient().dispatch();
 
   TLOG() << "Reset done";
@@ -101,6 +107,51 @@ void
 MIBIONode::reset(const std::string& clock_config_file) const
 {
   reset(-1, clock_config_file);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+MIBIONode::switch_downstream_mux_channel(uint32_t mux_channel) const // NOLINT(build/unsigned)
+{
+  validate_amc_slot(mux_channel);
+  uint16_t amc_in_bit = 0x1 << (mux_channel-1);
+  getNode("io_select.csr.ctrl.amc_in").write(amc_in_bit);
+  
+  TLOG_DEBUG(3) << " MIB downstream AMC (in) " << mux_channel << " enabled";
+  getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+uint32_t // NOLINT(build/unsigned)
+MIBIONode::read_active_downstream_mux_channel() const
+{
+  auto active_mux_channel_bits = getNode("io_select.csr.ctrl.amc_in").read();
+  getClient().dispatch();
+  double mux = log2(active_mux_channel_bits.value());
+  return mux+1;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+MIBIONode::switch_upstream_mux_channel(uint32_t mux_channel) const // NOLINT(build/unsigned)
+{
+  getNode("io_select.csr.ctrl.usfp_src").write(mux_channel);
+  TLOG_DEBUG(3) << " MIB upstream SFP (in) " << mux_channel << " enabled";
+  // TODO what about clock config?
+  getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+uint32_t // NOLINT(build/unsigned)
+MIBIONode::read_active_upstream_mux_channel() const
+{
+  auto active_sfp_mux_channel = getNode("io_select.csr.ctrl.usfp_src").read();
+  getClient().dispatch();
+  return active_sfp_mux_channel.value();
 }
 //-----------------------------------------------------------------------------
 
@@ -224,9 +275,18 @@ MIBIONode::get_info(opmonlib::InfoCollector& ci, int level) const
 //-----------------------------------------------------------------------------
 void
 MIBIONode::validate_sfp_id(uint32_t sfp_id) const { // NOLINT(build/unsigned)
-  // on this board we have 3 downstream SFPs
+  // on this board we have 3 upstream SFPs
   if (sfp_id > 2) {
         throw InvalidSFPId(ERS_HERE, format_reg_value(sfp_id));
+  }
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+MIBIONode::validate_amc_slot(uint32_t amc_slot) const { // NOLINT(build/unsigned)
+  if (amc_slot < 1 || amc_slot > 12) {
+        throw InvalidAMCSlot(ERS_HERE, format_reg_value(amc_slot, 10));
   }
 }
 //-----------------------------------------------------------------------------

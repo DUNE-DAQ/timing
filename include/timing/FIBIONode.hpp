@@ -61,13 +61,12 @@ public:
     /**
      * @brief     Switch the SFP mux channel
      */
-    void switch_sfp_mux_channel(uint32_t sfp_id) const override; // NOLINT(build/unsigned)
+    void switch_downstream_mux_channel(uint32_t mux_channel) const override; // NOLINT(build/unsigned)
 
     /**
      * @brief     Read the active SFP mux channel
      */
-    uint32_t read_active_sfp_mux_channel() const override; // NOLINT(build/unsigned)
-
+    uint32_t read_active_downstream_mux_channel() const override; // NOLINT(build/unsigned)
 
     /**
      * @brief      Print status of on-board SFP.
@@ -78,6 +77,16 @@ public:
      * @brief      control tx laser of on-board SFP softly (I2C command)
      */
     void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
+
+    /**
+    * @brief      Read frequencies of on-board clocks.
+    */
+    virtual std::vector<double> read_clock_frequencies() const override;
+
+    /**
+    * @brief      Print frequencies of on-board clocks.
+    */
+    virtual std::string get_clock_frequencies_table(bool print_out = false) const override;
 
     /**
      * @brief      reset on-board PLL using I2C IO expanders

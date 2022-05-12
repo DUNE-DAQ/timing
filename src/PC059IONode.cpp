@@ -126,18 +126,18 @@ PC059IONode::reset(const std::string& clock_config_file) const
 
 //-----------------------------------------------------------------------------
 void
-PC059IONode::switch_sfp_mux_channel(uint32_t sfp_id) const // NOLINT(build/unsigned)
+PC059IONode::switch_downstream_mux_channel(uint32_t mux_channel) const // NOLINT(build/unsigned)
 {
-  getNode("csr.ctrl.mux").write(sfp_id);
+  getNode("csr.ctrl.mux").write(mux_channel);
   getClient().dispatch();
 
-  TLOG_DEBUG(3) << "SFP input mux set to " << format_reg_value(read_active_sfp_mux_channel());
+  TLOG_DEBUG(3) << "SFP input mux set to " << format_reg_value(read_active_downstream_mux_channel());
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 uint32_t // NOLINT(build/unsigned)
-PC059IONode::read_active_sfp_mux_channel() const
+PC059IONode::read_active_downstream_mux_channel() const
 {
   auto active_sfp_mux_channel = getNode("csr.ctrl.mux").read();
   getClient().dispatch();
