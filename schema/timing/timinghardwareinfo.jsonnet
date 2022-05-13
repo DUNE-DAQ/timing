@@ -198,6 +198,29 @@ local timinghardwareinfo = {
                 doc="PLL frequency"),
     ], 
     doc="Timing FMC monitor data"),
+
+    timing_fib_mon_data: s.record("TimingFIBMonitorData", 
+    [
+        //s.field("sfp_los_flags", self.uint,
+        //        doc="Downstream SFP LOS flags"),
+        //s.field("sfp_fault_flags", self.uint,
+        //        doc="Downstream SFP fault flags"),
+        s.field("active_sfp_mux", self.uint, 0,
+                doc="Active SFP MUX channel"),
+
+        s.field("mmcm_ok", self.bool_data, 0,
+                doc="MMCM OK flag"),
+        
+        s.field("mmcm_sticky", self.bool_data, 0,
+                doc="Sticky MMCM OK flag"),
+        
+        s.field("pll_ok", self.bool_data, 0,
+                doc="PLL OK flag"),
+        
+        s.field("pll_sticky", self.bool_data, 0,
+                doc="Sticky PLL OK flag"),
+    ], 
+    doc="Timing FIB monitor data"),
 };
 
 // Output a topologically sorted array.

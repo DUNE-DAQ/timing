@@ -232,7 +232,7 @@ MIBIONode::get_info(timinghardwareinfo::TimingMIBMonitorData& mon_data) const
 void
 MIBIONode::get_info(opmonlib::InfoCollector& ci, int level) const
 {
-    auto i2c_switch = get_i2c_device<I2C9546SwitchSlave>("i2c", "TCA9546_Switch");
+  auto i2c_switch = get_i2c_device<I2C9546SwitchSlave>("i2c", "TCA9546_Switch");
 
   if (level >= 2) {
     i2c_switch->set_channels_states(8);
