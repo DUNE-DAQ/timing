@@ -90,7 +90,7 @@ SI534xSlave::seek_header(std::ifstream& file) const
     }
   }
 
-  TLOG_DEBUG(2) << "Found desing ID " << design_id;
+  TLOG_DEBUG(8) << "Found desing ID " << design_id;
 
   return design_id;
 }
@@ -163,7 +163,7 @@ SI534xSlave::read_config_section(std::ifstream& file, std::string tag) const
 
     std::stringstream debug_stream;
     debug_stream << std::showbase << std::hex << "Address: " << address << dummy << " Data: " << data;
-    TLOG_DEBUG(3) << debug_stream.str();
+    TLOG_DEBUG(8) << debug_stream.str();
 
     config.push_back(RegisterSetting_t(address, data));
   }
@@ -207,9 +207,9 @@ SI534xSlave::configure(const std::string& filename) const
     postamble.clear();
   }
 
-  TLOG_DEBUG(3) << "Preamble size = " << preamble.size();
-  TLOG_DEBUG(3) << "Registers size = " << registers.size();
-  TLOG_DEBUG(3) << "PostAmble size = " << postamble.size();
+  TLOG_DEBUG(8) << "Preamble size = " << preamble.size();
+  TLOG_DEBUG(8) << "Registers size = " << registers.size();
+  TLOG_DEBUG(8) << "PostAmble size = " << postamble.size();
 
   config_file.close();
 
@@ -249,11 +249,11 @@ SI534xSlave::upload_config(const std::vector<SI534xSlave::RegisterSetting_t>& co
     std::stringstream debug_stream;
     debug_stream << std::showbase << std::hex << "Writing to " << (uint32_t)setting.get<0>() // NOLINT(build/unsigned)
                  << " data " << (uint32_t)setting.get<1>();                                  // NOLINT(build/unsigned)
-    TLOG_DEBUG(3) << debug_stream.str();
+    TLOG_DEBUG(9) << debug_stream.str();
 
     uint32_t max_attempts(2), attempt(0); // NOLINT(build/unsigned)
     while (attempt < max_attempts) {
-      TLOG_DEBUG(3) << "Attempt " << attempt;
+      TLOG_DEBUG(9) << "Attempt " << attempt;
       if (attempt > 0) {
         ers::warning(SI534xRegWriteRetry(ERS_HERE,
                                          format_reg_value(attempt, 10),
@@ -274,7 +274,7 @@ SI534xSlave::upload_config(const std::vector<SI534xSlave::RegisterSetting_t>& co
 
     ++k;
     if ((k % notify_every) == 0) {
-      TLOG_DEBUG(3) << (k / notify_every) * notify_percent << "%";
+      TLOG_DEBUG(9) << (k / notify_every) * notify_percent << "%";
     }
   }
 }

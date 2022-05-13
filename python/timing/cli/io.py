@@ -71,7 +71,7 @@ def io(obj, device):
 @io.command('reset', short_help="Perform a hard reset on the timing master.")
 @click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
 @click.option('--fanout-mode', 'fanout', type=click.IntRange(0, 1), default=0, help='Configures the board in fanout mode (pc059 only)')
-@click.option('--downstream-mux-sel', 'downstream_mux_sel', type=int, default=0, help='Configures the downstream mux on the fib/mib/pc059')
+@click.option('--downstream-mux-sel', 'downstream_mux_sel', type=int, help='Configures the downstream mux on the fib/mib/pc059')
 @click.option('--force-pll-cfg', 'forcepllcfg', type=click.Path(exists=True))
 @click.pass_obj
 @click.pass_context
@@ -118,7 +118,7 @@ def reset(ctx, obj, soft, fanout, downstream_mux_sel, forcepllcfg):
             lIO.reset(fanout, lPLLConfigFilePath)
             lDevice.getNode('switch').configure_master_source(fanout)
             
-            if lBoardType in [ kBoardPC059, kBoardFIB, kBoardMIB ]:
+            if lBoardType in [ kBoardPC059, kBoardFIB, kBoardMIB ] and downstream_mux_sel is not None:
                 lIO.switch_downstream_mux_channel(downstream_mux_sel)
                 secho("Active downstream mux " + hex(downstream_mux_sel), fg='cyan')
         else:

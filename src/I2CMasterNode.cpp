@@ -395,7 +395,7 @@ I2CMasterNode::send_i2c_command_and_read_data(uint8_t command) const // NOLINT(b
   assert(!(command & kWriteToSlaveCmd));
 
   uint8_t full_cmd = command | kReadFromSlaveCmd;                                     // NOLINT(build/unsigned)
-  TLOG_DEBUG(4) << ">> sending read cmd  = " << format_reg_value((uint32_t)full_cmd); // NOLINT(build/unsigned)
+  TLOG_DEBUG(10) << ">> sending read cmd  = " << format_reg_value((uint32_t)full_cmd); // NOLINT(build/unsigned)
 
   // Force the read bit high and set them cmd bits
   getNode(kCmdNode).write(full_cmd);
@@ -408,7 +408,7 @@ I2CMasterNode::send_i2c_command_and_read_data(uint8_t command) const // NOLINT(b
   uhal::ValWord<uint32_t> result = getNode(kRxNode).read(); // NOLINT(build/unsigned)
   getClient().dispatch();
 
-  TLOG_DEBUG(4) << "<< receive data      = " << format_reg_value((uint32_t)result); // NOLINT(build/unsigned)v
+  TLOG_DEBUG(10) << "<< receive data      = " << format_reg_value((uint32_t)result); // NOLINT(build/unsigned)v
 
   return (result & 0xff);
 }
@@ -426,7 +426,7 @@ I2CMasterNode::send_i2c_command_and_write_data(uint8_t command, uint8_t data) co
   std::stringstream debug_stream;
   debug_stream << ">> sending write cmd = " << std::showbase << std::hex << (uint32_t)full_cmd // NOLINT(build/unsigned)
                << " data = " << std::showbase << std::hex << (uint32_t)data;                   // NOLINT(build/unsigned)
-  TLOG_DEBUG(4) << debug_stream.str();
+  TLOG_DEBUG(10) << debug_stream.str();
 
   // write the payload
   getNode(kTxNode).write(data);
