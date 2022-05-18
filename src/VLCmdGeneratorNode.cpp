@@ -46,7 +46,7 @@ VLCmdGeneratorNode::get_status(bool print_out) const
 void
 VLCmdGeneratorNode::switch_endpoint_sfp(uint32_t address, bool enable) const // NOLINT(build/unsigned)
 {
-  TLOG_DEBUG(4) << "Switching SFP for endpoint address: " << address << ", to state: " << enable;
+  TLOG_DEBUG(3) << "Switching SFP for endpoint address: " << address << ", to state: " << enable;
   reset_sub_nodes(getNode("csr.ctrl"));
   getNode("csr.ctrl.addr").write(address);
   getNode("csr.ctrl.tx_en").write(enable);
