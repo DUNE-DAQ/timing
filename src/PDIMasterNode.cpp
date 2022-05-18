@@ -130,58 +130,17 @@ PDIMasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsig
   auto vl_cmd_node = getNode<VLCmdGeneratorNode>("acmd");
   auto global = getNode<GlobalNode>("global");
   auto echo = getNode<EchoMonitorNode>("echo");
-
+  
   if (measure_rtt) {
-
-    if (control_sfp) {
-      // Switch off all TX SFPs
-      vl_cmd_node.switch_endpoint_sfp(0x0, false);
-
-      // Turn on the current target
-      vl_cmd_node.switch_endpoint_sfp(address, true);
-
-      millisleep(100);
-    }
-
-    try
-    {
-      global.enable_upstream_endpoint();
-    }
-    catch (const timing::EndpointNotReady& e)
-    {
-      if (control_sfp) {
-        vl_cmd_node.switch_endpoint_sfp(address, false);
-      }
-      throw e;
-    }
-
-    uint64_t endpoint_rtt = echo.send_echo_and_measure_delay(); // NOLINT(build/unsigned)
-    TLOG() << "Pre delay adjustment RTT:  " << format_reg_value(endpoint_rtt);
+    uint64_t endpoint_rtt = measure_endpoint_rtt(address, control_sfp); // NOLINT(build/unsigned)
+    TLOG() << "Pre delay adjustment RTT:  " << format_reg_value(endpoint_rtt,10);
   }
 
   vl_cmd_node.apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay);
 
   if (measure_rtt) {
-    millisleep(100);
-
-    try
-    {
-      global.enable_upstream_endpoint();
-    }
-    catch (const timing::EndpointNotReady& e)
-    {
-      if (control_sfp)
-      {
-        vl_cmd_node.switch_endpoint_sfp(address, false);
-      }
-      throw e;
-    }
-
-    uint64_t endpoint_rtt = echo.send_echo_and_measure_delay(); // NOLINT(build/unsigned)
-    TLOG() << "Post delay adjustment RTT: " << format_reg_value(endpoint_rtt);
-
-    if (control_sfp)
-      vl_cmd_node.switch_endpoint_sfp(address, false);
+    uint64_t endpoint_rtt = measure_endpoint_rtt(address, true); // NOLINT(build/unsigned)
+    TLOG() << "Post delay adjustment RTT: " << format_reg_value(endpoint_rtt,10);
   }
 }
 //-----------------------------------------------------------------------------
