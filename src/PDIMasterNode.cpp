@@ -94,7 +94,7 @@ PDIMasterNode::measure_endpoint_rtt(uint32_t address, bool control_sfp) const //
     // Turn on the current target
     vl_cmd_node.switch_endpoint_sfp(address, true);
 
-    millisleep(100);
+    millisleep(200);
   }
 
   try
