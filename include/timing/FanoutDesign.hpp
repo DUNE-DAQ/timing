@@ -83,9 +83,9 @@ public:
                             uint32_t coarse_delay, // NOLINT(build/unsigned)
                             uint32_t fine_delay,   // NOLINT(build/unsigned)
                             uint32_t phase_delay,  // NOLINT(build/unsigned)
-                            bool measure_rtt,
-                            bool control_sfp,
-                            int sfp_mux) const override;
+                            bool measure_rtt = false,
+                            bool control_sfp = true,
+                            int sfp_mux = -1) const override;
 
   // In leiu of UHAL_DERIVEDNODE
 protected:

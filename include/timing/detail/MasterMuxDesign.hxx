@@ -50,24 +50,14 @@ uint32_t
 MasterMuxDesign<MST>::measure_endpoint_rtt(uint32_t address, bool control_sfp, int sfp_mux) const
 {
 
-  if (sfp_mux > 0) {
-    if (control_sfp) {
-      this->get_master_node().switch_endpoint_sfp(0x0, false);
-      this->get_master_node().switch_endpoint_sfp(address, true);
+  if (sfp_mux > -1) {
+    if (control_sfp) 
+    {
+      // set fanout rtt mux channel, and do not wait for fanout rtt ept to be in a good state
+      switch_downstream_mux_channel(sfp_mux, false);
     }
-
-    // set fanout rtt mux channel, and do not wait for fanout rtt ept to be in a good state
-    switch_downstream_mux_channel(sfp_mux, false);
-
-    // sleep for a short time, otherwise the rtt endpoint will not get state to 0x8 in time
-    millisleep(200);
-
-    // gets master rtt ept in a good state, and sends echo command (due to second argument endpoint sfp is not controlled
-    // in this call, already done above)
-    uint32_t rtt = this->get_master_node().measure_endpoint_rtt(address, false);
-
-    if (control_sfp)
-      this->get_master_node().switch_endpoint_sfp(address, false);
+    // gets master rtt ept in a good state, and sends echo command
+    uint32_t rtt = this->get_master_node().measure_endpoint_rtt(address, control_sfp);
     return rtt;
   } else {
     return this->get_master_node().measure_endpoint_rtt(address, control_sfp);
@@ -86,27 +76,20 @@ MasterMuxDesign<MST>::apply_endpoint_delay(uint32_t address,
                                                bool control_sfp,
                                                int sfp_mux) const
 {
-
-  if (sfp_mux > 0) {
-    if (measure_rtt) {
-    if (control_sfp) {
-      this->get_master_node().switch_endpoint_sfp(0x0, false);
-      this->get_master_node().switch_endpoint_sfp(address, true);
+  if (sfp_mux > -1)
+  {
+    if (control_sfp && measure_rtt)
+    {
+      // set fanout rtt mux channel, and do not wait for fanout rtt ept to be in a good state
+      switch_downstream_mux_channel(sfp_mux, false);  
     }
-
-    // set fanout rtt mux channel, and wait for fanout rtt ept to be in a good state, don't bother waiting for a good
-    // rtt endpoint, the next method call takes care of that
-    switch_downstream_mux_channel(sfp_mux, false);
-  }
-
-  this->get_master_node().apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay, measure_rtt, false);
-
-  if (measure_rtt && control_sfp)
-    this->get_master_node().switch_endpoint_sfp(address, false);  
-  } else {
+    // gets master rtt ept in a good state, and sends echo command
     this->get_master_node().apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp);
   }
-  
+  else
+  {
+    this->get_master_node().apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp);
+  }
 }
 //-----------------------------------------------------------------------------
 
