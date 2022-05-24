@@ -339,7 +339,23 @@ def switchupstreammux(obj, mux):
 
     if lBoardType == kBoardMIB:
         echo("Setting upstream mux channel: {}".format(mux))
-        lIO.switch_downstream_mux_channel(mux)
+        lIO.switch_upstream_mux_channel(mux)
+    else:
+        raise RuntimeError('Board {} does not have/support an upstream mux!'.format(kBoardNameMap[lBoardType]))
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@io.command('read-upstream-mux', short_help="Read active upstream mux")
+@click.pass_obj
+def switchupstreammux(obj):
+    
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+    lIO = lDevice.getNode('io')
+
+    if lBoardType == kBoardMIB:
+        active_mux = lIO.read_active_upstream_mux_channel()
+        echo("Active upstream mux channel: {}".format(active_mux))
     else:
         raise RuntimeError('Board {} does not have/support an upstream mux!'.format(kBoardNameMap[lBoardType]))
 # ------------------------------------------------------------------------------
