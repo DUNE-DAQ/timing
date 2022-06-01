@@ -73,6 +73,6 @@
 
   <connection id="FAN_MIB"              uri="ipbusudp-2.0://192.168.200.21:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/fanout_mib/top_mib.xml" />
 
-  <connection id="NP02_HSI"             uri="chtcp-2.0://np04-srv-012.cern.ch:10203?target=10.73.24.61:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/chronos_fmc/top.xml" />
+  <connection id="NP04_CB_HSI"          uri="chtcp-2.0://np04-srv-012.cern.ch:10203?target=10.73.128.64:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/chronos_fmc/top.xml" />
 </connections>
     
