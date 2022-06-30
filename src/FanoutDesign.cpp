@@ -14,7 +14,6 @@ FanoutDesign::FanoutDesign(const uhal::Node& node)
   , MasterDesignInterface(node)
   , EndpointDesignInterface(node)
   , MasterMuxDesign(node)
-  , PlainEndpointDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
@@ -131,7 +130,7 @@ FanoutDesign::get_info(opmonlib::InfoCollector& ci, int level) const
   ci.add("io", hardware_collector);
 
   opmonlib::InfoCollector endpoint_collector;
-  get_endpoint_node(0).get_info(endpoint_collector, level);
+  get_endpoint_node_plain(0)->get_info(endpoint_collector, level);
   ci.add("endpoint", endpoint_collector);
 }
 //-----------------------------------------------------------------------------

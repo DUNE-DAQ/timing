@@ -21,7 +21,6 @@ OuroborosDesign::OuroborosDesign(const uhal::Node& node)
   , MasterDesignInterface(node)
   , EndpointDesignInterface(node)
   , MasterDesign(node)
-  , PlainEndpointDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
@@ -37,7 +36,7 @@ OuroborosDesign::get_status(bool print_out) const
   std::stringstream status;
   status << get_io_node_plain()->get_pll_status();
   status << get_master_node_plain()->get_status();
-  status << this->get_endpoint_node(0).get_status();
+  status << this->get_endpoint_node_plain(0)->get_status();
   if (print_out)
     TLOG() << status.str();
   return status.str();
@@ -70,7 +69,7 @@ OuroborosDesign::get_info(opmonlib::InfoCollector& ci, int level) const
   ci.add("io", hardware_collector);
 
   opmonlib::InfoCollector endpoint_collector;
-  this->get_endpoint_node(0).get_info(endpoint_collector, level);
+  this->get_endpoint_node_plain(0)->get_info(endpoint_collector, level);
   ci.add("endpoint", endpoint_collector);
 }
 //-----------------------------------------------------------------------------

@@ -87,7 +87,7 @@ public:
   /**
    * @brief      Get master node pointer
    */
-  const MasterNode* get_master_node_plain() const override { return dynamic_cast<const MasterNode*>(&uhal::Node::getNode("master")); }
+  const MasterNodeInterface* get_master_node_plain() const override { return dynamic_cast<const MasterNodeInterface*>(&uhal::Node::getNode("master")); }
 
   /**
    * @brief      Read master firmware version.

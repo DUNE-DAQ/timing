@@ -20,7 +20,7 @@ UHAL_REGISTER_DERIVED_NODE(PDIMasterNode)
 
 //-----------------------------------------------------------------------------
 PDIMasterNode::PDIMasterNode(const uhal::Node& node)
-  : MasterNode(node)
+  : MasterNodeInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
@@ -35,7 +35,7 @@ PDIMasterNode::get_status(bool print_out) const
   std::stringstream status;
   auto raw_timestamp = getNode<TimestampGeneratorNode>("tstamp").read_raw_timestamp();
   status << "Timestamp: 0x" << std::hex << tstamp2int(raw_timestamp) << std::endl << std::endl;
-  status << getNode<FLCmdGeneratorNode>("scmd_gen").get_cmd_counters_table();
+  status << getNode<PDIFLCmdGeneratorNode>("scmd_gen").get_cmd_counters_table();
   if (print_out)
     TLOG() << status.str();
   return status.str();
@@ -92,6 +92,18 @@ PDIMasterNode::get_status_with_date(uint32_t clock_frequency_hz, bool print_out)
 
 //-----------------------------------------------------------------------------
 void
+PDIMasterNode::send_fl_cmd(FixedLengthCommandType command,
+                           uint32_t channel,                  // NOLINT(build/unsigned)
+                           uint32_t number_of_commands) const // NOLINT(build/unsigned)
+{
+  for (uint32_t i = 0; i < number_of_commands; i++) { // NOLINT(build/unsigned)
+    getNode<PDIFLCmdGeneratorNode>("scmd_gen").send_fl_cmd(command, channel, getNode<TimestampGeneratorNode>("tstamp"));
+  }
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
 PDIMasterNode::switch_endpoint_sfp(uint32_t address, bool turn_on) const // NOLINT(build/unsigned)
 {
   auto vl_cmd_node = getNode<VLCmdGeneratorNode>("acmd");
@@ -105,7 +117,7 @@ PDIMasterNode::switch_endpoint_sfp(uint32_t address, bool turn_on) const // NOLI
 void
 PDIMasterNode::enable_upstream_endpoint() const
 {
-  auto global = getNode<GlobalNode>("global");
+  auto global = getNode<PDIMasterGlobalNode>("global");
   global.enable_upstream_endpoint();
 }
 //-----------------------------------------------------------------------------
@@ -116,7 +128,7 @@ PDIMasterNode::measure_endpoint_rtt(uint32_t address, bool control_sfp) const //
 {
 
   auto vl_cmd_node = getNode<VLCmdGeneratorNode>("acmd");
-  auto global = getNode<GlobalNode>("global");
+  auto global = getNode<PDIMasterGlobalNode>("global");
   auto echo = getNode<EchoMonitorNode>("echo");
 
   if (control_sfp)
@@ -161,7 +173,7 @@ PDIMasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsig
 {
 
   auto vl_cmd_node = getNode<VLCmdGeneratorNode>("acmd");
-  auto global = getNode<GlobalNode>("global");
+  auto global = getNode<PDIMasterGlobalNode>("global");
   auto echo = getNode<EchoMonitorNode>("echo");
   
   if (measure_rtt) {

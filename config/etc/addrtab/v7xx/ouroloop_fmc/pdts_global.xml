@@ -1,0 +1,19 @@
+<node id="pdts_global" description="PDTS master global registers" fwinfo="endpoint" class="MasterGlobalNode">
+		<node id="version" address="0x0" fwinfo="endpoint;width=0"/>
+		<node id="config" address="0x1" fwinfo="endpoint;width=0">
+		    <node id="n_chan" mask="0xf"/>
+		</node>
+		<node id="csr" address="0x2" fwinfo="endpoint;width=1">
+			<node id="ctrl" address="0x0">
+				<node id="resync" mask="0x1"/>	
+				<node id="clr_ctrs" mask="0x2"/>
+				<node id="ts_en" mask="0x4"/>
+			</node>
+			<node id="stat" address="0x1">		
+				<node id="tx_err" mask="0x1"/>
+				<node id="rx_rdy" mask="0x2"/>
+				<node id="ctrs_rdy" mask="0x4"/>	
+				<node id="ts_err" mask="0x8"/>			
+			</node>
+		</node>
+</node>

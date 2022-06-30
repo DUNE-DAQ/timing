@@ -31,7 +31,7 @@ namespace timing {
  * @brief      Class for PDI ouroboros timing master design 
  */
 class OuroborosMuxDesign
-  : public MasterMuxDesign, public PlainEndpointDesignInterface
+  : public MasterMuxDesign, public EndpointDesignInterface
 {
   UHAL_DERIVEDNODE(OuroborosMuxDesign)
 public:

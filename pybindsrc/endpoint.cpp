@@ -8,6 +8,7 @@
 
 #include "timing/CRTNode.hpp"
 #include "timing/EndpointNode.hpp"
+#include "timing/PDIEndpointNode.hpp"
 #include "timing/HSINode.hpp"
 
 #include <pybind11/pybind11.h>
@@ -22,20 +23,20 @@ namespace python {
 void
 register_endpoint(py::module& m)
 {
-  py::class_<timing::EndpointNode, uhal::Node>(m, "EndpointNode")
+  py::class_<timing::PDIEndpointNode, uhal::Node>(m, "PDIEndpointNode")
     .def(py::init<const uhal::Node&>())
-    .def("disable", &timing::EndpointNode::disable)
-    .def("enable", &timing::EndpointNode::enable, py::arg("address") = 0, py::arg("partition") = 0)
-    .def("reset", &timing::EndpointNode::reset, py::arg("address") = 0, py::arg("partition") = 0)
-    .def("read_buffer_count", &timing::EndpointNode::read_buffer_count)
-    .def("read_data_buffer", &timing::EndpointNode::read_data_buffer, py::arg("read_all") = false)
+    .def("disable", &timing::PDIEndpointNode::disable)
+    .def("enable", &timing::PDIEndpointNode::enable, py::arg("address") = 0, py::arg("partition") = 0)
+    .def("reset", &timing::PDIEndpointNode::reset, py::arg("address") = 0, py::arg("partition") = 0)
+    .def("read_buffer_count", &timing::PDIEndpointNode::read_buffer_count)
+    .def("read_data_buffer", &timing::PDIEndpointNode::read_data_buffer, py::arg("read_all") = false)
     .def("get_data_buffer_table",
-         &timing::EndpointNode::get_data_buffer_table,
+         &timing::PDIEndpointNode::get_data_buffer_table,
          py::arg("read_all") = false,
          py::arg("print_out") = false)
-    .def("read_version", &timing::EndpointNode::read_version)
-    .def("read_timestamp", &timing::EndpointNode::read_timestamp)
-    .def("read_clock_frequency", &timing::EndpointNode::read_clock_frequency);
+    .def("read_version", &timing::PDIEndpointNode::read_version)
+    .def("read_timestamp", &timing::PDIEndpointNode::read_timestamp)
+    .def("read_clock_frequency", &timing::PDIEndpointNode::read_clock_frequency);
 
   py::class_<timing::CRTNode, uhal::Node>(m, "CRTNode")
     .def(py::init<const uhal::Node&>())
@@ -68,6 +69,13 @@ register_endpoint(py::module& m)
          py::arg("print_out") = false)
     .def("read_buffer_warning", &timing::HSINode::reset_hsi)
     .def("read_buffer_error", &timing::HSINode::reset_hsi);
+
+    py::class_<timing::EndpointNode, uhal::Node>(m, "EndpointNode")
+    .def(py::init<const uhal::Node&>())
+    .def("disable", &timing::EndpointNode::disable)
+    .def("enable", &timing::EndpointNode::enable, py::arg("address") = 0, py::arg("partition") = 0)
+    .def("reset", &timing::EndpointNode::reset, py::arg("address") = 0, py::arg("partition") = 0)
+    .def("get_status", &timing::EndpointNode::get_status, py::arg("print_out") = false);
 }
 
 } // namespace python

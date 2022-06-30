@@ -10,6 +10,7 @@ import math
 import timing
 import traceback
 import sys
+import random
 from io import StringIO
 
 # PDT imports
@@ -53,7 +54,7 @@ def master(obj, device):
     
     lMaster = lDevice.getNode('master')    
     lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
-    lGenerics = toolbox.readSubNodes(lMaster.getNode('global.config'), False)
+    lNCmdchannels = lMaster.getNode('global.config.n_chan').read()
     lDevice.dispatch()
 
     if lBoardInfo['board_type'].value() in kLibrarySupportedBoards and lBoardInfo['design_type'].value() in kLibrarySupportedDesigns:
@@ -71,10 +72,9 @@ def master(obj, device):
         lVersion = lMaster.getNode('global.version').read()
         lDevice.dispatch()
 
-    echo("Master FW rev: {}, partitions: {}, channels: {}".format(
+    echo("Master FW rev: {}, channels: {}".format(
         style(format_firmware_version(lVersion), fg='cyan'),
-        style(str(lGenerics['n_part']), fg='cyan'),
-        style(str(lGenerics['n_chan']), fg='cyan'),
+        style(str(lNCmdchannels), fg='cyan'),
     ))
 
     obj.mDevice = lDevice
@@ -82,7 +82,6 @@ def master(obj, device):
     obj.mMaster = lMaster
     obj.mIO = lDevice.getNode('io')
 
-    obj.mGenerics = { k:v.value() for k,v in lGenerics.items()}
     obj.mVersion = lVersion
     obj.mBoardType = lBoardInfo['board_type'].value()
     obj.mCarrierType = lBoardInfo['carrier_type'].value()
@@ -93,7 +92,6 @@ def master(obj, device):
         obj.mExtTrig = obj.mTopDesign.get_external_triggers_endpoint_node()
     
 # ------------------------------------------------------------------------------
-
 
 # ------------------------------------------------------------------------------
 @master.command('status', short_help="Print master status")
@@ -117,11 +115,140 @@ def synctime(obj):
     lDesign.sync_timestamp()
 # ------------------------------------------------------------------------------
 
+# ------------------------------------------------------------------------------
+@master.command('send-cmd', short_help='Inject a single command.')
+@click.pass_obj
+@click.argument('cmd', type=click.Choice(defs.kCommandIDs.keys()))
+@click.argument('chan', type=int)
+@click.option('-n', type=int, default=1)
+def sendcmd(obj, cmd, chan, n):
+    '''
+    Inject a single command.
+    '''
+
+    lMaster = obj.mMaster
+    lMaster.send_fl_cmd(defs.kCommandIDs[cmd],chan,n)
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@master.command('faketrig-conf')
+@click.pass_obj
+@click.argument('chan', type=int)
+@click.argument('rate', type=float)
+@click.option('--poisson', is_flag=True, default=False, help="Randomize time interval between consecutive triggers.")
+def faketriggen(obj, chan, rate, poisson):
+    '''
+    \b
+    Enables the internal trigger generator.
+    Configures the internal command generator to produce triggers at a defined frequency.
+    
+    Rate =  (50MHz / 2^(d+8)) / p where n in [0,15] and p in [1,256]
+    \b
+    DIVIDER (int): Frequency divider.
+    '''
+
+    # The division from 50MHz to the desired rate is done in three steps:
+    # a) A pre-division by 256
+    # b) Division by a power of two set by n = 2 ^ rate_div_d (ranging from 2^0 -> 2^15)
+    # c) 1-in-n prescaling set by n = rate_div_p
+
+    lTopDesign = obj.mTopDesign
+    lTopDesign.enable_periodic_fl_cmd(chan,rate,poisson)
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@master.command('faketrig-clear')
+@click.pass_obj
+@click.argument('chan', type=int)
+def faketrigclear(obj, chan):
+    '''
+    Clear the internal trigger generator.
+    '''
+    lMaster = obj.mMaster
+    lMaster.disable_periodic_fl_cmd(chan)
+    secho( "Fake triggers disabled; chan: {}".format(chan), fg='green')
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@master.command('write-ept-reg')
+@click.pass_obj
+@click.argument('adr', type=int)
+@click.argument('reg', type=int)
+@click.argument('data', callback=toolbox.split_ints)
+@click.argument('mode', type=bool)
+def writeeptreg(obj, adr, reg, data, mode):
+    '''
+    Write data from endpoint
+    '''
+    lMaster = obj.mMaster
+    rx_data = lMaster.write_endpoint_data(adr, reg, data, mode)
+    #secho( "Fake triggers disabled; chan: {}".format(chan), fg='green')
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@master.command('read-ept-reg')
+@click.pass_obj
+@click.argument('adr', type=int)
+@click.argument('reg', type=int)
+@click.argument('length', type=int)
+@click.argument('mode', type=bool)
+def readeptreg(obj, adr, reg, length, mode):
+    '''
+    Read data from endpoint
+    '''
+    lMaster = obj.mMaster
+    rx_data = lMaster.read_endpoint_data(adr, reg, length, mode)
+    secho( f"Data from endpoint {adr}, reg {reg} and length {length}: {rx_data}", fg='green')
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@master.command('transmit-async-packet')
+@click.pass_obj
+@click.option('--packet', '-p', callback=toolbox.split_ints)
+def transmitasyncpacket(obj, packet):
+    '''
+    Transmit already formed packet
+    '''
+    lMaster = obj.mMaster
+    if len(packet) == 0:
+        # make a random packet
+        packet = [0x0, 0x0] + random.sample(range(256),random.randint(5, 20)) + [0x1aa]
+    
+    rx_packet = lMaster.transmit_async_packet(packet)
+    secho( f"tx packet: {packet}", fg='green')
+    secho( f"rx packet: {rx_packet}", fg='green')
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@master.command('reset-command-counters')
+@click.pass_obj
+def resetcommandcounters(obj):
+    '''
+    Transmit already formed packet
+    '''
+    lMaster = obj.mMaster
+    lMaster.reset_command_counters()
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@master.command('control-timestamp-broadcast')
+@click.option('--on/--off', default=True, help='enable/disable ts broadcast')
+@click.pass_obj
+def controltimestampbroadcast(obj, on):
+    '''
+    Enable or disable timestamp broadcast
+    '''
+    lMaster = obj.mMaster
+    if on:
+        lMaster.enable_timestamp_broadcast()
+    else:
+        lMaster.disable_timestamp_broadcast()
+# ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
 @master.group('part', invoke_without_command=True)
 @click.pass_obj
-@click.argument('id', type=int, callback=toolbox.validate_partition)
+@click.argument('id', type=int)
 def partition(obj, id):
     """
     Partition specific commands
@@ -174,7 +301,6 @@ def partstatus(obj, watch, period):
             break
 # ------------------------------------------------------------------------------
 
-
 # ------------------------------------------------------------------------------
 @partition.command('configure', short_help='Prepares partition for data taking.')
 @click.option('--trgmask', '-m', type=str, callback=lambda c, p, v: int(v, 16), default='0xf', help='Trigger mask (in hex).')
@@ -219,139 +345,6 @@ def configure(obj, trgmask, fakemask, spillgate, ratectrl):
 
 # ------------------------------------------------------------------------------
 
-
-# ------------------------------------------------------------------------------
-@partition.command('start', short_help='Starts data taking.')
-@click.pass_obj
-def start(obj):
-
-    '''
-    Starts a new run
-    
-    \b
-    - flushes the partition buffer
-    - set the command mask
-    - enables the readout buffer
-    - enables triggers
-    '''
-    obj.mPartitionNode.start()
-    secho("Partition {} started".format(obj.mPartitionId), fg='green')
-# ------------------------------------------------------------------------------
-
-
-# ------------------------------------------------------------------------------
-@partition.command('trig', short_help='Toggles triggers')
-@click.option('--on/--off', default=True, help='enable/disable triggers')
-@click.pass_obj
-def trig(obj, on):
-    '''
-    Toggles triggers.
-    '''
-    obj.mPartitionNode.enable_triggers(on)
-    secho("Partition {} triggers {}".format(obj.mPartitionId, 'enabled' if on else 'disbaled'), fg='green')
-# ------------------------------------------------------------------------------
-
-
-# ------------------------------------------------------------------------------
-@partition.command('stop', short_help='Stops data taking.')
-@click.pass_obj
-def stop(obj):
-    
-    '''
-    Stop the run
-    
-    \b
-    - disables triggers
-    - disables the readout buffer
-    '''
-
-    # Select the desired partition
-    obj.mPartitionNode.stop()
-    secho("Partition {} stopped".format(obj.mPartitionId), fg='green')
-# ------------------------------------------------------------------------------
-
-
-# ------------------------------------------------------------------------------
-    # d(0) <= X"aa000600"; -- DAQ word 0
-    # d(1) <= X"0000000" & scmd; -- DAQ word 1
-    # d(2) <= tstamp(31 downto 0); -- DAQ word 2
-    # d(3) <= tstamp(63 downto 32); -- DAQ word 3
-    # d(4) <= evtctr; -- DAQ word 4
-    # d(5) <= X"00000000"; -- Dummy checksum (not implemented yet)
-
-@partition.command('readback', short_help='Read the timing master readout buffer.')
-@click.pass_obj
-@click.option('--all/--events', '-a/ ', 'readall', default=False, help="Buffer readout mode.\n- events: only completed events are readout.\n- all: the content of the buffer is fully read-out.")
-@click.option('--keep-reading', '-k', 'keep', is_flag=True, default=False, help='Continuous buffer readout')
-def readback(obj, readall, keep):
-    '''
-    Read the content of the timing master readout buffer.
-    '''
-    def chunks(l, n):
-        """Yield successive n-sized chunks from l."""
-        for i in range(0, len(l), n):
-            yield l[i:i + n]
-
-    # lPartId = obj.mPartitionId
-    lPartNode = obj.mPartitionNode
-
-    while(True):
-        lBufCount = lPartNode.read_buffer_word_count()
-
-        echo ( "Words available in readout buffer: "+hex(lBufCount))
-
-        lWordsToRead = int(lBufCount) if readall else int(lBufCount // defs.kEventSize)*defs.kEventSize
-
-        # if lWordsToRead == 0:
-            # echo("Nothing to read, goodbye!")
-
-        lBufData = lPartNode.getNode('buf.data').readBlock(lWordsToRead)
-        lPartNode.getClient().dispatch()
-
-
-
-        for i,c in enumerate(chunks(lBufData, 6)):
-            ts = (c[3]<<32) +c[2]
-            # print ('header:', hex(c[0]), hex(c[1]))
-            print ('ev {} - ts    : {} ({})'.format(i, ts, hex(ts)))
-
-
-        # for i, lWord in enumerate(lBufData):
-            # echo ( '{:04d} {}'.format(i, hex(lWord)))
-        if not keep:
-            break
-# ------------------------------------------------------------------------------
-
-
-# ------------------------------------------------------------------------------
-@partition.command('rate-ctrl', short_help='Enable/Disable rate control.')
-@click.pass_obj
-@click.option('-e/-d', '--enable/--disable', 'rate_ctrl_en', default=True, help="Toggle rate control register.")
-def rate_ctrl(obj, rate_ctrl_en):
-    lPartId = obj.mPartitionId
-    lPartNode = obj.mPartitionNode
-
-    lPartNode.configure_rate_ctrl(rate_ctrl_en)
-    echo("Trigger throttling in partition {}: {}".format(lPartId, 'Enabled' if bool(rate_ctrl_en) else 'Disabled'))
-# ------------------------------------------------------------------------------
-
-
-# ------------------------------------------------------------------------------
-@master.command('send-cmd', short_help='Inject a single command.')
-@click.pass_obj
-@click.argument('cmd', type=click.Choice(defs.kCommandIDs.keys()))
-@click.argument('chan', type=int, callback=toolbox.validate_chan)
-@click.option('-n', type=int, default=1)
-def sendcmd(obj, cmd, chan, n):
-    '''
-    Inject a single command.
-    '''
-
-    lMaster = obj.mMaster
-    lMaster.send_fl_cmd(defs.kCommandIDs[cmd],chan,n)
-# ------------------------------------------------------------------------------
-
-
 # ------------------------------------------------------------------------------
 def validate_freq(ctx, param, value):
 
@@ -370,83 +363,4 @@ def validate_freq(ctx, param, value):
     lDeltas = [ abs(value-div2freq(div)) for div in range(0x10) ]
     lMinDeltaIdx = min(range(len(lDeltas)), key=lDeltas.__getitem__)
     return value, lMinDeltaIdx, div2freq(lMinDeltaIdx)
-# ------------------------------------------------------------------------------
-
-
-# ------------------------------------------------------------------------------
-@master.command('faketrig-conf')
-@click.pass_obj
-@click.argument('chan', type=int, callback=toolbox.validate_chan)
-@click.argument('rate', type=float)
-@click.option('--poisson', is_flag=True, default=False, help="Randomize time interval between consecutive triggers.")
-def faketriggen(obj, chan, rate, poisson):
-    '''
-    \b
-    Enables the internal trigger generator.
-    Configures the internal command generator to produce triggers at a defined frequency.
-    
-    Rate =  (50MHz / 2^(d+8)) / p where n in [0,15] and p in [1,256]
-    \b
-    DIVIDER (int): Frequency divider.
-    '''
-
-    # The division from 50MHz to the desired rate is done in three steps:
-    # a) A pre-division by 256
-    # b) Division by a power of two set by n = 2 ^ rate_div_d (ranging from 2^0 -> 2^15)
-    # c) 1-in-n prescaling set by n = rate_div_p
-
-    lTopDesign = obj.mTopDesign
-    lTopDesign.enable_periodic_fl_cmd(chan,rate,poisson)
-# ------------------------------------------------------------------------------
-
-
-# ------------------------------------------------------------------------------
-@master.command('faketrig-clear')
-@click.pass_obj
-@click.argument('chan', type=int, callback=toolbox.validate_chan)
-def faketrigclear(obj, chan):
-    '''
-    Clear the internal trigger generator.
-    '''
-    lMaster = obj.mMaster
-    lMaster.disable_periodic_fl_cmd(chan)
-    secho( "Fake triggers disabled; chan: {}".format(chan), fg='green')
-# ------------------------------------------------------------------------------
-
-
-# ------------------------------------------------------------------------------
-# -- cyc_len and spill_len are in units of 1 / (50MHz / 2^24) = 0.34s
-@master.command('spill-enable')
-@click.pass_obj
-def spillenable(obj):
-    '''
-    \b
-    Enables the internal spill generator.
-    '''
-    lMaster = obj.mMaster
-    lMaster.enable_spill_interface()
-    secho( "Spill interface enabled", fg='green')
-# ------------------------------------------------------------------------------
-
-
-# ------------------------------------------------------------------------------
-# -- cyc_len and spill_len are in units of 1 / (50MHz / 2^24) = 0.34s
-@master.command('fake-spillgen')
-@click.pass_obj
-def fakespillgen(obj):
-    '''
-    \b
-    Enables the internal spill generator.
-    Configures the internal command generator to produce spills at a defined frequency and length
-    
-    Rate = 50 Mhz / 2**( 12 + divider ) for divider between 0 and 15
-# -- cyc_len and spill_len are in units of 1 / (50MHz / 2^24) = 0.34s
-
-    \b
-    FREQ
-    '''
-    lMaster = obj.mMaster
-    lMaster.enable_fake_spills()
-    secho( "Fake spills enabled", fg='green')
-
 # ------------------------------------------------------------------------------

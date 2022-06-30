@@ -14,7 +14,7 @@
 
 // PDT Headers
 #include "timing/TopDesign.hpp"
-#include "timing/MasterNode.hpp"
+#include "timing/MasterNodeInterface.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -78,7 +78,7 @@ public:
   /**
    * @brief      Get master node pointer
    */
-  virtual const MasterNode* get_master_node_plain() const = 0;
+  virtual const MasterNodeInterface* get_master_node_plain() const = 0;
 
   template<class MST>
   const MST* get_master_node() const

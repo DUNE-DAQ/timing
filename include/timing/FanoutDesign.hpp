@@ -33,7 +33,7 @@ namespace timing {
 /**
  * @brief      Class for timing fanout designs.
  */
-class FanoutDesign : public MasterMuxDesign, public PlainEndpointDesignInterface
+class FanoutDesign : public MasterMuxDesign, public EndpointDesignInterface
 {
   UHAL_DERIVEDNODE(FanoutDesign)
 public:

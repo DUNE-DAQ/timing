@@ -22,8 +22,6 @@ OverlordDesign::OverlordDesign(const uhal::Node& node)
   , EndpointDesignInterface(node)
   , MasterDesign(node)
   , OverlordDesignInterface(node)
-  , PlainEndpointDesignInterface(node)
-
 {}
 //-----------------------------------------------------------------------------
 

@@ -1,13 +1,15 @@
 /**
- * @file DUNEEndpointNode.cpp
+ * @file PDIEndpointNode.cpp
  *
  * This is part of the DUNE DAQ Software Suite, copyright 2020.
  * Licensing/copyright details are in the COPYING file that you should have
  * received with this code.
  */
 
-#include "timing/DUNEEndpointNode.hpp"
+#include "timing/PDIEndpointNode.hpp"
 
+#include "timing/definitions.hpp"
+#include "timing/toolbox.hpp"
 #include "logging/Logging.hpp"
 
 #include <string>
@@ -17,27 +19,33 @@
 namespace dunedaq {
 namespace timing {
 
-UHAL_REGISTER_DERIVED_NODE(DUNEEndpointNode)
+UHAL_REGISTER_DERIVED_NODE(PDIEndpointNode)
 
 //-----------------------------------------------------------------------------
-DUNEEndpointNode::DUNEEndpointNode(const uhal::Node& node)
+PDIEndpointNode::PDIEndpointNode(const uhal::Node& node)
   : EndpointNodeInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-DUNEEndpointNode::~DUNEEndpointNode() {}
+PDIEndpointNode::~PDIEndpointNode() {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void
-DUNEEndpointNode::enable(uint32_t address, uint32_t /*partition*/) const // NOLINT(build/unsigned)
+PDIEndpointNode::enable(uint32_t address, uint32_t partition) const // NOLINT(build/unsigned)
 {
-  getNode("csr.ctrl.addr").write(address);
+  getNode("csr.ctrl.tgrp").write(partition);
+
+  if (address) {
+    getNode("csr.ctrl.int_addr").write(0x1);
+    getNode("csr.ctrl.addr").write(address);
+  } else {
+    getNode("csr.ctrl.int_addr").write(0x0);
+  }
 
   getNode("csr.ctrl.ctr_rst").write(0x1);
   getNode("csr.ctrl.ctr_rst").write(0x0);
-
   getNode("csr.ctrl.ep_en").write(0x1);
   getNode("csr.ctrl.buf_en").write(0x1);
   getClient().dispatch();
@@ -46,7 +54,7 @@ DUNEEndpointNode::enable(uint32_t address, uint32_t /*partition*/) const // NOLI
 
 //-----------------------------------------------------------------------------
 void
-DUNEEndpointNode::disable() const
+PDIEndpointNode::disable() const
 {
   getNode("csr.ctrl.ep_en").write(0x0);
   getNode("csr.ctrl.buf_en").write(0x0);
@@ -56,19 +64,19 @@ DUNEEndpointNode::disable() const
 
 //-----------------------------------------------------------------------------
 void
-DUNEEndpointNode::reset(uint32_t address, uint32_t /*partition*/) const // NOLINT(build/unsigned)
+PDIEndpointNode::reset(uint32_t address, uint32_t partition) const // NOLINT(build/unsigned)
 {
 
   getNode("csr.ctrl.ep_en").write(0x0);
   getNode("csr.ctrl.buf_en").write(0x0);
 
-  enable(address);
+  enable(address, partition);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 std::string
-DUNEEndpointNode::get_status(bool print_out) const
+PDIEndpointNode::get_status(bool print_out) const
 {
 
   std::stringstream status;
@@ -122,7 +130,7 @@ DUNEEndpointNode::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 uint64_t // NOLINT(build/unsigned)
-DUNEEndpointNode::read_timestamp() const
+PDIEndpointNode::read_timestamp() const
 {
   auto timestamp = getNode("tstamp").readBlock(2);
   getClient().dispatch();
@@ -132,7 +140,7 @@ DUNEEndpointNode::read_timestamp() const
 
 //-----------------------------------------------------------------------------
 uint32_t // NOLINT(build/unsigned)
-DUNEEndpointNode::read_buffer_count() const
+PDIEndpointNode::read_buffer_count() const
 {
   auto buffer_count = getNode("buf.count").read();
   getClient().dispatch();
@@ -142,7 +150,7 @@ DUNEEndpointNode::read_buffer_count() const
 
 //-----------------------------------------------------------------------------
 uhal::ValVector<uint32_t> // NOLINT(build/unsigned)
-DUNEEndpointNode::read_data_buffer(bool read_all) const
+PDIEndpointNode::read_data_buffer(bool read_all) const
 {
 
   auto buffer_count = getNode("buf.count").read();
@@ -171,7 +179,7 @@ DUNEEndpointNode::read_data_buffer(bool read_all) const
 
 //-----------------------------------------------------------------------------
 std::string
-DUNEEndpointNode::get_data_buffer_table(bool read_all, bool print_out) const
+PDIEndpointNode::get_data_buffer_table(bool read_all, bool print_out) const
 {
 
   std::stringstream table;
@@ -195,7 +203,7 @@ DUNEEndpointNode::get_data_buffer_table(bool read_all, bool print_out) const
 
 //-----------------------------------------------------------------------------
 double
-DUNEEndpointNode::read_clock_frequency() const
+PDIEndpointNode::read_clock_frequency() const
 {
   std::vector<double> frequencies = getNode<FrequencyCounterNode>("freq").measure_frequencies(1);
   return frequencies.at(0);
@@ -204,7 +212,7 @@ DUNEEndpointNode::read_clock_frequency() const
 
 //-----------------------------------------------------------------------------
 uint32_t // NOLINT(build/unsigned)
-DUNEEndpointNode::read_version() const
+PDIEndpointNode::read_version() const
 {
   auto buffer_version = getNode("version").read();
   getClient().dispatch();
@@ -214,7 +222,7 @@ DUNEEndpointNode::read_version() const
 
 //-----------------------------------------------------------------------------
 void
-DUNEEndpointNode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const
+PDIEndpointNode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const
 {
 
   auto timestamp = getNode("tstamp").readBlock(2);
@@ -244,7 +252,7 @@ DUNEEndpointNode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) con
 
 //-----------------------------------------------------------------------------
 void
-DUNEEndpointNode::get_info(opmonlib::InfoCollector& ci, int /*level*/) const
+PDIEndpointNode::get_info(opmonlib::InfoCollector& ci, int /*level*/) const
 {
   timingendpointinfo::TimingEndpointInfo mon_data;
   this->get_info(mon_data);

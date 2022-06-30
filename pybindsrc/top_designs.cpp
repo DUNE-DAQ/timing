@@ -6,8 +6,6 @@
  * received with this code.
  */
 
-#include "timing/PDIMasterNode.hpp"
-
 #include "timing/BoreasDesign.hpp"
 #include "timing/ChronosDesign.hpp"
 #include "timing/CRTDesign.hpp"
@@ -56,8 +54,7 @@ register_top_designs(py::module& m)
           py::arg("control_sfp") = true,
           py::arg("sfp_mux") = -1)
     .def("get_external_triggers_endpoint_node",
-         &timing::OverlordDesign::get_external_triggers_endpoint_node)
-    .def("get_endpoint_node", &timing::OverlordDesign::get_endpoint_node);
+         &timing::OverlordDesign::get_external_triggers_endpoint_node);
 
   // Boreas
   py::class_<timing::BoreasDesign, uhal::Node>(m, "BoreasDesign")
@@ -179,8 +176,7 @@ register_top_designs(py::module& m)
   py::class_<timing::EndpointDesign, uhal::Node>(m, "EndpointDesign")
     .def("read_firmware_version", &timing::EndpointDesign::read_firmware_version)
     .def("validate_firmware_version", &timing::EndpointDesign::validate_firmware_version)
-    .def("get_status", &timing::EndpointDesign::get_status)
-    .def("get_endpoint_node", &timing::EndpointDesign::get_endpoint_node);
+    .def("get_status", &timing::EndpointDesign::get_status);
 
   // Chronos on FMC
   py::class_<timing::ChronosDesign, uhal::Node>(m, "ChronosDesign")

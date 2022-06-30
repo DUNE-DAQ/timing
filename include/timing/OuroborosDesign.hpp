@@ -31,7 +31,7 @@ namespace timing {
  * @brief      Class for PDI timing master design (known as overlord).
  */
 class OuroborosDesign
-  : public MasterDesign, public PlainEndpointDesignInterface
+  : public MasterDesign, public EndpointDesignInterface
 {
   UHAL_DERIVEDNODE(OuroborosDesign)
 public:

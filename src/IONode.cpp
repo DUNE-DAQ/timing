@@ -173,18 +173,23 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
   } else {
 
     std::string config_file;
-    std::string clock_config_key;
+    std::stringstream clock_config_key;
 
-    const BoardRevision board_revision = get_board_revision();
+    const BoardType board_type = convert_value_to_board_type(read_board_type());
+//    const BoardRevision board_revision = get_board_revision();
 //    const CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
     const DesignType design_type = convert_value_to_design_type(read_design_type());
     const uint32_t firmware_frequency = read_firmware_frequency(); // NOLINT(build/unsigned)
 
     try {
-      clock_config_key = g_board_revision_map.at(board_revision) + "_";
+      clock_config_key << g_board_type_map.at(board_type) << "_";
     } catch (const std::out_of_range& e) {
-      throw MissingBoardRevisionMapEntry(ERS_HERE, format_reg_value(board_revision), e);
+      throw MissingBoardTypeMapEntry(ERS_HERE, format_reg_value(board_type), e);
     }
+
+    auto pll = get_pll();
+    auto pll_model = pll->read_device_version();
+    clock_config_key << std::hex << pll_model;
 
 //    try {
 //      clock_config_key = clock_config_key + g_carrier_type_map.at(carrier_type) + "_";
@@ -193,31 +198,38 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
 //    }
 
     try {
-      clock_config_key = clock_config_key + g_design_type_map.at(design_type);
+      clock_config_key << "_" << g_design_type_map.at(design_type);
     } catch (const std::out_of_range& e) {
       throw MissingDesignTypeMapEntry(ERS_HERE, format_reg_value(design_type), e);
     }
 
     // modifier in case a different clock file is needed based on firmware configuration
     if (mode >= 0)
-      clock_config_key = clock_config_key + "_mode" + std::to_string(mode);
+      clock_config_key << "_mode" << std::to_string(mode);
 
     // 50 MHz firmware clock frequency modifier, otherwise assume 62.5 MHz
     if (firmware_frequency == 50e6) {
-      clock_config_key = clock_config_key + "_50_mhz";
+      clock_config_key << "_50_mhz";
     } else if (firmware_frequency != 62.5e6) {
       throw UnknownFirmwareClockFrequency(ERS_HERE, firmware_frequency);
     }
 
-    TLOG_DEBUG(0) << "Using pll config key: " << clock_config_key;
+    // using cdr...?
+    auto no_cdr = getNode("config.no_cdr").read();
+    getClient().dispatch();
+
+    if (!no_cdr)
+      clock_config_key << "_cdr";
+
+    TLOG_DEBUG(0) << "Using pll config key: " << clock_config_key.str();
 
     try {
-      config_file = g_clock_config_map.at(clock_config_key);
+      config_file = g_clock_config_map.at(clock_config_key.str());
     } catch (const std::out_of_range& e) {
-      throw ClockConfigNotFound(ERS_HERE, clock_config_key, e);
+      throw ClockConfigNotFound(ERS_HERE, clock_config_key.str(), e);
     }
 
-    TLOG_DEBUG(0) << "PLL config file: " << config_file << " from key: " << clock_config_key;
+    TLOG_DEBUG(0) << "PLL config file: " << config_file << " from key: " << clock_config_key.str();
 
     const char* env_var_char = std::getenv("TIMING_SHARE");
 

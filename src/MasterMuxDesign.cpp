@@ -55,10 +55,10 @@ MasterMuxDesign::measure_endpoint_rtt(uint32_t address, bool control_sfp, int sf
       switch_downstream_mux_channel(sfp_mux, false);
     }
     // gets master rtt ept in a good state, and sends echo command
-    uint32_t rtt = this->get_master_node().measure_endpoint_rtt(address, control_sfp);
+    uint32_t rtt = get_master_node_plain()->measure_endpoint_rtt(address, control_sfp);
     return rtt;
   } else {
-    return this->get_master_node_plain()->measure_endpoint_rtt(address, control_sfp);
+    return get_master_node_plain()->measure_endpoint_rtt(address, control_sfp);
   }
 }
 //-----------------------------------------------------------------------------
@@ -81,18 +81,18 @@ MasterMuxDesign::apply_endpoint_delay(uint32_t address,
       switch_downstream_mux_channel(sfp_mux, false);  
     }
     // gets master rtt ept in a good state, and sends echo command
-    this->get_master_node().apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp);
+    get_master_node_plain()->apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp);
   }
   else
   {
-    this->get_master_node().apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp);
+    get_master_node_plain()->apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp);
   }
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void
-MasterMuxDesign<MST>::switch_downstream_mux_channel(uint32_t sfp_id, bool wait_for_rtt_ept_lock) const
+MasterMuxDesign::switch_downstream_mux_channel(uint32_t sfp_id, bool wait_for_rtt_ept_lock) const
 {
   TopDesignInterface::get_io_node<timing::FanoutIONode>()->switch_downstream_mux_channel(sfp_id);
   if (wait_for_rtt_ept_lock) {

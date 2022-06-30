@@ -7,7 +7,6 @@ import timing.common.definitions as defs
 from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
 
 from click import echo, style, secho
-from .click_texttable import Texttable
 import time
 
 # ------------------------------------------------------------------------------

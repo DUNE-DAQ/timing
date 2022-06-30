@@ -16,7 +16,8 @@
 #include "TimingIssues.hpp"
 #include "timing/FrequencyCounterNode.hpp"
 #include "timing/EndpointNodeInterface.hpp"
-
+#include "timing/toolbox.hpp"
+#include "timing/definitions.hpp"
 #include "timing/timingendpointinfo/InfoNljs.hpp"
 #include "timing/timingendpointinfo/InfoStructs.hpp"
 
@@ -53,7 +54,7 @@ public:
    * @return     { description_of_the_return_value }
    */
   void enable(uint32_t address = 0, uint32_t partition = 0) const override; // NOLINT(build/unsigned)
-
+  
   /**
    * @brief      Disable the endpoint
    *

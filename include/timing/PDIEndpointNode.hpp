@@ -1,7 +1,7 @@
 /**
- * @file DUNEEndpointNode.hpp
+ * @file PDIEndpointNode.hpp
  *
- * DUNEEndpointNode is a class providing an interface
+ * PDIEndpointNode is a class providing an interface
  * to the endpoint wrapper firmware block.
  *
  * This is part of the DUNE DAQ Software Suite, copyright 2020.
@@ -9,8 +9,8 @@
  * received with this code.
  */
 
-#ifndef TIMING_INCLUDE_TIMING_ENDPOINTNODE_HPP_
-#define TIMING_INCLUDE_TIMING_ENDPOINTNODE_HPP_
+#ifndef TIMING_INCLUDE_TIMING_PDIENDPOINTNODE_HPP_
+#define TIMING_INCLUDE_TIMING_PDIENDPOINTNODE_HPP_
 
 // PDT Headers
 #include "TimingIssues.hpp"
@@ -35,12 +35,12 @@ namespace timing {
 /**
  * @brief      Base class for timing IO nodes.
  */
-class DUNEEndpointNode : public EndpointNodeInterface
+class PDIEndpointNode : public EndpointNodeInterface
 {
-  UHAL_DERIVEDNODE(DUNEEndpointNode)
+  UHAL_DERIVEDNODE(PDIEndpointNode)
 public:
-  explicit DUNEEndpointNode(const uhal::Node& node);
-  virtual ~DUNEEndpointNode();
+  explicit PDIEndpointNode(const uhal::Node& node);
+  virtual ~PDIEndpointNode();
 
   /**
    * @brief     Print the status of the timing node.
@@ -53,7 +53,7 @@ public:
    * @return     { description_of_the_return_value }
    */
   void enable(uint32_t address = 0, uint32_t partition = 0) const override; // NOLINT(build/unsigned)
-  
+
   /**
    * @brief      Disable the endpoint
    *
@@ -125,4 +125,4 @@ public:
 } // namespace timing
 } // namespace dunedaq
 
-#endif // TIMING_INCLUDE_TIMING_ENDPOINTNODE_HPP_
+#endif // TIMING_INCLUDE_TIMING_PDIENDPOINTNODE_HPP_

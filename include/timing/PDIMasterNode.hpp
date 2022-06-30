@@ -14,9 +14,9 @@
 
 // PDT Headers
 #include "timing/definitions.hpp"
-#include "timing/MasterNode.hpp"
-#include "timing/GlobalNode.hpp"
-#include "timing/FLCmdGeneratorNode.hpp"
+#include "timing/MasterNodeInterface.hpp"
+#include "timing/PDIMasterGlobalNode.hpp"
+#include "timing/PDIFLCmdGeneratorNode.hpp"
 #include "timing/SpillInterfaceNode.hpp"
 #include "timing/PartitionNode.hpp"
 
@@ -36,7 +36,7 @@ namespace timing {
 /**
  * @brief      Class for PD-I master timing nodes.
  */
-class PDIMasterNode : public MasterNode
+class PDIMasterNode : public MasterNodeInterface
 {
   UHAL_DERIVEDNODE(PDIMasterNode)
 public:
@@ -81,6 +81,13 @@ public:
   void enable_upstream_endpoint() const override;
 
   /**
+   * @brief     Send a fixed length command
+   */
+  void send_fl_cmd(FixedLengthCommandType command,
+                           uint32_t channel,                                // NOLINT(build/unsigned)
+                           uint32_t number_of_commands = 1) const override; // NOLINT(build/unsigned)
+
+  /**
    * @brief      Measure the endpoint round trip time.
    *
    * @return     { description_of_the_return_value }
@@ -97,7 +104,7 @@ public:
                             bool measure_rtt = false,
                             bool control_sfp = true) const override;
 
-  using MasterNode::apply_endpoint_delay;
+  using MasterNodeInterface::apply_endpoint_delay;
 
   /**
    * @brief      Get partition node
