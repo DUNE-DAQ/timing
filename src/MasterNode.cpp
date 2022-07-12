@@ -113,7 +113,7 @@ MasterNode::measure_endpoint_rtt(uint32_t address, bool control_sfp) const // NO
 
 //  auto vl_cmd_node = getNode<VLCmdGeneratorNode>("acmd");
 //  auto global = getNode<DUNEMasterGlobalNode>("global");
-//  auto echo = getNode<EchoMonitorNode>("echo");
+  auto echo = getNode<EchoMonitorNode>("echo_mon");
 //
 //  if (control_sfp)
 //  {
@@ -137,12 +137,12 @@ MasterNode::measure_endpoint_rtt(uint32_t address, bool control_sfp) const // NO
 //    }
 //    throw e;
 //  }
-//  uint32_t endpoint_rtt = echo.send_echo_and_measure_delay(); // NOLINT(build/unsigned)
+  uint32_t endpoint_rtt = echo.send_echo_and_measure_delay(); // NOLINT(build/unsigned)
 //
 //  if (control_sfp)
 //    vl_cmd_node.switch_endpoint_sfp(address, false);
 //
-//  return endpoint_rtt;
+  return endpoint_rtt;
 }
 //-----------------------------------------------------------------------------
 
@@ -282,7 +282,7 @@ std::vector<uint32_t>
 MasterNode::transmit_async_packet(const std::vector<uint32_t>& packet, uint32_t timeout) const
 { 
   // get receiving endpoint in master ready
-  //enable_upstream_endpoint();
+  enable_upstream_endpoint();
 
   auto global = getNode<MasterGlobalNode>("global");
   

@@ -5,6 +5,8 @@
 
 namespace dunedaq::timing {
 
+UHAL_REGISTER_DERIVED_NODE(MasterDesign)
+
 //-----------------------------------------------------------------------------
 MasterDesign::MasterDesign(const uhal::Node& node)
   : TopDesignInterface(node)

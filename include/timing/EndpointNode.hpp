@@ -77,39 +77,11 @@ public:
   virtual uint64_t read_timestamp() const; // NOLINT(build/unsigned)
 
   /**
-   * @brief      Read the number of words in the data buffer.
-   *
-   * @return     { description_of_the_return_value }
-   */
-  virtual uint32_t read_buffer_count() const; // NOLINT(build/unsigned)
-
-  /**
-   * @brief      Read the contents of the endpoint data buffer.
-   *
-   * @return     { description_of_the_return_value }
-   */
-  virtual uhal::ValVector<uint32_t> read_data_buffer(bool read_all = false) const; // NOLINT(build/unsigned)
-
-  /**
-   * @brief      Print the contents of the endpoint data buffer.
-   *
-   * @return     { description_of_the_return_value }
-   */
-  virtual std::string get_data_buffer_table(bool read_all = false, bool print_out = false) const;
-
-  /**
    * @brief      Read the endpoint clock frequency.
    *
    * @return     { description_of_the_return_value }
    */
-  virtual double read_clock_frequency() const;
-
-  /**
-   * @brief      Read the endpoint wrapper version
-   *
-   * @return     { description_of_the_return_value }
-   */
-  virtual uint32_t read_version() const; // NOLINT(build/unsigned)
+  //virtual double read_clock_frequency() const;
 
   /**
    * @brief     Collect monitoring information for timing endpoint

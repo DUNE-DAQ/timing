@@ -7,6 +7,8 @@
  */
 
 #include "timing/OverlordDesign.hpp"
+#include "timing/PDIMasterNode.hpp"
+
 
 #include <sstream>
 #include <string>

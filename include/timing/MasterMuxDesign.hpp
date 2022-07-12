@@ -34,7 +34,7 @@ namespace timing {
 class MasterMuxDesign
   : virtual public MuxDesignInterface, public MasterDesign
 {
-
+  UHAL_DERIVEDNODE(MasterMuxDesign)
 public:
   explicit MasterMuxDesign(const uhal::Node& node);
   virtual ~MasterMuxDesign();

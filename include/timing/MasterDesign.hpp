@@ -32,7 +32,7 @@ namespace timing {
  */
 class MasterDesign : public TopDesign, virtual public MasterDesignInterface
 {
-
+  UHAL_DERIVEDNODE(MasterDesign)
 public:
   explicit MasterDesign(const uhal::Node& node);
   virtual ~MasterDesign();

@@ -1,0 +1,5 @@
+<node id="TOP">
+    <node id="io" address="0x0" module="file://pdts_fmc_io.xml"/>
+    <node id="cdr" address="0x100" module="file://pdts_upstream_cdr.xml"/>
+    <node id="master" address="0x400" module="file://pdts_master.xml"/>
+</node>

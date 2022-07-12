@@ -1,4 +1,4 @@
-<node id="pdts_echo_mon" description="Echo command monitor" fwinfo="endpoint" class="EchoMonitorNode">
+<node id="pdts_echo_mon" description="Echo command monitor" fwinfo="endpoint" class="PDIEchoMonitorNode">
 		<node id="csr" address="0x0" fwinfo="endpoint;width=4">
 			<node id="ctrl" address="0x0">
 				<node id="go" mask="0x1"/>

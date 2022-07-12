@@ -5,15 +5,7 @@
 
 namespace dunedaq::timing {
 
-// In leiu of UHAL_REGISTER_DERIVED_NODE
-//-----------------------------------------------------------------------------
-//template<class MST>
-//uhal::Node*
-//MasterMuxDesign::clone() const
-//{
-//  return new MasterMuxDesign(static_cast<const MasterMuxDesign&>(*this));
-//}
-////-----------------------------------------------------------------------------
+UHAL_REGISTER_DERIVED_NODE(MasterMuxDesign)
 
 //-----------------------------------------------------------------------------
 MasterMuxDesign::MasterMuxDesign(const uhal::Node& node)

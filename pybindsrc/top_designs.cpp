@@ -91,7 +91,7 @@ register_top_designs(py::module& m)
          py::arg("rate"),
          py::arg("dispatch") = true);
 
-  // PD-I fanout design on fib
+  // Fanout
   py::class_<timing::FanoutDesign, uhal::Node>(m, "FanoutDesign")
     .def("read_firmware_version", &timing::FanoutDesign::read_firmware_version)
     .def("validate_firmware_version", &timing::FanoutDesign::validate_firmware_version)
@@ -118,9 +118,8 @@ register_top_designs(py::module& m)
           py::arg("sfp_mux") = -1)
     .def("scan_sfp_mux", &timing::FanoutDesign::scan_sfp_mux);
 
-  // PD-I ouroboros design on fib
-  py::class_<timing::OuroborosMuxDesign, uhal::Node>(
-    m, "OuroborosMuxDesign")
+  // Ouroboros mux
+  py::class_<timing::OuroborosMuxDesign, uhal::Node>(m, "OuroborosMuxDesign")
     .def("read_firmware_version", &timing::OuroborosMuxDesign::read_firmware_version)
     .def("validate_firmware_version", &timing::OuroborosMuxDesign::validate_firmware_version)
     .def("sync_timestamp", &timing::OuroborosMuxDesign::sync_timestamp)
@@ -146,7 +145,33 @@ register_top_designs(py::module& m)
           py::arg("sfp_mux") = -1)
     .def("scan_sfp_mux", &timing::OuroborosMuxDesign::scan_sfp_mux);
 
-  // Ouroboros on FMC
+  // Master
+  py::class_<timing::MasterDesign, uhal::Node>(m, "MasterDesign")
+    .def("read_firmware_version", &timing::MasterDesign::read_firmware_version)
+    .def("validate_firmware_version", &timing::MasterDesign::validate_firmware_version)
+    .def("sync_timestamp", &timing::MasterDesign::sync_timestamp)
+    .def("get_status", &timing::MasterDesign::get_status)
+    .def("enable_periodic_fl_cmd",
+         &timing::MasterDesign::enable_periodic_fl_cmd,
+         py::arg("channel"),
+         py::arg("rate"),
+         py::arg("poisson"))
+    .def("apply_endpoint_delay", 
+          &timing::MasterDesign::apply_endpoint_delay,
+          py::arg("address"),
+          py::arg("coarse_delay"),
+          py::arg("fine_delay"),
+          py::arg("phase_delay"),
+          py::arg("measure_rtt") = false,
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1)
+    .def("measure_endpoint_rtt", 
+          &timing::MasterDesign::measure_endpoint_rtt,
+          py::arg("address"),
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1);
+
+  // Ouroboros
   py::class_<timing::OuroborosDesign, uhal::Node>(m, "OuroborosDesign")
     .def("read_firmware_version", &timing::OuroborosDesign::read_firmware_version)
     .def("validate_firmware_version", &timing::OuroborosDesign::validate_firmware_version)
@@ -172,13 +197,13 @@ register_top_designs(py::module& m)
           py::arg("control_sfp") = true,
           py::arg("sfp_mux") = -1);
 
-  // Endpoint on FMC
+  // Endpoint
   py::class_<timing::EndpointDesign, uhal::Node>(m, "EndpointDesign")
     .def("read_firmware_version", &timing::EndpointDesign::read_firmware_version)
     .def("validate_firmware_version", &timing::EndpointDesign::validate_firmware_version)
     .def("get_status", &timing::EndpointDesign::get_status);
 
-  // Chronos on FMC
+  // Chronos
   py::class_<timing::ChronosDesign, uhal::Node>(m, "ChronosDesign")
     .def("read_firmware_version", &timing::ChronosDesign::read_firmware_version)
     .def("validate_firmware_version", &timing::ChronosDesign::validate_firmware_version)
@@ -193,7 +218,7 @@ register_top_designs(py::module& m)
          py::arg("rate"),
          py::arg("dispatch") = true);
     
-  // CRT on FMC
+  // CRT 
   py::class_<timing::CRTDesign, uhal::Node>(m, "CRTDesign")
     .def("read_firmware_version", &timing::CRTDesign::read_firmware_version)
     .def("validate_firmware_version", &timing::CRTDesign::validate_firmware_version)

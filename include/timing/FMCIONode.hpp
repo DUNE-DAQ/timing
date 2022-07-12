@@ -63,6 +63,16 @@ public:
                      const std::string& clock_config_file = "") const override;
   
   /**
+    * @brief      Read frequencies of on-board clocks.
+    */
+  std::vector<double> read_clock_frequencies() const override;
+
+  /**
+    * @brief      Print frequencies of on-board clocks.
+    */
+  std::string get_clock_frequencies_table(bool print_out = false) const override;
+
+  /**
    * @brief      Fill hardware monitoring structure.
    */
   void get_info(timinghardwareinfo::TimingFMCMonitorData& mon_data) const;
