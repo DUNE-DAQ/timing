@@ -31,11 +31,10 @@ namespace timing {
 /**
  * @brief      Class for PDI timing master design on mux board
  */
-template<class MST>
 class MasterMuxDesign
-  : virtual public MuxDesignInterface, public MasterDesign<MST>
+  : virtual public MuxDesignInterface, public MasterDesign
 {
-
+  UHAL_DERIVEDNODE(MasterMuxDesign)
 public:
   explicit MasterMuxDesign(const uhal::Node& node);
   virtual ~MasterMuxDesign();
@@ -83,7 +82,5 @@ protected:
 
 } // namespace timing
 } // namespace dunedaq
-
-#include "timing/detail/MasterMuxDesign.hxx"
 
 #endif // TIMING_INCLUDE_TIMING_MASTERMUXDESIGN_HPP_

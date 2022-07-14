@@ -26,12 +26,12 @@ namespace timing {
 /**
  * @brief      Class for master global node.
  */
-class GlobalNode : public TimingNode
+class PDIMasterGlobalNode : public TimingNode
 {
   UHAL_DERIVEDNODE(GlobalNode)
 public:
-  explicit GlobalNode(const uhal::Node& node);
-  virtual ~GlobalNode();
+  explicit PDIMasterGlobalNode(const uhal::Node& node);
+  virtual ~PDIMasterGlobalNode();
 
   bool in_spill() const;
   bool tx_error() const;

@@ -24,9 +24,9 @@ def align(obj):
     lDevice = obj.mDevice
     lMaster = obj.mMaster
     obj.mGlobal = lMaster.getNode('global')
-    obj.mACmd = lMaster.getNode('acmd')
-    obj.mEcho = lMaster.getNode('echo')
-    obj.mIO = lDevice.getNode('io')
+    #obj.mACmd = lMaster.getNode('acmd')
+    #obj.mEcho = lMaster.getNode('echo')
+    #bj.mIO = lDevice.getNode('io')
 # ------------------------------------------------------------------------------
 
 

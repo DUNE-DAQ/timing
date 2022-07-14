@@ -46,9 +46,8 @@ public:
   /**
    * @brief     Send a fixed length command
    */
-  void send_fl_cmd(FixedLengthCommandType command,
-                   uint32_t channel, // NOLINT(build/unsigned)
-                   const TimestampGeneratorNode& timestamp_gen_node) const;
+  virtual void send_fl_cmd(FixedLengthCommandType command,
+                   uint32_t channel) const; // NOLINT(build/unsigned)
 
   /**
    * @brief     Configure fake trigger

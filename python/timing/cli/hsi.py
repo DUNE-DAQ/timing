@@ -8,7 +8,6 @@ import timing.common.definitions as defs
 from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
 
 from click import echo, style, secho
-from .click_texttable import Texttable
 import time
 
 # ------------------------------------------------------------------------------
@@ -86,9 +85,9 @@ def enable(ctx, obj, action, partition, address):
     if action == 'off':
         lHSIEpt.disable()
     elif action == 'on':
-        lHSIEpt.enable(partition, address)
+        lHSIEpt.enable(address=address,partition=partition)
     elif action == 'reset':
-        lHSIEpt.reset(partition, address)
+        lHSIEpt.reset(address=address,partition=partition)
         lHSIEpt.reset_hsi()
 
     time.sleep(0.1)

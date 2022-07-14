@@ -38,7 +38,7 @@ public:
    *
    * @return     { description_of_the_return_value }
    */
-  uint64_t send_echo_and_measure_delay(int64_t timeout = 500) const; // NOLINT(build/unsigned)
+  virtual uint64_t send_echo_and_measure_delay(int64_t timeout = 500) const; // NOLINT(build/unsigned)
 
   /**
    * @brief     Get status string, optionally print.

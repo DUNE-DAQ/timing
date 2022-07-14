@@ -18,9 +18,9 @@ UHAL_REGISTER_DERIVED_NODE(EndpointDesign)
 //-----------------------------------------------------------------------------
 EndpointDesign::EndpointDesign(const uhal::Node& node)
   : TopDesignInterface(node)
-  , EndpointDesignInterface(node)
   , TopDesign(node)
-  , PlainEndpointDesignInterface(node)
+  , EndpointDesignInterface(node)
+
 {}
 //-----------------------------------------------------------------------------
 
@@ -38,7 +38,7 @@ EndpointDesign::get_status(bool print_out) const
   size_t number_of_endpoint_nodes = EndpointDesign::get_number_of_endpoint_nodes(); 
   for (size_t i = 0; i < number_of_endpoint_nodes; ++i) {
     status << "Endpoint node " << i << " status" << std::endl;
-    status << get_endpoint_node(i).get_status();
+    status << get_endpoint_node_plain(i)->get_status();
   }
   if (print_out)
     TLOG() << status.str();
@@ -60,7 +60,7 @@ void
 EndpointDesign::get_info(opmonlib::InfoCollector& ci, int level) const
 { 
   opmonlib::InfoCollector endpoint_collector;
-  get_endpoint_node(0).get_info(endpoint_collector, level);
+  get_endpoint_node_plain(0)->get_info(endpoint_collector, level);
   ci.add("endpoint", endpoint_collector);
 
   opmonlib::InfoCollector hardware_collector;
@@ -73,7 +73,8 @@ EndpointDesign::get_info(opmonlib::InfoCollector& ci, int level) const
 uint32_t // NOLINT(build/unsigned)
 EndpointDesign::read_firmware_version() const
 {
-  return get_endpoint_node(0).read_version();
+  return 0; //TODO
+  //return get_endpoint_node_plain(0)->read_version();
 }
 //-----------------------------------------------------------------------------
 

@@ -14,16 +14,10 @@
 
 // PDT Headers
 #include "TimingIssues.hpp"
-#include "timing/FrequencyCounterNode.hpp"
 #include "timing/TimingNode.hpp"
-
-#include "timing/timingendpointinfo/InfoNljs.hpp"
-#include "timing/timingendpointinfo/InfoStructs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
-
-#include <nlohmann/json.hpp>
 
 // C++ Headers
 #include <chrono>
@@ -46,7 +40,7 @@ public:
    *
    * @return     { description_of_the_return_value }
    */
-  virtual void enable(uint32_t partition = 0, uint32_t address = 0) const = 0; // NOLINT(build/unsigned)
+  virtual void enable(uint32_t address = 0, uint32_t partition = 0) const = 0; // NOLINT(build/unsigned)
 
   /**
    * @brief      Disable the endpoint
@@ -60,7 +54,7 @@ public:
    *
    * @return     { description_of_the_return_value }
    */
-  virtual void reset(uint32_t partition = 0, uint32_t address = 0) const = 0; // NOLINT(build/unsigned)
+  virtual void reset(uint32_t address = 0, uint32_t partition = 0) const = 0; // NOLINT(build/unsigned)
 
   /**
    * @brief      Get endpoint ready flag

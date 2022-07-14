@@ -1,12 +1,12 @@
 /**
- * @file GlobalNode.cpp
+ * @file PDIMasterGlobalNode.cpp
  *
  * This is part of the DUNE DAQ Software Suite, copyright 2020.
  * Licensing/copyright details are in the COPYING file that you should have
  * received with this code.
  */
 
-#include "timing/GlobalNode.hpp"
+#include "timing/PDIMasterGlobalNode.hpp"
 
 #include "timing/toolbox.hpp"
 #include "logging/Logging.hpp"
@@ -16,21 +16,21 @@
 namespace dunedaq {
 namespace timing {
 
-UHAL_REGISTER_DERIVED_NODE(GlobalNode)
+UHAL_REGISTER_DERIVED_NODE(PDIMasterGlobalNode)
 
 //-----------------------------------------------------------------------------
-GlobalNode::GlobalNode(const uhal::Node& node)
+PDIMasterGlobalNode::PDIMasterGlobalNode(const uhal::Node& node)
   : TimingNode(node)
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-GlobalNode::~GlobalNode() {}
+PDIMasterGlobalNode::~PDIMasterGlobalNode() {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 bool
-GlobalNode::in_spill() const
+PDIMasterGlobalNode::in_spill() const
 {
   return false;
 }
@@ -38,7 +38,7 @@ GlobalNode::in_spill() const
 
 //-----------------------------------------------------------------------------
 bool
-GlobalNode::tx_error() const
+PDIMasterGlobalNode::tx_error() const
 {
   return false;
 }
@@ -46,7 +46,7 @@ GlobalNode::tx_error() const
 
 //-----------------------------------------------------------------------------
 uint32_t // NOLINT(build/unsigned)
-GlobalNode::readTimeStamp() const
+PDIMasterGlobalNode::readTimeStamp() const
 {
   return 0;
 }
@@ -54,7 +54,7 @@ GlobalNode::readTimeStamp() const
 
 //-----------------------------------------------------------------------------
 uint32_t // NOLINT(build/unsigned)
-GlobalNode::read_spill_counter() const
+PDIMasterGlobalNode::read_spill_counter() const
 {
   return 0;
 }
@@ -62,19 +62,19 @@ GlobalNode::read_spill_counter() const
 
 //-----------------------------------------------------------------------------
 void
-GlobalNode::select_partition() const
+PDIMasterGlobalNode::select_partition() const
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void
-GlobalNode::lock_partition() const
+PDIMasterGlobalNode::lock_partition() const
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 std::string
-GlobalNode::get_status(bool print_out) const
+PDIMasterGlobalNode::get_status(bool print_out) const
 {
   std::stringstream status;
   auto subnodes = read_sub_nodes(getNode("csr.stat"));
@@ -87,7 +87,7 @@ GlobalNode::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-GlobalNode::enable_upstream_endpoint(uint32_t timeout) // NOLINT(build/unsigned)
+PDIMasterGlobalNode::enable_upstream_endpoint(uint32_t timeout) // NOLINT(build/unsigned)
 {
   getNode("csr.ctrl.ep_en").write(0x0);
   getClient().dispatch();

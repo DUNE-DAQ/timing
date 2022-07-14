@@ -7,8 +7,6 @@ import click
 import time
 
 from click import echo, style, secho
-from .click_texttable import Texttable
-
 
 # ------------------------------------------------------------------------------
 def hookDebugger(debugger='gdb'):
@@ -161,32 +159,6 @@ def complete_device(ctx, args, incomplete):
     return [k for k in lDevices if incomplete in k]
 # -----------------
 
-
-# -----------------
-def validate_partition(ctx, param, value):
-    
-    lMaxParts = ctx.obj.mGenerics['n_part']
-    if value < 0 or value > lMaxParts-1:
-
-        raise click.BadParameter(
-            'Invalid partition {}. Available partitions: {}'.format(value, list(range(lMaxParts)))
-        )
-    return value
-# -----------------
-
-
-# ------------------------------------------------------------------------------
-def validate_chan(ctx, param, value):
-    
-    lMaxChans = ctx.obj.mGenerics['n_chan']
-    if value < 0 or value > lMaxChans-1:
-
-        raise click.BadParameter(
-            'Invalid partition {}. Available partitions: {}'.format(value, list(range(lMaxChans)))
-        )
-    return value
-# ------------------------------------------------------------------------------
-
 # ------------------------------------------------------------------------------
 def split(ctx, param, value):
     if value is None:
@@ -239,41 +211,9 @@ def printRegTable(aRegs, aHeader=True, sort=True):
     echo  ( format_reg_table(aRegs, aHeader, sort) )
 # ------------------------------------------------------------------------------
 
-
-# ------------------------------------------------------------------------------
-def format_reg_table(aRegs, aHeader=True, sort=True):
-    lRegTable = Texttable(max_width=0)
-    lRegTable.set_deco(Texttable.VLINES | Texttable.BORDER | Texttable.HEADER)
-    lRegTable.set_chars(['-', '|', '+', '-'])
-    if aHeader:
-        lRegTable.header( ['name', 'value'] )
-
-    lRegs = sorted(aRegs) if sort else aRegs
-    for k in lRegs:
-        lRegTable.add_row( [str(k), hex(aRegs[k])] )
-        
-    return lRegTable.draw()
-# ------------------------------------------------------------------------------
-
 # ------------------------------------------------------------------------------
 def printDictTable(aDict, aHdr=True, aSort=True, aFmtr=None):
     echo  ( formatDictTable(aDict, aHdr, aSort, aFmtr) )
-# ------------------------------------------------------------------------------
-
-
-# ------------------------------------------------------------------------------
-def formatDictTable(aDict, aHdr=True, aSort=True, aFmtr=str):
-    lDictTable = Texttable(max_width=0)
-    lDictTable.set_deco(Texttable.VLINES | Texttable.BORDER | Texttable.HEADER)
-    lDictTable.set_chars(['-', '|', '+', '-'])
-    if aHdr:
-        lDictTable.header( ['name', 'value'] )
-
-    for k in (sorted(aDict) if aSort else aDict):
-        v = aDict[k]
-        lDictTable.add_row( [str(k), aFmtr(v) if aFmtr else v])
-        
-    return lDictTable.draw()
 # ------------------------------------------------------------------------------
 
 
