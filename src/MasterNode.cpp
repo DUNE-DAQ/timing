@@ -211,6 +211,11 @@ MasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned
                                         (address_mode << 7UL) | 0x1, // transaction length of 0x1
                                         coarse_delay & 0xf,
 
+                                        // packet to set deskew done
+                                        (0x1 << 7UL) | 0x70, // write transaction on 0x70
+                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
+                                        0xb,
+
                                         // packet to reset rx
                                         (0x1 << 7UL) | 0x70, // write transaction on 0x70
                                         (address_mode << 7UL) | 0x1, // transaction length of 0x1
@@ -259,8 +264,8 @@ MasterNode::sync_timestamp(uint32_t clock_frequency_hz) const // NOLINT(build/un
   const uint64_t new_timestamp = read_timestamp(); // NOLINT(build/unsigned)
   TLOG() << "Reading new timestamp: " << format_reg_value(new_timestamp) << ", " << format_timestamp(new_timestamp, clock_frequency_hz);
 
-  //enable_timestamp_broadcast();
-  //TLOG() << "Timestamp broadcast enabled";
+  enable_timestamp_broadcast();
+  TLOG() << "Timestamp broadcast enabled";
 }
 //-----------------------------------------------------------------------------
 
@@ -364,6 +369,11 @@ MasterNode::transmit_async_packet(const std::vector<uint32_t>& packet, int timeo
   auto rx_packet = getNode("acmd_buf.rxbuf").readBlock(0x20);
   getClient().dispatch();
 
+  if (rx_packet.at(0) != 0xff || rx_packet.at(1) != 0xff || rx_packet.at(2) != packet.at(2))
+  {
+    ers::warning(InvalidVLCommandReplyPacket(ERS_HERE, rx_packet.at(0), rx_packet.at(1), rx_packet.at(2)));
+  }
+
   TLOG_DEBUG(11) << "async result: ";
   for (auto r : rx_packet)
     TLOG_DEBUG(11) << std::hex << "0x" << r;
@@ -396,8 +406,6 @@ MasterNode::write_endpoint_data(uint16_t endpoint_address, uint8_t reg_address, 
   tx_packet.back() = tx_packet.back() | (0x1 << 8UL);
 
   auto result = transmit_async_packet(tx_packet);
-
-  // TODO check result for errors and consistency
 }
 //-----------------------------------------------------------------------------
 

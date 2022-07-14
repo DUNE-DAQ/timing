@@ -185,6 +185,12 @@ ERS_DECLARE_ISSUE(timing,                                                       
                    ((uint)timeout)                                                                                                                 ///< Message parameters
 )
 
+ERS_DECLARE_ISSUE(timing,                                                                                                                                      ///< Namespace
+                  InvalidVLCommandReplyPacket,                                                                                                                 ///< Issue class name
+                  " Variable length (async) command reply packet invalid. byte 0,1,2: " << std::hex << "0x" << byte_0 << ", 0x" << byte_1 << ", 0x" << byte_2, ///< Message
+                  ((uint32_t)byte_0)((uint32_t)byte_1)((uint32_t)byte_2)                                                                                       ///< Message parameters
+)
+
 ERS_DECLARE_ISSUE(timing,                                               ///< Namespace
                   FormatCountersTableNodesTitlesMismatch,               ///< Issue class name
                   " Mismatch between number counters nodes and titles", ///< Message
