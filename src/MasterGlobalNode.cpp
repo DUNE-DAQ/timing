@@ -65,7 +65,7 @@ MasterGlobalNode::enable_upstream_endpoint(uint32_t timeout) const // NOLINT(bui
     auto now = std::chrono::high_resolution_clock::now();
     ms_since_start = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
 
-    millisleep(50);
+    millisleep(10);
 
     ept_ready = getNode("csr.stat.rx_rdy").read();    
     getClient().dispatch();
@@ -116,7 +116,7 @@ MasterGlobalNode::reset_command_counters(uint32_t timeout) const // NOLINT(build
     auto now = std::chrono::high_resolution_clock::now();
     ms_since_start = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
 
-    millisleep(50);
+    millisleep(10);
 
     counters_ready = getNode("csr.stat.ctrs_rdy").read();
     getClient().dispatch();
@@ -129,11 +129,12 @@ MasterGlobalNode::reset_command_counters(uint32_t timeout) const // NOLINT(build
     }
   }
 
-//  if (!ept_ready.value()) {
-//    throw UpstreamEndpointFailedToLock(ERS_HERE, format_reg_value(ept_ready));
-//  } else {
-//    TLOG_DEBUG(1) << "Master endpoint ready";
-//  }
+  if (!counters_ready.value()) {
+    // TODO throw something
+    TLOG() << "Command counters did not become ready";
+  } else {
+    TLOG_DEBUG(1) << "Command counters ready";
+  }
 }
 //-----------------------------------------------------------------------------
 

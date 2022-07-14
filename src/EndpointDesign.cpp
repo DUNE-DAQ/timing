@@ -18,8 +18,9 @@ UHAL_REGISTER_DERIVED_NODE(EndpointDesign)
 //-----------------------------------------------------------------------------
 EndpointDesign::EndpointDesign(const uhal::Node& node)
   : TopDesignInterface(node)
-  , EndpointDesignInterface(node)
   , TopDesign(node)
+  , EndpointDesignInterface(node)
+
 {}
 //-----------------------------------------------------------------------------
 

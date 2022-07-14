@@ -42,7 +42,7 @@ PDIFLCmdGeneratorNode::send_fl_cmd(FixedLengthCommandType command,
   getNode("chan_ctrl.force").write(0x1);
   getClient().dispatch();
 
-  getNode("ctrl.force").write(0x0);
+  getNode("chan_ctrl.force").write(0x0);
   getClient().dispatch();
 }
 //-----------------------------------------------------------------------------

@@ -60,7 +60,7 @@ PDIEchoMonitorNode::send_echo_and_measure_delay(int64_t timeout) const
   }
 
   if (!done.value()) {
-    throw EchoTimeout(ERS_HERE, timeout);
+    throw EchoFlagTimeout(ERS_HERE, timeout);
   }
 
   auto time_rx_l = getNode("csr.rx_l").read();

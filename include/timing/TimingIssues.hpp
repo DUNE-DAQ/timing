@@ -161,10 +161,28 @@ ERS_DECLARE_ISSUE(timing,                        ///< Namespace
                   ((std::string)dac_id)          ///< Message parameters
 )
 
-ERS_DECLARE_ISSUE(timing,                                                                        ///< Namespace
-                  EchoTimeout,                                                                   ///< Issue class name
-                  " Timeout whilst waiting for echo. Timeout (ms): " << std::to_string(timeout), ///< Message
-                  ((uint)timeout)                                                                ///< Message parameters
+ERS_DECLARE_ISSUE(timing,                                    ///< Namespace
+                  EchoReplyTimeout,                          ///< Issue class name
+                  " Timeout whilst waiting for echo reply.", ///< Message
+                  ERS_EMPTY                                  ///< Message parameters
+)
+
+ERS_DECLARE_ISSUE(timing,                                                                                   ///< Namespace
+                  EchoFlagTimeout,                                                                          ///< Issue class name
+                  " Timeout whilst waiting for echo reply flag. Timeout (ms): " << std::to_string(timeout), ///< Message
+                  ((uint)timeout)                                                                           ///< Message parameters
+)
+
+ERS_DECLARE_ISSUE(timing,                                                               ///< Namespace
+                  VLCommandReplyTimeout,                                                ///< Issue class name
+                  " Timeout whilst waiting for variable length (async) command reply.", ///< Message
+                  ERS_EMPTY                                                             ///< Message parameters
+)
+
+ERS_DECLARE_ISSUE(timing,                                                                                                                          ///< Namespace
+                  VLCommandReplyBufferFlagTimeout,                                                                                                 ///< Issue class name
+                  " Timeout whilst waiting for variable length (async) reply buffer response flag set. Timeout (ms): " << std::to_string(timeout), ///< Message
+                   ((uint)timeout)                                                                                                                 ///< Message parameters
 )
 
 ERS_DECLARE_ISSUE(timing,                                               ///< Namespace

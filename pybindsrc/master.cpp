@@ -62,6 +62,7 @@ register_master(py::module& m)
 
   py::class_<timing::MasterNode, uhal::Node>(m, "MasterNode")
     .def(py::init<const uhal::Node&>())
+    .def("switch_endpoint_sfp", &timing::MasterNode::switch_endpoint_sfp)
     .def("enable_upstream_endpoint", &timing::MasterNode::enable_upstream_endpoint)
     .def("reset_command_counters", &timing::MasterNode::reset_command_counters)
     .def("transmit_async_packet", &timing::MasterNode::transmit_async_packet, py::arg("packet"), py::arg("timeout") = 500) //timeout [us]

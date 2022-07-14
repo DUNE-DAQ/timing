@@ -13,6 +13,7 @@
 #include "logging/Logging.hpp"
 
 #include <string>
+#include <chrono>
 
 namespace dunedaq {
 namespace timing {
@@ -52,32 +53,37 @@ EchoMonitorNode::send_echo_and_measure_delay(int64_t timeout) const
 
   auto start = std::chrono::high_resolution_clock::now();
 
-  std::chrono::milliseconds ms_since_start(0);
-
   uhal::ValWord<uint32_t> done; // NOLINT(build/unsigned)
-
-  while (ms_since_start.count() < timeout) {
-
-    auto now = std::chrono::high_resolution_clock::now();
-    ms_since_start = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
-
-    millisleep(100);
+  uhal::ValWord<uint32_t> delta_t;
+  
+  while (true) {
 
     done = getNode("csr.stat.rx_done").read();
+    delta_t = getNode("csr.stat.deltat").read();
     getClient().dispatch();
 
-    TLOG_DEBUG(0) << "rx done: " << std::hex << done.value();
+    TLOG_DEBUG(0) << "rx done: " << std::hex << done.value() << ", delta_t: " << delta_t.value();
 
     if (done.value())
-      break;
-  }
+    {
+      if (delta_t.value() == 0xffff)
+      {
+        throw EchoReplyTimeout(ERS_HERE);
+      } 
+      else
+      {
+        break;
+      }
+    }
+    
+    auto now = std::chrono::high_resolution_clock::now();
+    auto us_since_start = std::chrono::duration_cast<std::chrono::microseconds>(now - start);
 
-  if (!done.value()) {
-    throw EchoTimeout(ERS_HERE, timeout);
-  }
+    if (us_since_start.count() > timeout)
+      throw EchoFlagTimeout(ERS_HERE, timeout);
 
-  auto delta_t = getNode("csr.stat.deltat").read();
-  getClient().dispatch();
+    std::this_thread::sleep_for(std::chrono::microseconds(1));
+  }
 
   TLOG_DEBUG(0) << "delta t: " << format_reg_value(delta_t.value(), 10);
 

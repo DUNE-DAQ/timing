@@ -153,55 +153,55 @@ EndpointNode::read_timestamp() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-EndpointNode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const
-{
-
-  auto timestamp = getNode("tstamp").readBlock(2);
-  auto event_counter = getNode("evtctr").read();
-  auto buffer_count = getNode("buf.count").read();
-  auto endpoint_control = read_sub_nodes(getNode("csr.ctrl"), false);
-  auto endpoint_state = read_sub_nodes(getNode("csr.stat"), false);
-  getClient().dispatch();
-
-  mon_data.state = endpoint_state.at("ep_stat").value();
-  mon_data.ready = endpoint_state.at("ep_rdy").value();
-  mon_data.partition = endpoint_control.at("tgrp").value();
-  mon_data.address = endpoint_control.at("addr").value();
-  mon_data.timestamp = tstamp2int(timestamp);
-  mon_data.in_run = endpoint_state.at("in_run").value();
-  mon_data.in_spill = endpoint_state.at("in_spill").value();
-  mon_data.buffer_warning = endpoint_state.at("buf_warn").value();
-  mon_data.buffer_error = endpoint_state.at("buf_err").value();
-  mon_data.buffer_occupancy = buffer_count.value();
-  mon_data.event_counter = event_counter.value();
-  mon_data.reset_out = endpoint_state.at("ep_rsto").value();
-  mon_data.sfp_tx_disable = endpoint_state.at("sfp_tx_dis").value();
-  mon_data.coarse_delay = endpoint_state.at("cdelay").value();
-  mon_data.fine_delay = endpoint_state.at("fdelay").value();
-}
+//void
+//EndpointNode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const
+//{
+//
+//  auto timestamp = getNode("tstamp").readBlock(2);
+//  auto event_counter = getNode("evtctr").read();
+//  auto buffer_count = getNode("buf.count").read();
+//  auto endpoint_control = read_sub_nodes(getNode("csr.ctrl"), false);
+//  auto endpoint_state = read_sub_nodes(getNode("csr.stat"), false);
+//  getClient().dispatch();
+//
+//  mon_data.state = endpoint_state.at("ep_stat").value();
+//  mon_data.ready = endpoint_state.at("ep_rdy").value();
+//  mon_data.partition = endpoint_control.at("tgrp").value();
+//  mon_data.address = endpoint_control.at("addr").value();
+//  mon_data.timestamp = tstamp2int(timestamp);
+//  mon_data.in_run = endpoint_state.at("in_run").value();
+//  mon_data.in_spill = endpoint_state.at("in_spill").value();
+//  mon_data.buffer_warning = endpoint_state.at("buf_warn").value();
+//  mon_data.buffer_error = endpoint_state.at("buf_err").value();
+//  mon_data.buffer_occupancy = buffer_count.value();
+//  mon_data.event_counter = event_counter.value();
+//  mon_data.reset_out = endpoint_state.at("ep_rsto").value();
+//  mon_data.sfp_tx_disable = endpoint_state.at("sfp_tx_dis").value();
+//  mon_data.coarse_delay = endpoint_state.at("cdelay").value();
+//  mon_data.fine_delay = endpoint_state.at("fdelay").value();
+//}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-EndpointNode::get_info(opmonlib::InfoCollector& ci, int /*level*/) const
-{
-  timingendpointinfo::TimingEndpointInfo mon_data;
-  this->get_info(mon_data);
-  ci.add(mon_data);
-
-  nlohmann::json cmd_data;
-  timingendpointinfo::TimingFLCmdCounters received_fl_commands_counters;
-  
-  auto counters = getNode("ctrs").readBlock(g_command_number);
-  getClient().dispatch();
-  
-  for (auto& cmd:  g_command_map) {
-    cmd_data[cmd.second] = counters.at(cmd.first);
-  }
-  timingendpointinfo::from_json(cmd_data, received_fl_commands_counters);
-  ci.add(received_fl_commands_counters);
-}
+//void
+//EndpointNode::get_info(opmonlib::InfoCollector& ci, int /*level*/) const
+//{
+//  timingendpointinfo::TimingEndpointInfo mon_data;
+//  this->get_info(mon_data);
+//  ci.add(mon_data);
+//
+//  nlohmann::json cmd_data;
+//  timingendpointinfo::TimingFLCmdCounters received_fl_commands_counters;
+//  
+//  auto counters = getNode("ctrs").readBlock(g_command_number);
+//  getClient().dispatch();
+//  
+//  for (auto& cmd:  g_command_map) {
+//    cmd_data[cmd.second] = counters.at(cmd.first);
+//  }
+//  timingendpointinfo::from_json(cmd_data, received_fl_commands_counters);
+//  ci.add(received_fl_commands_counters);
+//}
 //-----------------------------------------------------------------------------
 
 } // namespace timing

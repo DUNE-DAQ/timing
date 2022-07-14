@@ -107,7 +107,7 @@ public:
   /**
    * @brief     Fill the PD-I master monitoring structure.
    */
-//  void get_info(timingfirmwareinfo::PDIMasterMonitorData& mon_data) const;
+//  void get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const;
 
   /**
    * @brief    Give info to collector.
@@ -122,7 +122,7 @@ public:
   /**
    * @brief    Send an async packet
    */
-  std::vector<uint32_t> transmit_async_packet(const std::vector<uint32_t>& packet, uint32_t timeout=500) const;
+  std::vector<uint32_t> transmit_async_packet(const std::vector<uint32_t>& packet, int timeout=500) const;
 
   /**
    * @brief    Write some data to endpoint registers

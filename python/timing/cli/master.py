@@ -248,19 +248,11 @@ def controltimestampbroadcast(obj, on):
 # ------------------------------------------------------------------------------
 @master.group('part', invoke_without_command=True)
 @click.pass_obj
-@click.argument('id', type=int)
-def partition(obj, id):
+def partition(obj):
     """
     Partition specific commands
-
-    ID: Id of the selected partition
     """
-    obj.mPartitionId = id
-    try:
-        obj.mPartitionNode = obj.mMaster.getNode('partition{}'.format(id))
-    except Exception as lExc:
-        click.Abort('Partition {} not found in address table'.format(id))
-
+    secho("New partition concept not yet supported", fg='yellow')
 # ------------------------------------------------------------------------------
 
 
@@ -275,92 +267,12 @@ def partstatus(obj, watch, period):
     '''
 
     # lDevice = obj.mDevice
-    lMaster = obj.mMaster
-    lPartNode = obj.mPartitionNode
-    lIO = obj.mIO
-    
-    firmware_clock_frequency_hz = lIO.read_firmware_frequency()
-    lTStampNode = lMaster.getNode('tstamp.ctr.val')
-
-    while(True):
-        if watch:
-            click.clear()
-        echo()
-        echo( "-- " + style("Master state", fg='green') + "---")
-        echo()
-        
-        echo(lMaster.get_status_with_date(firmware_clock_frequency_hz))
-
-        echo()
-
-        echo(lPartNode.get_status())
-
-        if watch:
-            time.sleep(period)
-        else:
-            break
+    pass
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
 @partition.command('configure', short_help='Prepares partition for data taking.')
-@click.option('--trgmask', '-m', type=str, callback=lambda c, p, v: int(v, 16), default='0xf', help='Trigger mask (in hex).')
-@click.option('--fakemask', '-f', type=str, help='Fake mask (in hex).')
-@click.option('--spill-gate/--no-spill-gate', 'spillgate', default=True, help='Enable the spill gate')
-@click.option('--rate-ctrl/--no-rate-ctrl', 'ratectrl', default=True, help='Enable rate control')
 @click.pass_obj
-def configure(obj, trgmask, fakemask, spillgate, ratectrl):
-    '''
-    Configures partition for data taking
-
-    \b
-    - disable command generator (calibration)
-    - enable time-sync command generator
-    - disable readout buffer
-    - disable triggers
-    - set command mask for the partition
-    - enable partition
-    \b
-    Note: The trigger mask does not cover fake triggers which mask is automatically
-    set according to the partition number.
-    '''
-    lPartId = obj.mPartitionId
-    lPartNode = obj.mPartitionNode
-
-    if fakemask is None:
-        lFakeMask = (0x1 << lPartId)
-    else:
-        lFakeMask = int(fakemask, 16)
-    lTrgMask = (trgmask << 4) | lFakeMask;
-
-    echo()
-    echo("Configuring partition {}".format(lPartId))
-    echo("Trigger mask set to {}".format(hex(lTrgMask)))
-    echo("  Fake mask {}".format(hex(lFakeMask)))
-    echo("  Phys mask {}".format(hex(trgmask)))
-
-    lPartNode.reset(); 
-    lPartNode.configure(lTrgMask, spillgate, ratectrl);
-    lPartNode.enable();
-    secho("Partition {} enabled and configured".format(lPartId), fg='green')
-
-# ------------------------------------------------------------------------------
-
-# ------------------------------------------------------------------------------
-def validate_freq(ctx, param, value):
-
-    lFqMin = 0.5
-    lFqMax = 12500.0
-
-    if value < lFqMin or value > lFqMax:    
-        raise click.BadParameter(
-            'Frequency out of the allowed range {}-{} Hz'.format(lFqMin, lFqMax)
-            )
-
-    def div2freq(div):
-        return 50e6/(1<<(12+div))
-
-    # Brute force it
-    lDeltas = [ abs(value-div2freq(div)) for div in range(0x10) ]
-    lMinDeltaIdx = min(range(len(lDeltas)), key=lDeltas.__getitem__)
-    return value, lMinDeltaIdx, div2freq(lMinDeltaIdx)
+def configure(obj):
+    pass
 # ------------------------------------------------------------------------------
