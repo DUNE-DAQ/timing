@@ -7,6 +7,7 @@
  */
 
 #include "timing/EndpointNode.hpp"
+#include "timing/toolbox.hpp"
 
 #include "logging/Logging.hpp"
 
@@ -49,7 +50,7 @@ EndpointNode::enable(uint32_t address, uint32_t /*partition*/) const // NOLINT(b
     auto now = std::chrono::high_resolution_clock::now();
     ms_since_start = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
 
-    millisleep(50);
+    millisleep(10);
 
     counters_ready = getNode("csr.stat.ctrs_rdy").read();
     getClient().dispatch();

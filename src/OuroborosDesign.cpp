@@ -19,8 +19,8 @@ UHAL_REGISTER_DERIVED_NODE(OuroborosDesign)
 OuroborosDesign::OuroborosDesign(const uhal::Node& node)
   : TopDesignInterface(node)
   , MasterDesignInterface(node)
-  , EndpointDesignInterface(node)
   , MasterDesign(node)
+  , EndpointDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 

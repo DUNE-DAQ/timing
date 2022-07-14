@@ -21,9 +21,9 @@ UHAL_REGISTER_DERIVED_NODE(OverlordDesign)
 OverlordDesign::OverlordDesign(const uhal::Node& node)
   : TopDesignInterface(node)
   , MasterDesignInterface(node)
-  , EndpointDesignInterface(node)
   , MasterDesign(node)
   , OverlordDesignInterface(node)
+  , EndpointDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
