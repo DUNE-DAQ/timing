@@ -70,9 +70,15 @@
   <connection id="CHRONOS_FMC"          uri="ipbusudp-2.0://192.168.200.16:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v640/chronos_fmc/top.xml" />
   <connection id="CHRONOS_FMC_WR"       uri="ipbusudp-2.0://10.11.34.118:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v640/boreas_fmc/top_fmc.xml" />
   <connection id="CHRONOS_FMC_WR_CH"    uri="chtcp-2.0://np04-srv-012.cern.ch:10203?target=10.11.34.118:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v640/boreas_fmc/top_fmc.xml" />
-
+  
+  <connection id="BOREAS_TLU_CH"      uri="chtcp-2.0://cuthbert.phy.bris.ac.uk:10203?target=192.168.200.64:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v640/boreas_tlu/top_tlu.xml" />
+  
   <connection id="FAN_MIB"              uri="ipbusudp-2.0://192.168.200.21:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v640/fanout_mib/top_mib.xml" />
 
   <connection id="NP02_HSI"             uri="chtcp-2.0://np04-srv-012.cern.ch:10203?target=10.73.24.61:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v640/chronos_fmc/top.xml" />
+  <connection id="NP04_CB_HSI"          uri="chtcp-2.0://np04-srv-012.cern.ch:10203?target=10.73.128.64:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v610/chronos_fmc/top.xml" />  
+  
+  <connection id="MST_FMC"             uri="chtcp-2.0://cuthbert.phy.bris.ac.uk:10203?target=192.168.200.22:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/master_fmc/top.xml" />
+  <connection id="EPT_FMC"            uri="chtcp-2.0://cuthbert.phy.bris.ac.uk:10203?target=192.168.200.19:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/endpoint_fmc/top.xml" />  
 </connections>
     
