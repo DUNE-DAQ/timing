@@ -138,7 +138,7 @@ FMCIONode::read_clock_frequencies() const
   getClient().dispatch();
   if (no_cdr)
   {
-    clock_names.push_back("EPT");
+    clock_names.push_back("SMPL");
   }
   
   return getNode<FrequencyCounterNode>("freq").measure_frequencies(clock_names.size());
@@ -155,7 +155,7 @@ FMCIONode::get_clock_frequencies_table(bool print_out) const
   getClient().dispatch();
   if (no_cdr)
   {
-    clock_names.push_back("EPT");
+    clock_names.push_back("SMPL");
   }
   std::stringstream table;
   std::vector<double> frequencies = read_clock_frequencies();
