@@ -132,8 +132,16 @@ FMCIONode::reset(int32_t /*fanout_mode*/, // NOLINT(build/unsigned)
 std::vector<double>
 FMCIONode::read_clock_frequencies() const
 {
-  std::vector<std::string> fib_clock_names( {"PLL", "CDR", "EPT"});
-  return getNode<FrequencyCounterNode>("freq").measure_frequencies(fib_clock_names.size());
+  std::vector<std::string> clock_names( {"PLL", "CDR"});
+  // using cdr...?
+  auto no_cdr = getNode("config.no_cdr").read();
+  getClient().dispatch();
+  if (no_cdr)
+  {
+    clock_names.push_back("EPT");
+  }
+  
+  return getNode<FrequencyCounterNode>("freq").measure_frequencies(clock_names.size());
 }
 //-----------------------------------------------------------------------------
 
@@ -141,11 +149,18 @@ FMCIONode::read_clock_frequencies() const
 std::string
 FMCIONode::get_clock_frequencies_table(bool print_out) const
 {
-  std::vector<std::string> fib_clock_names( {"PLL", "CDR", "EPT"});
+  std::vector<std::string> clock_names( {"PLL", "CDR"});
+  // using cdr...?
+  auto no_cdr = getNode("config.no_cdr").read();
+  getClient().dispatch();
+  if (no_cdr)
+  {
+    clock_names.push_back("EPT");
+  }
   std::stringstream table;
   std::vector<double> frequencies = read_clock_frequencies();
   for (uint8_t i = 0; i < frequencies.size(); ++i) { // NOLINT(build/unsigned)
-    table << fib_clock_names.at(i) << " freq: " << std::setprecision(12) << frequencies.at(i) << std::endl;
+    table << clock_names.at(i) << " freq: " << std::setprecision(12) << frequencies.at(i) << std::endl;
   }
   // TODO add freq validation Stoyan Trilov stoyan.trilov@cern.ch
   if (print_out)
