@@ -214,17 +214,12 @@ MasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned
                                         // packet to reset rx
                                         (0x1 << 7UL) | 0x70, // write transaction on 0x70
                                         (address_mode << 7UL) | 0x1, // transaction length of 0x1
-                                        0x9,
-
-                                        // packet to reset rx
-                                        (0x1 << 7UL) | 0x70, // write transaction on 0x70
-                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
-                                        0x1,
+                                        0x4,
 
                                         // packet to set deskew done
                                         (0x1 << 7UL) | 0x70, // write transaction on 0x70
                                         (address_mode << 7UL) | 0x1, // transaction length of 0x1
-                                        0x5,
+                                        0x3,
                                     };
 
   tx_packet.back() = tx_packet.back() | (0x1 << 8UL);
