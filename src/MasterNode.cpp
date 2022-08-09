@@ -211,12 +211,12 @@ MasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned
                                         (address_mode << 7UL) | 0x1, // transaction length of 0x1
                                         coarse_delay & 0xf,
 
-                                        // packet to reset rx
+                                        // packet to set skew done
                                         (0x1 << 7UL) | 0x70, // write transaction on 0x70
                                         (address_mode << 7UL) | 0x1, // transaction length of 0x1
 				                                0x3, // deskew done
 
-                                        // packet to set deskew done
+                                        // packet to resync
                                         (0x1 << 7UL) | 0x70, // write transaction on 0x70
                                         (address_mode << 7UL) | 0x1, // transaction length of 0x1
 				                                0x4, // resync
