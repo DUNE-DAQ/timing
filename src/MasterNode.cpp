@@ -199,10 +199,10 @@ MasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned
     TLOG() << "Pre delay adjustment RTT:  " << format_reg_value(endpoint_rtt, 10);
   }
 
-    uint32_t sequence = 0xab;
-    uint32_t address_mode = 1;
+  uint32_t sequence = 0xab;
+  uint32_t address_mode = 1;
     
-    std::vector<uint32_t> tx_packet = { address & 0xff, 
+  std::vector<uint32_t> tx_packet = { address & 0xff, 
                                         address >> 8UL, 
                                         sequence,
 
@@ -211,20 +211,20 @@ MasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned
                                         (address_mode << 7UL) | 0x1, // transaction length of 0x1
                                         coarse_delay & 0xf,
 
-                                        // packet to reset rx
+                                        // packet to set skew done
                                         (0x1 << 7UL) | 0x70, // write transaction on 0x70
                                         (address_mode << 7UL) | 0x1, // transaction length of 0x1
-                                        0x9,
+				                                0x3, // deskew done
 
-//                                        // packet to set deskew done
-//                                        (0x1 << 7UL) | 0x70, // write transaction on 0x70
-//                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
-//                                        0x4,
+                                        // packet to resync
+                                        (0x1 << 7UL) | 0x70, // write transaction on 0x70
+                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
+				                                0x4, // resync
                                     };
 
   tx_packet.back() = tx_packet.back() | (0x1 << 8UL);
 
-  transmit_async_packet(tx_packet);
+  transmit_async_packet(tx_packet, -1);
 
   if (measure_rtt) {
     try

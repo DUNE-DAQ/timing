@@ -8,13 +8,15 @@
 				<node id="resync" mask="0x1"/>	
 				<node id="clr_ctrs" mask="0x2"/>
 				<node id="ts_en" mask="0x4"/>
+				<node id="rx_sticky_clr" mask="0x8"/>
 			</node>
 			<node id="stat" address="0x1">		
 				<node id="tx_err" mask="0x1"/>
 				<node id="rx_rdy" mask="0x2"/>
-				<node id="ctrs_rdy" mask="0x4"/>	
-				<node id="ts_err" mask="0x8"/>
-				<node id="cdr_locked" mask="0x10"/>
+				<node id="rx_sticky" mask="0x4"/>
+				<node id="ctrs_rdy" mask="0x8"/>	
+				<node id="ts_err" mask="0x10"/>
+				<node id="cdr_locked" mask="0x20"/>
 			</node>
 		</node>
 </node>
