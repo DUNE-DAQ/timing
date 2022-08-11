@@ -48,8 +48,10 @@ void
 MasterGlobalNode::enable_upstream_endpoint(uint32_t timeout) const // NOLINT(build/unsigned)
 {
   getNode("csr.ctrl.resync_cdr").write(0x1);
+  getNode("csr.ctrl.resync").write(0x1);
   getClient().dispatch();
   getNode("csr.ctrl.resync_cdr").write(0x0);
+  getNode("csr.ctrl.resync").write(0x0);
   getClient().dispatch();
 
   TLOG() << "Upstream CDR reset, waiting for lock";
