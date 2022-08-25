@@ -137,19 +137,20 @@ MasterNode::measure_endpoint_rtt(uint32_t address, bool control_sfp) const // NO
     switch_endpoint_sfp(address, true);
 
     millisleep(100);
+
+    try
+    {
+      global.enable_upstream_endpoint();
+    }
+    catch (const timing::EndpointNotReady& e)
+    {
+      if (control_sfp) {
+        switch_endpoint_sfp(address, false);
+      }
+      throw e;
+    }
   }
 
-  try
-  {
-    global.enable_upstream_endpoint();
-  }
-  catch (const timing::EndpointNotReady& e)
-  {
-    if (control_sfp) {
-      switch_endpoint_sfp(address, false);
-    }
-    throw e;
-  }
   uint32_t endpoint_rtt = echo.send_echo_and_measure_delay(); // NOLINT(build/unsigned)
 
   if (control_sfp)

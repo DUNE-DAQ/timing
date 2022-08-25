@@ -47,18 +47,21 @@ MasterGlobalNode::get_status(bool print_out) const
 void
 MasterGlobalNode::enable_upstream_endpoint(uint32_t timeout) const // NOLINT(build/unsigned)
 {
+  getNode("csr.ctrl.resync_cdr").write(0x1);
   getNode("csr.ctrl.resync").write(0x1);
   getClient().dispatch();
+  getNode("csr.ctrl.resync_cdr").write(0x0);
   getNode("csr.ctrl.resync").write(0x0);
   getClient().dispatch();
 
-  TLOG() << "Upstream endpoint reset, waiting for lock";
+  TLOG() << "Upstream CDR reset, waiting for lock";
 
   auto start = std::chrono::high_resolution_clock::now();
 
   std::chrono::milliseconds ms_since_start(0);
 
-  uhal::ValWord<uint32_t> ept_ready;  // NOLINT(build/unsigned)
+  uhal::ValWord<uint32_t> rx_ready;  // NOLINT(build/unsigned)
+  uhal::ValWord<uint32_t> cdr_ready;  // NOLINT(build/unsigned)
 
   // Wait for the endpoint to be happy
   while (ms_since_start.count() < timeout) {
@@ -67,19 +70,20 @@ MasterGlobalNode::enable_upstream_endpoint(uint32_t timeout) const // NOLINT(bui
 
     millisleep(10);
 
-    ept_ready = getNode("csr.stat.rx_rdy").read();    
+    rx_ready = getNode("csr.stat.rx_rdy").read();
+    cdr_ready = getNode("csr.stat.cdr_locked").read();
     getClient().dispatch();
 
-    TLOG_DEBUG(1) << "ept ready: 0x" << ept_ready.value();
+    TLOG_DEBUG(1) << "ept ready: 0x" << rx_ready.value();
 
-    if (ept_ready.value()) {
-      TLOG_DEBUG(1) << "Master endpoint ready!";
+    if (rx_ready.value() && cdr_ready.value()) {
+      TLOG_DEBUG(1) << "Master endpoint and CDR ready!";
       return;
     }
   }
 
-  if (!ept_ready.value()) {
-    throw EndpointNotReady(ERS_HERE, "Master upstream", ept_ready.value());
+  if (!rx_ready.value() || !cdr_ready.value()) {
+    throw EndpointNotReady(ERS_HERE, "Master upstream", rx_ready.value());
   } else {
     TLOG_DEBUG(1) << "Master endpoint ready";
   }
@@ -90,9 +94,9 @@ MasterGlobalNode::enable_upstream_endpoint(uint32_t timeout) const // NOLINT(bui
 bool
 MasterGlobalNode::read_upstream_endpoint_ready() const
 {
-  auto ept_ready = getNode("csr.stat.rx_rdy").read();
+  auto rx_ready = getNode("csr.stat.rx_rdy").read();
   getClient().dispatch();
-  return ept_ready.value();
+  return rx_ready.value();
 }
 //-----------------------------------------------------------------------------
 
