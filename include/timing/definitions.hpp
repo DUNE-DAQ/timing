@@ -35,8 +35,10 @@ enum BoardType
   kBoardTLU,
   kBoardFIB,
   kBoardMIB,
-  kBoardUnknown
+  kBoardPC069,
+  kBoardUnknown = 256
 };
+
 enum CarrierType
 {
   kCarrierEnclustraA35,
@@ -46,8 +48,9 @@ enum CarrierType
   kCarrierAFC,
   kCarrierNexusVideo,
   kCarrierTrenzTE0712, // include fpga part number?
-  kCarrierUnknown
+  kCarrierUnknown = 256
 };
+
 enum DesignType
 {
   kDesignMaster,
@@ -60,8 +63,9 @@ enum DesignType
   kDesignEndpoBICRT,
   kDesignChronos,
   kDesignBoreas,
-  kDesignUnknown
+  kDesignUnknown = 256
 };
+
 enum BoardRevision
 {
   kFMCRev1,
@@ -73,6 +77,8 @@ enum BoardRevision
   kSIMRev1,
   kFIBRev1,
   kMIBRev1,
+  kPC069a,
+  kBoardRevisionUnknown = 256
 };
 
 enum FixedLengthCommandType
@@ -95,7 +101,7 @@ enum FixedLengthCommandType
 };
 
 const std::vector<BoardType> g_library_supported_boards = {
-    kBoardFMC, kBoardPC059, kBoardTLU, kBoardSim, kBoardFIB, kBoardMIB
+  kBoardFMC, kBoardPC059, kBoardTLU, kBoardSim, kBoardFIB, kBoardMIB, kBoardPC069
 };
 
 const uint32_t g_event_size = 6;             // NOLINT(build/unsigned)
@@ -115,7 +121,9 @@ const std::map<BoardType, std::string> g_board_type_map = { { kBoardFMC, "fmc" }
                                                             { kBoardMicrozed, "microzed" },
                                                             { kBoardTLU, "tlu" },
                                                             { kBoardFIB, "fib" }, 
-                                                            { kBoardMIB, "mib" }, };
+                                                            { kBoardMIB, "mib" }, 
+                                                            { kBoardPC069, "pc069" },
+                                                            };
 
 const std::map<CarrierType, std::string> g_carrier_type_map = { { kCarrierEnclustraA35, "enclustra-a35" },
                                                                 { kCarrierKC705, "kc705" },
@@ -147,7 +155,8 @@ const std::vector<DesignType> g_library_supported_designs = {
 const std::map<BoardRevision, std::string> g_board_revision_map = {
   { kFMCRev1, "kFMCRev1" },     { kFMCRev2, "kFMCRev2" }, { kFMCRev3, "kFMCRev3" },
   { kPC059Rev1, "kPC059Rev1" }, { kTLURev1, "kTLURev1" }, { kSIMRev1, "kSIMRev1" },
-  { kFIBRev1, "kFIBRev1" }, { kFMCRev4, "kFMCRev4" }, { kMIBRev1, "kMIBRev1" }
+  { kFIBRev1, "kFIBRev1" }, { kFMCRev4, "kFMCRev4" }, { kMIBRev1, "kMIBRev1" },
+  { kPC069a, "pc069a" },
 };
 
 // NOLINTNEXTLINE(build/unsigned)
