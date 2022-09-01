@@ -123,6 +123,7 @@ const std::map<BoardType, std::string> g_board_type_map = { { kBoardFMC, "fmc" }
                                                             { kBoardFIB, "fib" }, 
                                                             { kBoardMIB, "mib" }, 
                                                             { kBoardPC069, "pc069" },
+                                                            { kBoardUnknown, "unknown" }
                                                             };
 
 const std::map<CarrierType, std::string> g_carrier_type_map = { { kCarrierEnclustraA35, "enclustra-a35" },
@@ -132,8 +133,8 @@ const std::map<CarrierType, std::string> g_carrier_type_map = { { kCarrierEnclus
                                                                 { kCarrierAFC, "afc" },
                                                                 { kCarrierNexusVideo, "nexus-video" },
                                                                 { kCarrierTrenzTE0712, "trenz-te0712" },
-
-};
+                                                                { kCarrierUnknown, "unknown" }
+                                                                };
 
 const std::map<DesignType, std::string> g_design_type_map = {
   { kDesignMaster, "master" },
@@ -146,6 +147,7 @@ const std::map<DesignType, std::string> g_design_type_map = {
   { kDesignEndpoBICRT, "endpoint-bi-crt" },
   { kDesignChronos, "chronos" },
   { kDesignBoreas, "boreas" },
+  { kDesignUnknown, "unknown" },
 };
 
 const std::vector<DesignType> g_library_supported_designs = {
@@ -156,7 +158,7 @@ const std::map<BoardRevision, std::string> g_board_revision_map = {
   { kFMCRev1, "kFMCRev1" },     { kFMCRev2, "kFMCRev2" }, { kFMCRev3, "kFMCRev3" },
   { kPC059Rev1, "kPC059Rev1" }, { kTLURev1, "kTLURev1" }, { kSIMRev1, "kSIMRev1" },
   { kFIBRev1, "kFIBRev1" }, { kFMCRev4, "kFMCRev4" }, { kMIBRev1, "kMIBRev1" },
-  { kPC069a, "pc069a" },
+  { kPC069a, "pc069a" }, { kBoardRevisionUnknown, "unknown" }
 };
 
 // NOLINTNEXTLINE(build/unsigned)
