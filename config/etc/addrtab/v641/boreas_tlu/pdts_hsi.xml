@@ -1,4 +1,4 @@
-<node id="hsi" description="PDTS hardware signals interface" fwinfo="endpoint">
+<node id="hsi" description="PDTS hardware signals interface" fwinfo="endpoint" class="HSINode">
 		<node id="version" address="0x0" fwinfo="endpoint;width=0"/>
 		<node id="csr" address="0x8" fwinfo="endpoint;width=3">
 			<node id="ctrl" address="0x0">

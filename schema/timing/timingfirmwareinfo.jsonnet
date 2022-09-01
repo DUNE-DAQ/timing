@@ -106,18 +106,6 @@ local timingfirmwareinfo = {
         
         s.field("enabled", self.bool_data,
                 doc="HSI triggering enabled"),
-        
-        s.field("endpoint_enabled", self.bool_data,
-                doc="HSI endpoint enabled"),
-        
-        s.field("endpoint_address", self.uint,
-                doc="HSI endpoint address"),
-        
-        s.field("endpoint_partition", self.uint,
-                doc="HSI endpoint partition"),
-        
-        s.field("endpoint_state", self.uint,
-                doc="HSI endpoint state"),
     ], doc="HSI monitor data"),
 };
 

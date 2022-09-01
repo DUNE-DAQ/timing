@@ -37,6 +37,7 @@ BoreasDesign::get_status(bool print_out) const
   std::stringstream status;
   status << get_io_node_plain()->get_pll_status();
   status << get_master_node_plain()->get_status();
+  status << get_endpoint_node_plain(0)->get_status();
   status << get_hsi_node().get_status();
   if (print_out)
     TLOG() << status.str();
@@ -71,6 +72,10 @@ BoreasDesign::get_info(opmonlib::InfoCollector& ci, int level) const
   opmonlib::InfoCollector hardware_collector;
   get_io_node_plain()->get_info(hardware_collector, level);
   ci.add("io", hardware_collector);
+
+  opmonlib::InfoCollector endpoint_collector;
+  get_endpoint_node_plain(0)->get_info(endpoint_collector, level);
+  ci.add("endpoint", endpoint_collector);
 
   opmonlib::InfoCollector hsi_collector;
   get_hsi_node().get_info(hsi_collector, level);
