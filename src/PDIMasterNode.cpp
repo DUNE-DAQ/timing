@@ -225,15 +225,10 @@ PDIMasterNode::read_in_spill() const
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::get_info(timingfirmwareinfo::PDIMasterMonitorData& mon_data) const
+PDIMasterNode::get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const
 {
   auto timestamp = getNode<TimestampGeneratorNode>("tstamp").read_raw_timestamp();
   mon_data.timestamp = tstamp2int(timestamp);
-
-  auto spill_interface_enabled = getNode("spill.csr.ctrl.en").read();
-  getClient().dispatch();
-
-  mon_data.spill_interface_enabled = spill_interface_enabled.value();
 }
 //-----------------------------------------------------------------------------
 
@@ -241,7 +236,7 @@ PDIMasterNode::get_info(timingfirmwareinfo::PDIMasterMonitorData& mon_data) cons
 void
 PDIMasterNode::get_info(opmonlib::InfoCollector& ic, int level) const
 {
-  timingfirmwareinfo::PDIMasterMonitorData mon_data;
+  timingfirmwareinfo::MasterMonitorData mon_data;
   this->get_info(mon_data);
   ic.add(mon_data);
 
@@ -253,6 +248,8 @@ PDIMasterNode::get_info(opmonlib::InfoCollector& ic, int level) const
   }
 
   getNode<FLCmdGeneratorNode>("scmd_gen").get_info(ic, level);
+
+  getNode<SpillInterfaceNode>("spill").get_info(ic, level);
 }
 //-----------------------------------------------------------------------------
 

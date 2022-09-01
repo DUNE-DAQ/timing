@@ -119,6 +119,12 @@ public:
   uint32_t read_buffer_state() const; // NOLINT(build/unsigned)
 
   /**
+   * @brief     Read signal source, 0 - hardware, 1 - internal emulation
+   *
+   */
+  uint32_t read_signal_source_mode() const; // NOLINT(build/unsigned)
+
+  /**
    * @brief     Collect monitoring information for timing endpoint
    *
    */

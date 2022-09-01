@@ -70,13 +70,21 @@ local timingfirmwareinfo = {
     ],
     doc="Fixed length command counters structure"),
     
-    pdi_master_fw_mon_data: s.record("PDIMasterMonitorData", 
+    spill_interface_mon_data: s.record("PDISpillInterfaceMonitorData",
+    [
+        s.field("spill_interface_enabled", self.bool_data,
+                doc="Partition spill interface enabled flag"),
+        s.field("source", self.bool_data,
+                doc="configured source"),
+        s.field("in_spill", self.bool_data,
+                doc="In spill flag")
+    ], doc="PDI spill interface node monitor data"),
+
+    master_fw_mon_data: s.record("MasterMonitorData", 
     [
         s.field("timestamp", self.l_uint,
                 doc="Timestamp"),
-        s.field("spill_interface_enabled", self.bool_data, 0,
-                doc="Partition spill interface enabled flag"),
-    ], doc="PDI master monitor data"),
+    ], doc="master monitor data"),
 
     hsi_fw_mon_data: s.record("HSIFirmwareMonitorData", 
     [

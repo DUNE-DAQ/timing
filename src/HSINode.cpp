@@ -294,6 +294,16 @@ HSINode::read_buffer_state() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+uint32_t // NOLINT(build/unsigned)
+HSINode::read_signal_source_mode() const
+{
+  auto source = getNode("csr.ctrl.src").read();
+  getClient().dispatch();
+  return source.value();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 void
 HSINode::get_info(timingfirmwareinfo::HSIFirmwareMonitorData& mon_data) const
 {
