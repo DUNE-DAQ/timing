@@ -157,7 +157,6 @@ EndpointNode::read_timestamp() const
 void
 EndpointNode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const
 {
-  TLOG() << "deep ept get info called";
   auto timestamp = getNode("tstamp").readBlock(2);
   auto endpoint_control = read_sub_nodes(getNode("csr.ctrl"), false);
   auto endpoint_state = read_sub_nodes(getNode("csr.stat"), false);
@@ -175,7 +174,6 @@ EndpointNode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const
 void
 EndpointNode::get_info(opmonlib::InfoCollector& ci, int /*level*/) const
 {
-  TLOG() << "ept get info called";
   timingendpointinfo::TimingEndpointInfo mon_data;
   this->get_info(mon_data);
   ci.add(mon_data);
