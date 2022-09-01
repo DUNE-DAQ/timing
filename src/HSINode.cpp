@@ -22,41 +22,12 @@ UHAL_REGISTER_DERIVED_NODE(HSINode)
 
 //-----------------------------------------------------------------------------
 HSINode::HSINode(const uhal::Node& node)
-  : EndpointNodeInterface(node)
+  : TimingNode(node)
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 HSINode::~HSINode() {}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
-HSINode::enable(uint32_t address, uint32_t partition) const // NOLINT(build/unsigned)
-{
-  getNode("csr.ctrl.tgrp").write(partition);
-  getNode("csr.ctrl.addr").write(address);
-  getNode("csr.ctrl.ep_en").write(0x1);
-  getClient().dispatch();
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
-HSINode::disable() const
-{
-  getNode("csr.ctrl.ep_en").write(0x0);
-  getClient().dispatch();
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
-HSINode::reset(uint32_t address, uint32_t partition) const // NOLINT(build/unsigned)
-{
-  getNode("csr.ctrl.ep_en").write(0x0);
-  enable(address, partition);
-}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -70,24 +41,17 @@ HSINode::get_status(bool print_out) const
   std::vector<std::pair<std::string, std::string>> hsi_summary;
 
   // auto lEPTimestamp = getNode("tstamp").readBlock(2);
-  auto ept_control = read_sub_nodes(getNode("csr.ctrl"), false);
-  auto ept_state = read_sub_nodes(getNode("csr.stat"), false);
 
-  auto hsi_control = read_sub_nodes(getNode("hsi.csr.ctrl"), false);
-  auto hsi_state = read_sub_nodes(getNode("hsi.csr.stat"), false);
+  auto hsi_control = read_sub_nodes(getNode("csr.ctrl"), false);
+  auto hsi_state = read_sub_nodes(getNode("csr.stat"), false);
 
-  auto hsi_buffer_count = getNode("hsi.buf.count").read();
+  auto hsi_buffer_count = getNode("buf.count").read();
 
-  auto hsi_re_mask = getNode("hsi.csr.re_mask").read();
-  auto hsi_fe_mask = getNode("hsi.csr.fe_mask").read();
-  auto hsi_inv_mask = getNode("hsi.csr.inv_mask").read();
+  auto hsi_re_mask = getNode("csr.re_mask").read();
+  auto hsi_fe_mask = getNode("csr.fe_mask").read();
+  auto hsi_inv_mask = getNode("csr.inv_mask").read();
 
   getClient().dispatch();
-
-  ept_summary.push_back(std::make_pair("Enabled", format_reg_value(ept_control.find("ep_en")->second.value(), 16)));
-  ept_summary.push_back(std::make_pair("Partition", format_reg_value(ept_control.find("tgrp")->second.value(), 16)));
-  ept_summary.push_back(std::make_pair("Address", format_reg_value(ept_control.find("addr")->second.value(), 16)));
-  ept_summary.push_back(std::make_pair("State", g_endpoint_state_map.at(ept_state.find("ep_stat")->second.value())));
 
   hsi_summary.push_back(std::make_pair("Source", format_reg_value(hsi_control.find("src")->second.value(), 16)));
   hsi_summary.push_back(std::make_pair("Enabled", format_reg_value(hsi_control.find("en")->second.value(), 16)));
@@ -102,7 +66,6 @@ HSINode::get_status(bool print_out) const
     std::make_pair("Buffer warning", format_reg_value(hsi_state.find("buf_warn")->second.value(), 16)));
   hsi_summary.push_back(std::make_pair("Buffer occupancy", to_string(hsi_buffer_count.value())));
 
-  status << format_reg_table(ept_summary, "Endpoint summary", { "", "" }) << std::endl;
   status << format_reg_table(hsi_summary, "HSI summary", { "", "" }) << std::endl;
 
   if (print_out)
@@ -115,7 +78,7 @@ HSINode::get_status(bool print_out) const
 uint32_t // NOLINT(build/unsigned)
 HSINode::read_buffer_count() const
 {
-  auto buffer_count = getNode("hsi.buf.count").read();
+  auto buffer_count = getNode("buf.count").read();
   getClient().dispatch();
   return buffer_count.value();
 }
@@ -166,7 +129,7 @@ HSINode::read_data_buffer(uint16_t& n_words, bool read_all, bool fail_on_error) 
     TLOG_DEBUG(5) << "No words to be read out.";
   }
 
-  buffer_data = getNode("hsi.buf.data").readBlock(words_to_read);
+  buffer_data = getNode("buf.data").readBlock(words_to_read);
   getClient().dispatch();
 
   return buffer_data;
@@ -216,10 +179,10 @@ HSINode::configure_hsi(uint32_t src,      // NOLINT(build/unsigned)
                        bool dispatch) const
 {
 
-  getNode("hsi.csr.ctrl.src").write(src);
-  getNode("hsi.csr.re_mask").write(re_mask);
-  getNode("hsi.csr.fe_mask").write(fe_mask);
-  getNode("hsi.csr.inv_mask").write(inv_mask);
+  getNode("csr.ctrl.src").write(src);
+  getNode("csr.re_mask").write(re_mask);
+  getNode("csr.fe_mask").write(fe_mask);
+  getNode("csr.inv_mask").write(inv_mask);
 
   // Configures the internal hsi signal generator to produce triggers at a defined frequency.
   // Rate =  (clock_frequency_hz / 2^(d+8)) / p where n in [0,15] and p in [1,256]
@@ -240,8 +203,8 @@ HSINode::configure_hsi(uint32_t src,      // NOLINT(build/unsigned)
     trig_stream << "> Random trigger rate for HSI set to " << std::setprecision(3) << std::scientific << fake_trigger_config.actual_rate << " Hz. d: " << fake_trigger_config.divisor << " p: " << fake_trigger_config.prescale;
     TLOG() << trig_stream.str();
     
-    getNode("hsi.csr.ctrl.rate_div_p").write(fake_trigger_config.prescale);
-    getNode("hsi.csr.ctrl.rate_div_d").write(fake_trigger_config.divisor);
+    getNode("csr.ctrl.rate_div_p").write(fake_trigger_config.prescale);
+    getNode("csr.ctrl.rate_div_d").write(fake_trigger_config.divisor);
   }
   catch (const timing::BadRequestedFakeTriggerRate& e)
   {
@@ -257,7 +220,7 @@ HSINode::configure_hsi(uint32_t src,      // NOLINT(build/unsigned)
 void
 HSINode::start_hsi(bool dispatch) const
 {
-  getNode("hsi.csr.ctrl.en").write(0x1);
+  getNode("csr.ctrl.en").write(0x1);
   if (dispatch)
     getClient().dispatch();
 }
@@ -267,7 +230,7 @@ HSINode::start_hsi(bool dispatch) const
 void
 HSINode::stop_hsi(bool dispatch) const
 {
-  getNode("hsi.csr.ctrl.en").write(0x0);
+  getNode("csr.ctrl.en").write(0x0);
   if (dispatch)
     getClient().dispatch();
 }
@@ -277,15 +240,15 @@ HSINode::stop_hsi(bool dispatch) const
 void
 HSINode::reset_hsi(bool dispatch) const
 {
-  getNode("hsi.csr.ctrl.en").write(0x0);
+  getNode("csr.ctrl.en").write(0x0);
 
-  getNode("hsi.csr.ctrl.buf_en").write(0x0);
-  getNode("hsi.csr.ctrl.buf_en").write(0x1);
+  getNode("csr.ctrl.buf_en").write(0x0);
+  getNode("csr.ctrl.buf_en").write(0x1);
 
-  getNode("hsi.csr.re_mask").write(0x0);
-  getNode("hsi.csr.fe_mask").write(0x0);
-  getNode("hsi.csr.inv_mask").write(0x0);
-  getNode("hsi.csr.ctrl.src").write(0x0);
+  getNode("csr.re_mask").write(0x0);
+  getNode("csr.fe_mask").write(0x0);
+  getNode("csr.inv_mask").write(0x0);
+  getNode("csr.ctrl.src").write(0x0);
 
   if (dispatch)
     getClient().dispatch();
@@ -296,7 +259,7 @@ HSINode::reset_hsi(bool dispatch) const
 bool
 HSINode::read_buffer_warning() const
 {
-  auto buf_warning = getNode("hsi.csr.stat.buf_warn").read();
+  auto buf_warning = getNode("csr.stat.buf_warn").read();
   getClient().dispatch();
   return buf_warning.value();
 }
@@ -306,7 +269,7 @@ HSINode::read_buffer_warning() const
 bool
 HSINode::read_buffer_error() const
 {
-  auto buf_error = getNode("hsi.csr.stat.buf_err").read();
+  auto buf_error = getNode("csr.stat.buf_err").read();
   getClient().dispatch();
   return buf_error.value();
 }
@@ -317,8 +280,8 @@ uint32_t // NOLINT(build/unsigned)
 HSINode::read_buffer_state() const
 {
 
-  auto buf_state = read_sub_nodes(getNode("hsi.csr.stat"), false);
-  auto hsi_buffer_count = getNode("hsi.buf.count").read();
+  auto buf_state = read_sub_nodes(getNode("csr.stat"), false);
+  auto hsi_buffer_count = getNode("buf.count").read();
   getClient().dispatch();
 
   uint8_t buffer_error = static_cast<uint8_t>(buf_state.find("buf_err")->second.value());    // NOLINT(build/unsigned)
@@ -331,21 +294,27 @@ HSINode::read_buffer_state() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+uint32_t // NOLINT(build/unsigned)
+HSINode::read_signal_source_mode() const
+{
+  auto source = getNode("csr.ctrl.src").read();
+  getClient().dispatch();
+  return source.value();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 void
 HSINode::get_info(timingfirmwareinfo::HSIFirmwareMonitorData& mon_data) const
 {
+  auto hsi_control = read_sub_nodes(getNode("csr.ctrl"), false);
+  auto hsi_state = read_sub_nodes(getNode("csr.stat"), false);
 
-  auto ept_control = read_sub_nodes(getNode("csr.ctrl"), false);
-  auto ept_state = read_sub_nodes(getNode("csr.stat"), false);
+  auto hsi_buffer_count = getNode("buf.count").read();
 
-  auto hsi_control = read_sub_nodes(getNode("hsi.csr.ctrl"), false);
-  auto hsi_state = read_sub_nodes(getNode("hsi.csr.stat"), false);
-
-  auto hsi_buffer_count = getNode("hsi.buf.count").read();
-
-  auto hsi_re_mask = getNode("hsi.csr.re_mask").read();
-  auto hsi_fe_mask = getNode("hsi.csr.fe_mask").read();
-  auto hsi_inv_mask = getNode("hsi.csr.inv_mask").read();
+  auto hsi_re_mask = getNode("csr.re_mask").read();
+  auto hsi_fe_mask = getNode("csr.fe_mask").read();
+  auto hsi_inv_mask = getNode("csr.inv_mask").read();
 
   getClient().dispatch();
 
@@ -358,11 +327,6 @@ HSINode::get_info(timingfirmwareinfo::HSIFirmwareMonitorData& mon_data) const
   mon_data.buffer_warning = hsi_state.find("buf_warn")->second.value();
   mon_data.buffer_occupancy = hsi_buffer_count.value();
   mon_data.enabled = hsi_control.find("en")->second.value();
-
-  mon_data.endpoint_enabled = ept_control.find("ep_en")->second.value();
-  mon_data.endpoint_address = ept_control.find("addr")->second.value();
-  mon_data.endpoint_partition = ept_control.find("tgrp")->second.value();
-  mon_data.endpoint_state = ept_state.find("ep_stat")->second.value();
 }
 //-----------------------------------------------------------------------------
 

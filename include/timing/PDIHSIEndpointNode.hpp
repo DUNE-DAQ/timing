@@ -1,7 +1,7 @@
 /**
- * @file EndpointNode.hpp
+ * @file PDIHSIEndpointNode.hpp
  *
- * EndpointNode is a class providing an interface
+ * PDIHSIEndpointNode is a class providing an interface
  * to the endpoint wrapper firmware block.
  *
  * This is part of the DUNE DAQ Software Suite, copyright 2020.
@@ -9,13 +9,14 @@
  * received with this code.
  */
 
-#ifndef TIMING_INCLUDE_TIMING_ENDPOINTNODE_HPP_
-#define TIMING_INCLUDE_TIMING_ENDPOINTNODE_HPP_
+#ifndef TIMING_INCLUDE_TIMING_PDIHSIENDPOINTNODE_HPP_
+#define TIMING_INCLUDE_TIMING_PDIHSIENDPOINTNODE_HPP_
 
 // PDT Headers
 #include "TimingIssues.hpp"
 #include "timing/FrequencyCounterNode.hpp"
 #include "timing/EndpointNodeInterface.hpp"
+#include "timing/HSINode.hpp"
 
 #include "timing/timingendpointinfo/InfoNljs.hpp"
 #include "timing/timingendpointinfo/InfoStructs.hpp"
@@ -35,12 +36,12 @@ namespace timing {
 /**
  * @brief      Base class for timing IO nodes.
  */
-class EndpointNode : public EndpointNodeInterface
+class PDIHSIEndpointNode : public EndpointNodeInterface
 {
-  UHAL_DERIVEDNODE(EndpointNode)
+  UHAL_DERIVEDNODE(PDIHSIEndpointNode)
 public:
-  explicit EndpointNode(const uhal::Node& node);
-  virtual ~EndpointNode();
+  explicit PDIHSIEndpointNode(const uhal::Node& node);
+  virtual ~PDIHSIEndpointNode();
 
   /**
    * @brief     Print the status of the timing node.
@@ -53,7 +54,7 @@ public:
    * @return     { description_of_the_return_value }
    */
   void enable(uint32_t address = 0, uint32_t partition = 0) const override; // NOLINT(build/unsigned)
-  
+
   /**
    * @brief      Disable the endpoint
    *
@@ -69,19 +70,12 @@ public:
   void reset(uint32_t address = 0, uint32_t partition = 0) const override; // NOLINT(build/unsigned)
 
   /**
-   * @brief      Read the current timestamp word.
+   * @brief      Get wrapped hsi node
    *
    * @return     { description_of_the_return_value }
    */
-  virtual uint64_t read_timestamp() const; // NOLINT(build/unsigned)
-
-  /**
-   * @brief      Read the endpoint clock frequency.
-   *
-   * @return     { description_of_the_return_value }
-   */
-  //virtual double read_clock_frequency() const;
-
+  const HSINode& get_hsi_node() const { return uhal::Node::getNode<HSINode>("hsi"); }
+  
   /**
    * @brief     Collect monitoring information for timing endpoint
    *
@@ -97,4 +91,4 @@ public:
 } // namespace timing
 } // namespace dunedaq
 
-#endif // TIMING_INCLUDE_TIMING_ENDPOINTNODE_HPP_
+#endif // TIMING_INCLUDE_TIMING_PDIHSIENDPOINTNODE_HPP_

@@ -48,8 +48,9 @@ def hsi(obj, device):
             secho("Error: {}".format(e), fg='red')
 
     obj.mDevice = lDevice
-    obj.mHSIEndpoint = lDevice.getNode('endpoint0')
+    obj.mEndpoint = lDevice.getNode('endpoint0')
     obj.mTopDesign = lDevice.getNode('')
+    obj.mHSI = obj.mTopDesign.get_hsi_node()
 # ------------------------------------------------------------------------------
 
 
@@ -63,8 +64,8 @@ def status(ctx, obj):
     '''
 
     lDevice = obj.mDevice
-    lHSIEpt = obj.mHSIEndpoint
-    echo(lHSIEpt.get_status())
+    lHSI = obj.mHSI
+    echo(lHSI.get_status())
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
@@ -80,15 +81,15 @@ def enable(ctx, obj, action, partition, address):
     '''
 
     lDevice = obj.mDevice
-    lHSIEpt = obj.mHSIEndpoint
+    mEndpoint = obj.mHSIEndpoint
     
     if action == 'off':
-        lHSIEpt.disable()
+        mEndpoint.disable()
     elif action == 'on':
-        lHSIEpt.enable(address=address,partition=partition)
+        mEndpoint.enable(address=address,partition=partition)
     elif action == 'reset':
-        lHSIEpt.reset(address=address,partition=partition)
-        lHSIEpt.reset_hsi()
+        mEndpoint.reset(address=address,partition=partition)
+        mEndpoint.reset_hsi()
 
     time.sleep(0.1)
     ctx.invoke(status)
@@ -109,12 +110,12 @@ def configure(ctx, obj, src, re_mask, fe_mask, inv_mask, rate):
     '''
 
     lDevice = obj.mDevice
-    lHSIEpt = obj.mHSIEndpoint
+    lHSI = obj.mHSI
     lTopDesign = obj.mTopDesign
 
-    lHSIEpt.reset_hsi()
+    lHSI.reset_hsi()
     lTopDesign.configure_hsi(src, re_mask, fe_mask, inv_mask, rate)
-    lHSIEpt.start_hsi()
+    lHSI.start_hsi()
     secho("HSI configured (and started)", fg='green')
 
     time.sleep(0.1)
@@ -131,9 +132,9 @@ def readback(ctx, obj):
     Read the content of the endpoint master readout buffer.
     '''
     lDevice = obj.mDevice
-    lHSIEpt = obj.mHSIEndpoint
+    lHSI = obj.mHSI
 
-    lHSIEpt.start_hsi()
+    lHSI.start_hsi()
     secho("HSI start", fg='green')
 
     time.sleep(0.1)
@@ -149,9 +150,9 @@ def readback(ctx, obj):
     Read the content of the endpoint master readout buffer.
     '''
     lDevice = obj.mDevice
-    lHSIEpt = obj.mHSIEndpoint
+    lHSI = obj.mHSI
 
-    lHSIEpt.stop_hsi()
+    lHSI.stop_hsi()
     secho("HSI stop", fg='green')
 
     time.sleep(0.1)
@@ -168,7 +169,7 @@ def readback(ctx, obj, readall):
     Read the content of the endpoint master readout buffer.
     '''
     lDevice = obj.mDevice
-    lHSIEpt = obj.mHSIEndpoint
+    lHSI = obj.mHSI
     
-    echo(lHSIEpt.get_data_buffer_table(readall,False))
+    echo(lHSI.get_data_buffer_table(readall,False))
 # ------------------------------------------------------------------------------

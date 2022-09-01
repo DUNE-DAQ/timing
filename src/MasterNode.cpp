@@ -287,21 +287,20 @@ MasterNode::set_timestamp(uint64_t timestamp) const // NOLINT(build/unsigned)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-//void
-//MasterNode::get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const
-//{
-//
-//}
-
+void
+MasterNode::get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const
+{
+  mon_data.timestamp = read_timestamp();
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void
 MasterNode::get_info(opmonlib::InfoCollector& ic, int level) const
 {
-//  timingfirmwareinfo::MasterMonitorData mon_data;
-//  this->get_info(mon_data);
-//  ic.add(mon_data);
+  timingfirmwareinfo::MasterMonitorData mon_data;
+  this->get_info(mon_data);
+  ic.add(mon_data);
 
   getNode<FLCmdGeneratorNode>("scmd_gen").get_info(ic, level);
 }
