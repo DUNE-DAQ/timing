@@ -219,8 +219,11 @@ const std::map<std::string, std::string> g_clock_config_map = {
   { "fmc_5344_boreas", "SI5344/PDTS0003.txt" },
   { "fmc_5394_boreas", "SI5344/PDTS0003.txt" },
 
-  { "fmc_5344_endpoint", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
-  { "fmc_5394_endpoint", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
+  { "fmc_5344_endpoint", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
+  { "fmc_5394_endpoint", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
+  
+  { "fmc_5344_chronos", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
+  { "fmc_5394_chronos", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
 
   { "tlu_5345_boreas", "nocdr/DUNE_TLU-4_45_M-Registers.txt" },
   
