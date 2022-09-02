@@ -65,7 +65,6 @@ def master(obj, device):
     ))
 
     if lBoardInfo['board_type'].value() in kLibrarySupportedBoards and lBoardInfo['design_type'].value() in kLibrarySupportedDesigns:
-        secho("here")
         lVersion = lTopDesign.read_firmware_version()
         lTopDesign.validate_firmware_version()
 
@@ -76,7 +75,6 @@ def master(obj, device):
             e = sys.exc_info()[0]
             secho("Error: {}".format(e), fg='red')
     else:
-        secho("else")
         lVersion = lMaster.getNode('global.version').read()
         lDevice.dispatch()
 
