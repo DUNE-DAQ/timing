@@ -45,7 +45,19 @@ public:
    *
    * @return     { description_of_the_return_value }
    */
-  virtual const HSINode& get_hsi_node() const { return uhal::Node::getNode<HSINode>("endpoint0"); }
+  virtual const HSINode& get_hsi_node() const
+  { 
+    
+    auto top_level_hsi_nodes = getNodes("hsi");
+    if (top_level_hsi_nodes.size() > 0)
+    {
+     return uhal::Node::getNode<HSINode>("hsi");  
+    }
+    else
+    {
+      return uhal::Node::getNode<HSINode>("endpoint0.hsi"); 
+    }
+  }
 
   /** @brief      Configure the HSI node.
    *
