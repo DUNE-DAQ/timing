@@ -57,18 +57,26 @@ def master(obj, device):
     lNCmdchannels = lMaster.getNode('global.config.n_chan').read()
     lDevice.dispatch()
 
+    echo("Design '{}' on board '{}' on carrier '{}' with frequency {} MHz".format(
+        style(kDesignNameMap[lBoardInfo['design_type'].value()], fg='blue'),
+        style(kBoardNameMap[lBoardInfo['board_type'].value()], fg='blue'),
+        style(kCarrierNameMap[lBoardInfo['carrier_type'].value()], fg='blue'),
+        style(str(lBoardInfo['clock_frequency'].value()/1e6), fg='blue')
+    ))
+
     if lBoardInfo['board_type'].value() in kLibrarySupportedBoards and lBoardInfo['design_type'].value() in kLibrarySupportedDesigns:
-        
+        secho("here")
         lVersion = lTopDesign.read_firmware_version()
         lTopDesign.validate_firmware_version()
 
         try:
             echo(lDevice.getNode('io').get_hardware_info())
         except:
-            secho("Failed to retrieve hardware information I2C issue? Initial board reset needed?", fg='yellow')
+            secho("Failed to retrieve hardware information! I2C issue? Initial board reset needed?", fg='yellow')
             e = sys.exc_info()[0]
             secho("Error: {}".format(e), fg='red')
     else:
+        secho("else")
         lVersion = lMaster.getNode('global.version').read()
         lDevice.dispatch()
 

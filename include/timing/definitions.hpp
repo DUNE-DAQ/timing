@@ -151,7 +151,7 @@ const std::map<DesignType, std::string> g_design_type_map = {
 };
 
 const std::vector<DesignType> g_library_supported_designs = {
-    kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord, kDesignEndpoBICRT, kDesignChronos, kDesignBoreas
+    kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord, kDesignEndpoBICRT, kDesignChronos, kDesignBoreas
 };
 
 const std::map<BoardRevision, std::string> g_board_revision_map = {
