@@ -20,6 +20,9 @@
 #include "timing/TimingNode.hpp"
 #include "timing/VLCmdGeneratorNode.hpp"
 
+#include "timing/timingfirmware/Nljs.hpp"
+#include "timing/timingfirmware/Structs.hpp"
+
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
@@ -103,6 +106,11 @@ public:
    * @brief     Clear fake trigger configuration
    */
   virtual void disable_periodic_fl_cmd(uint32_t channel) const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief    Scan endpoints
+   */
+  virtual std::vector<timingfirmware::EndpointCheckResult> scan_endpoints(const std::vector<uint>& endpoints) const = 0;
 };
 
 } // namespace timing

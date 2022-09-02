@@ -20,6 +20,8 @@
 #include "timing/MasterGlobalNode.hpp"
 #include "timing/timingfirmwareinfo/InfoNljs.hpp"
 #include "timing/timingfirmwareinfo/InfoStructs.hpp"
+#include "timing/timingfirmware/Nljs.hpp"
+#include "timing/timingfirmware/Structs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -144,6 +146,10 @@ public:
    */
   void enable_timestamp_broadcast() const;
 
+  /**
+   * @brief    Scan endpoints
+   */
+  std::vector<timingfirmware::EndpointCheckResult> scan_endpoints(const std::vector<uint>& endpoints) const override;
 };
 
 } // namespace timing
