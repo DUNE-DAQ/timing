@@ -37,6 +37,8 @@ local timingfirmware = {
                 doc="Measured endpoint round trip time"),
         s.field("state", self.int, -1,
                 doc="State of the checked endpoint"),
+        s.field("round_trip_time_after_delay_apply", self.int, -1,
+                doc="Measured endpoint round trip time after delay apply"),
         s.field("state_after_delay_apply", self.int, -1,
                 doc="State of the checked endpoint after delays applied"),
         s.field("applied_delay", self.int, -1,

@@ -62,7 +62,7 @@ EchoMonitorNode::send_echo_and_measure_delay(int64_t timeout) const
     delta_t = getNode("csr.stat.deltat").read();
     getClient().dispatch();
 
-    TLOG_DEBUG(0) << "rx done: " << std::hex << done.value() << ", delta_t: " << delta_t.value();
+    TLOG_DEBUG(6) << "rx done: " << done.value() << ", delta_t: " << delta_t.value();
 
     if (done.value())
     {
@@ -85,7 +85,7 @@ EchoMonitorNode::send_echo_and_measure_delay(int64_t timeout) const
     std::this_thread::sleep_for(std::chrono::microseconds(1));
   }
 
-  TLOG_DEBUG(0) << "delta t: " << format_reg_value(delta_t.value(), 10);
+  TLOG_DEBUG(4) << "delta t: " << format_reg_value(delta_t.value(), 10);
 
   return delta_t.value();
 }

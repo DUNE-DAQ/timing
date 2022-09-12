@@ -54,7 +54,7 @@ MasterGlobalNode::enable_upstream_endpoint(uint32_t timeout) const // NOLINT(bui
   getNode("csr.ctrl.resync").write(0x0);
   getClient().dispatch();
 
-  TLOG() << "Upstream CDR reset, waiting for lock";
+  TLOG_DEBUG(4) << "Upstream CDR reset, waiting for lock";
 
   auto start = std::chrono::high_resolution_clock::now();
 
@@ -74,10 +74,10 @@ MasterGlobalNode::enable_upstream_endpoint(uint32_t timeout) const // NOLINT(bui
     cdr_ready = getNode("csr.stat.cdr_locked").read();
     getClient().dispatch();
 
-    TLOG_DEBUG(1) << "ept ready: 0x" << rx_ready.value();
+    TLOG_DEBUG(6) << "ept ready: 0x" << rx_ready.value();
 
     if (rx_ready.value() && cdr_ready.value()) {
-      TLOG_DEBUG(1) << "Master endpoint and CDR ready!";
+      TLOG_DEBUG(4) << "Master endpoint and CDR ready!";
       return;
     }
   }
@@ -85,7 +85,7 @@ MasterGlobalNode::enable_upstream_endpoint(uint32_t timeout) const // NOLINT(bui
   if (!rx_ready.value() || !cdr_ready.value()) {
     throw EndpointNotReady(ERS_HERE, "Master upstream", rx_ready.value());
   } else {
-    TLOG_DEBUG(1) << "Master endpoint ready";
+    TLOG_DEBUG(4) << "Master endpoint ready";
   }
 }
 //-----------------------------------------------------------------------------
@@ -125,10 +125,10 @@ MasterGlobalNode::reset_command_counters(uint32_t timeout) const // NOLINT(build
     counters_ready = getNode("csr.stat.ctrs_rdy").read();
     getClient().dispatch();
 
-    TLOG_DEBUG(1) << "counters ready: 0x" << counters_ready.value();
+    TLOG_DEBUG(6) << "counters ready: 0x" << counters_ready.value();
 
     if (counters_ready.value()) {
-      TLOG_DEBUG(1) << "Master command counters ready!";
+      TLOG_DEBUG(4) << "Master command counters ready!";
       return;
     }
   }
@@ -137,7 +137,7 @@ MasterGlobalNode::reset_command_counters(uint32_t timeout) const // NOLINT(build
     // TODO throw something
     TLOG() << "Command counters did not become ready";
   } else {
-    TLOG_DEBUG(1) << "Command counters ready";
+    TLOG_DEBUG(4) << "Command counters ready";
   }
 }
 //-----------------------------------------------------------------------------
