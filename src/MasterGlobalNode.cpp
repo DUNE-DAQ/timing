@@ -50,6 +50,7 @@ MasterGlobalNode::enable_upstream_endpoint(uint32_t timeout) const // NOLINT(bui
   getNode("csr.ctrl.resync_cdr").write(0x1);
   getNode("csr.ctrl.resync").write(0x1);
   getClient().dispatch();
+
   getNode("csr.ctrl.resync_cdr").write(0x0);
   getNode("csr.ctrl.resync").write(0x0);
   getClient().dispatch();
@@ -58,34 +59,27 @@ MasterGlobalNode::enable_upstream_endpoint(uint32_t timeout) const // NOLINT(bui
 
   auto start = std::chrono::high_resolution_clock::now();
 
-  std::chrono::milliseconds ms_since_start(0);
-
-  uhal::ValWord<uint32_t> rx_ready;  // NOLINT(build/unsigned)
-  uhal::ValWord<uint32_t> cdr_ready;  // NOLINT(build/unsigned)
-
-  // Wait for the endpoint to be happy
-  while (ms_since_start.count() < timeout) {
-    auto now = std::chrono::high_resolution_clock::now();
-    ms_since_start = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
-
-    millisleep(10);
-
-    rx_ready = getNode("csr.stat.rx_rdy").read();
-    cdr_ready = getNode("csr.stat.cdr_locked").read();
+  // Wait for the rx and cdr to be happy
+  while (true) {
+    auto rx_ready = getNode("csr.stat.rx_rdy").read();
+    auto cdr_ready = getNode("csr.stat.cdr_locked").read();
     getClient().dispatch();
 
-    TLOG_DEBUG(6) << "ept ready: 0x" << rx_ready.value();
+    TLOG_DEBUG(6) << std::hex << "rx ready: 0x" << rx_ready.value() << ", cdr ready: " << cdr_ready.value();
 
-    if (rx_ready.value() && cdr_ready.value()) {
+    if (rx_ready.value() && cdr_ready.value())
+    {
       TLOG_DEBUG(4) << "Master endpoint and CDR ready!";
-      return;
+      break;
     }
-  }
 
-  if (!rx_ready.value() || !cdr_ready.value()) {
-    throw EndpointNotReady(ERS_HERE, "Master upstream", rx_ready.value());
-  } else {
-    TLOG_DEBUG(4) << "Master endpoint ready";
+    auto now = std::chrono::high_resolution_clock::now();
+    auto us_since_start = std::chrono::duration_cast<std::chrono::microseconds>(now - start);
+
+    if (us_since_start.count() > timeout)
+      throw EndpointNotReady(ERS_HERE, "Master upstream", rx_ready.value());
+
+    std::this_thread::sleep_for(std::chrono::microseconds(1));
   }
 }
 //-----------------------------------------------------------------------------
