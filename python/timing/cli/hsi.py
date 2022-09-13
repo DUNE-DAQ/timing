@@ -77,19 +77,20 @@ def status(ctx, obj):
 @click.option('--address', '-a', type=toolbox.IntRange(0x0,0x100), help='Address', default=0)
 def enable(ctx, obj, action, partition, address):
     '''
-    Activate the timing endpoint in the hsi wrapper block.
+    Activate the timing endpoint in the hsi design. Left in for compatibility reasons
     '''
 
     lDevice = obj.mDevice
-    mEndpoint = obj.mHSIEndpoint
+    lEndpoint = obj.mEndpoint
+    lHSI = obj.mHSI
     
     if action == 'off':
-        mEndpoint.disable()
+        lEndpoint.disable()
     elif action == 'on':
-        mEndpoint.enable(address=address,partition=partition)
+        lEndpoint.enable(address=address,partition=partition)
     elif action == 'reset':
-        mEndpoint.reset(address=address,partition=partition)
-        mEndpoint.reset_hsi()
+        lEndpoint.reset(address=address,partition=partition)
+        lHSI.reset_hsi()
 
     time.sleep(0.1)
     ctx.invoke(status)
