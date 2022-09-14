@@ -77,12 +77,12 @@ EchoMonitorNode::send_echo_and_measure_delay(int64_t timeout) const
     }
     
     auto now = std::chrono::high_resolution_clock::now();
-    auto us_since_start = std::chrono::duration_cast<std::chrono::microseconds>(now - start);
+    auto ms_since_start = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
 
-    if (us_since_start.count() > timeout)
+    if (ms_since_start.count() > timeout)
       throw EchoFlagTimeout(ERS_HERE, timeout);
 
-    std::this_thread::sleep_for(std::chrono::microseconds(1));
+    std::this_thread::sleep_for(std::chrono::microseconds(10));
   }
 
   TLOG_DEBUG(4) << "delta t: " << format_reg_value(delta_t.value(), 10);

@@ -74,12 +74,12 @@ MasterGlobalNode::enable_upstream_endpoint(uint32_t timeout) const // NOLINT(bui
     }
 
     auto now = std::chrono::high_resolution_clock::now();
-    auto us_since_start = std::chrono::duration_cast<std::chrono::microseconds>(now - start);
+    auto ms_since_start = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
 
-    if (us_since_start.count() > timeout)
+    if (ms_since_start.count() > timeout)
       throw EndpointNotReady(ERS_HERE, "Master upstream", rx_ready.value());
 
-    std::this_thread::sleep_for(std::chrono::microseconds(1));
+    std::this_thread::sleep_for(std::chrono::microseconds(10));
   }
 }
 //-----------------------------------------------------------------------------
