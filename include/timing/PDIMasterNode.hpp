@@ -137,6 +137,11 @@ public:
    * @brief    Give info to collector.
    */
   void get_info(opmonlib::InfoCollector& ic, int level) const override;
+
+  /**
+   * @brief    Scan endpoints
+   */
+  std::vector<timingfirmware::EndpointCheckResult> scan_endpoints(const std::vector<uint>& endpoints) const override;
 };
 
 } // namespace timing

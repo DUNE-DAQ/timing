@@ -349,7 +349,7 @@ MasterNode::transmit_async_packet(const std::vector<uint32_t>& packet, int timeo
     buffer_timeout = getNode("acmd_buf.stat.timeout").read();
     getClient().dispatch();
     
-    TLOG_DEBUG(1) << "async buffer ready: 0x" << buffer_ready.value() << ", timeout: " << buffer_timeout.value();
+    TLOG_DEBUG(10) << "async buffer ready: 0x" << buffer_ready.value() << ", timeout: " << buffer_timeout.value();
   
     if (buffer_timeout)
       throw VLCommandReplyTimeout(ERS_HERE);
@@ -454,6 +454,76 @@ void MasterNode::enable_timestamp_broadcast() const
 {
   getNode("global.csr.ctrl.ts_en").write(0x1);
   getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+std::vector<timingfirmware::EndpointCheckResult>
+MasterNode::scan_endpoints(const std::vector<uint>& endpoints) const
+{
+  std::vector<timingfirmware::EndpointCheckResult> results;
+  auto global = getNode<MasterGlobalNode>("global");
+  auto echo = getNode<EchoMonitorNode>("echo_mon");
+
+  for (auto endpoint_address : endpoints)
+  {
+    timingfirmware::EndpointCheckResult endpoint_result;
+    endpoint_result.address = endpoint_address;
+
+    switch_endpoint_sfp(endpoint_address, true);
+
+    millisleep(100);
+    
+    try
+    {
+      global.enable_upstream_endpoint();
+    }
+    catch (const timing::EndpointNotReady& e)
+    {
+        switch_endpoint_sfp(endpoint_address, false);
+        results.push_back(endpoint_result);
+        
+        TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << " looks dead.";
+
+        continue;
+    }
+
+    endpoint_result.alive = true;
+    endpoint_result.round_trip_time = echo.send_echo_and_measure_delay();
+    TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << " alive. RTT: " << endpoint_result.round_trip_time;
+
+    auto ept_state = read_endpoint_data(endpoint_address, 0x71, 0x1, 0x1).at(0) & 0xf;
+    TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << " state: " << ept_state;
+    endpoint_result.state = ept_state;
+
+    if (ept_state == 0x6)
+    {
+      TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << ", applying delays of: " << 0x0;
+      
+      apply_endpoint_delay(endpoint_address, 0x0, 0x0, 0x0, false, false);
+      
+      endpoint_result.applied_delay = 0x0;
+
+      auto ept_state_after_delays = read_endpoint_data(endpoint_address, 0x71, 0x1, 0x1).at(0) & 0xf;
+      TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << ", state after delays apply: " << ept_state_after_delays;
+      endpoint_result.state_after_delay_apply = ept_state_after_delays;
+
+      endpoint_result.round_trip_time_after_delay_apply = echo.send_echo_and_measure_delay();
+      TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << ", RTT after delays apply: " << endpoint_result.round_trip_time_after_delay_apply;
+    }
+    else if (ept_state == 0x7 || ept_state == 0x8)
+    {
+      TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << ", delays not needed";
+    }
+    else
+    {
+      TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << ", unexpected state"; 
+    }
+
+    results.push_back(endpoint_result);
+    switch_endpoint_sfp(endpoint_address, false);
+  }
+  return results;
 }
 //-----------------------------------------------------------------------------
 
