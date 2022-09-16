@@ -43,7 +43,7 @@ def hsi(obj, device):
         try:
             echo(lDevice.getNode('io').get_hardware_info())
         except:
-            secho("Failed to retrieve hardware information I2C issue? Initial board reset needed?", fg='yellow')
+            secho("Failed to retrieve hardware information! I2C issue? Initial board reset needed?", fg='yellow')
             e = sys.exc_info()[0]
             secho("Error: {}".format(e), fg='red')
 

@@ -107,7 +107,8 @@ IONode::get_board_revision() const
   try {
     return g_board_uid_revision_map.at(uid);
   } catch (const std::out_of_range& e) {
-    throw UnknownBoardUID(ERS_HERE, format_reg_value(uid), e);
+    ers::warning(UnknownBoardUID(ERS_HERE, format_reg_value(uid), e));
+    return kBoardRevisionUnknown;
   }
 }
 //-----------------------------------------------------------------------------
@@ -128,13 +129,13 @@ IONode::get_hardware_info(bool print_out) const
   try {
     hardware_info.push_back(std::make_pair("Board type", g_board_type_map.at(board_type)));
   } catch (const std::out_of_range& e) {
-    throw MissingBoardTypeMapEntry(ERS_HERE, format_reg_value(board_type), e);
+    ers::error(MissingBoardTypeMapEntry(ERS_HERE, format_reg_value(board_type), e));
   }
 
   try {
     hardware_info.push_back(std::make_pair("Board revision", g_board_revision_map.at(board_revision)));
   } catch (const std::out_of_range& e) {
-    throw MissingBoardRevisionMapEntry(ERS_HERE, format_reg_value(board_revision), e);
+    ers::error(MissingBoardRevisionMapEntry(ERS_HERE, format_reg_value(board_revision), e));
   }
 
   hardware_info.push_back(std::make_pair("Board UID", format_reg_value(read_board_uid())));
@@ -142,13 +143,13 @@ IONode::get_hardware_info(bool print_out) const
   try {
     hardware_info.push_back(std::make_pair("Carrier type", g_carrier_type_map.at(carrier_type)));
   } catch (const std::out_of_range& e) {
-    throw MissingCarrierTypeMapEntry(ERS_HERE, format_reg_value(carrier_type), e);
+    ers::error(MissingCarrierTypeMapEntry(ERS_HERE, format_reg_value(carrier_type), e));
   }
 
   try {
     hardware_info.push_back(std::make_pair("Design type", g_design_type_map.at(design_type)));
   } catch (const std::out_of_range& e) {
-    throw MissingDesignTypeMapEntry(ERS_HERE, format_reg_value(design_type), e);
+    ers::error(MissingDesignTypeMapEntry(ERS_HERE, format_reg_value(design_type), e));
   }
 
   hardware_info.push_back(std::make_pair("Firmware frequency [MHz]", std::to_string(firmware_frequency)));
