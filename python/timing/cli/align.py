@@ -74,7 +74,7 @@ def measuredelay(ctx, obj, addr, mux, sfp_control):
     lTopDesign = obj.mTopDesign
     
     # or a different type of fanout board
-    if lBoardType in [kBoardPC059, kBoardFIB]:
+    if lBoardType in [kBoardPC059, kBoardFIB] and sfp_control == True:
         if mux is not None:
             echo("Endpoint (adr: {}, mux: {}) RTT: {}".format(addr,mux,lTopDesign.measure_endpoint_rtt(addr, sfp_control, mux)))
         else:

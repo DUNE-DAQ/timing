@@ -85,5 +85,7 @@
   <connection id="EPT_FMC"             uri="chtcp-2.0://cuthbert.phy.bris.ac.uk:10203?target=192.168.200.22:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/endpoint_fmc/top.xml" />  
   <connection id="CHRONOS_FMC_NOCDR"   uri="chtcp-2.0://cuthbert.phy.bris.ac.uk:10203?target=192.168.200.22:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/chronos_fmc/top_fmc.xml" />
   <connection id="BOREAS_FMC_NOCDR"    uri="chtcp-2.0://cuthbert.phy.bris.ac.uk:10203?target=192.168.200.22:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/boreas_fmc/top_fmc.xml" />
+
+  <connection id="MASTER_PC059_NOCDR"    uri="chtcp-2.0://cuthbert.phy.bris.ac.uk:10203?target=192.168.200.65:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/master_pc059/top_pc059.xml" />
 </connections>
     

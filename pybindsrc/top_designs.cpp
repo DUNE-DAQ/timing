@@ -145,6 +145,33 @@ register_top_designs(py::module& m)
           py::arg("sfp_mux") = -1)
     .def("scan_sfp_mux", &timing::OuroborosMuxDesign::scan_sfp_mux);
 
+  // Master mux
+  py::class_<timing::MasterMuxDesign, uhal::Node>(m, "MasterMuxDesign")
+    .def("read_firmware_version", &timing::MasterMuxDesign::read_firmware_version)
+    .def("validate_firmware_version", &timing::MasterMuxDesign::validate_firmware_version)
+    .def("sync_timestamp", &timing::MasterMuxDesign::sync_timestamp)
+    .def("enable_periodic_fl_cmd",
+         &timing::MasterMuxDesign::enable_periodic_fl_cmd,
+         py::arg("channel"),
+         py::arg("rate"),
+         py::arg("poisson"))
+    .def("switch_downstream_mux_channel", &timing::MasterMuxDesign::switch_downstream_mux_channel)
+    .def("apply_endpoint_delay", 
+          &timing::MasterMuxDesign::apply_endpoint_delay,
+          py::arg("address"),
+          py::arg("coarse_delay"),
+          py::arg("fine_delay"),
+          py::arg("phase_delay"),
+          py::arg("measure_rtt") = false,
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1)
+    .def("measure_endpoint_rtt", 
+          &timing::MasterMuxDesign::measure_endpoint_rtt,
+          py::arg("address"),
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1)
+    .def("scan_sfp_mux", &timing::MasterMuxDesign::scan_sfp_mux);
+
   // Master
   py::class_<timing::MasterDesign, uhal::Node>(m, "MasterDesign")
     .def("read_firmware_version", &timing::MasterDesign::read_firmware_version)
