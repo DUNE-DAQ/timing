@@ -56,9 +56,10 @@ EndpointNode::enable(uint32_t address, uint32_t /*partition*/) const // NOLINT(b
     getClient().dispatch();
     TLOG_DEBUG(1) << "counters_ready: 0x" << std::hex << counters_ready.value();
 
-    if (counters_ready)
+    if (counters_ready) {
       TLOG_DEBUG(1) << "counters ready";
       break;
+    }
   }
 
   if (!counters_ready) {
