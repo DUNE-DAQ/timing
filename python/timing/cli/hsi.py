@@ -65,6 +65,9 @@ def status(ctx, obj):
 
     lDevice = obj.mDevice
     lHSI = obj.mHSI
+    lEndpoint = obj.mEndpoint
+    
+    echo(lEndpoint.get_status())
     echo(lHSI.get_status())
 # ------------------------------------------------------------------------------
 
