@@ -266,7 +266,7 @@ const std::map<std::string, std::string> g_clock_config_map = {
   { "tlu_5345_boreas_cdr", "devel/DUNE_TLU-DUNTLU09-Registers_62.5_mhz.txt" },
 
   { "pc059_5345_ouroboros_cdr", "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" },
-  { "pc059_5345_fanout_mode0",
+  { "pc059_5345_fanout_mode0_cdr",
     "devel/pc059_sfp_in_312_mhz-059_0s62-Registers.txt" }, // fanout mode, assuming sfp is the upstream input
   { "pc059_5345_fanout_mode1_cdr",
     "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" }, // stand-alone mode
