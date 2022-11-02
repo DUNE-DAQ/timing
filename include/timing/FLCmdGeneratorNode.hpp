@@ -46,8 +46,8 @@ public:
   /**
    * @brief     Send a fixed length command
    */
-  virtual void send_fl_cmd(FixedLengthCommandType command,
-                   uint32_t channel) const; // NOLINT(build/unsigned)
+  virtual void send_fl_cmd(uint32_t command,        // NOLINT(build/unsigned)
+                           uint32_t channel) const; // NOLINT(build/unsigned)
 
   /**
    * @brief     Configure fake trigger

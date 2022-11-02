@@ -49,7 +49,7 @@ public:
    * @brief     Send a fixed length command
    */
   void send_fl_cmd(FixedLengthCommandType command,
-                   uint32_t channel) const override; // NOLINT(build/unsigned)
+                   uint32_t channel) const; // NOLINT(build/unsigned)
 };
 
 } // namespace timing

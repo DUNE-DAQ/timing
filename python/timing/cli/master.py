@@ -124,7 +124,7 @@ def synctime(obj):
 # ------------------------------------------------------------------------------
 @master.command('send-cmd', short_help='Inject a single command.')
 @click.pass_obj
-@click.argument('cmd', type=click.Choice(defs.kCommandIDs.keys()))
+@click.argument('cmd', type=toolbox.IntRange(0x0,0xff))
 @click.argument('chan', type=int)
 @click.option('-n', type=int, default=1)
 def sendcmd(obj, cmd, chan, n):
@@ -133,7 +133,7 @@ def sendcmd(obj, cmd, chan, n):
     '''
 
     lMaster = obj.mMaster
-    lMaster.send_fl_cmd(defs.kCommandIDs[cmd],chan,n)
+    lMaster.send_fl_cmd(cmd,chan,n)
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
@@ -178,8 +178,8 @@ def faketrigclear(obj, chan):
 # ------------------------------------------------------------------------------
 @master.command('write-ept-reg')
 @click.pass_obj
-@click.argument('adr', type=int)
-@click.argument('reg', type=int)
+@click.argument('adr', type=toolbox.IntRange(0x0,0xffff))
+@click.argument('reg', type=toolbox.IntRange(0x0,0x78))
 @click.argument('data', callback=toolbox.split_ints)
 @click.argument('mode', type=bool)
 def writeeptreg(obj, adr, reg, data, mode):
@@ -194,8 +194,8 @@ def writeeptreg(obj, adr, reg, data, mode):
 # ------------------------------------------------------------------------------
 @master.command('read-ept-reg')
 @click.pass_obj
-@click.argument('adr', type=int)
-@click.argument('reg', type=int)
+@click.argument('adr', type=toolbox.IntRange(0x0,0xffff))
+@click.argument('reg', type=toolbox.IntRange(0x0,0x78))
 @click.argument('length', type=int)
 @click.argument('mode', type=bool)
 def readeptreg(obj, adr, reg, length, mode):

@@ -30,14 +30,46 @@ MasterNode::~MasterNode() {}
 
 //-----------------------------------------------------------------------------
 std::string
+MasterNode::get_status_tables() const
+{
+  std::stringstream status;
+
+  status << getNode<MasterGlobalNode>("global").get_status();
+  status << std::endl;
+
+  status << getNode<FLCmdGeneratorNode>("scmd_gen").get_cmd_counters_table();
+  status << std::endl;
+
+  getNode("cmd_ctrs.addr").write(0x0);
+  auto counters = getNode("cmd_ctrs.data").readBlock(0x14);
+  getClient().dispatch();
+
+  std::vector<uhal::ValVector<uint32_t>> counters_container = { counters }; // NOLINT(build/unsigned)
+
+  std::vector<std::string> counter_labels;
+  for (uint i=0; i < counters.size(); ++i) 
+  {
+    counter_labels.push_back(format_reg_value(i));
+  }
+  status << format_counters_table(counters_container, { "Sent cmd counters" }, "Master cmd counters", counter_labels);
+  status << std::endl;
+
+  auto acmd_buf = read_sub_nodes(getNode("acmd_buf.stat"));
+  status << format_reg_table(acmd_buf, "Master acmd buffer");
+
+  return status.str();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+std::string
 MasterNode::get_status(bool print_out) const
 {
   std::stringstream status;
   auto raw_timestamp = getNode<TimestampGeneratorNode>("tstamp").read_raw_timestamp();
   status << "Timestamp: 0x" << std::hex << tstamp2int(raw_timestamp) << std::endl << std::endl;
-  status << getNode<FLCmdGeneratorNode>("scmd_gen").get_cmd_counters_table();
-  status << std::endl;
-  status << getNode<MasterGlobalNode>("global").get_status();
+  status << get_status_tables();
+
   if (print_out)
     TLOG() << status.str();
   return status.str();
@@ -52,11 +84,8 @@ MasterNode::get_status_with_date(uint32_t clock_frequency_hz, bool print_out) co
   auto raw_timestamp = getNode<TimestampGeneratorNode>("tstamp").read_raw_timestamp();
   status << "Timestamp: 0x" << std::hex << tstamp2int(raw_timestamp) << " -> " << format_timestamp(raw_timestamp, clock_frequency_hz) << std::endl
           << std::endl;
-  status << getNode<FLCmdGeneratorNode>("scmd_gen").get_cmd_counters_table();
-  status << std::endl;
-  status << getNode<MasterGlobalNode>("global").get_status();
-  auto acmd_buf = read_sub_nodes(getNode("acmd_buf.stat"));
-  status << format_reg_table(acmd_buf, "Master acmd buffer");
+  status << get_status_tables();
+
   if (print_out)
     TLOG() << status.str();
   return status.str();
@@ -96,9 +125,9 @@ MasterNode::enable_upstream_endpoint() const
 
 //-----------------------------------------------------------------------------
 void
-MasterNode::send_fl_cmd(FixedLengthCommandType command,
-                           uint32_t channel,                  // NOLINT(build/unsigned)
-                           uint32_t number_of_commands) const // NOLINT(build/unsigned)
+MasterNode::send_fl_cmd(uint32_t command,
+                        uint32_t channel,                  // NOLINT(build/unsigned)
+                        uint32_t number_of_commands) const // NOLINT(build/unsigned)
 {
   for (uint32_t i = 0; i < number_of_commands; i++) { // NOLINT(build/unsigned)
     getNode<FLCmdGeneratorNode>("scmd_gen").send_fl_cmd(command, channel);
@@ -114,7 +143,7 @@ MasterNode::send_fl_cmd(FixedLengthCommandType command,
       // TODO throw something
     }
     uint64_t timestamp = (uint64_t)ts_h.value() << 32 | ts_l.value();
-    TLOG() << "Command sent " << g_command_map.at(command) << "(" << format_reg_value(command) << ") from generator "
+    TLOG() << "Command sent " << "(" << format_reg_value(command) << ") from generator "
          << format_reg_value(channel) << " @time " << std::hex << std::showbase << timestamp;
   }
 }

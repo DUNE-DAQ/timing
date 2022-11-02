@@ -104,6 +104,16 @@ PDIMasterNode::send_fl_cmd(FixedLengthCommandType command,
 
 //-----------------------------------------------------------------------------
 void
+PDIMasterNode::send_fl_cmd(uint32_t command,
+                           uint32_t channel,                  // NOLINT(build/unsigned)
+                           uint32_t number_of_commands) const // NOLINT(build/unsigned)
+{
+  send_fl_cmd(static_cast<FixedLengthCommandType>(command), channel, number_of_commands);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
 PDIMasterNode::switch_endpoint_sfp(uint32_t address, bool turn_on) const // NOLINT(build/unsigned)
 {
   auto vl_cmd_node = getNode<VLCmdGeneratorNode>("acmd");

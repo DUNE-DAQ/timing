@@ -39,7 +39,8 @@ register_master(py::module& m)
          py::arg("control_sfp") = true)
     .def("switch_endpoint_sfp", &timing::PDIMasterNode::switch_endpoint_sfp)
     .def("enable_upstream_endpoint", &timing::PDIMasterNode::enable_upstream_endpoint)
-    .def("send_fl_cmd",
+    .def<void (timing::PDIMasterNode::*)(FixedLengthCommandType, uint32_t, uint32_t) const>(
+         "send_fl_cmd",
          &timing::PDIMasterNode::send_fl_cmd,
          py::arg("command"),
          py::arg("channel"),

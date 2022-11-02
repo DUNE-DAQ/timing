@@ -118,7 +118,7 @@ format_reg_value(T reg_value, uint32_t base)
 {
   std::stringstream value_stream;
   if (base == 16) {
-    value_stream << std::showbase << std::hex;
+    value_stream << "0x" << std::hex;
   } else if (base == 10) {
     value_stream << std::dec;
   } else {
@@ -147,7 +147,7 @@ format_reg_value(uhal::ValWord<uint32_t> reg_value, uint32_t base)
 {
   std::stringstream value_stream;
   if (base == 16) {
-    value_stream << std::showbase << std::hex;
+    value_stream << "0x" << std::hex;
   } else if (base == 10) {
     value_stream << std::dec;
   } else {

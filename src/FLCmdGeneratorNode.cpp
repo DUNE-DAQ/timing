@@ -44,7 +44,7 @@ FLCmdGeneratorNode::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-FLCmdGeneratorNode::send_fl_cmd(FixedLengthCommandType command,
+FLCmdGeneratorNode::send_fl_cmd(uint32_t command,       // NOLINT(build/unsigned)
                                 uint32_t channel) const // NOLINT(build/unsigned)
 {
   getNode("sel").write(channel);
