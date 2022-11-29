@@ -104,7 +104,7 @@ EndpointNode::get_status(bool print_out) const
   auto ept_control = read_sub_nodes(getNode("csr.ctrl"), false);
   auto ept_state = read_sub_nodes(getNode("csr.stat"), false);
   getNode("cmd_ctrs.addr").write(0x0);
-  auto counters = getNode("cmd_ctrs.data").readBlock(0x14);
+  auto counters = getNode("cmd_ctrs.data").readBlock(0xff);
   getClient().dispatch();
 
   ept_summary.push_back(std::make_pair("Enabled", std::to_string(ept_control.find("ep_en")->second.value())));
@@ -117,14 +117,21 @@ EndpointNode::get_status(bool print_out) const
 //  status << "Endpoint frequency: " << ept_clock_frequency << " MHz" << std::endl;
   status << format_reg_table(ept_state, "Endpoint state") << std::endl;
   
-  std::vector<uhal::ValVector<uint32_t>> counters_container = { counters }; // NOLINT(build/unsigned)
-
+  std::vector<uint32_t> non_zero_counters;
   std::vector<std::string> counter_labels;
+
   for (uint i=0; i < counters.size(); ++i) 
   {
-    counter_labels.push_back(format_reg_value(i));
+    auto counter = counters.at(i);
+    if (counter > 0)
+    {
+      counter_labels.push_back(format_reg_value(i));
+      non_zero_counters.push_back(counter);
+    }
   }
-  status << format_counters_table(counters_container, { "Received cmd counters" }, "Endpoint cmd counters", counter_labels);
+  std::vector<std::vector<uint32_t>> counters_container = { non_zero_counters }; // NOLINT(build/unsigned)
+
+  status << format_counters_table(counters_container, { "Received cmd counters" }, "Endpoint cmd counters (>0)", counter_labels);
   status << std::endl;
 
   if (print_out)

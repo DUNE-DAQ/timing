@@ -235,7 +235,7 @@ PDIMasterNode::read_in_spill() const
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const
+PDIMasterNode::get_info(timingfirmwareinfo::PDIMasterMonitorData& mon_data) const
 {
   auto timestamp = getNode<TimestampGeneratorNode>("tstamp").read_raw_timestamp();
   mon_data.timestamp = tstamp2int(timestamp);
@@ -246,7 +246,7 @@ PDIMasterNode::get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const
 void
 PDIMasterNode::get_info(opmonlib::InfoCollector& ic, int level) const
 {
-  timingfirmwareinfo::MasterMonitorData mon_data;
+  timingfirmwareinfo::PDIMasterMonitorData mon_data;
   this->get_info(mon_data);
   ic.add(mon_data);
 

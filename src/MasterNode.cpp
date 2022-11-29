@@ -41,17 +41,25 @@ MasterNode::get_status_tables() const
   status << std::endl;
 
   getNode("cmd_ctrs.addr").write(0x0);
-  auto counters = getNode("cmd_ctrs.data").readBlock(0x14);
+  auto counters = getNode("cmd_ctrs.data").readBlock(0xff);
   getClient().dispatch();
 
-  std::vector<uhal::ValVector<uint32_t>> counters_container = { counters }; // NOLINT(build/unsigned)
-
+  std::vector<uint32_t> non_zero_counters;
   std::vector<std::string> counter_labels;
+
   for (uint i=0; i < counters.size(); ++i) 
   {
-    counter_labels.push_back(format_reg_value(i));
+    auto counter = counters.at(i);
+    if (counter > 0)
+    {
+      counter_labels.push_back(format_reg_value(i));
+      non_zero_counters.push_back(counter);
+    }
   }
-  status << format_counters_table(counters_container, { "Sent cmd counters" }, "Master cmd counters", counter_labels);
+
+  std::vector<std::vector<uint32_t>> counters_container = { non_zero_counters }; // NOLINT(build/unsigned)
+
+  status << format_counters_table(counters_container, { "Sent cmd counters" }, "Master cmd counters (>0)", counter_labels);
   status << std::endl;
 
   auto acmd_buf = read_sub_nodes(getNode("acmd_buf.stat"));
@@ -329,7 +337,33 @@ MasterNode::get_info(opmonlib::InfoCollector& ic, int level) const
 {
   timingfirmwareinfo::MasterMonitorData mon_data;
   this->get_info(mon_data);
+
+  mon_data.ts_en = getNode("global.csr.ctrl.ts_en").read();
+  mon_data.ts_err = getNode("global.csr.stat.ts_err").read();
+  mon_data.tx_err = getNode("global.csr.stat.tx_err").read();
+  mon_data.ctrs_rdy = getNode("global.csr.stat.ctrs_rdy").read();
+
   ic.add(mon_data);
+
+  uint number_of_commands = 0xff;
+
+  getNode("cmd_ctrs.addr").write(0x0);
+  auto counters = getNode("cmd_ctrs.data").readBlock(number_of_commands);
+  getClient().dispatch();
+
+  for (uint i = 0; i < number_of_commands; ++i) { // NOLINT(build/unsigned)
+
+    timingfirmwareinfo::SentCommandCounter cmd_counter;
+    opmonlib::InfoCollector cmd_counter_ic;
+
+    cmd_counter.counts = counters.at(i);
+
+    std::stringstream channel;
+    channel << "cmd_0x" << std::hex << i;
+
+    cmd_counter_ic.add(cmd_counter);
+    ic.add(channel.str(), cmd_counter_ic);
+  }
 
   getNode<FLCmdGeneratorNode>("scmd_gen").get_info(ic, level);
 }

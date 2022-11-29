@@ -70,6 +70,13 @@ local timingfirmwareinfo = {
     ],
     doc="Fixed length command counters structure"),
     
+    sent_cmd_counter: s.record("SentCommandCounter",
+    [
+        s.field("counts", self.uint,
+                doc="Number of commands sent"),
+    ],
+    doc="Sent command counters structure"),
+    
     spill_interface_mon_data: s.record("PDISpillInterfaceMonitorData",
     [
         s.field("spill_interface_enabled", self.bool_data,
@@ -80,10 +87,24 @@ local timingfirmwareinfo = {
                 doc="In spill flag")
     ], doc="PDI spill interface node monitor data"),
 
+    pdi_master_fw_mon_data: s.record("PDIMasterMonitorData", 
+    [
+        s.field("timestamp", self.l_uint,
+                doc="Timestamp"),
+    ], doc="master monitor data"),
+
     master_fw_mon_data: s.record("MasterMonitorData", 
     [
         s.field("timestamp", self.l_uint,
                 doc="Timestamp"),
+        s.field("ts_en", self.uint,
+                doc="Timestamp tx enabled"),
+        s.field("ts_err", self.uint,
+                doc="Timestamp error"),
+        s.field("tx_err", self.uint,
+                doc="Tx error"),
+        s.field("ctrs_rdy", self.uint,
+                doc="Counters error"),
     ], doc="master monitor data"),
 
     hsi_fw_mon_data: s.record("HSIFirmwareMonitorData", 

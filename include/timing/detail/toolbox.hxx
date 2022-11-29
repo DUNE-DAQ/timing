@@ -239,17 +239,9 @@ format_counters_table(std::vector<T> counter_nodes,
   uint32_t counter_label_column_width = 0;
 
   std::stringstream table_stream;
+  counter_number = counter_labels.size();
 
-  std::vector<std::string> counter_labels_to_use;
-  if (counter_labels.size()) {
-    counter_labels_to_use = counter_labels;
-  } else {
-    for (auto it = g_command_map.begin(); it != g_command_map.end(); ++it)
-      counter_labels_to_use.push_back(it->second);
-  }
-  counter_number = counter_labels_to_use.size();
-
-  for (auto it = counter_labels_to_use.begin(); it != counter_labels_to_use.end(); ++it) {
+  for (auto it = counter_labels.begin(); it != counter_labels.end(); ++it) {
     counter_label_column_width = counter_label_column_width > it->size() ? counter_label_column_width : it->size();
   }
   counter_label_column_width =
@@ -361,7 +353,7 @@ format_counters_table(std::vector<T> counter_nodes,
     std::stringstream table_row_stream;
 
     table_row_stream << boost::format("| %=s |") %
-                         boost::io::group(std::setw(counter_label_column_width), counter_labels_to_use.at(i));
+                         boost::io::group(std::setw(counter_label_column_width), counter_labels.at(i));
 
     for (uint32_t j = 0; j < counter_nodes_number; ++j) {
       uint32_t dec_width = counter_value_column_widths.at(j).first;

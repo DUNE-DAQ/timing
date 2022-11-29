@@ -21,7 +21,6 @@ import timing.cli.toolbox as toolbox
 import timing.cli.system as system
 import timing.cli.io as io
 import timing.cli.master as master
-import timing.cli.exttrig as exttrig
 import timing.cli.align as align
 import timing.cli.endpoint as endpoint
 import timing.cli.crt as crt

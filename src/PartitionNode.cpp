@@ -293,7 +293,13 @@ PartitionNode::get_status(bool print_out) const
 
   std::vector<uhal::ValVector<uint32_t>> counters_container = { accepted_counters, rejected_counters }; // NOLINT(build/unsigned)
 
-  status << format_counters_table(counters_container, { "Accept counters", "Reject counters" });
+  std::vector<std::string> counter_labels;
+  for (auto it = g_command_map.begin(); it != g_command_map.end(); ++it)
+  {
+      counter_labels.push_back(it->second);
+  }
+
+  status << format_counters_table(counters_container, { "Accept counters", "Reject counters" }, "", counter_labels);
 
   if (print_out)
     TLOG() << status.str();
