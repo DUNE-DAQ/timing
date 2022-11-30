@@ -1,0 +1,38 @@
+<node id="io" description="GIB IO" fwinfo="endpoint">
+		<node id="csr" address="0x0" description="ctrl/stat register" fwinfo="endpoint;width=1">
+				<node id="ctrl" address="0x0">
+					<node id="soft_rst" mask="0x1"/>
+					<node id="nuke" mask="0x2"/>
+					<node id="rst" mask="0x4"/>
+					<node id="clk_gen_rst" mask="0x8"/>
+					<node id="i2c_exten_rst" mask="0x10"/>
+					<node id="i2c_sw_rst" mask="0x20"/>
+					<node id="gps_clk_en" mask="0x40"/>
+					<node id="gps_clk_fltr_a" mask="0x80"/>
+					<node id="gps_clk_fltr_b" mask="0x100"/>
+					<node id="cdr_lol" mask="0x7E00"/>
+					<node id="cdr_los" mask="0x1F8000"/>
+					<node id="sfp_los" mask="0x7E00000"/>
+					<node id="cdr_edge_sel" mask="0x8000000"/>
+				</node>
+				<node id="stat" address="0x1">
+					<node id="mmcm_ok" mask="0x1"/>
+					<node id="mmcm_sticky" mask="0x2"/>        	
+					<node id="clk_gen_lol" mask="0x4"/>
+					<node id="clk_gen_intr" mask="0x8"/>
+					<node id="i2c_exten_intr0" mask="0x10"/>
+					<node id="i2c_exten_intr1" mask="0x20"/>
+					<node id="temp_intr" mask="0x40"/>
+					<node id="sfp_tx_disable" mask="0x1F80"/>
+				</node>
+		</node>
+		<node id="config" address="0x2" description="board/firmware config" fwinfo="endpoint;width=0">
+		    <node id="board_type" mask="0xff0000"/>
+		    <node id="carrier_type" mask="0xff00"/>
+		    <node id="design_type" mask="0xff"/>
+		</node>
+		<node id="i2c" address="0x08" module="file://opencores_i2c.xml" class="I2CMasterNode"
+			parameters="Board_EEProm=0x50;ClkGen=0x68;SFPExpander0=0x74;SFPExpander1=0x75;I2CSwitch=0x70;TempMon=0x48;CDR=0x40;SFP=0xFF;PMon5V=0xCE;PMon3V3=0xD0;PMon2V5=0xD2;PMon1V8=0xD4"
+		/>
+		<node id="freq" address="0x20" module="file://ipbus_freq_ctr.xml" class="FrequencyCounterNode"/>
+</node>
