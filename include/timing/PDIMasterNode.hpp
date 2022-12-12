@@ -13,12 +13,12 @@
 #define TIMING_INCLUDE_TIMING_PDIMASTERNODE_HPP_
 
 // PDT Headers
-#include "timing/definitions.hpp"
 #include "timing/MasterNodeInterface.hpp"
-#include "timing/PDIMasterGlobalNode.hpp"
 #include "timing/PDIFLCmdGeneratorNode.hpp"
-#include "timing/SpillInterfaceNode.hpp"
+#include "timing/PDIMasterGlobalNode.hpp"
 #include "timing/PartitionNode.hpp"
+#include "timing/SpillInterfaceNode.hpp"
+#include "timing/definitions.hpp"
 
 #include "timing/timingfirmwareinfo/InfoNljs.hpp"
 #include "timing/timingfirmwareinfo/InfoStructs.hpp"
@@ -84,8 +84,8 @@ public:
    * @brief     Send a fixed length command
    */
   void send_fl_cmd(FixedLengthCommandType command,
-                           uint32_t channel,                                // NOLINT(build/unsigned)
-                           uint32_t number_of_commands = 1) const override; // NOLINT(build/unsigned)
+                   uint32_t channel,                                // NOLINT(build/unsigned)
+                   uint32_t number_of_commands = 1) const override; // NOLINT(build/unsigned)
 
   /**
    * @brief      Measure the endpoint round trip time.

@@ -13,8 +13,8 @@
 #define TIMING_INCLUDE_TIMING_BOREASDESIGN_HPP_
 
 // Timing Headers
-#include "timing/HSINode.hpp"
 #include "timing/HSIDesignInterface.hpp"
+#include "timing/HSINode.hpp"
 #include "timing/MasterDesign.hpp"
 
 // uHal Headers
@@ -31,7 +31,9 @@ namespace timing {
 /**
  * @brief      Class for timing master with integrated HSI designs.
  */
-class BoreasDesign : public MasterDesign, public HSIDesignInterface
+class BoreasDesign
+  : public MasterDesign
+  , public HSIDesignInterface
 {
   UHAL_DERIVEDNODE(BoreasDesign)
 public:
@@ -51,7 +53,7 @@ public:
 
   /**
    * @brief    Give info to collector.
-   */  
+   */
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
 };
 

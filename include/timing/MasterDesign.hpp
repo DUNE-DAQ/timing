@@ -13,8 +13,8 @@
 #define TIMING_INCLUDE_TIMING_MASTERDESIGN_HPP_
 
 // PDT Headers
-#include "timing/TopDesign.hpp"
 #include "timing/MasterDesignInterface.hpp"
+#include "timing/TopDesign.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -30,7 +30,9 @@ namespace timing {
 /**
  * @brief      Base class for timing master designs.
  */
-class MasterDesign : public TopDesign, virtual public MasterDesignInterface
+class MasterDesign
+  : public TopDesign
+  , virtual public MasterDesignInterface
 {
   UHAL_DERIVEDNODE(MasterDesign)
 public:
@@ -47,7 +49,7 @@ public:
    *
    */
   void configure() const override;
-  
+
   /**
    * @brief      Read the current timestamp.
    *
@@ -60,34 +62,39 @@ public:
    *
    */
   void sync_timestamp() const override;
-  
+
   /**
    * @brief      Measure the endpoint round trip time.
    *
    * @return     { description_of_the_return_value }
    */
   uint32_t measure_endpoint_rtt(uint32_t address, // NOLINT(build/unsigned)
-                                        bool control_sfp = true,
-                                        int sfp_mux = -1) const override;
+                                bool control_sfp = true,
+                                int sfp_mux = -1) const override;
   /**
    * @brief      Apply delay to endpoint
    */
   void apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned)
-                                    uint32_t coarse_delay, // NOLINT(build/unsigned)
-                                    uint32_t fine_delay,   // NOLINT(build/unsigned)
-                                    uint32_t phase_delay,  // NOLINT(build/unsigned)
-                                    bool measure_rtt = false,
-                                    bool control_sfp = true,
-                                    int sfp_mux = -1) const override;
+                            uint32_t coarse_delay, // NOLINT(build/unsigned)
+                            uint32_t fine_delay,   // NOLINT(build/unsigned)
+                            uint32_t phase_delay,  // NOLINT(build/unsigned)
+                            bool measure_rtt = false,
+                            bool control_sfp = true,
+                            int sfp_mux = -1) const override;
   /**
    * @brief     Configure fake trigger generator
    */
-  void enable_periodic_fl_cmd(uint32_t channel, double rate, bool poisson = false) const override; // NOLINT(build/unsigned)
+  void enable_periodic_fl_cmd(uint32_t channel,
+                              double rate,
+                              bool poisson = false) const override; // NOLINT(build/unsigned)
 
   /**
    * @brief      Get master node pointer
    */
-  const MasterNodeInterface* get_master_node_plain() const override { return dynamic_cast<const MasterNodeInterface*>(&uhal::Node::getNode("master")); }
+  const MasterNodeInterface* get_master_node_plain() const override
+  {
+    return dynamic_cast<const MasterNodeInterface*>(&uhal::Node::getNode("master"));
+  }
 
   /**
    * @brief      Read master firmware version.
@@ -104,7 +111,7 @@ public:
 
   /**
    * @brief    Give info to collector.
-   */  
+   */
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
 };
 

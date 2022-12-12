@@ -21,7 +21,8 @@ UHAL_REGISTER_DERIVED_NODE(MasterNode)
 //-----------------------------------------------------------------------------
 MasterNode::MasterNode(const uhal::Node& node)
   : MasterNodeInterface(node)
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -50,8 +51,9 @@ MasterNode::get_status_with_date(uint32_t clock_frequency_hz, bool print_out) co
 {
   std::stringstream status;
   auto raw_timestamp = getNode<TimestampGeneratorNode>("tstamp").read_raw_timestamp();
-  status << "Timestamp: 0x" << std::hex << tstamp2int(raw_timestamp) << " -> " << format_timestamp(raw_timestamp, clock_frequency_hz) << std::endl
-          << std::endl;
+  status << "Timestamp: 0x" << std::hex << tstamp2int(raw_timestamp) << " -> "
+         << format_timestamp(raw_timestamp, clock_frequency_hz) << std::endl
+         << std::endl;
   status << getNode<FLCmdGeneratorNode>("scmd_gen").get_cmd_counters_table();
   status << std::endl;
   status << getNode<MasterGlobalNode>("global").get_status();
@@ -67,18 +69,19 @@ MasterNode::get_status_with_date(uint32_t clock_frequency_hz, bool print_out) co
 void
 MasterNode::switch_endpoint_sfp(uint32_t address, bool turn_on) const // NOLINT(build/unsigned)
 {
-    uint32_t sequence = 0xab;
-    uint32_t address_mode = 1;
-    
-    std::vector<uint32_t> tx_packet = { address & 0xff, 
-                                        address >> 8UL, 
-                                        sequence,
+  uint32_t sequence = 0xab;
+  uint32_t address_mode = 1;
 
-                                        // packet to reset rx
-                                        (0x1 << 7UL) | 0x70, // write transaction on 0x70
-                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
-                                        turn_on,
-                                      };
+  std::vector<uint32_t> tx_packet = {
+    address & 0xff,
+    address >> 8UL,
+    sequence,
+
+    // packet to reset rx
+    (0x1 << 7UL) | 0x70,         // write transaction on 0x70
+    (address_mode << 7UL) | 0x1, // transaction length of 0x1
+    turn_on,
+  };
   tx_packet.back() = tx_packet.back() | (0x1 << 8UL);
 
   auto result = transmit_async_packet(tx_packet, -1);
@@ -97,53 +100,48 @@ MasterNode::enable_upstream_endpoint() const
 //-----------------------------------------------------------------------------
 void
 MasterNode::send_fl_cmd(FixedLengthCommandType command,
-                           uint32_t channel,                  // NOLINT(build/unsigned)
-                           uint32_t number_of_commands) const // NOLINT(build/unsigned)
+                        uint32_t channel,                  // NOLINT(build/unsigned)
+                        uint32_t number_of_commands) const // NOLINT(build/unsigned)
 {
   for (uint32_t i = 0; i < number_of_commands; i++) { // NOLINT(build/unsigned)
     getNode<FLCmdGeneratorNode>("scmd_gen").send_fl_cmd(command, channel);
-    
+
     auto ts_l = getNode("cmd_log.tstamp_l").read();
     auto ts_h = getNode("cmd_log.tstamp_h").read();
     auto sent_cmd = getNode("cmd_log.cmd").read();
     getClient().dispatch();
 
-    if (sent_cmd.value() != command)
-    {
+    if (sent_cmd.value() != command) {
       TLOG() << "cmd in sent log: 0x" << std::hex << command << ", does not match requested 0x: " << sent_cmd.value();
       // TODO throw something
     }
     uint64_t timestamp = (uint64_t)ts_h.value() << 32 | ts_l.value();
     TLOG() << "Command sent " << g_command_map.at(command) << "(" << format_reg_value(command) << ") from generator "
-         << format_reg_value(channel) << " @time " << std::hex << std::showbase << timestamp;
+           << format_reg_value(channel) << " @time " << std::hex << std::showbase << timestamp;
   }
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-uint32_t                                                                      // NOLINT(build/unsigned)
+uint32_t                                                                   // NOLINT(build/unsigned)
 MasterNode::measure_endpoint_rtt(uint32_t address, bool control_sfp) const // NOLINT(build/unsigned)
 {
 
   auto global = getNode<MasterGlobalNode>("global");
   auto echo = getNode<EchoMonitorNode>("echo_mon");
 
-  if (control_sfp)
-  {
+  if (control_sfp) {
     // Switch off all TX SFPs
-    //switch_endpoint_sfp(0xffff, false);
+    // switch_endpoint_sfp(0xffff, false);
 
     // Turn on the current target
     switch_endpoint_sfp(address, true);
 
     millisleep(100);
 
-    try
-    {
+    try {
       global.enable_upstream_endpoint();
-    }
-    catch (const timing::EndpointNotReady& e)
-    {
+    } catch (const timing::EndpointNotReady& e) {
       if (control_sfp) {
         switch_endpoint_sfp(address, false);
       }
@@ -162,12 +160,12 @@ MasterNode::measure_endpoint_rtt(uint32_t address, bool control_sfp) const // NO
 
 //-----------------------------------------------------------------------------
 void
-MasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned)
-                                    uint32_t coarse_delay, // NOLINT(build/unsigned)
-                                    uint32_t /*fine_delay*/,   // NOLINT(build/unsigned)
-                                    uint32_t /*phase_delay*/,  // NOLINT(build/unsigned)
-                                    bool measure_rtt,
-                                    bool control_sfp) const
+MasterNode::apply_endpoint_delay(uint32_t address,         // NOLINT(build/unsigned)
+                                 uint32_t coarse_delay,    // NOLINT(build/unsigned)
+                                 uint32_t /*fine_delay*/,  // NOLINT(build/unsigned)
+                                 uint32_t /*phase_delay*/, // NOLINT(build/unsigned)
+                                 bool measure_rtt,
+                                 bool control_sfp) const
 {
 
   auto global = getNode<MasterGlobalNode>("global");
@@ -184,12 +182,9 @@ MasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned
       millisleep(100);
     }
 
-    try
-    {
+    try {
       global.enable_upstream_endpoint();
-    }
-    catch (const timing::EndpointNotReady& e)
-    {
+    } catch (const timing::EndpointNotReady& e) {
       if (control_sfp) {
         switch_endpoint_sfp(address, false);
       }
@@ -202,40 +197,37 @@ MasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned
 
   uint32_t sequence = 0xab;
   uint32_t address_mode = 1;
-    
-  std::vector<uint32_t> tx_packet = { address & 0xff, 
-                                        address >> 8UL, 
-                                        sequence,
 
-                                        // packet to write coarse delay
-                                        (0x1 << 7UL) | 0x72, // write transaction on 0x72
-                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
-                                        coarse_delay & 0xf,
+  std::vector<uint32_t> tx_packet = {
+    address & 0xff,
+    address >> 8UL,
+    sequence,
 
-                                        // packet to set skew done
-                                        (0x1 << 7UL) | 0x70, // write transaction on 0x70
-                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
-				                                0x3, // deskew done
+    // packet to write coarse delay
+    (0x1 << 7UL) | 0x72,         // write transaction on 0x72
+    (address_mode << 7UL) | 0x1, // transaction length of 0x1
+    coarse_delay & 0xf,
 
-                                        // packet to resync
-                                        (0x1 << 7UL) | 0x70, // write transaction on 0x70
-                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
-				                                0x4, // resync
-                                    };
+    // packet to set skew done
+    (0x1 << 7UL) | 0x70,         // write transaction on 0x70
+    (address_mode << 7UL) | 0x1, // transaction length of 0x1
+    0x3,                         // deskew done
+
+    // packet to resync
+    (0x1 << 7UL) | 0x70,         // write transaction on 0x70
+    (address_mode << 7UL) | 0x1, // transaction length of 0x1
+    0x4,                         // resync
+  };
 
   tx_packet.back() = tx_packet.back() | (0x1 << 8UL);
 
   transmit_async_packet(tx_packet, -1);
 
   if (measure_rtt) {
-    try
-    {
+    try {
       global.enable_upstream_endpoint();
-    }
-    catch (const timing::EndpointNotReady& e)
-    {
-      if (control_sfp)
-      {
+    } catch (const timing::EndpointNotReady& e) {
+      if (control_sfp) {
         switch_endpoint_sfp(address, false);
       }
       throw e;
@@ -255,15 +247,18 @@ void
 MasterNode::sync_timestamp(uint32_t clock_frequency_hz) const // NOLINT(build/unsigned)
 {
   const uint64_t old_timestamp = read_timestamp(); // NOLINT(build/unsigned)
-  TLOG() << "Reading old timestamp: " << format_reg_value(old_timestamp) << ", " << format_timestamp(old_timestamp, clock_frequency_hz);
+  TLOG() << "Reading old timestamp: " << format_reg_value(old_timestamp) << ", "
+         << format_timestamp(old_timestamp, clock_frequency_hz);
 
   const uint64_t now_timestamp = get_seconds_since_epoch() * clock_frequency_hz; // NOLINT(build/unsigned)
-  TLOG() << "Setting new timestamp: " << format_reg_value(now_timestamp) << ", " << format_timestamp(now_timestamp, clock_frequency_hz);
+  TLOG() << "Setting new timestamp: " << format_reg_value(now_timestamp) << ", "
+         << format_timestamp(now_timestamp, clock_frequency_hz);
 
   set_timestamp(now_timestamp);
 
   const uint64_t new_timestamp = read_timestamp(); // NOLINT(build/unsigned)
-  TLOG() << "Reading new timestamp: " << format_reg_value(new_timestamp) << ", " << format_timestamp(new_timestamp, clock_frequency_hz);
+  TLOG() << "Reading new timestamp: " << format_reg_value(new_timestamp) << ", "
+         << format_timestamp(new_timestamp, clock_frequency_hz);
 
   enable_timestamp_broadcast();
   TLOG() << "Timestamp broadcast enabled";
@@ -307,7 +302,8 @@ MasterNode::get_info(opmonlib::InfoCollector& ic, int level) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void MasterNode::reset_command_counters() const
+void
+MasterNode::reset_command_counters() const
 {
   auto global = getNode<MasterGlobalNode>("global");
   global.reset_command_counters();
@@ -330,14 +326,13 @@ MasterNode::transmit_async_packet(const std::vector<uint32_t>& packet, int timeo
   getClient().dispatch();
 
   // we do not expect a reply
-  if (timeout < 0)
-  {
+  if (timeout < 0) {
     std::vector<uint32_t> empty_vector;
     return empty_vector;
   }
 
-  uhal::ValWord<uint32_t> buffer_ready;  // NOLINT(build/unsigned)
-  uhal::ValWord<uint32_t> buffer_timeout;  // NOLINT(build/unsigned)
+  uhal::ValWord<uint32_t> buffer_ready;   // NOLINT(build/unsigned)
+  uhal::ValWord<uint32_t> buffer_timeout; // NOLINT(build/unsigned)
 
   // start time counting
   auto start = std::chrono::high_resolution_clock::now();
@@ -348,12 +343,12 @@ MasterNode::transmit_async_packet(const std::vector<uint32_t>& packet, int timeo
     buffer_ready = getNode("acmd_buf.stat.ready").read();
     buffer_timeout = getNode("acmd_buf.stat.timeout").read();
     getClient().dispatch();
-    
+
     TLOG_DEBUG(10) << "async buffer ready: 0x" << buffer_ready.value() << ", timeout: " << buffer_timeout.value();
-  
+
     if (buffer_timeout)
       throw VLCommandReplyTimeout(ERS_HERE);
-     
+
     if (buffer_ready)
       break;
 
@@ -365,43 +360,43 @@ MasterNode::transmit_async_packet(const std::vector<uint32_t>& packet, int timeo
 
     std::this_thread::sleep_for(std::chrono::microseconds(50));
   }
-    
+
   auto rx_packet = getNode("acmd_buf.rxbuf").readBlock(0x20);
   getClient().dispatch();
 
-  if (rx_packet.at(0) != 0xff || rx_packet.at(1) != 0xff || rx_packet.at(2) != packet.at(2))
-  {
+  if (rx_packet.at(0) != 0xff || rx_packet.at(1) != 0xff || rx_packet.at(2) != packet.at(2)) {
     ers::warning(InvalidVLCommandReplyPacket(ERS_HERE, rx_packet.at(0), rx_packet.at(1), rx_packet.at(2)));
   }
 
   TLOG_DEBUG(11) << "async result: ";
   for (auto r : rx_packet)
     TLOG_DEBUG(11) << std::hex << "0x" << r;
-  
+
   return rx_packet.value();
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void
-MasterNode::write_endpoint_data(uint16_t endpoint_address, uint8_t reg_address, std::vector<uint8_t> data, bool address_mode) const
+MasterNode::write_endpoint_data(uint16_t endpoint_address,
+                                uint8_t reg_address,
+                                std::vector<uint8_t> data,
+                                bool address_mode) const
 {
   auto data_length = data.size();
-  if (data_length > 0x3f || data_length == 0)
-  {
+  if (data_length > 0x3f || data_length == 0) {
     TLOG() << "invalid data length";
   }
 
   // TODO make sequence a function argument?
   uint32_t sequence = 0xab;
-  
-  std::vector<uint32_t> tx_packet = { static_cast<uint32_t>(endpoint_address & 0xff), 
-                                      static_cast<uint32_t>(endpoint_address >> 8UL), 
-                                      sequence, 
+
+  std::vector<uint32_t> tx_packet = { static_cast<uint32_t>(endpoint_address & 0xff),
+                                      static_cast<uint32_t>(endpoint_address >> 8UL),
+                                      sequence,
                                       // bit 7 = 1 -> write
                                       static_cast<uint32_t>((0x1 << 7UL) | reg_address),
-                                       static_cast<uint32_t>((address_mode << 7UL) | (0x3f & data_length))
-                                    };
+                                      static_cast<uint32_t>((address_mode << 7UL) | (0x3f & data_length)) };
   tx_packet.insert(tx_packet.end(), data.begin(), data.end());
   tx_packet.back() = tx_packet.back() | (0x1 << 8UL);
 
@@ -411,29 +406,31 @@ MasterNode::write_endpoint_data(uint16_t endpoint_address, uint8_t reg_address, 
 
 //-----------------------------------------------------------------------------
 std::vector<uint32_t>
-MasterNode::read_endpoint_data(uint16_t endpoint_address, uint8_t reg_address, uint8_t data_length, bool address_mode) const
+MasterNode::read_endpoint_data(uint16_t endpoint_address,
+                               uint8_t reg_address,
+                               uint8_t data_length,
+                               bool address_mode) const
 {
-  if (data_length > 0x3f || data_length == 0)
-  {
+  if (data_length > 0x3f || data_length == 0) {
     TLOG() << "invalid data length";
     // TODO throw something
   }
 
   // TODO make sequence a function argument?
   uint32_t sequence = 0xab;
-  std::vector<uint32_t> tx_packet = { static_cast<uint32_t>(endpoint_address & 0xff), 
-                                      static_cast<uint32_t>(endpoint_address >> 8UL), 
+  std::vector<uint32_t> tx_packet = { static_cast<uint32_t>(endpoint_address & 0xff),
+                                      static_cast<uint32_t>(endpoint_address >> 8UL),
                                       sequence,
                                       // bit 7 = 0 -> read
                                       reg_address,
-                                      static_cast<uint32_t>((0x1 << 8UL) | (address_mode << 7UL) | (0x3f & data_length))
-                                      };
+                                      static_cast<uint32_t>((0x1 << 8UL) | (address_mode << 7UL) |
+                                                            (0x3f & data_length)) };
 
   auto result = transmit_async_packet(tx_packet);
 
   // get parts we actually want
-  std::vector<uint32_t> result_data (result.begin()+3, result.begin()+3+data_length);
-  
+  std::vector<uint32_t> result_data(result.begin() + 3, result.begin() + 3 + data_length);
+
   // strip off the bit 8 which is high for last byte
   result_data.back() = result_data.back() & 0xff;
 
@@ -442,7 +439,8 @@ MasterNode::read_endpoint_data(uint16_t endpoint_address, uint8_t reg_address, u
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void MasterNode::disable_timestamp_broadcast() const
+void
+MasterNode::disable_timestamp_broadcast() const
 {
   getNode("global.csr.ctrl.ts_en").write(0x0);
   getClient().dispatch();
@@ -450,7 +448,8 @@ void MasterNode::disable_timestamp_broadcast() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void MasterNode::enable_timestamp_broadcast() const
+void
+MasterNode::enable_timestamp_broadcast() const
 {
   getNode("global.csr.ctrl.ts_en").write(0x1);
   getClient().dispatch();
@@ -465,27 +464,23 @@ MasterNode::scan_endpoints(const std::vector<uint>& endpoints) const
   auto global = getNode<MasterGlobalNode>("global");
   auto echo = getNode<EchoMonitorNode>("echo_mon");
 
-  for (auto endpoint_address : endpoints)
-  {
+  for (auto endpoint_address : endpoints) {
     timingfirmware::EndpointCheckResult endpoint_result;
     endpoint_result.address = endpoint_address;
 
     switch_endpoint_sfp(endpoint_address, true);
 
     millisleep(100);
-    
-    try
-    {
-      global.enable_upstream_endpoint();
-    }
-    catch (const timing::EndpointNotReady& e)
-    {
-        switch_endpoint_sfp(endpoint_address, false);
-        results.push_back(endpoint_result);
-        
-        TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << " looks dead.";
 
-        continue;
+    try {
+      global.enable_upstream_endpoint();
+    } catch (const timing::EndpointNotReady& e) {
+      switch_endpoint_sfp(endpoint_address, false);
+      results.push_back(endpoint_result);
+
+      TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << " looks dead.";
+
+      continue;
     }
 
     endpoint_result.alive = true;
@@ -496,28 +491,25 @@ MasterNode::scan_endpoints(const std::vector<uint>& endpoints) const
     TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << " state: " << ept_state;
     endpoint_result.state = ept_state;
 
-    if (ept_state == 0x6)
-    {
+    if (ept_state == 0x6) {
       TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << ", applying delays of: " << 0x0;
-      
+
       apply_endpoint_delay(endpoint_address, 0x0, 0x0, 0x0, false, false);
-      
+
       endpoint_result.applied_delay = 0x0;
 
       auto ept_state_after_delays = read_endpoint_data(endpoint_address, 0x71, 0x1, 0x1).at(0) & 0xf;
-      TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << ", state after delays apply: " << ept_state_after_delays;
+      TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address
+                    << ", state after delays apply: " << ept_state_after_delays;
       endpoint_result.state_after_delay_apply = ept_state_after_delays;
 
       endpoint_result.round_trip_time_after_delay_apply = echo.send_echo_and_measure_delay();
-      TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << ", RTT after delays apply: " << endpoint_result.round_trip_time_after_delay_apply;
-    }
-    else if (ept_state == 0x7 || ept_state == 0x8)
-    {
+      TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address
+                    << ", RTT after delays apply: " << endpoint_result.round_trip_time_after_delay_apply;
+    } else if (ept_state == 0x7 || ept_state == 0x8) {
       TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << ", delays not needed";
-    }
-    else
-    {
-      TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << ", unexpected state"; 
+    } else {
+      TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << ", unexpected state";
     }
 
     results.push_back(endpoint_result);

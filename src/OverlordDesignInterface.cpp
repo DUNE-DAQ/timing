@@ -8,7 +8,6 @@
 
 #include "timing/OverlordDesignInterface.hpp"
 
-
 #include <sstream>
 #include <string>
 
@@ -17,12 +16,12 @@ namespace dunedaq::timing {
 //-----------------------------------------------------------------------------
 OverlordDesignInterface::OverlordDesignInterface(const uhal::Node& node)
   : MasterDesignInterface(node)
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-OverlordDesignInterface::~OverlordDesignInterface()
-{}
+OverlordDesignInterface::~OverlordDesignInterface() {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

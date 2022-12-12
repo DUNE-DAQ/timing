@@ -8,9 +8,9 @@
 
 #include "timing/PartitionNode.hpp"
 
+#include "logging/Logging.hpp"
 #include "timing/definitions.hpp"
 #include "timing/toolbox.hpp"
-#include "logging/Logging.hpp"
 
 #include <chrono>
 #include <string>
@@ -28,7 +28,8 @@ const uint32_t PartitionNode::kWordsPerEvent = 6; // NOLINT(build/unsigned)
 //-----------------------------------------------------------------------------
 PartitionNode::PartitionNode(const uhal::Node& node)
   : TimingNode(node)
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -250,8 +251,10 @@ PartitionNode::read_command_counts() const
   const uhal::Node& accepted_counters = getNode("actrs");
   const uhal::Node& rejected_counters = getNode("rctrs");
 
-  uhal::ValVector<uint32_t> accepted = accepted_counters.readBlock(accepted_counters.getSize()); // NOLINT(build/unsigned)
-  uhal::ValVector<uint32_t> rejected = rejected_counters.readBlock(rejected_counters.getSize()); // NOLINT(build/unsigned)
+  uhal::ValVector<uint32_t> accepted =
+    accepted_counters.readBlock(accepted_counters.getSize()); // NOLINT(build/unsigned)
+  uhal::ValVector<uint32_t> rejected =
+    rejected_counters.readBlock(rejected_counters.getSize()); // NOLINT(build/unsigned)
   getClient().dispatch();
 
   return { accepted.value(), rejected.value() };
@@ -291,7 +294,8 @@ PartitionNode::get_status(bool print_out) const
 
   status << std::endl;
 
-  std::vector<uhal::ValVector<uint32_t>> counters_container = { accepted_counters, rejected_counters }; // NOLINT(build/unsigned)
+  std::vector<uhal::ValVector<uint32_t>> counters_container = { accepted_counters,
+                                                                rejected_counters }; // NOLINT(build/unsigned)
 
   status << format_counters_table(counters_container, { "Accept counters", "Reject counters" });
 
@@ -340,8 +344,7 @@ PartitionNode::get_info(opmonlib::InfoCollector& ic, int /*level*/) const
   auto rejected_counters = getNode("rctrs").readBlock(getNode("actrs").getSize());
   getClient().dispatch();
 
-
-  for (auto& cmd: g_command_map) {
+  for (auto& cmd : g_command_map) {
     timingfirmwareinfo::TimingFLCmdCounter cmd_counter;
     opmonlib::InfoCollector cmd_counter_ic;
 
@@ -351,7 +354,6 @@ PartitionNode::get_info(opmonlib::InfoCollector& ic, int /*level*/) const
     cmd_counter_ic.add(cmd_counter);
     ic.add(cmd.second, cmd_counter_ic);
   }
-
 }
 //-----------------------------------------------------------------------------
 

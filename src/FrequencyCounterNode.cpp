@@ -8,8 +8,8 @@
 
 #include "timing/FrequencyCounterNode.hpp"
 
-#include "timing/toolbox.hpp"
 #include "logging/Logging.hpp"
+#include "timing/toolbox.hpp"
 
 #include <string>
 #include <vector>
@@ -22,7 +22,8 @@ UHAL_REGISTER_DERIVED_NODE(FrequencyCounterNode)
 //-----------------------------------------------------------------------------
 FrequencyCounterNode::FrequencyCounterNode(const uhal::Node& node)
   : TimingNode(node)
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -55,7 +56,7 @@ FrequencyCounterNode::measure_frequencies(uint8_t number_of_clocks) const // NOL
 
     millisleep(2000);
 
-    uhal::ValWord<uint32_t> frequency = getNode("freq.count").read();      // NOLINT(build/unsigned)
+    uhal::ValWord<uint32_t> frequency = getNode("freq.count").read();       // NOLINT(build/unsigned)
     uhal::ValWord<uint32_t> frequency_valid = getNode("freq.valid").read(); // NOLINT(build/unsigned)
     getClient().dispatch();
 

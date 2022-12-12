@@ -8,8 +8,8 @@
 
 #include "timing/SwitchyardNode.hpp"
 
-#include "timing/toolbox.hpp"
 #include "logging/Logging.hpp"
+#include "timing/toolbox.hpp"
 
 #include <string>
 
@@ -21,7 +21,8 @@ UHAL_REGISTER_DERIVED_NODE(SwitchyardNode)
 //-----------------------------------------------------------------------------
 SwitchyardNode::SwitchyardNode(const uhal::Node& node)
   : TimingNode(node)
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

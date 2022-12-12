@@ -19,7 +19,8 @@ UHAL_REGISTER_DERIVED_NODE(TLUIONode)
 TLUIONode::TLUIONode(const uhal::Node& node)
   : IONode(node, "i2c", "i2c", "SI5345", { "PLL" }, {})
   , m_dac_devices({ "DAC1", "DAC2" })
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -128,7 +129,7 @@ TLUIONode::reset(const std::string& clock_config_file) const
 //-----------------------------------------------------------------------------
 void
 TLUIONode::reset(int32_t /*fanout_mode*/, // NOLINT(build/unsigned)
-                     const std::string& clock_config_file) const
+                 const std::string& clock_config_file) const
 {
   reset(clock_config_file);
 }

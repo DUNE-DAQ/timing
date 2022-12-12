@@ -24,7 +24,8 @@ namespace timing {
 //-----------------------------------------------------------------------------
 I2CExpanderSlave::I2CExpanderSlave(const I2CMasterNode* i2c_master, uint8_t address) // NOLINT(build/unsigned)
   : I2CSlave(i2c_master, address)
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -83,12 +84,12 @@ I2CExpanderSlave::read_inputs(uint8_t bank_id) const // NOLINT(build/unsigned)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-uint8_t                                                        // NOLINT(build/unsigned)
-I2CExpanderSlave::read_outputs_config(uint8_t bank_id) const { // NOLINT(build/unsigned)
+uint8_t // NOLINT(build/unsigned)
+I2CExpanderSlave::read_outputs_config(uint8_t bank_id) const
+{ // NOLINT(build/unsigned)
 
-    this->ensure_valid_bank_id(bank_id);
-    return this->read_i2c(0x2 + bank_id);
-    
+  this->ensure_valid_bank_id(bank_id);
+  return this->read_i2c(0x2 + bank_id);
 }
 //-----------------------------------------------------------------------------
 

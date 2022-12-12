@@ -8,8 +8,8 @@
 
 #include "timing/PDIMasterNode.hpp"
 
-#include "timing/toolbox.hpp"
 #include "logging/Logging.hpp"
+#include "timing/toolbox.hpp"
 
 #include <string>
 
@@ -21,7 +21,8 @@ UHAL_REGISTER_DERIVED_NODE(PDIMasterNode)
 //-----------------------------------------------------------------------------
 PDIMasterNode::PDIMasterNode(const uhal::Node& node)
   : MasterNodeInterface(node)
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -63,15 +64,18 @@ void
 PDIMasterNode::sync_timestamp(uint32_t clock_frequency_hz) const // NOLINT(build/unsigned)
 {
   const uint64_t old_timestamp = read_timestamp(); // NOLINT(build/unsigned)
-  TLOG() << "Reading old timestamp: " << format_reg_value(old_timestamp) << ", " << format_timestamp(old_timestamp, clock_frequency_hz);
+  TLOG() << "Reading old timestamp: " << format_reg_value(old_timestamp) << ", "
+         << format_timestamp(old_timestamp, clock_frequency_hz);
 
   const uint64_t now_timestamp = get_seconds_since_epoch() * clock_frequency_hz; // NOLINT(build/unsigned)
-  TLOG() << "Setting new timestamp: " << format_reg_value(now_timestamp) << ", " << format_timestamp(now_timestamp, clock_frequency_hz);
+  TLOG() << "Setting new timestamp: " << format_reg_value(now_timestamp) << ", "
+         << format_timestamp(now_timestamp, clock_frequency_hz);
 
   set_timestamp(now_timestamp);
 
   const uint64_t new_timestamp = read_timestamp(); // NOLINT(build/unsigned)
-  TLOG() << "Reading new timestamp: " << format_reg_value(new_timestamp) << ", " << format_timestamp(new_timestamp, clock_frequency_hz);
+  TLOG() << "Reading new timestamp: " << format_reg_value(new_timestamp) << ", "
+         << format_timestamp(new_timestamp, clock_frequency_hz);
 }
 //-----------------------------------------------------------------------------
 
@@ -81,8 +85,9 @@ PDIMasterNode::get_status_with_date(uint32_t clock_frequency_hz, bool print_out)
 {
   std::stringstream status;
   auto raw_timestamp = getNode<TimestampGeneratorNode>("tstamp").read_raw_timestamp();
-  status << "Timestamp: 0x" << std::hex << tstamp2int(raw_timestamp) << " -> " << format_timestamp(raw_timestamp, clock_frequency_hz) << std::endl
-          << std::endl;
+  status << "Timestamp: 0x" << std::hex << tstamp2int(raw_timestamp) << " -> "
+         << format_timestamp(raw_timestamp, clock_frequency_hz) << std::endl
+         << std::endl;
   status << getNode<FLCmdGeneratorNode>("scmd_gen").get_cmd_counters_table();
   if (print_out)
     TLOG() << status.str();
@@ -131,8 +136,7 @@ PDIMasterNode::measure_endpoint_rtt(uint32_t address, bool control_sfp) const //
   auto global = getNode<PDIMasterGlobalNode>("global");
   auto echo = getNode<EchoMonitorNode>("echo");
 
-  if (control_sfp)
-  {
+  if (control_sfp) {
     // Switch off all TX SFPs
     vl_cmd_node.switch_endpoint_sfp(0x0, false);
 
@@ -142,12 +146,9 @@ PDIMasterNode::measure_endpoint_rtt(uint32_t address, bool control_sfp) const //
     millisleep(200);
   }
 
-  try
-  {
+  try {
     global.enable_upstream_endpoint();
-  }
-  catch (const timing::EndpointNotReady& e)
-  {
+  } catch (const timing::EndpointNotReady& e) {
     if (control_sfp) {
       vl_cmd_node.switch_endpoint_sfp(address, false);
     }
@@ -175,17 +176,17 @@ PDIMasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsig
   auto vl_cmd_node = getNode<VLCmdGeneratorNode>("acmd");
   auto global = getNode<PDIMasterGlobalNode>("global");
   auto echo = getNode<EchoMonitorNode>("echo");
-  
+
   if (measure_rtt) {
     uint64_t endpoint_rtt = measure_endpoint_rtt(address, control_sfp); // NOLINT(build/unsigned)
-    TLOG() << "Pre delay adjustment RTT:  " << format_reg_value(endpoint_rtt,10);
+    TLOG() << "Pre delay adjustment RTT:  " << format_reg_value(endpoint_rtt, 10);
   }
 
   vl_cmd_node.apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay);
 
   if (measure_rtt) {
     uint64_t endpoint_rtt = measure_endpoint_rtt(address, true); // NOLINT(build/unsigned)
-    TLOG() << "Post delay adjustment RTT: " << format_reg_value(endpoint_rtt,10);
+    TLOG() << "Post delay adjustment RTT: " << format_reg_value(endpoint_rtt, 10);
   }
 }
 //-----------------------------------------------------------------------------
@@ -240,11 +241,10 @@ PDIMasterNode::get_info(opmonlib::InfoCollector& ic, int level) const
   this->get_info(mon_data);
   ic.add(mon_data);
 
-  for (int i=0; i < 4; ++i)
-  {
+  for (int i = 0; i < 4; ++i) {
     opmonlib::InfoCollector partition_ic;
     get_partition_node(i).get_info(partition_ic, level);
-    ic.add("partition"+std::to_string(i),partition_ic);
+    ic.add("partition" + std::to_string(i), partition_ic);
   }
 
   getNode<FLCmdGeneratorNode>("scmd_gen").get_info(ic, level);
@@ -261,33 +261,28 @@ PDIMasterNode::scan_endpoints(const std::vector<uint>& endpoints) const
   auto global = getNode<PDIMasterGlobalNode>("global");
   auto echo = getNode<EchoMonitorNode>("echo");
 
-  for (auto endpoint_address : endpoints)
-  {
+  for (auto endpoint_address : endpoints) {
     timingfirmware::EndpointCheckResult endpoint_result;
     endpoint_result.address = endpoint_address;
 
     switch_endpoint_sfp(endpoint_address, true);
 
     millisleep(100);
-    
-    try
-    {
-      global.enable_upstream_endpoint();
-    }
-    catch (const timing::EndpointNotReady& e)
-    {
-        switch_endpoint_sfp(endpoint_address, false);
-        results.push_back(endpoint_result);
-        
-        TLOG_DEBUG(9) << "Endpoint at address " << endpoint_address << " looks dead.";
 
-        continue;
+    try {
+      global.enable_upstream_endpoint();
+    } catch (const timing::EndpointNotReady& e) {
+      switch_endpoint_sfp(endpoint_address, false);
+      results.push_back(endpoint_result);
+
+      TLOG_DEBUG(9) << "Endpoint at address " << endpoint_address << " looks dead.";
+
+      continue;
     }
 
     endpoint_result.alive = true;
     endpoint_result.round_trip_time = echo.send_echo_and_measure_delay();
     TLOG_DEBUG(9) << "Endpoint at address " << endpoint_address << " alive. RTT: " << endpoint_result.round_trip_time;
-
 
     results.push_back(endpoint_result);
     switch_endpoint_sfp(endpoint_address, false);

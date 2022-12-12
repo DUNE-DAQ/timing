@@ -252,8 +252,8 @@ format_counters_table(std::vector<T> counter_nodes,
   for (auto it = counter_labels_to_use.begin(); it != counter_labels_to_use.end(); ++it) {
     counter_label_column_width = counter_label_column_width > it->size() ? counter_label_column_width : it->size();
   }
-  counter_label_column_width =
-    counter_label_column_width > counter_labels_header.size() ? counter_label_column_width : counter_labels_header.size();
+  counter_label_column_width = counter_label_column_width > counter_labels_header.size() ? counter_label_column_width
+                                                                                         : counter_labels_header.size();
 
   typedef std::vector<std::pair<std::string, std::string>> CounterValuesContainer;
 
@@ -272,16 +272,19 @@ format_counters_table(std::vector<T> counter_nodes,
       std::string counter_value_dec = format_reg_value(*counter_iter, 10);
       std::string counter_value_hex = format_reg_value(*counter_iter, 16);
 
-      counter_value_dec_column_width =
-        counter_value_dec_column_width > counter_value_dec.size() ? counter_value_dec_column_width : counter_value_dec.size();
-      counter_value_hex_column_width =
-        counter_value_hex_column_width > counter_value_hex.size() ? counter_value_hex_column_width : counter_value_hex.size();
+      counter_value_dec_column_width = counter_value_dec_column_width > counter_value_dec.size()
+                                         ? counter_value_dec_column_width
+                                         : counter_value_dec.size();
+      counter_value_hex_column_width = counter_value_hex_column_width > counter_value_hex.size()
+                                         ? counter_value_hex_column_width
+                                         : counter_value_hex.size();
 
       counter_values.push_back(std::make_pair(counter_value_dec, counter_value_hex));
     }
 
     counter_value_containers.push_back(counter_values);
-    counter_value_column_widths.push_back(std::make_pair(counter_value_dec_column_width, counter_value_hex_column_width));
+    counter_value_column_widths.push_back(
+      std::make_pair(counter_value_dec_column_width, counter_value_hex_column_width));
   }
 
   std::vector<uint32_t> counter_node_title_sizes;
@@ -307,7 +310,7 @@ format_counters_table(std::vector<T> counter_nodes,
       counter_title_size = (dec_width + hex_width + 3);
     }
     counter_titles_row << boost::format(" %=s |") %
-                           boost::io::group(std::setw(counter_title_size), counter_node_titles_to_use.at(i));
+                            boost::io::group(std::setw(counter_title_size), counter_node_titles_to_use.at(i));
     counter_node_title_sizes.push_back(counter_title_size);
     table_width = table_width + counter_title_size;
   }
@@ -315,10 +318,10 @@ format_counters_table(std::vector<T> counter_nodes,
 
   std::stringstream title_row_border;
   title_row_border << boost::format("+-%=s-+") %
-                       boost::io::group(std::setw(counter_label_column_width), std::setfill('-'), "");
+                        boost::io::group(std::setw(counter_label_column_width), std::setfill('-'), "");
   for (uint32_t i = 0; i < counter_nodes_number; ++i) {
     title_row_border << boost::format("-%=s-+") %
-                         boost::io::group(std::setw(counter_node_title_sizes.at(i)), std::setfill('-'), "");
+                          boost::io::group(std::setw(counter_node_title_sizes.at(i)), std::setfill('-'), "");
   }
   title_row_border << std::endl;
 
@@ -345,7 +348,8 @@ format_counters_table(std::vector<T> counter_nodes,
 
   // top counter row border
   std::stringstream row_border;
-  row_border << boost::format("+-%=s-+") % boost::io::group(std::setw(counter_label_column_width), std::setfill('-'), "");
+  row_border << boost::format("+-%=s-+") %
+                  boost::io::group(std::setw(counter_label_column_width), std::setfill('-'), "");
   for (uint32_t j = 0; j < counter_nodes_number; ++j) {
     uint32_t dec_width = counter_value_column_widths.at(j).first;
     uint32_t hex_width = counter_value_column_widths.at(j).second;
@@ -361,7 +365,7 @@ format_counters_table(std::vector<T> counter_nodes,
     std::stringstream table_row_stream;
 
     table_row_stream << boost::format("| %=s |") %
-                         boost::io::group(std::setw(counter_label_column_width), counter_labels_to_use.at(i));
+                          boost::io::group(std::setw(counter_label_column_width), counter_labels_to_use.at(i));
 
     for (uint32_t j = 0; j < counter_nodes_number; ++j) {
       uint32_t dec_width = counter_value_column_widths.at(j).first;
@@ -371,7 +375,7 @@ format_counters_table(std::vector<T> counter_nodes,
       std::string hex_value = counter_value_containers.at(j).at(i).second;
 
       table_row_stream << boost::format(" %=s | %=s |") % boost::io::group(std::setw(dec_width), dec_value) %
-                           boost::io::group(std::setw(hex_width), hex_value);
+                            boost::io::group(std::setw(hex_width), hex_value);
     }
     table_stream << table_row_stream.str() << std::endl;
   }

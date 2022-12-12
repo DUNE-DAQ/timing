@@ -83,29 +83,28 @@ enum BoardRevision
 
 enum FixedLengthCommandType
 {
-  TimeSync,  
-  Echo,      
-  SpillStart, 
-  SpillStop,  
+  TimeSync,
+  Echo,
+  SpillStart,
+  SpillStop,
   RunStart,
-  RunStop,   
-  WibCalib,  
-  SSPCalib,   
-  FakeTrig0,  
+  RunStop,
+  WibCalib,
+  SSPCalib,
+  FakeTrig0,
   FakeTrig1,
-  FakeTrig2, 
-  FakeTrig3, 
-  BeamTrig,   
-  NoBeamTrig, 
+  FakeTrig2,
+  FakeTrig3,
+  BeamTrig,
+  NoBeamTrig,
   ExtFakeTrig
 };
 
-const std::vector<BoardType> g_library_supported_boards = {
-  kBoardFMC, kBoardPC059, kBoardTLU, kBoardSim, kBoardFIB, kBoardMIB, kBoardPC069
-};
+const std::vector<BoardType> g_library_supported_boards = { kBoardFMC, kBoardPC059, kBoardTLU,  kBoardSim,
+                                                            kBoardFIB, kBoardMIB,   kBoardPC069 };
 
-const uint32_t g_event_size = 6;             // NOLINT(build/unsigned)
-const uint32_t g_hsi_event_size = 5;         // NOLINT(build/unsigned)
+const uint32_t g_event_size = 6;     // NOLINT(build/unsigned)
+const uint32_t g_hsi_event_size = 5; // NOLINT(build/unsigned)
 
 const int g_required_major_master_firmware_version = 6;
 const int g_required_minor_master_firmware_version = 4;
@@ -115,16 +114,11 @@ const int g_required_major_endpoint_firmware_version = 6;
 const int g_required_minor_endpoint_firmware_version = 4;
 const int g_required_patch_endpoint_firmware_version = 0;
 
-const std::map<BoardType, std::string> g_board_type_map = { { kBoardFMC, "fmc" },
-                                                            { kBoardSim, "sim" },
-                                                            { kBoardPC059, "pc059" },
-                                                            { kBoardMicrozed, "microzed" },
-                                                            { kBoardTLU, "tlu" },
-                                                            { kBoardFIB, "fib" }, 
-                                                            { kBoardMIB, "mib" }, 
-                                                            { kBoardPC069, "pc069" },
-                                                            { kBoardUnknown, "unknown" }
-                                                            };
+const std::map<BoardType, std::string> g_board_type_map = { { kBoardFMC, "fmc" },        { kBoardSim, "sim" },
+                                                            { kBoardPC059, "pc059" },    { kBoardMicrozed, "microzed" },
+                                                            { kBoardTLU, "tlu" },        { kBoardFIB, "fib" },
+                                                            { kBoardMIB, "mib" },        { kBoardPC069, "pc069" },
+                                                            { kBoardUnknown, "unknown" } };
 
 const std::map<CarrierType, std::string> g_carrier_type_map = { { kCarrierEnclustraA35, "enclustra-a35" },
                                                                 { kCarrierKC705, "kc705" },
@@ -133,8 +127,7 @@ const std::map<CarrierType, std::string> g_carrier_type_map = { { kCarrierEnclus
                                                                 { kCarrierAFC, "afc" },
                                                                 { kCarrierNexusVideo, "nexus-video" },
                                                                 { kCarrierTrenzTE0712, "trenz-te0712" },
-                                                                { kCarrierUnknown, "unknown" }
-                                                                };
+                                                                { kCarrierUnknown, "unknown" } };
 
 const std::map<DesignType, std::string> g_design_type_map = {
   { kDesignMaster, "master" },
@@ -150,100 +143,72 @@ const std::map<DesignType, std::string> g_design_type_map = {
   { kDesignUnknown, "unknown" },
 };
 
-const std::vector<DesignType> g_library_supported_designs = {
-    kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord, kDesignEndpoBICRT, kDesignChronos, kDesignBoreas
-};
+const std::vector<DesignType> g_library_supported_designs = { kDesignMaster,     kDesignOuroboros, kDesignOuroborosSim,
+                                                              kDesignEndpoint,   kDesignFanout,    kDesignOverlord,
+                                                              kDesignEndpoBICRT, kDesignChronos,   kDesignBoreas };
 
-const std::map<BoardRevision, std::string> g_board_revision_map = {
-  { kFMCRev1, "kFMCRev1" },     { kFMCRev2, "kFMCRev2" }, { kFMCRev3, "kFMCRev3" },
-  { kPC059Rev1, "kPC059Rev1" }, { kTLURev1, "kTLURev1" }, { kSIMRev1, "kSIMRev1" },
-  { kFIBRev1, "kFIBRev1" }, { kFMCRev4, "kFMCRev4" }, { kMIBRev1, "kMIBRev1" },
-  { kPC069a, "pc069a" }, { kBoardRevisionUnknown, "unknown" }
-};
+const std::map<BoardRevision, std::string> g_board_revision_map = { { kFMCRev1, "kFMCRev1" },
+                                                                    { kFMCRev2, "kFMCRev2" },
+                                                                    { kFMCRev3, "kFMCRev3" },
+                                                                    { kPC059Rev1, "kPC059Rev1" },
+                                                                    { kTLURev1, "kTLURev1" },
+                                                                    { kSIMRev1, "kSIMRev1" },
+                                                                    { kFIBRev1, "kFIBRev1" },
+                                                                    { kFMCRev4, "kFMCRev4" },
+                                                                    { kMIBRev1, "kMIBRev1" },
+                                                                    { kPC069a, "pc069a" },
+                                                                    { kBoardRevisionUnknown, "unknown" } };
 
 // NOLINTNEXTLINE(build/unsigned)
 const std::map<uint64_t, BoardRevision> g_board_uid_revision_map = {
-  { 0xd880395e720b, kFMCRev1 },
-  { 0xd880395e501a, kFMCRev1 },
-  { 0xd880395e50b8, kFMCRev1 },
-  { 0xd880395e501b, kFMCRev1 },
-  { 0xd880395e7201, kFMCRev1 },
-  { 0xd880395e4fcc, kFMCRev1 },
-  { 0xd880395e5069, kFMCRev1 },
-  { 0xd880395e7206, kFMCRev1 },
-  { 0xd880395e1c86, kFMCRev2 },
-  { 0xd880395e2630, kFMCRev2 },
-  { 0xd880395e262b, kFMCRev2 },
-  { 0xd880395e2b38, kFMCRev2 },
-  { 0xd880395e1a6a, kFMCRev2 },
-  { 0xd880395e36ae, kFMCRev2 },
-  { 0xd880395e2b2e, kFMCRev2 },
-  { 0xd880395e2b33, kFMCRev2 },
-  { 0xd880395e1c81, kFMCRev2 },
-  { 0x049162b67ce6, kFMCRev3 },
-  { 0x049162b62947, kFMCRev3 },
-  { 0x049162b67cdf, kFMCRev3 },
-  { 0x49162b62050, kFMCRev3 },
-  { 0x49162b62951, kFMCRev3 },
-  { 0x49162b675e3, kFMCRev3 },
-  { 0xd88039d980cf, kPC059Rev1 },
-  { 0xd88039d98adf, kPC059Rev1 },
-  { 0xd88039d92491, kPC059Rev1 },
-  { 0xd88039d9248e, kPC059Rev1 },
-  { 0xd88039d98ae9, kPC059Rev1 },
-  { 0xd88039d92498, kPC059Rev1 },
-  { 0x5410ecbba408, kTLURev1 },
-  { 0x5410ecbb9426, kTLURev1 },
-  { 0x801f12f5ce48, kFIBRev1 },
-  { 0x801f12f5e9ae, kFIBRev1 },
-  { 0x49162b65025, kFMCRev3 },
-  { 0x49162b62948, kFMCRev3 },
-  { 0x49162b675ea, kFMCRev3 },
-  { 0x49162b645cd, kFMCRev3 },
-  { 0xd880395dab52, kFMCRev4 },
-  { 0xd880395d99b3, kFMCRev4 },
-  { 0xd880395df010, kFMCRev4 },
-  { 0xd880395df00f, kFMCRev4 },
-  { 0xd880395de4a4, kFMCRev4 },
-  { 0xd880395d99a9, kFMCRev4 },
-  { 0xd880395d99b0, kFMCRev4 },
-  { 0xd880395de452, kFMCRev4 },
-  { 0xd880395da48e, kFMCRev4 },
-  { 0xd880395dbcee, kFMCRev4 },
-  { 0x5410ecbb6845, kTLURev1 },
-  { 0x801f12ee6739, kMIBRev1 },
-  { 0x801f12f5e183, kFIBRev1 },
+  { 0xd880395e720b, kFMCRev1 },   { 0xd880395e501a, kFMCRev1 },   { 0xd880395e50b8, kFMCRev1 },
+  { 0xd880395e501b, kFMCRev1 },   { 0xd880395e7201, kFMCRev1 },   { 0xd880395e4fcc, kFMCRev1 },
+  { 0xd880395e5069, kFMCRev1 },   { 0xd880395e7206, kFMCRev1 },   { 0xd880395e1c86, kFMCRev2 },
+  { 0xd880395e2630, kFMCRev2 },   { 0xd880395e262b, kFMCRev2 },   { 0xd880395e2b38, kFMCRev2 },
+  { 0xd880395e1a6a, kFMCRev2 },   { 0xd880395e36ae, kFMCRev2 },   { 0xd880395e2b2e, kFMCRev2 },
+  { 0xd880395e2b33, kFMCRev2 },   { 0xd880395e1c81, kFMCRev2 },   { 0x049162b67ce6, kFMCRev3 },
+  { 0x049162b62947, kFMCRev3 },   { 0x049162b67cdf, kFMCRev3 },   { 0x49162b62050, kFMCRev3 },
+  { 0x49162b62951, kFMCRev3 },    { 0x49162b675e3, kFMCRev3 },    { 0xd88039d980cf, kPC059Rev1 },
+  { 0xd88039d98adf, kPC059Rev1 }, { 0xd88039d92491, kPC059Rev1 }, { 0xd88039d9248e, kPC059Rev1 },
+  { 0xd88039d98ae9, kPC059Rev1 }, { 0xd88039d92498, kPC059Rev1 }, { 0x5410ecbba408, kTLURev1 },
+  { 0x5410ecbb9426, kTLURev1 },   { 0x801f12f5ce48, kFIBRev1 },   { 0x801f12f5e9ae, kFIBRev1 },
+  { 0x49162b65025, kFMCRev3 },    { 0x49162b62948, kFMCRev3 },    { 0x49162b675ea, kFMCRev3 },
+  { 0x49162b645cd, kFMCRev3 },    { 0xd880395dab52, kFMCRev4 },   { 0xd880395d99b3, kFMCRev4 },
+  { 0xd880395df010, kFMCRev4 },   { 0xd880395df00f, kFMCRev4 },   { 0xd880395de4a4, kFMCRev4 },
+  { 0xd880395d99a9, kFMCRev4 },   { 0xd880395d99b0, kFMCRev4 },   { 0xd880395de452, kFMCRev4 },
+  { 0xd880395da48e, kFMCRev4 },   { 0xd880395dbcee, kFMCRev4 },   { 0x5410ecbb6845, kTLURev1 },
+  { 0x801f12ee6739, kMIBRev1 },   { 0x801f12f5e183, kFIBRev1 },
 };
 
 const std::map<std::string, std::string> g_clock_config_map = {
-  
+
   // 62.5 MHz mappings (no cdr)
   { "fmc_5344_ouroboros", "SI5344/PDTS0003.txt" },
   { "fmc_5394_ouroboros", "SI5344/PDTS0003.txt" },
 
   { "fmc_5344_master", "SI5344/PDTS0003.txt" },
   { "fmc_5394_master", "SI5344/PDTS0003.txt" },
-  
+
   { "fmc_5344_overlord", "SI5344/PDTS0003.txt" },
   { "fmc_5394_overlord", "SI5344/PDTS0003.txt" },
-  
+
   { "fmc_5344_boreas", "SI5344/PDTS0003.txt" },
   { "fmc_5394_boreas", "SI5344/PDTS0003.txt" },
 
   { "fmc_5344_endpoint", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
   { "fmc_5394_endpoint", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
-  
+
   { "fmc_5344_chronos", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
   { "fmc_5394_chronos", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
 
   { "tlu_5345_boreas", "nocdr/DUNE_TLU-4_45_M-Registers.txt" },
-  
+
   { "pc059_5345_master", "devel/PDTS_PC059_FANOUT.txt" },
 
   // 62.5 MHz mappings (with cdr)
   { "fmc_5344_endpoint_cdr", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
   { "fmc_5394_endpoint_cdr", "devel/Si5394-053endptr_62-5MHz_4kHz-Registers.txt" },
-  
+
   { "fmc_5344_endpoint-bi-crt_cdr", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
   { "fmc_5394_endpoint-bi-crt_cdr", "devel/Si5394-053endptr_62-5MHz_4kHz-Registers.txt" },
 
@@ -268,29 +233,24 @@ const std::map<std::string, std::string> g_clock_config_map = {
   { "pc059_5345_ouroboros_cdr", "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" },
   { "pc059_5345_fanout_mode0_cdr",
     "devel/pc059_sfp_in_312_mhz-059_0s62-Registers.txt" }, // fanout mode, assuming sfp is the upstream input
-  { "pc059_5345_fanout_mode1_cdr",
-    "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" }, // stand-alone mode
-  { "pc059_5345_fanout_cdr",
-    "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" }, // stand-alone mode
+  { "pc059_5345_fanout_mode1_cdr", "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" }, // stand-alone mode
+  { "pc059_5345_fanout_cdr", "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" },       // stand-alone mode
 
   { "fib_5395_fanout_mode0_cdr",
     "devel/Si5395-RevA-FIB_fanout-65_FA_31-Registers.txt" }, // fanout mode, data and clock from backplane
-  { "fib_5395_fanout_mode1_cdr",
-    "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" }, // stand-alone mode
-  { "fib_5395_fanout_cdr",
-    "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" }, // stand-alone mode  
-  
+  { "fib_5395_fanout_mode1_cdr", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" }, // stand-alone mode
+  { "fib_5395_fanout_cdr", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" },       // stand-alone mode
+
   { "mib_5395_fanout_mode0_cdr",
     "devel/Si5395-RevA-MIB_62_1-Registers.txt" }, // fanout mode, data and clock always from upstream sfp 1
-  { "mib_5395_fanout_mode1_cdr",
-    "devel/Si5395-RevA-MIB_62_1-Registers.txt" }, // stand-alone mode
+  { "mib_5395_fanout_mode1_cdr", "devel/Si5395-RevA-MIB_62_1-Registers.txt" }, // stand-alone mode
 
   { "fib_5395_ouroboros_cdr", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" },
   { "fib_5395_ouroboros_cdr", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" },
 
   // 50 MHz mappings
-  { "fmc_5344_endpoint_50_mhz_cdr", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
-  { "fmc_5394_endpoint_50_mhz_cdr", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
+  { "fmc_5344_endpoint_50_mhz_cdr", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
+  { "fmc_5394_endpoint_50_mhz_cdr", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
 
   { "fmc_5344_endpoint-bi-crt_50_mhz_cdr", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
   { "fmc_5394_endpoint-bi-crt_50_mhz_cdr", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
@@ -316,18 +276,23 @@ const std::map<std::string, std::string> g_clock_config_map = {
 
   { "tlu_5345_overlord_50_mhz_cdr", "wr/TLU_EXTCLK_10MHZ_NOZDM.txt" },
   { "tlu_5345_boreas_50_mhz_cdr", "wr/TLU_EXTCLK_10MHZ_NOZDM.txt" },
-  
+
   { "pc059_5345_ouroboros_50_mhz_cdr", "SI5345/PDTS0005.txt" },
   { "pc059_5345_fanout_mode0_50_mhz_cdr", "wr/FANOUT_PLL_WIDEBW_SFPIN.txt" }, // fanout mode
   { "pc059_5345_fanout_mode1_50_mhz_cdr", "devel/PDTS_PC059_FANOUT.txt" },    // stand-alone mode
-  { "pc059_5345_fanout_50_mhz_cdr", "devel/PDTS_PC059_FANOUT.txt" },    // stand-alone mode
+  { "pc059_5345_fanout_50_mhz_cdr", "devel/PDTS_PC059_FANOUT.txt" },          // stand-alone mode
 };
 
 // NOLINTNEXTLINE(build/unsigned)
 const std::map<FixedLengthCommandType, std::string> g_command_map = {
-  { TimeSync, "TimeSync" }, { Echo, "Echo" }, { SpillStart, "SpillStart" }, { SpillStop, "SpillStop" }, { RunStart, "RunStart" },
-  { RunStop, "RunStop" }, { WibCalib, "WibCalib" }, { SSPCalib, "SSPCalib" }, { FakeTrig0, "FakeTrig0" }, { FakeTrig1, "FakeTrig1" },
-  { FakeTrig2, "FakeTrig2" }, { FakeTrig3, "FakeTrig3" }, { BeamTrig, "BeamTrig" }, { NoBeamTrig, "NoBeamTrig" }, { ExtFakeTrig, "ExtFakeTrig" }
+  { TimeSync, "TimeSync" },      { Echo, "Echo" },
+  { SpillStart, "SpillStart" },  { SpillStop, "SpillStop" },
+  { RunStart, "RunStart" },      { RunStop, "RunStop" },
+  { WibCalib, "WibCalib" },      { SSPCalib, "SSPCalib" },
+  { FakeTrig0, "FakeTrig0" },    { FakeTrig1, "FakeTrig1" },
+  { FakeTrig2, "FakeTrig2" },    { FakeTrig3, "FakeTrig3" },
+  { BeamTrig, "BeamTrig" },      { NoBeamTrig, "NoBeamTrig" },
+  { ExtFakeTrig, "ExtFakeTrig" }
 };
 
 const uint32_t g_command_number = g_command_map.size(); // NOLINT(build/unsigned)
@@ -419,7 +384,8 @@ struct ActiveEndpointConfig
     , cdelay(coarse_delayay)
     , fdelay(fine_delayay)
     , pdelay(0)
-  {}
+  {
+  }
 };
 
 struct EndpointRTTResult
@@ -436,7 +402,8 @@ struct EndpointRTTResult
     , fanout(ept_config.fanout)
     , mux(ept_config.mux)
     , measuredRTT(aMeasuredRTT)
-  {}
+  {
+  }
 };
 
 } // namespace timing

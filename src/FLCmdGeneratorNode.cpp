@@ -8,8 +8,8 @@
 
 #include "timing/FLCmdGeneratorNode.hpp"
 
-#include "timing/toolbox.hpp"
 #include "logging/Logging.hpp"
+#include "timing/toolbox.hpp"
 
 #include <string>
 #include <vector>
@@ -22,7 +22,8 @@ UHAL_REGISTER_DERIVED_NODE(FLCmdGeneratorNode)
 //-----------------------------------------------------------------------------
 FLCmdGeneratorNode::FLCmdGeneratorNode(const uhal::Node& node)
   : TimingNode(node)
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -100,7 +101,8 @@ FLCmdGeneratorNode::get_cmd_counters_table(bool print_out) const
   auto rejected_counters = getNode("rctrs").readBlock(getNode("actrs").getSize());
   getClient().dispatch();
 
-  std::vector<uhal::ValVector<uint32_t>> counters_container = { accepted_counters, rejected_counters }; // NOLINT(build/unsigned)
+  std::vector<uhal::ValVector<uint32_t>> counters_container = { accepted_counters,
+                                                                rejected_counters }; // NOLINT(build/unsigned)
 
   counters_table << format_counters_table(counters_container,
                                           { "Accept counters", "Reject counters" },

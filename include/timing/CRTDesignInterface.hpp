@@ -35,9 +35,10 @@ class CRTDesignInterface : virtual public EndpointDesignInterface
 {
 
 public:
-  explicit CRTDesignInterface(const uhal::Node& node) 
-    : EndpointDesignInterface(node) 
-    {}
+  explicit CRTDesignInterface(const uhal::Node& node)
+    : EndpointDesignInterface(node)
+  {
+  }
   virtual ~CRTDesignInterface() {}
 
   /**
@@ -46,7 +47,6 @@ public:
    * @return     { description_of_the_return_value }
    */
   virtual const CRTNode& get_crt_node() const { return uhal::Node::getNode<CRTNode>("endpoint0"); }
-
 };
 
 } // namespace timing

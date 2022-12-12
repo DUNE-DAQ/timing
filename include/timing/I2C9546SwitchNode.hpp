@@ -67,7 +67,6 @@ public:
 
 private:
   void ensure_valid_channel(uint8_t channel) const; // NOLINT(build/unsigned)
-
 };
 
 } // namespace timing

@@ -8,9 +8,9 @@
 
 #include "timing/PDIHSIEndpointNode.hpp"
 
+#include "logging/Logging.hpp"
 #include "timing/definitions.hpp"
 #include "timing/toolbox.hpp"
-#include "logging/Logging.hpp"
 
 #include <string>
 #include <utility>
@@ -24,7 +24,8 @@ UHAL_REGISTER_DERIVED_NODE(PDIHSIEndpointNode)
 //-----------------------------------------------------------------------------
 PDIHSIEndpointNode::PDIHSIEndpointNode(const uhal::Node& node)
   : EndpointNodeInterface(node)
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -86,7 +87,6 @@ PDIHSIEndpointNode::get_status(bool print_out) const
   return status.str();
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 void

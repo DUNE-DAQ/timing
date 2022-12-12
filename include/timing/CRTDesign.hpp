@@ -13,9 +13,9 @@
 #define TIMING_INCLUDE_TIMING_CRTDESIGN_HPP_
 
 // Timing Headers
+#include "timing/CRTDesignInterface.hpp"
 #include "timing/CRTNode.hpp"
 #include "timing/TopDesign.hpp"
-#include "timing/CRTDesignInterface.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -31,7 +31,9 @@ namespace timing {
 /**
  * @brief      Class for timing master with integrated HSI designs.
  */
-class CRTDesign : public TopDesign, public CRTDesignInterface
+class CRTDesign
+  : public TopDesign
+  , public CRTDesignInterface
 {
   UHAL_DERIVEDNODE(CRTDesign)
 public:
@@ -54,10 +56,11 @@ public:
    *
    * @return     { description_of_the_return_value }
    */
-  uint32_t read_firmware_version() const override { // NOLINT(build/unsigned)
+  uint32_t read_firmware_version() const override
+  { // NOLINT(build/unsigned)
     // current crt firmware does not store firmware version
-    return 0; 
-  } 
+    return 0;
+  }
 
   /**
    * @brief      Validate endpoint firmware version.

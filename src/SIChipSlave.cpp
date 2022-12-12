@@ -23,7 +23,8 @@ namespace timing {
 //-----------------------------------------------------------------------------
 SIChipSlave::SIChipSlave(const I2CMasterNode* i2c_master, uint8_t address) // NOLINT(build/unsigned)
   : I2CSlave(i2c_master, address)
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -77,8 +78,8 @@ SIChipSlave::read_clock_register(uint16_t address) const // NOLINT(build/unsigne
   uint8_t page_address = (address >> 8) & 0xff; // NOLINT(build/unsigned)
   std::stringstream debug_stream;
   debug_stream << std::showbase << std::hex << "Read Address " << (uint32_t)address // NOLINT(build/unsigned)
-               << " reg: " << (uint32_t)reg_address                                    // NOLINT(build/unsigned)
-               << " page: " << (uint32_t)page_address;                                 // NOLINT(build/unsigned)
+               << " reg: " << (uint32_t)reg_address                                 // NOLINT(build/unsigned)
+               << " page: " << (uint32_t)page_address;                              // NOLINT(build/unsigned)
   TLOG_DEBUG(6) << debug_stream.str();
   // Change page only when required.
   // (The SI5344 don't like to have the page register id to be written all the time.)
@@ -102,8 +103,8 @@ SIChipSlave::write_clock_register(uint16_t address, uint8_t data) const // NOLIN
 
   std::stringstream debug_stream;
   debug_stream << std::showbase << std::hex << "Write Address " << (uint32_t)address // NOLINT(build/unsigned)
-               << " reg: " << (uint32_t)reg_address                                     // NOLINT(build/unsigned)
-               << " page: " << (uint32_t)page_address;                                  // NOLINT(build/unsigned)
+               << " reg: " << (uint32_t)reg_address                                  // NOLINT(build/unsigned)
+               << " page: " << (uint32_t)page_address;                               // NOLINT(build/unsigned)
   TLOG_DEBUG(6) << debug_stream.str();
   // Change page only when required.
   // (The SI5344 don't like to have the page register id to be written all the time.)

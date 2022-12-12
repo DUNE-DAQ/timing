@@ -8,8 +8,8 @@
 
 #include "timing/TriggerReceiverNode.hpp"
 
-#include "timing/toolbox.hpp"
 #include "logging/Logging.hpp"
+#include "timing/toolbox.hpp"
 
 #include <string>
 #include <vector>
@@ -22,7 +22,8 @@ UHAL_REGISTER_DERIVED_NODE(TriggerReceiverNode)
 //-----------------------------------------------------------------------------
 TriggerReceiverNode::TriggerReceiverNode(const uhal::Node& node)
   : TimingNode(node)
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

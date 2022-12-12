@@ -13,9 +13,9 @@
 #define TIMING_INCLUDE_TIMING_MUXDESIGNINTERFACE_HPP_
 
 // PDT Headers
-#include "timing/TopDesignInterface.hpp"
-#include "timing/FanoutIONode.hpp"
 #include "TimingIssues.hpp"
+#include "timing/FanoutIONode.hpp"
+#include "timing/TopDesignInterface.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -37,13 +37,16 @@ class MuxDesignInterface : virtual public TopDesignInterface
 
 public:
   explicit MuxDesignInterface(const uhal::Node& node)
-  : TopDesignInterface(node) {}
+    : TopDesignInterface(node)
+  {
+  }
   virtual ~MuxDesignInterface() {}
 
   /**
    * @brief     Switch the SFP mux channel
    */
-  virtual void switch_downstream_mux_channel(uint32_t sfp_id, bool /*wait_for_rtt_ept_lock*/) const = 0;// NOLINT(build/unsigned)
+  virtual void switch_downstream_mux_channel(uint32_t sfp_id,
+                                             bool /*wait_for_rtt_ept_lock*/) const = 0; // NOLINT(build/unsigned)
 
   /**
    * @brief     Read the active SFP mux channel
@@ -56,7 +59,7 @@ public:
   /**
    * @brief     Scan SFP for alive timing transmitters
    */
-  virtual std::vector<uint32_t> scan_sfp_mux() const = 0;// NOLINT(build/unsigned)
+  virtual std::vector<uint32_t> scan_sfp_mux() const = 0; // NOLINT(build/unsigned)
 };
 
 } // namespace timing

@@ -223,7 +223,7 @@ I2CMasterNode::write_i2cPrimitive(uint8_t i2c_device_address,       // NOLINT(bu
 
 //-----------------------------------------------------------------------------
 void
-I2CMasterNode::write_block_i2c(uint8_t i2c_device_address,         // NOLINT(build/unsigned)
+I2CMasterNode::write_block_i2c(uint8_t i2c_device_address,       // NOLINT(build/unsigned)
                                const std::vector<uint8_t>& data, // NOLINT(build/unsigned)
                                bool send_stop) const
 {
@@ -260,7 +260,7 @@ I2CMasterNode::write_block_i2c(uint8_t i2c_device_address,         // NOLINT(bui
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-std::vector<uint8_t>                                                                // NOLINT(build/unsigned)
+std::vector<uint8_t>                                                                      // NOLINT(build/unsigned)
 I2CMasterNode::read_block_i2c(uint8_t i2c_device_address, uint32_t number_of_bytes) const // NOLINT(build/unsigned)
 {
   // transmit reg definitions
@@ -394,7 +394,7 @@ I2CMasterNode::send_i2c_command_and_read_data(uint8_t command) const // NOLINT(b
 
   assert(!(command & kWriteToSlaveCmd));
 
-  uint8_t full_cmd = command | kReadFromSlaveCmd;                                     // NOLINT(build/unsigned)
+  uint8_t full_cmd = command | kReadFromSlaveCmd;                                      // NOLINT(build/unsigned)
   TLOG_DEBUG(10) << ">> sending read cmd  = " << format_reg_value((uint32_t)full_cmd); // NOLINT(build/unsigned)
 
   // Force the read bit high and set them cmd bits
@@ -440,7 +440,7 @@ I2CMasterNode::send_i2c_command_and_write_data(uint8_t command, uint8_t data) co
 
   // Wait for transaction to finish. Require idle bus at the end if stop bit is high
   // wait_until_finished(req_hack, requ_idle)
-  wait_until_finished( true, command & kStopCmd); // NOLINT
+  wait_until_finished(true, command & kStopCmd); // NOLINT
 }
 //-----------------------------------------------------------------------------
 

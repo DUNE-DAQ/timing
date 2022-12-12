@@ -31,7 +31,8 @@ namespace timing {
  * @brief      Class for PDI timing master design (known as overlord).
  */
 class OuroborosDesign
-  : public MasterDesign, public EndpointDesignInterface
+  : public MasterDesign
+  , public EndpointDesignInterface
 {
   UHAL_DERIVEDNODE(OuroborosDesign)
 public:
@@ -51,7 +52,7 @@ public:
 
   /**
    * @brief    Give info to collector.
-   */  
+   */
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
 };
 
