@@ -96,12 +96,12 @@ FMCIONode::reset(const std::string& clock_config_file) const
   getNode("csr.ctrl.sfp_tx_dis").write(0x0);
 
   // rx edges
-  uint32_t cdr_rx_edge = 0x0; // NOLINT(build/unsigned)
-  uint32_t sfp_rx_edge = 0x0; // NOLINT(build/unsigned)
+  uint32_t cdr_rx_edge = 0x0;  // NOLINT(build/unsigned)
+  uint32_t sfp_rx_edge = 0x0;  // NOLINT(build/unsigned)
   uint32_t rj45_rx_edge = 0x0; // NOLINT(build/unsigned)
 
   // tx edges
-  uint32_t sfp_tx_edge = 0x0; // NOLINT(build/unsigned)
+  uint32_t sfp_tx_edge = 0x0;  // NOLINT(build/unsigned)
   uint32_t rj45_tx_edge = 0x0; // NOLINT(build/unsigned)
 
   // rx edges
@@ -122,7 +122,7 @@ FMCIONode::reset(const std::string& clock_config_file) const
 //-----------------------------------------------------------------------------
 void
 FMCIONode::reset(int32_t /*fanout_mode*/, // NOLINT(build/unsigned)
-                     const std::string& clock_config_file) const
+                 const std::string& clock_config_file) const
 {
   reset(clock_config_file);
 }
@@ -132,15 +132,14 @@ FMCIONode::reset(int32_t /*fanout_mode*/, // NOLINT(build/unsigned)
 std::vector<double>
 FMCIONode::read_clock_frequencies() const
 {
-  std::vector<std::string> clock_names( {"PLL", "CDR"});
+  std::vector<std::string> clock_names({ "PLL", "CDR" });
   // using cdr...?
   auto no_cdr = getNode("config.no_cdr").read();
   getClient().dispatch();
-  if (no_cdr)
-  {
+  if (no_cdr) {
     clock_names.push_back("SMPL");
   }
-  
+
   return getNode<FrequencyCounterNode>("freq").measure_frequencies(clock_names.size());
 }
 //-----------------------------------------------------------------------------
@@ -149,12 +148,11 @@ FMCIONode::read_clock_frequencies() const
 std::string
 FMCIONode::get_clock_frequencies_table(bool print_out) const
 {
-  std::vector<std::string> clock_names( {"PLL", "CDR"});
+  std::vector<std::string> clock_names({ "PLL", "CDR" });
   // using cdr...?
   auto no_cdr = getNode("config.no_cdr").read();
   getClient().dispatch();
-  if (no_cdr)
-  {
+  if (no_cdr) {
     clock_names.push_back("SMPL");
   }
   std::stringstream table;

@@ -14,8 +14,8 @@
 
 // PDT Headers
 #include "TimingIssues.hpp"
-#include "timing/HSINode.hpp"
 #include "timing/EndpointDesignInterface.hpp"
+#include "timing/HSINode.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -35,9 +35,10 @@ class HSIDesignInterface : virtual public EndpointDesignInterface
 {
 
 public:
-  explicit HSIDesignInterface(const uhal::Node& node) 
-    : EndpointDesignInterface(node) 
-    {}
+  explicit HSIDesignInterface(const uhal::Node& node)
+    : EndpointDesignInterface(node)
+  {
+  }
   virtual ~HSIDesignInterface() {}
 
   /**
@@ -46,16 +47,13 @@ public:
    * @return     { description_of_the_return_value }
    */
   virtual const HSINode& get_hsi_node() const
-  { 
-    
+  {
+
     auto top_level_hsi_nodes = getNodes("hsi");
-    if (top_level_hsi_nodes.size() > 0)
-    {
-     return uhal::Node::getNode<HSINode>("hsi");  
-    }
-    else
-    {
-      return uhal::Node::getNode<HSINode>("endpoint0.hsi"); 
+    if (top_level_hsi_nodes.size() > 0) {
+      return uhal::Node::getNode<HSINode>("hsi");
+    } else {
+      return uhal::Node::getNode<HSINode>("endpoint0.hsi");
     }
   }
 
@@ -68,7 +66,7 @@ public:
                              uint32_t fe_mask,  // NOLINT(build/unsigned)
                              uint32_t inv_mask, // NOLINT(build/unsigned)
                              double rate,
-                             bool dispatch = true) const 
+                             bool dispatch = true) const
   {
     uint32_t firmware_frequency = get_io_node_plain()->read_firmware_frequency(); // NOLINT(build/unsigned)
     get_hsi_node().configure_hsi(src, re_mask, fe_mask, inv_mask, rate, firmware_frequency, dispatch);

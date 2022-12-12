@@ -77,7 +77,7 @@ public:
    *
    * @return     { description_of_the_return_value }
    */
-  uint8_t read_outputs_config( uint8_t bank_id ) const; // NOLINT(build/unsigned)
+  uint8_t read_outputs_config(uint8_t bank_id) const; // NOLINT(build/unsigned)
 
   std::vector<uint32_t> debug() const; // NOLINT(build/unsigned)
 

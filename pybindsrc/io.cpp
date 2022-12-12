@@ -6,14 +6,14 @@
  * received with this code.
  */
 
+#include "timing/FIBIONode.hpp"
 #include "timing/FMCIONode.hpp"
 #include "timing/IONode.hpp"
-#include "timing/PC059IONode.hpp"
-#include "timing/FIBIONode.hpp"
-#include "timing/SIMIONode.hpp"
-#include "timing/TLUIONode.hpp"
 #include "timing/MIBIONode.hpp"
+#include "timing/PC059IONode.hpp"
+#include "timing/SIMIONode.hpp"
 #include "timing/SwitchyardNode.hpp"
+#include "timing/TLUIONode.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -62,7 +62,7 @@ register_io(py::module& m)
     .def("switch_downstream_mux_channel", &timing::PC059IONode::switch_downstream_mux_channel, py::arg("mux_channel"))
     .def("read_active_downstream_mux_channel", &timing::PC059IONode::read_active_downstream_mux_channel);
 
-    py::class_<timing::FIBIONode, timing::IONode, uhal::Node>(m, "FIBIONode")
+  py::class_<timing::FIBIONode, timing::IONode, uhal::Node>(m, "FIBIONode")
     .def(py::init<const uhal::Node&>())
     .def<void (timing::FIBIONode::*)(const std::string&) const>(
       "reset", &timing::FIBIONode::reset, py::arg("clock_config_file") = "")
@@ -130,10 +130,16 @@ register_io(py::module& m)
     .def("switch_upstream_mux_channel", &timing::MIBIONode::switch_upstream_mux_channel, py::arg("mux_channel"))
     .def("read_active_upstream_mux_channel", &timing::MIBIONode::read_active_upstream_mux_channel);
 
-    py::class_<timing::SwitchyardNode, uhal::Node>(m, "SwitchyardNode")
-      .def("get_status", &timing::SwitchyardNode::get_status, py::arg("print_out") = false)
-      .def("configure_master_source", &timing::SwitchyardNode::configure_master_source, py::arg("master_source"), py::arg("dispatch") = true)
-      .def("configure_endpoint_source", &timing::SwitchyardNode::configure_endpoint_source, py::arg("endpoint_source"), py::arg("dispatch") = true);
+  py::class_<timing::SwitchyardNode, uhal::Node>(m, "SwitchyardNode")
+    .def("get_status", &timing::SwitchyardNode::get_status, py::arg("print_out") = false)
+    .def("configure_master_source",
+         &timing::SwitchyardNode::configure_master_source,
+         py::arg("master_source"),
+         py::arg("dispatch") = true)
+    .def("configure_endpoint_source",
+         &timing::SwitchyardNode::configure_endpoint_source,
+         py::arg("endpoint_source"),
+         py::arg("dispatch") = true);
 
 } // NOLINT
 

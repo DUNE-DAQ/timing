@@ -36,7 +36,8 @@ IONode::IONode(const uhal::Node& node,
   , m_sfp_i2c_buses(sfp_i2c_buses)
 // mPLL (new SI534xSlave( getNode<I2CMasterNode>(m_pll_i2c_bus)& ,
 // getNode<I2CMasterNode>(m_pll_i2c_bus).get_slave_address(pll_i2c_device) ))
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -88,7 +89,7 @@ uint64_t // NOLINT(build/unsigned)
 IONode::read_board_uid() const
 {
 
-  uint64_t uid = 0;                // NOLINT(build/unsigned)
+  uint64_t uid = 0;                 // NOLINT(build/unsigned)
   std::vector<uint8_t> uid_values = // NOLINT(build/unsigned)
     getNode<I2CMasterNode>(m_uid_i2c_bus).get_slave(get_uid_address_parameter_name()).read_i2cArray(0xfa, 6);
 
@@ -122,7 +123,7 @@ IONode::get_hardware_info(bool print_out) const
   const BoardRevision board_revision = get_board_revision();
   const CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
   const DesignType design_type = convert_value_to_design_type(read_design_type());
-  const double firmware_frequency = read_firmware_frequency()/1e6;
+  const double firmware_frequency = read_firmware_frequency() / 1e6;
 
   std::vector<std::pair<std::string, std::string>> hardware_info;
 
@@ -177,8 +178,8 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
     std::stringstream clock_config_key;
 
     const BoardType board_type = convert_value_to_board_type(read_board_type());
-//    const BoardRevision board_revision = get_board_revision();
-//    const CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
+    //    const BoardRevision board_revision = get_board_revision();
+    //    const CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
     const DesignType design_type = convert_value_to_design_type(read_design_type());
     const uint32_t firmware_frequency = read_firmware_frequency(); // NOLINT(build/unsigned)
 
@@ -192,11 +193,11 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
     auto pll_model = pll->read_device_version();
     clock_config_key << std::hex << pll_model;
 
-//    try {
-//      clock_config_key = clock_config_key + g_carrier_type_map.at(carrier_type) + "_";
-//    } catch (const std::out_of_range& e) {
-//      throw MissingCarrierTypeMapEntry(ERS_HERE, format_reg_value(carrier_type), e);
-//    }
+    //    try {
+    //      clock_config_key = clock_config_key + g_carrier_type_map.at(carrier_type) + "_";
+    //    } catch (const std::out_of_range& e) {
+    //      throw MissingCarrierTypeMapEntry(ERS_HERE, format_reg_value(carrier_type), e);
+    //    }
 
     try {
       clock_config_key << "_" << g_design_type_map.at(design_type);

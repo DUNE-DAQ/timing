@@ -15,8 +15,8 @@
 // PDT Headers
 #include "TimingIssues.hpp"
 #include "timing/IONode.hpp"
-#include "timing/timinghardwareinfo/InfoStructs.hpp"
 #include "timing/timinghardwareinfo/InfoNljs.hpp"
+#include "timing/timinghardwareinfo/InfoStructs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -46,7 +46,7 @@ public:
    * @return     { description_of_the_return_value }
    */
   std::string get_uid_address_parameter_name() const override;
-  
+
   /**
    * @brief     Print the status of the timing node.
    */
@@ -61,7 +61,7 @@ public:
    * @brief     Reset fanout board
    */
   void reset(int32_t fanout_mode = -1, // NOLINT(build/unsigned)
-                     const std::string& clock_config_file = "") const override;
+             const std::string& clock_config_file = "") const override;
   /**
    * @brief      Configure on-board DAC
    */

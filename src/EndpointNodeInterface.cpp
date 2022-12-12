@@ -8,7 +8,6 @@
 
 #include "timing/EndpointNodeInterface.hpp"
 
-
 #include <sstream>
 #include <string>
 
@@ -17,12 +16,12 @@ namespace dunedaq::timing {
 //-----------------------------------------------------------------------------
 EndpointNodeInterface::EndpointNodeInterface(const uhal::Node& node)
   : TimingNode(node)
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-EndpointNodeInterface::~EndpointNodeInterface()
-{}
+EndpointNodeInterface::~EndpointNodeInterface() {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

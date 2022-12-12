@@ -15,9 +15,9 @@
 // PDT Headers
 #include "TimingIssues.hpp"
 #include "timing/FanoutIONode.hpp"
-#include "timing/timinghardwareinfo/InfoStructs.hpp"
-#include "timing/timinghardwareinfo/InfoNljs.hpp"
 #include "timing/I2C9546SwitchNode.hpp"
+#include "timing/timinghardwareinfo/InfoNljs.hpp"
+#include "timing/timinghardwareinfo/InfoStructs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -56,7 +56,7 @@ public:
    * @brief      Configure clock chip.
    */
   void configure_pll(const std::string& clock_config_file = "") const override;
-  
+
   /**
    * @brief      Print status of on-board PLL.
    */
@@ -71,7 +71,7 @@ public:
    * @brief     Reset FMC IO.
    */
   void reset(int32_t fanout_mode = -1, // NOLINT(build/unsigned)
-                     const std::string& clock_config_file = "") const override;
+             const std::string& clock_config_file = "") const override;
   /**
    * @brief     Switch the SFP mux channel
    */
@@ -81,7 +81,7 @@ public:
    * @brief     Read the active SFP mux channel
    */
   uint32_t read_active_downstream_mux_channel() const override; // NOLINT(build/unsigned)
-  
+
   /**
    * @brief     Switch the SFP mux channel
    */
@@ -113,7 +113,7 @@ public:
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
 
 private:
-  void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)
+  void validate_sfp_id(uint32_t sfp_id) const;     // NOLINT(build/unsigned)
   void validate_amc_slot(uint32_t amc_slot) const; // NOLINT(build/unsigned)
 };
 

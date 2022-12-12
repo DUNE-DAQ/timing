@@ -21,7 +21,8 @@ namespace timing {
 I2CSFPSlave::I2CSFPSlave(const I2CMasterNode* i2c_master, uint8_t address) // NOLINT(build/unsigned)
   : I2CSlave(i2c_master, address)
   , m_calibration_parameter_start_addresses({ 0x4C, 0x50, 0x54, 0x58 }) // laser current, tx_pwr, temp, voltage
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -81,7 +82,8 @@ I2CSFPSlave::read_temperature_raw() const
   auto temperature_array = this->read_i2cArray(0x51, 0x60, 0x2);
 
   // bit 7 corresponds to temperature sign, 0 for pos, 1 for neg
-  double temperature = temperature_array.at(0) & (1UL << 7) ? (temperature_array.at(0) & 0x7f) - 0xff : temperature_array.at(0);
+  double temperature =
+    temperature_array.at(0) & (1UL << 7) ? (temperature_array.at(0) & 0x7f) - 0xff : temperature_array.at(0);
   return temperature + (temperature_array.at(1) / 256.0);
 }
 //-----------------------------------------------------------------------------
@@ -458,14 +460,16 @@ UHAL_REGISTER_DERIVED_NODE(I2CSFPNode)
 I2CSFPNode::I2CSFPNode(const uhal::Node& node)
   : I2CMasterNode(node)
   , I2CSFPSlave(this, this->get_slave_address("SFP_EEProm"))
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 I2CSFPNode::I2CSFPNode(const I2CSFPNode& node)
   : I2CMasterNode(node)
   , I2CSFPSlave(this, this->get_slave_address("SFP_EEProm"))
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

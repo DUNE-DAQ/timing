@@ -21,12 +21,12 @@ ChronosDesign::ChronosDesign(const uhal::Node& node)
   , EndpointDesignInterface(node)
   , TopDesign(node)
   , HSIDesignInterface(node)
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-ChronosDesign::~ChronosDesign()
-{}
+ChronosDesign::~ChronosDesign() {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -55,7 +55,7 @@ ChronosDesign::configure() const
 //-----------------------------------------------------------------------------
 void
 ChronosDesign::get_info(opmonlib::InfoCollector& ci, int level) const
-{  
+{
   opmonlib::InfoCollector hardware_collector;
   get_io_node_plain()->get_info(hardware_collector, level);
   ci.add("io", hardware_collector);

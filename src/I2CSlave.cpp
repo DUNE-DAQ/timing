@@ -33,7 +33,8 @@ namespace timing {
 I2CSlave::I2CSlave(const I2CMasterNode* i2c_master, uint8_t i2c_device_address) // NOLINT(build/unsigned)
   : m_i2c_master(i2c_master)
   , m_i2c_device_address(i2c_device_address)
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

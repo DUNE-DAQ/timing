@@ -15,8 +15,8 @@
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
-#include "opmonlib/InfoCollector.hpp"
 #include "ers/Issue.hpp"
+#include "opmonlib/InfoCollector.hpp"
 
 // C++ Headers
 #include <chrono>

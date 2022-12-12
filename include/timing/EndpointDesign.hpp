@@ -14,9 +14,9 @@
 
 // PDT Headers
 #include "TimingIssues.hpp"
+#include "timing/EndpointDesignInterface.hpp"
 #include "timing/FMCIONode.hpp"
 #include "timing/TopDesign.hpp"
-#include "timing/EndpointDesignInterface.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -32,7 +32,9 @@ namespace timing {
 /**
  * @brief      Base class for timing endpoint design nodes.
  */
-class EndpointDesign : public TopDesign, public EndpointDesignInterface
+class EndpointDesign
+  : public TopDesign
+  , public EndpointDesignInterface
 {
   UHAL_DERIVEDNODE(EndpointDesign)
 public:
@@ -52,7 +54,7 @@ public:
 
   /**
    * @brief    Give info to collector.
-   */  
+   */
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
 
   /**

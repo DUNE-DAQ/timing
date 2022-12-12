@@ -22,7 +22,8 @@ TimingSystemManager<MST_TOP, EPT_TOP>::TimingSystemManager(std::string cf)
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP>
 TimingSystemManager<MST_TOP, EPT_TOP>::~TimingSystemManager()
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

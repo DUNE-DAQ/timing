@@ -6,8 +6,8 @@
  * received with this code.
  */
 
-#include "timing/PDIMasterNode.hpp"
 #include "timing/MasterNode.hpp"
+#include "timing/PDIMasterNode.hpp"
 #include "timing/TriggerReceiverNode.hpp"
 
 #include <pybind11/pybind11.h>
@@ -57,7 +57,10 @@ register_master(py::module& m)
          py::arg("cycle_length") = 16,
          py::arg("spill_length") = 8)
     .def("get_status", &timing::PDIMasterNode::get_status, py::arg("print_out") = false)
-    .def("get_status_with_date", &timing::PDIMasterNode::get_status_with_date, py::arg("clock_frequency_hz"), py::arg("print_out") = false)
+    .def("get_status_with_date",
+         &timing::PDIMasterNode::get_status_with_date,
+         py::arg("clock_frequency_hz"),
+         py::arg("print_out") = false)
     .def("sync_timestamp", &timing::PDIMasterNode::sync_timestamp);
 
   py::class_<timing::MasterNode, uhal::Node>(m, "MasterNode")
@@ -65,7 +68,10 @@ register_master(py::module& m)
     .def("switch_endpoint_sfp", &timing::MasterNode::switch_endpoint_sfp)
     .def("enable_upstream_endpoint", &timing::MasterNode::enable_upstream_endpoint)
     .def("reset_command_counters", &timing::MasterNode::reset_command_counters)
-    .def("transmit_async_packet", &timing::MasterNode::transmit_async_packet, py::arg("packet"), py::arg("timeout") = 500) //timeout [us]
+    .def("transmit_async_packet",
+         &timing::MasterNode::transmit_async_packet,
+         py::arg("packet"),
+         py::arg("timeout") = 500) // timeout [us]
     .def("write_endpoint_data", &timing::MasterNode::write_endpoint_data)
     .def("read_endpoint_data", &timing::MasterNode::read_endpoint_data)
     .def("send_fl_cmd",
@@ -80,7 +86,10 @@ register_master(py::module& m)
          py::arg("poisson"),
          py::arg("clock_frequency_hz"))
     .def("get_status", &timing::MasterNode::get_status, py::arg("print_out") = false)
-    .def("get_status_with_date", &timing::MasterNode::get_status_with_date, py::arg("clock_frequency_hz"), py::arg("print_out") = false)
+    .def("get_status_with_date",
+         &timing::MasterNode::get_status_with_date,
+         py::arg("clock_frequency_hz"),
+         py::arg("print_out") = false)
     .def("sync_timestamp", &timing::MasterNode::sync_timestamp)
     .def("disable_timestamp_broadcast", &timing::MasterNode::disable_timestamp_broadcast)
     .def("enable_timestamp_broadcast", &timing::MasterNode::enable_timestamp_broadcast);

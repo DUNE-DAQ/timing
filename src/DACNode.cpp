@@ -17,7 +17,8 @@ UHAL_REGISTER_DERIVED_NODE(DACNode)
 //-----------------------------------------------------------------------------
 DACSlave::DACSlave(const I2CMasterNode* i2c_master, uint8_t address) // NOLINT(build/unsigned)
   : I2CSlave(i2c_master, address)
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -51,14 +52,16 @@ DACSlave::set_dac(uint8_t channel, uint32_t code) const // NOLINT(build/unsigned
 DACNode::DACNode(const uhal::Node& node)
   : I2CMasterNode(node)
   , DACSlave(this, this->get_slave_address("i2caddr"))
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 DACNode::DACNode(const DACNode& node)
   : I2CMasterNode(node)
   , DACSlave(this, this->get_slave_address("i2caddr"))
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

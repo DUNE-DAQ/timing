@@ -8,8 +8,8 @@
 
 #include "timing/TimestampGeneratorNode.hpp"
 
-#include "timing/toolbox.hpp"
 #include "logging/Logging.hpp"
+#include "timing/toolbox.hpp"
 
 #include <string>
 
@@ -21,7 +21,8 @@ UHAL_REGISTER_DERIVED_NODE(TimestampGeneratorNode)
 //-----------------------------------------------------------------------------
 TimestampGeneratorNode::TimestampGeneratorNode(const uhal::Node& node)
   : TimingNode(node)
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -65,7 +66,7 @@ TimestampGeneratorNode::set_timestamp(uint64_t timestamp) const // NOLINT(build/
 {
   // Take the timestamp and split it up
   uint32_t now_high = (timestamp >> 32) & ((1UL << 32) - 1); // NOLINT(build/unsigned)
-  uint32_t now_low = (timestamp >> 0) & ((1UL << 32) - 1);  // NOLINT(build/unsigned)
+  uint32_t now_low = (timestamp >> 0) & ((1UL << 32) - 1);   // NOLINT(build/unsigned)
   getNode("ctr.set").writeBlock({ now_low, now_high });
   getClient().dispatch();
 }

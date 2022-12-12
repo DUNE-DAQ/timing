@@ -22,12 +22,12 @@ BoreasDesign::BoreasDesign(const uhal::Node& node)
   , EndpointDesignInterface(node)
   , MasterDesign(node)
   , HSIDesignInterface(node)
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-BoreasDesign::~BoreasDesign()
-{}
+BoreasDesign::~BoreasDesign() {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -64,7 +64,7 @@ BoreasDesign::configure() const
 //-----------------------------------------------------------------------------
 void
 BoreasDesign::get_info(opmonlib::InfoCollector& ci, int level) const
-{ 
+{
   opmonlib::InfoCollector master_collector;
   get_master_node_plain()->get_info(master_collector, level);
   ci.add("master", master_collector);

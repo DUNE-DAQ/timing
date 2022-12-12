@@ -69,10 +69,9 @@ public:
    * @return     { description_of_the_return_value }
    */
   virtual uint32_t read_endpoint_state() const; // NOLINT(build/unsigned)
-
 };
 
 } // namespace timing
 } // namespace dunedaq
 
-#endif  // TIMING_INCLUDE_TIMING_ENDPOINTNODEINTERFACE_HPP_
+#endif // TIMING_INCLUDE_TIMING_ENDPOINTNODEINTERFACE_HPP_

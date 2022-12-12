@@ -14,8 +14,8 @@
 
 // PDT Headers
 #include "TimingIssues.hpp"
-#include "timing/FrequencyCounterNode.hpp"
 #include "timing/EndpointNodeInterface.hpp"
+#include "timing/FrequencyCounterNode.hpp"
 #include "timing/HSINode.hpp"
 
 #include "timing/timingendpointinfo/InfoNljs.hpp"
@@ -75,7 +75,7 @@ public:
    * @return     { description_of_the_return_value }
    */
   const HSINode& get_hsi_node() const { return uhal::Node::getNode<HSINode>("hsi"); }
-  
+
   /**
    * @brief     Collect monitoring information for timing endpoint
    *

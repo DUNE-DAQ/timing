@@ -32,7 +32,8 @@ UHAL_REGISTER_DERIVED_NODE(SI534xNode)
 //-----------------------------------------------------------------------------
 SI534xSlave::SI534xSlave(const I2CMasterNode* i2c_master, uint8_t address) // NOLINT(build/unsigned)
   : SIChipSlave(i2c_master, address)
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -231,7 +232,7 @@ SI534xSlave::configure(const std::string& filename) const
   if (conf_design_id != chip_design_id) {
     std::ostringstream message;
     message << "Post-configuration check failed: Loaded design ID " << chip_design_id
-         << " does not match the configurationd design id " << conf_design_id << std::endl;
+            << " does not match the configurationd design id " << conf_design_id << std::endl;
     throw SI534xConfigError(ERS_HERE, message.str());
   }
 }
@@ -370,14 +371,16 @@ SI534xSlave::get_info(timinghardwareinfo::TimingPLLMonitorData& mon_data) const
 SI534xNode::SI534xNode(const uhal::Node& node)
   : I2CMasterNode(node)
   , SI534xSlave(this, this->get_slave_address("i2caddr"))
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 SI534xNode::SI534xNode(const SI534xNode& node)
   : I2CMasterNode(node)
   , SI534xSlave(this, this->get_slave_address("i2caddr"))
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

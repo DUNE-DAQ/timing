@@ -20,7 +20,8 @@ UHAL_REGISTER_DERIVED_NODE(PC059IONode)
 //-----------------------------------------------------------------------------
 PC059IONode::PC059IONode(const uhal::Node& node)
   : FanoutIONode(node, "i2c", "i2c", "SI5345", { "PLL", "CDR" }, { "usfp_i2c", "i2c" })
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -75,7 +76,7 @@ PC059IONode::reset(int32_t fanout_mode, const std::string& clock_config_file) co
   try {
     getNode<I2CMasterNode>(m_uid_i2c_bus).get_slave("AX3_Switch").write_i2c(0x01, 0x7f);
   } catch (const std::exception& e) {
-      ers::warning(EnclustraSwitchFailure(ERS_HERE, e));
+    ers::warning(EnclustraSwitchFailure(ERS_HERE, e));
   }
 
   // Find the right pll config file
@@ -108,9 +109,9 @@ PC059IONode::reset(int32_t fanout_mode, const std::string& clock_config_file) co
   TLOG_DEBUG(0) << "SFPs 0-7 enabled";
 
   // To be removed from firmware address maps also
-  //getNode("csr.ctrl.rst_lock_mon").write(0x1);
-  //getNode("csr.ctrl.rst_lock_mon").write(0x0);
-  //getClient().dispatch();
+  // getNode("csr.ctrl.rst_lock_mon").write(0x1);
+  // getNode("csr.ctrl.rst_lock_mon").write(0x0);
+  // getClient().dispatch();
 
   TLOG() << "Reset done";
 }
@@ -216,14 +217,14 @@ PC059IONode::get_info(timinghardwareinfo::TimingPC059MonitorData& mon_data) cons
 
   mon_data.cdr_lol = subnodes.at("cdr_lol").value();
   mon_data.cdr_los = subnodes.at("cdr_los").value();
-  
+
   mon_data.mmcm_ok = subnodes.at("mmcm_ok").value();
   mon_data.mmcm_sticky = subnodes.at("mmcm_sticky").value();
-  
+
   mon_data.pll_lol = subnodes.at("pll_lol").value();
   mon_data.pll_ok = subnodes.at("pll_ok").value();
   mon_data.pll_sticky = subnodes.at("pll_sticky").value();
-  
+
   mon_data.sfp_los = subnodes.at("sfp_los").value();
 
   mon_data.ucdr_lol = subnodes.at("ucdr_lol").value();
@@ -238,8 +239,7 @@ PC059IONode::get_info(timinghardwareinfo::TimingPC059MonitorData& mon_data) cons
 void
 PC059IONode::get_info(opmonlib::InfoCollector& ci, int level) const
 {
-  if (level >= 2)
-  {
+  if (level >= 2) {
     timinghardwareinfo::TimingPLLMonitorData pll_mon_data;
     this->get_pll()->get_info(pll_mon_data);
     ci.add(pll_mon_data);
@@ -251,17 +251,15 @@ PC059IONode::get_info(opmonlib::InfoCollector& ci, int level) const
       opmonlib::InfoCollector upstream_sfp_ic;
       upstream_sfp_ic.add(upstream_sfp_mon_data);
       ci.add("upstream_sfp", upstream_sfp_ic);
-    }
-    catch (timing::SFPUnreachable& e) {
+    } catch (timing::SFPUnreachable& e) {
       // It is valid that an SFP may not be installed, currently no good way of knowing whether they it should be
       TLOG_DEBUG(2) << "Failed to communicate with upstream SFP on i2c bus" << m_sfp_i2c_buses.at(0);
     }
 
-
-    for (uint sfp_id=0; sfp_id < 8; ++sfp_id) {
+    for (uint sfp_id = 0; sfp_id < 8; ++sfp_id) {
       TLOG_DEBUG(5) << "checking sfp: " << sfp_id;
       switch_sfp_i2c_mux_channel(sfp_id);
-      
+
       auto sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(1), "SFP_EEProm");
       timinghardwareinfo::TimingSFPMonitorData sfp_data;
 
@@ -269,13 +267,14 @@ PC059IONode::get_info(opmonlib::InfoCollector& ci, int level) const
         sfp->get_info(sfp_data);
       } catch (timing::SFPUnreachable& e) {
         // It is valid that an SFP may not be installed, currently no good way of knowing whether they it should be
-        TLOG_DEBUG(2) << "Failed to communicate with downstream SFP: " << sfp_id << " on i2c bus" << m_sfp_i2c_buses.at(1);
+        TLOG_DEBUG(2) << "Failed to communicate with downstream SFP: " << sfp_id << " on i2c bus"
+                      << m_sfp_i2c_buses.at(1);
         continue;
       }
 
       opmonlib::InfoCollector sfp_ic;
       sfp_ic.add(sfp_data);
-      ci.add("sfp_"+std::to_string(sfp_id), sfp_ic);
+      ci.add("sfp_" + std::to_string(sfp_id), sfp_ic);
     }
   }
 
@@ -283,7 +282,7 @@ PC059IONode::get_info(opmonlib::InfoCollector& ci, int level) const
     timinghardwareinfo::TimingPC059MonitorData mon_data;
     this->get_info(mon_data);
     ci.add(mon_data);
-  }  
+  }
 }
 //-----------------------------------------------------------------------------
 

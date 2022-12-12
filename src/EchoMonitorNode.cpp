@@ -8,12 +8,12 @@
 
 #include "timing/EchoMonitorNode.hpp"
 
+#include "logging/Logging.hpp"
 #include "timing/TimingIssues.hpp"
 #include "timing/toolbox.hpp"
-#include "logging/Logging.hpp"
 
-#include <string>
 #include <chrono>
+#include <string>
 
 namespace dunedaq {
 namespace timing {
@@ -23,7 +23,8 @@ UHAL_REGISTER_DERIVED_NODE(EchoMonitorNode)
 //-----------------------------------------------------------------------------
 EchoMonitorNode::EchoMonitorNode(const uhal::Node& node)
   : TimingNode(node)
-{}
+{
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -55,7 +56,7 @@ EchoMonitorNode::send_echo_and_measure_delay(int64_t timeout) const
 
   uhal::ValWord<uint32_t> done; // NOLINT(build/unsigned)
   uhal::ValWord<uint32_t> delta_t;
-  
+
   while (true) {
 
     done = getNode("csr.stat.rx_done").read();
@@ -64,18 +65,14 @@ EchoMonitorNode::send_echo_and_measure_delay(int64_t timeout) const
 
     TLOG_DEBUG(6) << "rx done: " << done.value() << ", delta_t: " << delta_t.value();
 
-    if (done.value())
-    {
-      if (delta_t.value() == 0xffff)
-      {
+    if (done.value()) {
+      if (delta_t.value() == 0xffff) {
         throw EchoReplyTimeout(ERS_HERE);
-      } 
-      else
-      {
+      } else {
         break;
       }
     }
-    
+
     auto now = std::chrono::high_resolution_clock::now();
     auto ms_since_start = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
 

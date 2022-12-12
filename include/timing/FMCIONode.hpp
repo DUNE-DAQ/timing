@@ -15,8 +15,8 @@
 // PDT Headers
 #include "TimingIssues.hpp"
 #include "timing/IONode.hpp"
-#include "timing/timinghardwareinfo/InfoStructs.hpp"
 #include "timing/timinghardwareinfo/InfoNljs.hpp"
+#include "timing/timinghardwareinfo/InfoStructs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -60,16 +60,16 @@ public:
    * @brief     Reset FMC IO.
    */
   void reset(int32_t fanout_mode = -1, // NOLINT(build/unsigned)
-                     const std::string& clock_config_file = "") const override;
-  
+             const std::string& clock_config_file = "") const override;
+
   /**
-    * @brief      Read frequencies of on-board clocks.
-    */
+   * @brief      Read frequencies of on-board clocks.
+   */
   std::vector<double> read_clock_frequencies() const override;
 
   /**
-    * @brief      Print frequencies of on-board clocks.
-    */
+   * @brief      Print frequencies of on-board clocks.
+   */
   std::string get_clock_frequencies_table(bool print_out = false) const override;
 
   /**
