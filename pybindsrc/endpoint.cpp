@@ -8,8 +8,8 @@
 
 #include "timing/CRTNode.hpp"
 #include "timing/EndpointNode.hpp"
-#include "timing/HSINode.hpp"
 #include "timing/PDIEndpointNode.hpp"
+#include "timing/HSINode.hpp"
 #include "timing/PDIHSIEndpointNode.hpp"
 
 #include <pybind11/pybind11.h>
@@ -42,9 +42,7 @@ register_endpoint(py::module& m)
   py::class_<timing::CRTNode, uhal::Node>(m, "CRTNode")
     .def(py::init<const uhal::Node&>())
     .def("disable", &timing::CRTNode::disable)
-    .def("enable",
-         py::overload_cast<uint32_t, FixedLengthCommandType>(&timing::CRTNode::enable,
-                                                             py::const_)) // NOLINT(build/unsigned)
+    .def("enable", py::overload_cast<uint32_t, FixedLengthCommandType>(&timing::CRTNode::enable, py::const_)) // NOLINT(build/unsigned)
     .def("get_status", &timing::CRTNode::get_status, py::arg("print_out") = false)
     .def("read_last_pulse_timestamp", &timing::CRTNode::read_last_pulse_timestamp);
 
@@ -70,14 +68,14 @@ register_endpoint(py::module& m)
     .def("read_buffer_warning", &timing::HSINode::reset_hsi)
     .def("read_buffer_error", &timing::HSINode::reset_hsi);
 
-  py::class_<timing::EndpointNode, uhal::Node>(m, "EndpointNode")
+    py::class_<timing::EndpointNode, uhal::Node>(m, "EndpointNode")
     .def(py::init<const uhal::Node&>())
     .def("disable", &timing::EndpointNode::disable)
     .def("enable", &timing::EndpointNode::enable, py::arg("address") = 0, py::arg("partition") = 0)
     .def("reset", &timing::EndpointNode::reset, py::arg("address") = 0, py::arg("partition") = 0)
     .def("get_status", &timing::EndpointNode::get_status, py::arg("print_out") = false);
 
-  py::class_<timing::PDIHSIEndpointNode, uhal::Node>(m, "PDIHSIEndpointNode")
+    py::class_<timing::PDIHSIEndpointNode, uhal::Node>(m, "PDIHSIEndpointNode")
     .def(py::init<const uhal::Node&>())
     .def("disable", &timing::PDIHSIEndpointNode::disable)
     .def("enable", &timing::PDIHSIEndpointNode::enable, py::arg("address") = 0, py::arg("partition") = 0)

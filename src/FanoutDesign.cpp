@@ -14,12 +14,12 @@ FanoutDesign::FanoutDesign(const uhal::Node& node)
   , MasterDesignInterface(node)
   , MasterMuxDesign(node)
   , EndpointDesignInterface(node)
-{
-}
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-FanoutDesign::~FanoutDesign() {}
+FanoutDesign::~FanoutDesign()
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -62,7 +62,7 @@ FanoutDesign::reset_io(int32_t fanout_mode, const std::string& clock_config_file
   // 1 - standalone mode, outgoing data comes from local master
   if (fanout_mode < 0) {
     TLOG() << "Fanout mode not supplied, defaulting to: 1 (standalone - built in master)";
-    fanout_mode = 1;
+    fanout_mode=1;
   }
   uhal::Node::getNode<SwitchyardNode>("switch").configure_master_source(fanout_mode);
 }
@@ -75,6 +75,7 @@ FanoutDesign::reset_io(int32_t fanout_mode, const std::string& clock_config_file
 //}
 ////-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 uint32_t
 FanoutDesign::measure_endpoint_rtt(uint32_t address, bool control_sfp, int sfp_mux) const
@@ -85,7 +86,7 @@ FanoutDesign::measure_endpoint_rtt(uint32_t address, bool control_sfp, int sfp_m
   if (!fanout_mode.value()) {
     std::ostringstream message;
     message << " Fanout unit " << uhal::Node::getId()
-            << " is in fanout mode. Measure endpoint RTT should be called from master device.";
+         << " is in fanout mode. Measure endpoint RTT should be called from master device.";
     throw UnsupportedFunction(ERS_HERE, message.str());
   }
   return MasterMuxDesign::measure_endpoint_rtt(address, control_sfp, sfp_mux);
@@ -95,12 +96,12 @@ FanoutDesign::measure_endpoint_rtt(uint32_t address, bool control_sfp, int sfp_m
 //-----------------------------------------------------------------------------
 void
 FanoutDesign::apply_endpoint_delay(uint32_t address,
-                                   uint32_t coarse_delay,
-                                   uint32_t fine_delay,
-                                   uint32_t phase_delay,
-                                   bool measure_rtt,
-                                   bool control_sfp,
-                                   int sfp_mux) const
+                                            uint32_t coarse_delay,
+                                            uint32_t fine_delay,
+                                            uint32_t phase_delay,
+                                            bool measure_rtt,
+                                            bool control_sfp,
+                                            int sfp_mux) const
 {
   auto fanout_mode = uhal::Node::getNode("switch.csr.ctrl.master_src").read();
   uhal::Node::getClient().dispatch();
@@ -108,7 +109,7 @@ FanoutDesign::apply_endpoint_delay(uint32_t address,
   if (!fanout_mode.value()) {
     std::ostringstream message;
     message << "Fanout unit " << uhal::Node::getId()
-            << " is in fanout mode. Apply endpoint delay should be called from master device.";
+         << " is in fanout mode. Apply endpoint delay should be called from master device.";
     throw UnsupportedFunction(ERS_HERE, message.str());
   }
   MasterMuxDesign::apply_endpoint_delay(
@@ -119,7 +120,7 @@ FanoutDesign::apply_endpoint_delay(uint32_t address,
 //-----------------------------------------------------------------------------
 void
 FanoutDesign::get_info(opmonlib::InfoCollector& ci, int level) const
-{
+{ 
   opmonlib::InfoCollector master_collector;
   this->get_master_node_plain()->get_info(master_collector, level);
   ci.add("master", master_collector);

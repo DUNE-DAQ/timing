@@ -13,9 +13,9 @@
 #define TIMING_INCLUDE_TIMING_CHRONOSDESIGN_HPP_
 
 // Timing Headers
-#include "timing/EndpointDesign.hpp"
-#include "timing/HSIDesignInterface.hpp"
 #include "timing/HSINode.hpp"
+#include "timing/HSIDesignInterface.hpp"
+#include "timing/EndpointDesign.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -31,9 +31,7 @@ namespace timing {
 /**
  * @brief      Class for timing master with integrated HSI designs.
  */
-class ChronosDesign
-  : public TopDesign
-  , public HSIDesignInterface
+class ChronosDesign : public TopDesign, public HSIDesignInterface
 {
   UHAL_DERIVEDNODE(ChronosDesign)
 public:
@@ -50,27 +48,26 @@ public:
    *
    */
   void configure() const override;
-
+  
   /**
    * @brief      Read endpoint firmware version.
    *
    * @return     { description_of_the_return_value }
    */
-  uint32_t read_firmware_version() const override
-  { // NOLINT(build/unsigned)
+  uint32_t read_firmware_version() const override { // NOLINT(build/unsigned)
     // current chronos firmware does not store firmware version
     return 0;
-  }
+  } 
 
   /**
    * @brief      Validate endpoint firmware version.
    *
    */
   void validate_firmware_version() const override {} // current chronos firmware does not store firmware version
-
+  
   /**
    * @brief    Give info to collector.
-   */
+   */  
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
 };
 

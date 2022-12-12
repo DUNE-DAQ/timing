@@ -16,8 +16,7 @@ TimingSystemWithFanoutManager<MST_TOP, EPT_TOP, FAN_TOP>::TimingSystemWithFanout
 //-----------------------------------------------------------------------------
 template<class MST_TOP, class EPT_TOP, class FAN_TOP>
 TimingSystemWithFanoutManager<MST_TOP, EPT_TOP, FAN_TOP>::~TimingSystemWithFanoutManager()
-{
-}
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

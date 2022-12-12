@@ -14,8 +14,8 @@
 
 // PDT Headers
 #include "TimingIssues.hpp"
-#include "timing/EndpointNodeInterface.hpp"
 #include "timing/FrequencyCounterNode.hpp"
+#include "timing/EndpointNodeInterface.hpp"
 
 #include "timing/timingendpointinfo/InfoNljs.hpp"
 #include "timing/timingendpointinfo/InfoStructs.hpp"

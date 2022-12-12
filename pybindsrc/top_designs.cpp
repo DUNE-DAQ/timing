@@ -7,13 +7,13 @@
  */
 
 #include "timing/BoreasDesign.hpp"
-#include "timing/CRTDesign.hpp"
 #include "timing/ChronosDesign.hpp"
-#include "timing/EndpointDesign.hpp"
+#include "timing/CRTDesign.hpp"
 #include "timing/FanoutDesign.hpp"
 #include "timing/OuroborosDesign.hpp"
 #include "timing/OuroborosMuxDesign.hpp"
 #include "timing/OverlordDesign.hpp"
+#include "timing/EndpointDesign.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -39,21 +39,22 @@ register_top_designs(py::module& m)
          py::arg("channel"),
          py::arg("rate"),
          py::arg("poisson"))
-    .def("apply_endpoint_delay",
-         &timing::OverlordDesign::apply_endpoint_delay,
-         py::arg("address"),
-         py::arg("coarse_delay"),
-         py::arg("fine_delay"),
-         py::arg("phase_delay"),
-         py::arg("measure_rtt") = false,
-         py::arg("control_sfp") = true,
-         py::arg("sfp_mux") = -1)
-    .def("measure_endpoint_rtt",
-         &timing::OverlordDesign::measure_endpoint_rtt,
-         py::arg("address"),
-         py::arg("control_sfp") = true,
-         py::arg("sfp_mux") = -1)
-    .def("get_external_triggers_endpoint_node", &timing::OverlordDesign::get_external_triggers_endpoint_node);
+    .def("apply_endpoint_delay", 
+          &timing::OverlordDesign::apply_endpoint_delay,
+          py::arg("address"),
+          py::arg("coarse_delay"),
+          py::arg("fine_delay"),
+          py::arg("phase_delay"),
+          py::arg("measure_rtt") = false,
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1)
+    .def("measure_endpoint_rtt", 
+          &timing::OverlordDesign::measure_endpoint_rtt,
+          py::arg("address"),
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1)
+    .def("get_external_triggers_endpoint_node",
+         &timing::OverlordDesign::get_external_triggers_endpoint_node);
 
   // Boreas
   py::class_<timing::BoreasDesign, uhal::Node>(m, "BoreasDesign")
@@ -66,22 +67,22 @@ register_top_designs(py::module& m)
          py::arg("channel"),
          py::arg("rate"),
          py::arg("poisson"))
-    .def("apply_endpoint_delay",
-         &timing::BoreasDesign::apply_endpoint_delay,
-         py::arg("address"),
-         py::arg("coarse_delay"),
-         py::arg("fine_delay"),
-         py::arg("phase_delay"),
-         py::arg("measure_rtt") = false,
-         py::arg("control_sfp") = true,
-         py::arg("sfp_mux") = -1)
-    .def("measure_endpoint_rtt",
-         &timing::BoreasDesign::measure_endpoint_rtt,
-         py::arg("address"),
-         py::arg("control_sfp") = true,
-         py::arg("sfp_mux") = -1)
+    .def("apply_endpoint_delay", 
+          &timing::BoreasDesign::apply_endpoint_delay,
+          py::arg("address"),
+          py::arg("coarse_delay"),
+          py::arg("fine_delay"),
+          py::arg("phase_delay"),
+          py::arg("measure_rtt") = false,
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1)
+    .def("measure_endpoint_rtt", 
+          &timing::BoreasDesign::measure_endpoint_rtt,
+          py::arg("address"),
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1)
     .def("get_hsi_node", &timing::BoreasDesign::get_hsi_node)
-    .def("configure_hsi",
+    .def("configure_hsi", 
          &timing::BoreasDesign::configure_hsi,
          py::arg("src"),
          py::arg("re_mask"),
@@ -101,20 +102,20 @@ register_top_designs(py::module& m)
          py::arg("rate"),
          py::arg("poisson"))
     .def("switch_downstream_mux_channel", &timing::FanoutDesign::switch_downstream_mux_channel)
-    .def("apply_endpoint_delay",
-         &timing::FanoutDesign::apply_endpoint_delay,
-         py::arg("address"),
-         py::arg("coarse_delay"),
-         py::arg("fine_delay"),
-         py::arg("phase_delay"),
-         py::arg("measure_rtt") = false,
-         py::arg("control_sfp") = true,
-         py::arg("sfp_mux") = -1)
-    .def("measure_endpoint_rtt",
-         &timing::FanoutDesign::measure_endpoint_rtt,
-         py::arg("address"),
-         py::arg("control_sfp") = true,
-         py::arg("sfp_mux") = -1)
+    .def("apply_endpoint_delay", 
+          &timing::FanoutDesign::apply_endpoint_delay,
+          py::arg("address"),
+          py::arg("coarse_delay"),
+          py::arg("fine_delay"),
+          py::arg("phase_delay"),
+          py::arg("measure_rtt") = false,
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1)
+    .def("measure_endpoint_rtt", 
+          &timing::FanoutDesign::measure_endpoint_rtt,
+          py::arg("address"),
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1)
     .def("scan_sfp_mux", &timing::FanoutDesign::scan_sfp_mux);
 
   // Ouroboros mux
@@ -128,20 +129,20 @@ register_top_designs(py::module& m)
          py::arg("rate"),
          py::arg("poisson"))
     .def("switch_downstream_mux_channel", &timing::OuroborosMuxDesign::switch_downstream_mux_channel)
-    .def("apply_endpoint_delay",
-         &timing::OuroborosMuxDesign::apply_endpoint_delay,
-         py::arg("address"),
-         py::arg("coarse_delay"),
-         py::arg("fine_delay"),
-         py::arg("phase_delay"),
-         py::arg("measure_rtt") = false,
-         py::arg("control_sfp") = true,
-         py::arg("sfp_mux") = -1)
-    .def("measure_endpoint_rtt",
-         &timing::OuroborosMuxDesign::measure_endpoint_rtt,
-         py::arg("address"),
-         py::arg("control_sfp") = true,
-         py::arg("sfp_mux") = -1)
+    .def("apply_endpoint_delay", 
+          &timing::OuroborosMuxDesign::apply_endpoint_delay,
+          py::arg("address"),
+          py::arg("coarse_delay"),
+          py::arg("fine_delay"),
+          py::arg("phase_delay"),
+          py::arg("measure_rtt") = false,
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1)
+    .def("measure_endpoint_rtt", 
+          &timing::OuroborosMuxDesign::measure_endpoint_rtt,
+          py::arg("address"),
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1)
     .def("scan_sfp_mux", &timing::OuroborosMuxDesign::scan_sfp_mux);
 
   // Master mux
@@ -155,20 +156,20 @@ register_top_designs(py::module& m)
          py::arg("rate"),
          py::arg("poisson"))
     .def("switch_downstream_mux_channel", &timing::MasterMuxDesign::switch_downstream_mux_channel)
-    .def("apply_endpoint_delay",
-         &timing::MasterMuxDesign::apply_endpoint_delay,
-         py::arg("address"),
-         py::arg("coarse_delay"),
-         py::arg("fine_delay"),
-         py::arg("phase_delay"),
-         py::arg("measure_rtt") = false,
-         py::arg("control_sfp") = true,
-         py::arg("sfp_mux") = -1)
-    .def("measure_endpoint_rtt",
-         &timing::MasterMuxDesign::measure_endpoint_rtt,
-         py::arg("address"),
-         py::arg("control_sfp") = true,
-         py::arg("sfp_mux") = -1)
+    .def("apply_endpoint_delay", 
+          &timing::MasterMuxDesign::apply_endpoint_delay,
+          py::arg("address"),
+          py::arg("coarse_delay"),
+          py::arg("fine_delay"),
+          py::arg("phase_delay"),
+          py::arg("measure_rtt") = false,
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1)
+    .def("measure_endpoint_rtt", 
+          &timing::MasterMuxDesign::measure_endpoint_rtt,
+          py::arg("address"),
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1)
     .def("scan_sfp_mux", &timing::MasterMuxDesign::scan_sfp_mux);
 
   // Master
@@ -182,20 +183,20 @@ register_top_designs(py::module& m)
          py::arg("channel"),
          py::arg("rate"),
          py::arg("poisson"))
-    .def("apply_endpoint_delay",
-         &timing::MasterDesign::apply_endpoint_delay,
-         py::arg("address"),
-         py::arg("coarse_delay"),
-         py::arg("fine_delay"),
-         py::arg("phase_delay"),
-         py::arg("measure_rtt") = false,
-         py::arg("control_sfp") = true,
-         py::arg("sfp_mux") = -1)
-    .def("measure_endpoint_rtt",
-         &timing::MasterDesign::measure_endpoint_rtt,
-         py::arg("address"),
-         py::arg("control_sfp") = true,
-         py::arg("sfp_mux") = -1);
+    .def("apply_endpoint_delay", 
+          &timing::MasterDesign::apply_endpoint_delay,
+          py::arg("address"),
+          py::arg("coarse_delay"),
+          py::arg("fine_delay"),
+          py::arg("phase_delay"),
+          py::arg("measure_rtt") = false,
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1)
+    .def("measure_endpoint_rtt", 
+          &timing::MasterDesign::measure_endpoint_rtt,
+          py::arg("address"),
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1);
 
   // Ouroboros
   py::class_<timing::OuroborosDesign, uhal::Node>(m, "OuroborosDesign")
@@ -208,20 +209,20 @@ register_top_designs(py::module& m)
          py::arg("channel"),
          py::arg("rate"),
          py::arg("poisson"))
-    .def("apply_endpoint_delay",
-         &timing::OuroborosDesign::apply_endpoint_delay,
-         py::arg("address"),
-         py::arg("coarse_delay"),
-         py::arg("fine_delay"),
-         py::arg("phase_delay"),
-         py::arg("measure_rtt") = false,
-         py::arg("control_sfp") = true,
-         py::arg("sfp_mux") = -1)
-    .def("measure_endpoint_rtt",
-         &timing::OuroborosDesign::measure_endpoint_rtt,
-         py::arg("address"),
-         py::arg("control_sfp") = true,
-         py::arg("sfp_mux") = -1);
+    .def("apply_endpoint_delay", 
+          &timing::OuroborosDesign::apply_endpoint_delay,
+          py::arg("address"),
+          py::arg("coarse_delay"),
+          py::arg("fine_delay"),
+          py::arg("phase_delay"),
+          py::arg("measure_rtt") = false,
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1)
+    .def("measure_endpoint_rtt", 
+          &timing::OuroborosDesign::measure_endpoint_rtt,
+          py::arg("address"),
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1);
 
   // Endpoint
   py::class_<timing::EndpointDesign, uhal::Node>(m, "EndpointDesign")
@@ -235,7 +236,7 @@ register_top_designs(py::module& m)
     .def("validate_firmware_version", &timing::ChronosDesign::validate_firmware_version)
     .def("get_status", &timing::ChronosDesign::get_status)
     .def("get_hsi_node", &timing::ChronosDesign::get_hsi_node)
-    .def("configure_hsi",
+    .def("configure_hsi", 
          &timing::ChronosDesign::configure_hsi,
          py::arg("src"),
          py::arg("re_mask"),
@@ -243,8 +244,8 @@ register_top_designs(py::module& m)
          py::arg("inv_mask"),
          py::arg("rate"),
          py::arg("dispatch") = true);
-
-  // CRT
+    
+  // CRT 
   py::class_<timing::CRTDesign, uhal::Node>(m, "CRTDesign")
     .def("read_firmware_version", &timing::CRTDesign::read_firmware_version)
     .def("validate_firmware_version", &timing::CRTDesign::validate_firmware_version)

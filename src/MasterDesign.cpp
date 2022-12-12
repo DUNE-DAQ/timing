@@ -12,12 +12,12 @@ MasterDesign::MasterDesign(const uhal::Node& node)
   : TopDesignInterface(node)
   , MasterDesignInterface(node)
   , TopDesign(node)
-{
-}
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-MasterDesign::~MasterDesign() {}
+MasterDesign::~MasterDesign()
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -75,15 +75,14 @@ MasterDesign::measure_endpoint_rtt(uint32_t address, bool control_sfp, int /*sfp
 //-----------------------------------------------------------------------------
 void
 MasterDesign::apply_endpoint_delay(uint32_t address,
-                                   uint32_t coarse_delay,
-                                   uint32_t fine_delay,
-                                   uint32_t phase_delay,
-                                   bool measure_rtt,
-                                   bool control_sfp,
-                                   int /*sfp_mux*/) const
+                                            uint32_t coarse_delay,
+                                            uint32_t fine_delay,
+                                            uint32_t phase_delay,
+                                            bool measure_rtt,
+                                            bool control_sfp,
+                                            int /*sfp_mux*/) const
 {
-  get_master_node_plain()->apply_endpoint_delay(
-    address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp);
+  get_master_node_plain()->apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp);
 }
 //-----------------------------------------------------------------------------
 
@@ -118,21 +117,18 @@ MasterDesign::validate_firmware_version() const
   int patch_firmware_version = (firmware_version >> 0) & 0xff;
 
   if (major_firmware_version != g_required_major_master_firmware_version)
-    ers::error(IncompatibleMajorMasterFirmwareVersion(
-      ERS_HERE, major_firmware_version, g_required_major_master_firmware_version));
+    ers::error(IncompatibleMajorMasterFirmwareVersion(ERS_HERE, major_firmware_version, g_required_major_master_firmware_version));
   if (minor_firmware_version != g_required_minor_master_firmware_version)
-    ers::warning(IncompatibleMinorMasterFirmwareVersion(
-      ERS_HERE, minor_firmware_version, g_required_minor_master_firmware_version));
+    ers::warning(IncompatibleMinorMasterFirmwareVersion(ERS_HERE, minor_firmware_version, g_required_minor_master_firmware_version));
   if (patch_firmware_version != g_required_patch_master_firmware_version)
-    ers::warning(IncompatiblePatchMasterFirmwareVersion(
-      ERS_HERE, patch_firmware_version, g_required_patch_master_firmware_version));
+    ers::warning(IncompatiblePatchMasterFirmwareVersion(ERS_HERE, patch_firmware_version, g_required_patch_master_firmware_version));
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void
 MasterDesign::get_info(opmonlib::InfoCollector& ci, int level) const
-{
+{ 
   opmonlib::InfoCollector master_collector;
   this->get_master_node_plain()->get_info(master_collector, level);
   ci.add("master", master_collector);

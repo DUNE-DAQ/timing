@@ -13,11 +13,11 @@
 #define TIMING_INCLUDE_TIMING_PDIFLCMDGENERATORNODE_HPP_
 
 // PDT Headers
-#include "timing/FLCmdGeneratorNode.hpp"
-#include "timing/TimestampGeneratorNode.hpp"
 #include "timing/definitions.hpp"
-#include "timing/timingfirmwareinfo/InfoNljs.hpp"
+#include "timing/TimestampGeneratorNode.hpp"
+#include "timing/FLCmdGeneratorNode.hpp"
 #include "timing/timingfirmwareinfo/InfoStructs.hpp"
+#include "timing/timingfirmwareinfo/InfoNljs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"

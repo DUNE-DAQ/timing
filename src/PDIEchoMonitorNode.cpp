@@ -8,9 +8,9 @@
 
 #include "timing/PDIEchoMonitorNode.hpp"
 
-#include "logging/Logging.hpp"
 #include "timing/TimingIssues.hpp"
 #include "timing/toolbox.hpp"
+#include "logging/Logging.hpp"
 
 #include <string>
 
@@ -22,8 +22,7 @@ UHAL_REGISTER_DERIVED_NODE(PDIEchoMonitorNode)
 //-----------------------------------------------------------------------------
 PDIEchoMonitorNode::PDIEchoMonitorNode(const uhal::Node& node)
   : EchoMonitorNode(node)
-{
-}
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

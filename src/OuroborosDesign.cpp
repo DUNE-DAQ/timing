@@ -21,12 +21,12 @@ OuroborosDesign::OuroborosDesign(const uhal::Node& node)
   , MasterDesignInterface(node)
   , MasterDesign(node)
   , EndpointDesignInterface(node)
-{
-}
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-OuroborosDesign::~OuroborosDesign() {}
+OuroborosDesign::~OuroborosDesign()
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -59,7 +59,7 @@ OuroborosDesign::configure() const
 //-----------------------------------------------------------------------------
 void
 OuroborosDesign::get_info(opmonlib::InfoCollector& ci, int level) const
-{
+{ 
   opmonlib::InfoCollector master_collector;
   this->get_master_node_plain()->get_info(master_collector, level);
   ci.add("master", master_collector);
@@ -73,4 +73,4 @@ OuroborosDesign::get_info(opmonlib::InfoCollector& ci, int level) const
   ci.add("endpoint", endpoint_collector);
 }
 //-----------------------------------------------------------------------------
-} // namespace dunedaq::timing
+} // namespace dunedaq::timing  

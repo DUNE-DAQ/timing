@@ -41,12 +41,13 @@ public:
   /**
    * @brief     Configure master source
    */
-  void configure_master_source(uint8_t master_source, bool dispatch = true) const; // NOLINT(build/unsigned)
+  void configure_master_source(uint8_t master_source, bool dispatch=true) const; // NOLINT(build/unsigned)
 
   /**
    * @brief     Configure endpoint source
    */
-  void configure_endpoint_source(uint8_t endpoint_source, bool dispatch = true) const; // NOLINT(build/unsigned)
+  void configure_endpoint_source(uint8_t endpoint_source, bool dispatch=true) const; // NOLINT(build/unsigned)
+
 };
 
 } // namespace timing

@@ -122,7 +122,7 @@ ERS_DECLARE_ISSUE(timing,                                               ///< Nam
 ERS_DECLARE_ISSUE(timing,                                                              ///< Namespace
                   UnknownFirmwareClockFrequency,                                       ///< Issue class name
                   frequency << " Hz is not a known timing firmwaare clock frequency!", ///< Message
-                  ((std::uint32_t)frequency) // NOLINT(build/unsigned) /< Message parameters
+                  ((std::uint32_t)frequency)                                           // NOLINT(build/unsigned) /< Message parameters 
 )
 
 ERS_DECLARE_ISSUE(timing,                                              ///< Namespace
@@ -167,10 +167,10 @@ ERS_DECLARE_ISSUE(timing,                                    ///< Namespace
                   ERS_EMPTY                                  ///< Message parameters
 )
 
-ERS_DECLARE_ISSUE(timing,          ///< Namespace
-                  EchoFlagTimeout, ///< Issue class name
+ERS_DECLARE_ISSUE(timing,                                                                                   ///< Namespace
+                  EchoFlagTimeout,                                                                          ///< Issue class name
                   " Timeout whilst waiting for echo reply flag. Timeout (ms): " << std::to_string(timeout), ///< Message
-                  ((uint)timeout) ///< Message parameters
+                  ((uint)timeout)                                                                           ///< Message parameters
 )
 
 ERS_DECLARE_ISSUE(timing,                                                               ///< Namespace
@@ -179,18 +179,16 @@ ERS_DECLARE_ISSUE(timing,                                                       
                   ERS_EMPTY                                                             ///< Message parameters
 )
 
-ERS_DECLARE_ISSUE(timing,                          ///< Namespace
-                  VLCommandReplyBufferFlagTimeout, ///< Issue class name
-                  " Timeout whilst waiting for variable length (async) reply buffer response flag set. Timeout (ms): "
-                    << std::to_string(timeout), ///< Message
-                  ((uint)timeout)               ///< Message parameters
+ERS_DECLARE_ISSUE(timing,                                                                                                                          ///< Namespace
+                  VLCommandReplyBufferFlagTimeout,                                                                                                 ///< Issue class name
+                  " Timeout whilst waiting for variable length (async) reply buffer response flag set. Timeout (ms): " << std::to_string(timeout), ///< Message
+                   ((uint)timeout)                                                                                                                 ///< Message parameters
 )
 
-ERS_DECLARE_ISSUE(timing,                      ///< Namespace
-                  InvalidVLCommandReplyPacket, ///< Issue class name
-                  " Variable length (async) command reply packet invalid. byte 0,1,2: "
-                    << std::hex << "0x" << byte_0 << ", 0x" << byte_1 << ", 0x" << byte_2, ///< Message
-                  ((uint32_t)byte_0)((uint32_t)byte_1)((uint32_t)byte_2)                   ///< Message parameters
+ERS_DECLARE_ISSUE(timing,                                                                                                                                      ///< Namespace
+                  InvalidVLCommandReplyPacket,                                                                                                                 ///< Issue class name
+                  " Variable length (async) command reply packet invalid. byte 0,1,2: " << std::hex << "0x" << byte_0 << ", 0x" << byte_1 << ", 0x" << byte_2, ///< Message
+                  ((uint32_t)byte_0)((uint32_t)byte_1)((uint32_t)byte_2)                                                                                       ///< Message parameters
 )
 
 ERS_DECLARE_ISSUE(timing,                                               ///< Namespace
@@ -242,10 +240,10 @@ ERS_DECLARE_ISSUE(timing,                      ///< Namespace
                   ((double)trig_rate)((uint)ps)                     ///< Message parameters // NOLINT
 )
 
-ERS_DECLARE_ISSUE(timing,           ///< Namespace
-                  EndpointNotReady, ///< Issue class name
+ERS_DECLARE_ISSUE(timing,                                                                 ///< Namespace
+                  EndpointNotReady,                                                       ///< Issue class name
                   ept_description << " endpoint not ready. Current state: 0x" << std::hex << ept_state, ///< Message
-                  ((std::string)ept_description)((uint32_t)ept_state) ///< Message parameters
+                  ((std::string)ept_description)((uint32_t)ept_state)                  ///< Message parameters
 )
 
 ERS_DECLARE_ISSUE(timing, HSIBufferIssue, "HSI buffer in state: " << buffer_state, ((std::string)buffer_state))
@@ -255,57 +253,51 @@ ERS_DECLARE_ISSUE(timing,                                                       
                   " Failed to program Enclustra I2C IO expander. FMC I2C access may not work.", ///< Message
                   ERS_EMPTY)                                                                    ///< Message parameters
 
-ERS_DECLARE_ISSUE(timing,                                 ///< Namespace
-                  IncompatibleMajorMasterFirmwareVersion, ///< Issue class name
-                  " Incompatible major master firmware version; found: " << found_firmware_version << ", required: "
-                                                                         << required_firmware_version, ///< Message
-                  ((int)found_firmware_version)((int)required_firmware_version) ///< Message parameters
+ERS_DECLARE_ISSUE(timing,                                                                                                                            ///< Namespace
+                  IncompatibleMajorMasterFirmwareVersion,                                                                                            ///< Issue class name
+                  " Incompatible major master firmware version; found: " << found_firmware_version << ", required: " << required_firmware_version, ///< Message
+                  ((int)found_firmware_version)((int)required_firmware_version)                                                                      ///< Message parameters
 )
 
-ERS_DECLARE_ISSUE(timing,                                 ///< Namespace
-                  IncompatibleMinorMasterFirmwareVersion, ///< Issue class name
-                  " Incompatible minor master firmware version; found: " << found_firmware_version << ", required: "
-                                                                         << required_firmware_version, ///< Message
-                  ((int)found_firmware_version)((int)required_firmware_version) ///< Message parameters
+ERS_DECLARE_ISSUE(timing,                                                                                                                            ///< Namespace
+                  IncompatibleMinorMasterFirmwareVersion,                                                                                            ///< Issue class name
+                  " Incompatible minor master firmware version; found: " << found_firmware_version << ", required: " << required_firmware_version, ///< Message
+                  ((int)found_firmware_version)((int)required_firmware_version)                                                                      ///< Message parameters
 )
 
-ERS_DECLARE_ISSUE(timing,                                 ///< Namespace
-                  IncompatiblePatchMasterFirmwareVersion, ///< Issue class name
-                  " Incompatible patch master firmware version; found: " << found_firmware_version << ", required: "
-                                                                         << required_firmware_version, ///< Message
-                  ((int)found_firmware_version)((int)required_firmware_version) ///< Message parameters
+ERS_DECLARE_ISSUE(timing,                                                                                                                            ///< Namespace
+                  IncompatiblePatchMasterFirmwareVersion,                                                                                            ///< Issue class name
+                  " Incompatible patch master firmware version; found: " << found_firmware_version << ", required: " << required_firmware_version, ///< Message
+                  ((int)found_firmware_version)((int)required_firmware_version)                                                                      ///< Message parameters
 )
 
-ERS_DECLARE_ISSUE(timing,                                   ///< Namespace
-                  IncompatibleMajorEndpointFirmwareVersion, ///< Issue class name
-                  " Incompatible major endpoint firmware version; found: " << found_firmware_version << ", required: "
-                                                                           << required_firmware_version, ///< Message
-                  ((int)found_firmware_version)((int)required_firmware_version) ///< Message parameters
+ERS_DECLARE_ISSUE(timing,                                                                                                                            ///< Namespace
+                  IncompatibleMajorEndpointFirmwareVersion,                                                                                          ///< Issue class name
+                  " Incompatible major endpoint firmware version; found: " << found_firmware_version << ", required: " << required_firmware_version, ///< Message
+                  ((int)found_firmware_version)((int)required_firmware_version)                                                                      ///< Message parameters
 )
 
-ERS_DECLARE_ISSUE(timing,                                   ///< Namespace
-                  IncompatibleMinorEndpointFirmwareVersion, ///< Issue class name
-                  " Incompatible minor endpoint firmware version; found: " << found_firmware_version << ", required: "
-                                                                           << required_firmware_version, ///< Message
-                  ((int)found_firmware_version)((int)required_firmware_version) ///< Message parameters
+ERS_DECLARE_ISSUE(timing,                                                                                                                            ///< Namespace
+                  IncompatibleMinorEndpointFirmwareVersion,                                                                                          ///< Issue class name
+                  " Incompatible minor endpoint firmware version; found: " << found_firmware_version << ", required: " << required_firmware_version, ///< Message
+                  ((int)found_firmware_version)((int)required_firmware_version)                                                                      ///< Message parameters
 )
 
-ERS_DECLARE_ISSUE(timing,                                   ///< Namespace
-                  IncompatiblePatchEndpointFirmwareVersion, ///< Issue class name
-                  " Incompatible patch endpoint firmware version; found: " << found_firmware_version << ", required: "
-                                                                           << required_firmware_version, ///< Message
-                  ((int)found_firmware_version)((int)required_firmware_version) ///< Message parameters
+ERS_DECLARE_ISSUE(timing,                                                                                                                            ///< Namespace
+                  IncompatiblePatchEndpointFirmwareVersion,                                                                                          ///< Issue class name
+                  " Incompatible patch endpoint firmware version; found: " << found_firmware_version << ", required: " << required_firmware_version, ///< Message
+                  ((int)found_firmware_version)((int)required_firmware_version)                                                                      ///< Message parameters
 )
 
-ERS_DECLARE_ISSUE(timing,                                             ///< Namespace
-                  FailedToUpdateHSIRandomRate,                        ///< Issue class name
-                  "  Random bit 0 trigger rate for HSI not updated!", ///< Message
-                  ERS_EMPTY)                                          //< Message parameters
+ERS_DECLARE_ISSUE(timing,                                                                       ///< Namespace
+                  FailedToUpdateHSIRandomRate,                                                  ///< Issue class name
+                  "  Random bit 0 trigger rate for HSI not updated!",                           ///< Message
+                  ERS_EMPTY)                                                                    //< Message parameters
 
-ERS_DECLARE_ISSUE(timing,                            ///< Namespace
-                  InvalidAMCSlot,                    ///< Issue class name
+ERS_DECLARE_ISSUE(timing,                          ///< Namespace
+                  InvalidAMCSlot,                  ///< Issue class name
                   " Invalid AMC slot: " << amc_slot, ///< Message
-                  ((std::string)amc_slot)            ///< Message parameters
+                  ((std::string)amc_slot)          ///< Message parameters
 )
 } // namespace dunedaq
 

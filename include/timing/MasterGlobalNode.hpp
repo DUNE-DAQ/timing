@@ -32,7 +32,7 @@ class MasterGlobalNode : public TimingNode
 public:
   explicit MasterGlobalNode(const uhal::Node& node);
   virtual ~MasterGlobalNode();
-
+  
   /**
    * @brief     Enable the upstream endpoint.
    */

@@ -20,7 +20,7 @@ namespace python {
 void
 register_toolbox(py::module& m)
 {
-  m.def("format_firmware_version", &timing::format_firmware_version);
+  m.def("format_firmware_version", &timing::format_firmware_version);	
 }
 
 } // namespace python

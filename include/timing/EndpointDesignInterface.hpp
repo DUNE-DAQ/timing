@@ -14,8 +14,8 @@
 
 // PDT Headers
 #include "TimingIssues.hpp"
-#include "timing/EndpointNode.hpp"
 #include "timing/TopDesignInterface.hpp"
+#include "timing/EndpointNode.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -35,10 +35,8 @@ class EndpointDesignInterface : virtual public TopDesignInterface
 {
 
 public:
-  explicit EndpointDesignInterface(const uhal::Node& node)
-    : TopDesignInterface(node)
-  {
-  }
+  explicit EndpointDesignInterface(const uhal::Node& node) 
+    : TopDesignInterface(node) {}
   virtual ~EndpointDesignInterface() {}
 
   /**
@@ -49,7 +47,7 @@ public:
   virtual const EndpointNodeInterface* get_endpoint_node_plain(uint32_t ept_id) const // NOLINT(build/unsigned)
   {
     const std::string node_name = "endpoint" + std::to_string(ept_id);
-    return dynamic_cast<const EndpointNodeInterface*>(&uhal::Node::getNode(node_name));
+    return dynamic_cast<const EndpointNodeInterface*>(&uhal::Node::getNode(node_name)); 
   }
 
   /**

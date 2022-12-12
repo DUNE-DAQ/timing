@@ -13,15 +13,15 @@
 #define TIMING_INCLUDE_TIMING_MASTERNODE_HPP_
 
 // PDT Headers
-#include "timing/FLCmdGeneratorNode.hpp"
-#include "timing/MasterGlobalNode.hpp"
-#include "timing/MasterNodeInterface.hpp"
 #include "timing/definitions.hpp"
-#include "timing/timingfirmware/Nljs.hpp"
-#include "timing/timingfirmware/Structs.hpp"
+#include "timing/toolbox.hpp"
+#include "timing/FLCmdGeneratorNode.hpp"
+#include "timing/MasterNodeInterface.hpp"
+#include "timing/MasterGlobalNode.hpp"
 #include "timing/timingfirmwareinfo/InfoNljs.hpp"
 #include "timing/timingfirmwareinfo/InfoStructs.hpp"
-#include "timing/toolbox.hpp"
+#include "timing/timingfirmware/Nljs.hpp"
+#include "timing/timingfirmware/Structs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -67,9 +67,9 @@ public:
    * @brief     Send a fixed length command
    */
   void send_fl_cmd(FixedLengthCommandType command,
-                   uint32_t channel,                                // NOLINT(build/unsigned)
-                   uint32_t number_of_commands = 1) const override; // NOLINT(build/unsigned)
-
+                           uint32_t channel,                                // NOLINT(build/unsigned)
+                           uint32_t number_of_commands = 1) const override; // NOLINT(build/unsigned)
+  
   /**
    * @brief      Measure the endpoint round trip time.
    *
@@ -94,7 +94,7 @@ public:
    */
   void sync_timestamp(uint32_t clock_frequency_hz) const override; // NOLINT(build/unsigned)
 
-  /**
+    /**
    * @brief      Read the current timestamp word.
    *
    * @return     { description_of_the_return_value }
@@ -124,23 +124,17 @@ public:
   /**
    * @brief    Send an async packet
    */
-  std::vector<uint32_t> transmit_async_packet(const std::vector<uint32_t>& packet, int timeout = 500) const;
+  std::vector<uint32_t> transmit_async_packet(const std::vector<uint32_t>& packet, int timeout=500) const;
 
   /**
    * @brief    Write some data to endpoint registers
    */
-  void write_endpoint_data(uint16_t endpoint_address,
-                           uint8_t reg_address,
-                           std::vector<uint8_t> data,
-                           bool address_mode) const;
+  void write_endpoint_data(uint16_t endpoint_address, uint8_t reg_address, std::vector<uint8_t> data, bool address_mode) const;
 
   /**
    * @brief    Read some data from endpoint registers
    */
-  std::vector<uint32_t> read_endpoint_data(uint16_t endpoint_address,
-                                           uint8_t reg_address,
-                                           uint8_t data_length,
-                                           bool address_mode) const;
+  std::vector<uint32_t> read_endpoint_data(uint16_t endpoint_address, uint8_t reg_address, uint8_t data_length, bool address_mode) const;
 
   /**
    * @brief    Disable timestamp sending
