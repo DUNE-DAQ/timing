@@ -9,6 +9,7 @@
 #include "timing/OverlordDesign.hpp"
 #include "timing/PDIMasterNode.hpp"
 
+
 #include <sstream>
 #include <string>
 
@@ -23,12 +24,12 @@ OverlordDesign::OverlordDesign(const uhal::Node& node)
   , MasterDesign(node)
   , OverlordDesignInterface(node)
   , EndpointDesignInterface(node)
-{
-}
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-OverlordDesign::~OverlordDesign() {}
+OverlordDesign::~OverlordDesign()
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -68,7 +69,7 @@ OverlordDesign::configure() const
 //-----------------------------------------------------------------------------
 void
 OverlordDesign::get_info(opmonlib::InfoCollector& ci, int level) const
-{
+{ 
   opmonlib::InfoCollector master_collector;
   get_master_node_plain()->get_info(master_collector, level);
   ci.add("master", master_collector);
@@ -78,10 +79,10 @@ OverlordDesign::get_info(opmonlib::InfoCollector& ci, int level) const
   ci.add("io", hardware_collector);
 
   // TODO full trix info
-  // auto trig_interface_enabled = uhal::Node::getNode("trig_rx.csr.ctrl.ext_trig_en").read();
-  // uhal::Node::getClient().dispatch();
-  // data.trig_interface_enabled = trig_interface_enabled.value();
+  //auto trig_interface_enabled = uhal::Node::getNode("trig_rx.csr.ctrl.ext_trig_en").read();
+  //uhal::Node::getClient().dispatch();
+  //data.trig_interface_enabled = trig_interface_enabled.value();
 }
 //-----------------------------------------------------------------------------
 
-} // namespace dunedaq::timing
+} // namespace dunedaq::timing  

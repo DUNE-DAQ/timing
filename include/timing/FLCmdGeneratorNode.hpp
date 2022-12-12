@@ -13,11 +13,11 @@
 #define TIMING_INCLUDE_TIMING_FLCMDGENERATORNODE_HPP_
 
 // PDT Headers
+#include "timing/definitions.hpp"
 #include "timing/TimestampGeneratorNode.hpp"
 #include "timing/TimingNode.hpp"
-#include "timing/definitions.hpp"
-#include "timing/timingfirmwareinfo/InfoNljs.hpp"
 #include "timing/timingfirmwareinfo/InfoStructs.hpp"
+#include "timing/timingfirmwareinfo/InfoNljs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -47,7 +47,7 @@ public:
    * @brief     Send a fixed length command
    */
   virtual void send_fl_cmd(FixedLengthCommandType command,
-                           uint32_t channel) const; // NOLINT(build/unsigned)
+                   uint32_t channel) const; // NOLINT(build/unsigned)
 
   /**
    * @brief     Configure fake trigger

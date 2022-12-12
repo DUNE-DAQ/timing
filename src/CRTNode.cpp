@@ -8,8 +8,8 @@
 
 #include "timing/CRTNode.hpp"
 
-#include "logging/Logging.hpp"
 #include "timing/toolbox.hpp"
+#include "logging/Logging.hpp"
 
 #include <string>
 #include <vector>
@@ -22,8 +22,7 @@ UHAL_REGISTER_DERIVED_NODE(CRTNode)
 //-----------------------------------------------------------------------------
 CRTNode::CRTNode(const uhal::Node& node)
   : EndpointNodeInterface(node)
-{
-}
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -89,9 +88,8 @@ CRTNode::get_status(bool print_out) const
   auto crt_registers = read_sub_nodes(getNode(""));
   status << format_reg_table(crt_registers, "CRT state", { "", "" }) << std::endl;
 
-  const uint64_t last_pulse_timestamp = // NOLINT(build/unsigned)
-    ((uint64_t)crt_registers.at("pulse.ts_h").value() << 32) +
-    crt_registers.at("pulse.ts_l").value(); // NOLINT(build/unsigned)
+  const uint64_t last_pulse_timestamp =                                                       // NOLINT(build/unsigned)
+    ((uint64_t)crt_registers.at("pulse.ts_h").value() << 32) + crt_registers.at("pulse.ts_l").value(); // NOLINT(build/unsigned)
   status << "Last Pulse Timestamp: 0x" << std::hex << last_pulse_timestamp << std::endl;
 
   if (print_out)

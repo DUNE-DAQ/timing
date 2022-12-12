@@ -8,8 +8,8 @@
 
 #include "timing/PDIFLCmdGeneratorNode.hpp"
 
-#include "logging/Logging.hpp"
 #include "timing/toolbox.hpp"
+#include "logging/Logging.hpp"
 
 #include <string>
 #include <vector>
@@ -22,8 +22,7 @@ UHAL_REGISTER_DERIVED_NODE(PDIFLCmdGeneratorNode)
 //-----------------------------------------------------------------------------
 PDIFLCmdGeneratorNode::PDIFLCmdGeneratorNode(const uhal::Node& node)
   : FLCmdGeneratorNode(node)
-{
-}
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -33,7 +32,7 @@ PDIFLCmdGeneratorNode::~PDIFLCmdGeneratorNode() {}
 //-----------------------------------------------------------------------------
 void
 PDIFLCmdGeneratorNode::send_fl_cmd(FixedLengthCommandType command,
-                                   uint32_t channel) const // NOLINT(build/unsigned)
+                                uint32_t channel) const // NOLINT(build/unsigned)
 {
   getNode("sel").write(channel);
 
@@ -51,8 +50,8 @@ PDIFLCmdGeneratorNode::send_fl_cmd(FixedLengthCommandType command,
 //-----------------------------------------------------------------------------
 void
 PDIFLCmdGeneratorNode::send_fl_cmd(FixedLengthCommandType command,
-                                   uint32_t channel, // NOLINT(build/unsigned)
-                                   const TimestampGeneratorNode& timestamp_gen_node) const
+                                uint32_t channel, // NOLINT(build/unsigned)
+                                const TimestampGeneratorNode& timestamp_gen_node) const
 {
   getNode("sel").write(channel);
 

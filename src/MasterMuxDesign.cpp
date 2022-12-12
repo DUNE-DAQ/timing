@@ -13,12 +13,12 @@ MasterMuxDesign::MasterMuxDesign(const uhal::Node& node)
   , MuxDesignInterface(node)
   , MasterDesignInterface(node)
   , MasterDesign(node)
-{
-}
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-MasterMuxDesign::~MasterMuxDesign() {}
+MasterMuxDesign::~MasterMuxDesign()
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -41,7 +41,8 @@ MasterMuxDesign::measure_endpoint_rtt(uint32_t address, bool control_sfp, int sf
 {
 
   if (sfp_mux > -1) {
-    if (control_sfp) {
+    if (control_sfp) 
+    {
       // set fanout rtt mux channel, and do not wait for fanout rtt ept to be in a good state
       switch_downstream_mux_channel(sfp_mux, false);
     }
@@ -57,24 +58,26 @@ MasterMuxDesign::measure_endpoint_rtt(uint32_t address, bool control_sfp, int sf
 //-----------------------------------------------------------------------------
 void
 MasterMuxDesign::apply_endpoint_delay(uint32_t address,
-                                      uint32_t coarse_delay,
-                                      uint32_t fine_delay,
-                                      uint32_t phase_delay,
-                                      bool measure_rtt,
-                                      bool control_sfp,
-                                      int sfp_mux) const
+                                               uint32_t coarse_delay,
+                                               uint32_t fine_delay,
+                                               uint32_t phase_delay,
+                                               bool measure_rtt,
+                                               bool control_sfp,
+                                               int sfp_mux) const
 {
-  if (sfp_mux > -1) {
-    if (control_sfp && measure_rtt) {
+  if (sfp_mux > -1)
+  {
+    if (control_sfp && measure_rtt)
+    {
       // set fanout rtt mux channel, and do not wait for fanout rtt ept to be in a good state
-      switch_downstream_mux_channel(sfp_mux, false);
+      switch_downstream_mux_channel(sfp_mux, false);  
     }
     // gets master rtt ept in a good state, and sends echo command
-    get_master_node_plain()->apply_endpoint_delay(
-      address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp);
-  } else {
-    get_master_node_plain()->apply_endpoint_delay(
-      address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp);
+    get_master_node_plain()->apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp);
+  }
+  else
+  {
+    get_master_node_plain()->apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp);
   }
 }
 //-----------------------------------------------------------------------------
@@ -92,7 +95,7 @@ MasterMuxDesign::switch_downstream_mux_channel(uint32_t sfp_id, bool wait_for_rt
 
 //-----------------------------------------------------------------------------
 std::vector<uint32_t>
-MasterMuxDesign::scan_sfp_mux() const
+MasterMuxDesign::scan_sfp_mux() const 
 {
   std::vector<uint32_t> locked_channels;
 

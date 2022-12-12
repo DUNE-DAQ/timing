@@ -171,7 +171,7 @@ dec_rng(uint8_t word, uint8_t ibit, uint8_t nbits) // NOLINT(build/unsigned)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-uint64_t                                            // NOLINT(build/unsigned)
+uint64_t                                           // NOLINT(build/unsigned)
 tstamp2int(uhal::ValVector<uint32_t> raw_timestamp) // NOLINT(build/unsigned)
 {
   return (uint64_t)raw_timestamp[0] + ((uint64_t)raw_timestamp[1] << 32); // NOLINT(build/unsigned)
@@ -225,7 +225,7 @@ convert_bits_to_float(uint64_t bits, bool is_double_precision) // NOLINT(build/u
 {
   uint32_t mantissa_shift = is_double_precision ? 52 : 23;                        // NOLINT(build/unsigned)
   uint64_t exponent_mask = is_double_precision ? 0x7FF0000000000000 : 0x7f800000; // NOLINT(build/unsigned)
-  uint32_t bias = is_double_precision ? 1023 : 127;                               // NOLINT(build/unsigned)
+  uint32_t bias = is_double_precision ? 1023 : 127;                              // NOLINT(build/unsigned)
   uint32_t sign_shift = is_double_precision ? 63 : 31;                            // NOLINT(build/unsigned)
 
   int32_t sign = (bits >> sign_shift) & 0x01;
@@ -234,7 +234,7 @@ convert_bits_to_float(uint64_t bits, bool is_double_precision) // NOLINT(build/u
 
   int32_t power = -1;
   double mantissa = 0.0;
-  for (uint32_t i = 0; i < mantissa_shift; ++i) {                      // NOLINT(build/unsigned)
+  for (uint32_t i = 0; i < mantissa_shift; ++i) {                       // NOLINT(build/unsigned)
     uint64_t mantissa_bit = (bits >> (mantissa_shift - i - 1)) & 0x01; // NOLINT(build/unsigned)
     mantissa += mantissa_bit * pow(2.0, power);
     --power;
@@ -338,8 +338,7 @@ format_firmware_version(uint32_t firmware_version) // NOLINT(build/unsigned)
   int patch_firmware_version = (firmware_version >> 0) & 0xff;
 
   std::stringstream firmware_version_stream;
-  firmware_version_stream << "v" << major_firmware_version << "." << minor_firmware_version << "."
-                          << patch_firmware_version;
+  firmware_version_stream << "v" << major_firmware_version << "." << minor_firmware_version << "." << patch_firmware_version;
   return firmware_version_stream.str();
 }
 //-----------------------------------------------------------------------------

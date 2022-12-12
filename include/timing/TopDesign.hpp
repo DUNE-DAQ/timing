@@ -36,20 +36,24 @@ class TopDesign : virtual public TopDesignInterface
 {
 public:
   explicit TopDesign(const uhal::Node& node)
-    : TopDesignInterface(node)
-  {
-  }
+    : TopDesignInterface(node) {}
   virtual ~TopDesign() {}
 
   /**
    * @brief      Get io node pointer
    */
-  const IONode* get_io_node_plain() const override { return dynamic_cast<const IONode*>(&uhal::Node::getNode("io")); }
+  const IONode* get_io_node_plain() const override
+  { 
+    return dynamic_cast<const IONode*>(&uhal::Node::getNode("io")); 
+  }
 
   /**
    * @brief      Reset timing node.
    */
-  void soft_reset_io() const override { get_io_node_plain()->soft_reset(); }
+  void soft_reset_io() const override
+  {
+    get_io_node_plain()->soft_reset();
+  }
 
   /**
    * @brief      Reset timing node.
@@ -63,7 +67,7 @@ public:
    * @brief      Reset timing node.
    */
   void reset_io(int32_t fanout_mode, // NOLINT(build/unsigned)
-                const std::string& clock_config_file = "") const override
+                        const std::string& clock_config_file = "") const override
   {
     get_io_node_plain()->reset(fanout_mode, clock_config_file);
   }

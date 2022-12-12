@@ -22,8 +22,7 @@ UHAL_REGISTER_DERIVED_NODE(SIMIONode)
 //-----------------------------------------------------------------------------
 SIMIONode::SIMIONode(const uhal::Node& node)
   : IONode(node, "", "", "", {}, {})
-{
-}
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -125,7 +124,7 @@ SIMIONode::reset(const std::string& /*clock_config_file*/) const
 //-----------------------------------------------------------------------------
 void
 SIMIONode::reset(int32_t /*fanout_mode*/, // NOLINT(build/unsigned)
-                 const std::string& clock_config_file) const
+                     const std::string& clock_config_file) const
 {
   reset(clock_config_file);
 }

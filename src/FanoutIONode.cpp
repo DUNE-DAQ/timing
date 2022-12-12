@@ -22,8 +22,7 @@ FanoutIONode::FanoutIONode(const uhal::Node& node,
                            std::vector<std::string> clock_names,
                            std::vector<std::string> sfp_i2c_buses)
   : IONode(node, uid_i2c_bus, pll_i2c_bus, pll_i2c_device, clock_names, sfp_i2c_buses)
-{
-}
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

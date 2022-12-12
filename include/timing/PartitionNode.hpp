@@ -15,8 +15,8 @@
 // PDT Headers
 #include "TimingIssues.hpp"
 #include "timing/TimingNode.hpp"
-#include "timing/timingfirmwareinfo/InfoNljs.hpp"
 #include "timing/timingfirmwareinfo/InfoStructs.hpp"
+#include "timing/timingfirmwareinfo/InfoNljs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"

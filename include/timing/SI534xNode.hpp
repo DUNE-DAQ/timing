@@ -18,10 +18,10 @@
 
 #include "ers/Issue.hpp"
 
-#include <boost/tuple/tuple.hpp>
 #include <map>
 #include <string>
 #include <vector>
+#include <boost/tuple/tuple.hpp>
 
 namespace dunedaq {
 ERS_DECLARE_ISSUE(timing,                            ///< Namespace

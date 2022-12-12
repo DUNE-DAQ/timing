@@ -13,8 +13,8 @@
 #define TIMING_INCLUDE_TIMING_FANOUTDESIGN_HPP_
 
 // PDT Headers
-#include "timing/EndpointDesignInterface.hpp"
 #include "timing/MasterMuxDesign.hpp"
+#include "timing/EndpointDesignInterface.hpp"
 #include "timing/SwitchyardNode.hpp"
 
 #include "TimingIssues.hpp"
@@ -33,9 +33,7 @@ namespace timing {
 /**
  * @brief      Class for timing fanout designs.
  */
-class FanoutDesign
-  : public MasterMuxDesign
-  , public EndpointDesignInterface
+class FanoutDesign : public MasterMuxDesign, public EndpointDesignInterface
 {
   UHAL_DERIVEDNODE(FanoutDesign)
 public:
@@ -49,7 +47,7 @@ public:
 
   /**
    * @brief    Give info to collector.
-   */
+   */  
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
 
   /**
@@ -66,8 +64,7 @@ public:
   /**
    * @brief      Reset timing fanout node.
    */
-  void reset_io(int32_t fanout_mode,
-                const std::string& clock_config_file = "") const override; // NOLINT(build/unsigned)
+  void reset_io(int32_t fanout_mode, const std::string& clock_config_file = "") const override; // NOLINT(build/unsigned)
 
   /**
    * @brief      Measure the endpoint round trip time.
@@ -75,8 +72,8 @@ public:
    * @return     { description_of_the_return_value }
    */
   uint32_t measure_endpoint_rtt(uint32_t address, // NOLINT(build/unsigned)
-                                bool control_sfp = true,
-                                int sfp_mux = -1) const override;
+                                        bool control_sfp = true,
+                                        int sfp_mux = -1) const override;
 
   /**
    * @brief      Apply delay to endpoint

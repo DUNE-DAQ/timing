@@ -13,8 +13,8 @@
 #define TIMING_INCLUDE_TIMING_MASTERMUXDESIGN_HPP_
 
 // PDT Headers
-#include "timing/MasterDesign.hpp"
 #include "timing/MuxDesignInterface.hpp"
+#include "timing/MasterDesign.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -32,8 +32,7 @@ namespace timing {
  * @brief      Class for PDI timing master design on mux board
  */
 class MasterMuxDesign
-  : virtual public MuxDesignInterface
-  , public MasterDesign
+  : virtual public MuxDesignInterface, public MasterDesign
 {
   UHAL_DERIVEDNODE(MasterMuxDesign)
 public:
@@ -45,39 +44,40 @@ public:
    */
   std::string get_status(bool print_out = false) const override;
 
+
   /**
    * @brief      Measure the endpoint round trip time.
    *
    * @return     { description_of_the_return_value }
    */
   uint32_t measure_endpoint_rtt(uint32_t address, // NOLINT(build/unsigned)
-                                bool control_sfp = true,
-                                int sfp_mux = -1) const override;
+                                        bool control_sfp = true,
+                                        int sfp_mux = -1) const override;
   /**
    * @brief      Apply delay to endpoint
    */
   void apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned)
-                            uint32_t coarse_delay, // NOLINT(build/unsigned)
-                            uint32_t fine_delay,   // NOLINT(build/unsigned)
-                            uint32_t phase_delay,  // NOLINT(build/unsigned)
-                            bool measure_rtt = false,
-                            bool control_sfp = true,
-                            int sfp_mux = -1) const override;
+                                    uint32_t coarse_delay, // NOLINT(build/unsigned)
+                                    uint32_t fine_delay,   // NOLINT(build/unsigned)
+                                    uint32_t phase_delay,  // NOLINT(build/unsigned)
+                                    bool measure_rtt = false,
+                                    bool control_sfp = true,
+                                    int sfp_mux = -1) const override; 
 
   /**
    * @brief     Switch the SFP mux channel
    */
-  void switch_downstream_mux_channel(uint32_t sfp_id,
-                                     bool wait_for_rtt_ept_lock) const override; // NOLINT(build/unsigned)
+  void switch_downstream_mux_channel(uint32_t sfp_id, bool wait_for_rtt_ept_lock) const override; // NOLINT(build/unsigned)
 
   /**
    * @brief     Scan SFP for alive timing transmitters
    */
   std::vector<uint32_t> scan_sfp_mux() const override; // NOLINT(build/unsigned)
-
+    
   // In leiu of UHAL_DERIVEDNODE
 protected:
-  // virtual uhal::Node* clone() const;
+ // virtual uhal::Node* clone() const;
+  
 };
 
 } // namespace timing

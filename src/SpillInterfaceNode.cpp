@@ -8,8 +8,8 @@
 
 #include "timing/SpillInterfaceNode.hpp"
 
-#include "logging/Logging.hpp"
 #include "timing/toolbox.hpp"
+#include "logging/Logging.hpp"
 
 #include <string>
 
@@ -21,8 +21,7 @@ UHAL_REGISTER_DERIVED_NODE(SpillInterfaceNode)
 //-----------------------------------------------------------------------------
 SpillInterfaceNode::SpillInterfaceNode(const uhal::Node& node)
   : TimingNode(node)
-{
-}
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

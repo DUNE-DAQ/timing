@@ -8,8 +8,8 @@
 
 #include "timing/MIBIONode.hpp"
 
-#include <math.h>
 #include <string>
+#include <math.h>
 
 namespace dunedaq {
 namespace timing {
@@ -76,11 +76,11 @@ MIBIONode::get_pll_status(bool print_out) const
 void
 MIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) const
 {
-
+  
   write_soft_reset_register();
 
   millisleep(1000);
-
+  
   // Find the right pll config file
   std::string clock_config_path = get_full_clock_config_file_path(clock_config_file, fanout_mode);
   TLOG() << "PLL configuration file : " << clock_config_path;
@@ -115,9 +115,9 @@ void
 MIBIONode::switch_downstream_mux_channel(uint32_t mux_channel) const // NOLINT(build/unsigned)
 {
   validate_amc_slot(mux_channel);
-  uint16_t amc_in_bit = 0x1 << (mux_channel - 1);
+  uint16_t amc_in_bit = 0x1 << (mux_channel-1);
   getNode("io_select.csr.ctrl.amc_in").write(amc_in_bit);
-
+  
   TLOG_DEBUG(3) << " MIB downstream AMC (in) " << mux_channel << " enabled";
   getClient().dispatch();
 }
@@ -130,7 +130,7 @@ MIBIONode::read_active_downstream_mux_channel() const
   auto active_mux_channel_bits = getNode("io_select.csr.ctrl.amc_in").read();
   getClient().dispatch();
   double mux = log2(active_mux_channel_bits.value());
-  return mux + 1;
+  return mux+1;
 }
 //-----------------------------------------------------------------------------
 
@@ -157,10 +157,9 @@ MIBIONode::read_active_upstream_mux_channel() const
 
 //-----------------------------------------------------------------------------
 std::string
-MIBIONode::get_sfp_status(uint32_t sfp_id, bool print_out) const
-{ // NOLINT(build/unsigned)
+MIBIONode::get_sfp_status(uint32_t sfp_id, bool print_out) const { // NOLINT(build/unsigned)
   std::stringstream status;
-
+  
   validate_sfp_id(sfp_id);
 
   // enable i2c path for sfp
@@ -170,10 +169,13 @@ MIBIONode::get_sfp_status(uint32_t sfp_id, bool print_out) const
   auto sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
 
   status << "SFP " << sfp_id << ":" << std::endl;
-
-  try {
+  
+  try
+  {
     status << sfp->get_status();
-  } catch (...) {
+  }
+  catch(...)
+  {
     i2c_switch->set_channels_states(8);
     throw;
   }
@@ -189,8 +191,7 @@ MIBIONode::get_sfp_status(uint32_t sfp_id, bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-MIBIONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const
-{ // NOLINT(build/unsigned)
+MIBIONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const { // NOLINT(build/unsigned)
   validate_sfp_id(sfp_id);
 
   auto i2c_switch = get_i2c_device<I2C9546SwitchSlave>("i2c", "TCA9546_Switch");
@@ -216,7 +217,7 @@ MIBIONode::get_info(timinghardwareinfo::TimingMIBMonitorData& mon_data) const
 
   mon_data.mmcm_ok = subnodes.at("mmcm_ok").value();
   mon_data.mmcm_sticky = subnodes.at("mmcm_sticky").value();
-
+  
   mon_data.sfp_0_flt = subnodes.at("sfp_flt").value() & 0x1;
   mon_data.sfp_1_flt = subnodes.at("sfp_flt").value() & 0x2;
 
@@ -239,24 +240,27 @@ MIBIONode::get_info(opmonlib::InfoCollector& ci, int level) const
     timinghardwareinfo::TimingPLLMonitorData pll_mon_data;
     get_pll()->get_info(pll_mon_data);
     ci.add(pll_mon_data);
-
-    for (uint i = 0; i < 3; ++i) {
+    
+    for (uint i=0; i < 3; ++i)
+    {
       opmonlib::InfoCollector sfp_ic;
-
+      
       // enable i2c path for sfp
       i2c_switch->set_channels_states(1UL << i);
 
       auto sfp = this->get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
-
-      try {
+      
+      try
+      {
         sfp->get_info(sfp_ic, level);
-      } catch (timing::SFPUnreachable& e) {
+      }
+      catch (timing::SFPUnreachable& e)
+      {
         // It is valid that an SFP may not be installed, currently no good way of knowing whether they it should be
-        TLOG_DEBUG(2) << "Failed to communicate with SFP " << i << " on I2C switch channel " << (1UL << i)
-                      << " on i2c bus" << m_sfp_i2c_buses.at(0);
+        TLOG_DEBUG(2) << "Failed to communicate with SFP " << i <<  " on I2C switch channel " << (1UL << i) << " on i2c bus" << m_sfp_i2c_buses.at(0);
         continue;
       }
-      ci.add("sfp_" + std::to_string(i), sfp_ic);
+      ci.add("sfp_"+std::to_string(i),sfp_ic);
     }
     i2c_switch->set_channels_states(8);
   }
@@ -270,21 +274,19 @@ MIBIONode::get_info(opmonlib::InfoCollector& ci, int level) const
 
 //-----------------------------------------------------------------------------
 void
-MIBIONode::validate_sfp_id(uint32_t sfp_id) const
-{ // NOLINT(build/unsigned)
+MIBIONode::validate_sfp_id(uint32_t sfp_id) const { // NOLINT(build/unsigned)
   // on this board we have 3 upstream SFPs
   if (sfp_id > 2) {
-    throw InvalidSFPId(ERS_HERE, format_reg_value(sfp_id));
+        throw InvalidSFPId(ERS_HERE, format_reg_value(sfp_id));
   }
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void
-MIBIONode::validate_amc_slot(uint32_t amc_slot) const
-{ // NOLINT(build/unsigned)
+MIBIONode::validate_amc_slot(uint32_t amc_slot) const { // NOLINT(build/unsigned)
   if (amc_slot < 1 || amc_slot > 12) {
-    throw InvalidAMCSlot(ERS_HERE, format_reg_value(amc_slot, 10));
+        throw InvalidAMCSlot(ERS_HERE, format_reg_value(amc_slot, 10));
   }
 }
 //-----------------------------------------------------------------------------

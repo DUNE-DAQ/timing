@@ -100,10 +100,7 @@ public:
   /**
    * @brief     Configure fake trigger generator
    */
-  virtual void enable_periodic_fl_cmd(uint32_t channel,
-                                      double rate,
-                                      bool poisson,
-                                      uint32_t clock_frequency_hz) const; // NOLINT(build/unsigned)
+  virtual void enable_periodic_fl_cmd(uint32_t channel, double rate, bool poisson, uint32_t clock_frequency_hz) const; // NOLINT(build/unsigned)
 
   /**
    * @brief     Clear fake trigger configuration

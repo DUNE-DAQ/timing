@@ -16,8 +16,7 @@ namespace timing {
 //-----------------------------------------------------------------------------
 MasterNodeInterface::MasterNodeInterface(const uhal::Node& node)
   : TimingNode(node)
-{
-}
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -29,20 +28,17 @@ void
 MasterNodeInterface::apply_endpoint_delay(const ActiveEndpointConfig& ept_config, bool measure_rtt) const
 {
   std::string lEptIdD = ept_config.id;
-  uint32_t ept_address = ept_config.adr;     // NOLINT(build/unsigned)
+  uint32_t ept_address = ept_config.adr;    // NOLINT(build/unsigned)
   uint32_t coarse_Delay = ept_config.cdelay; // NOLINT(build/unsigned)
-  uint32_t fine_delay = ept_config.fdelay;   // NOLINT(build/unsigned)
-  uint32_t phase_delay = ept_config.pdelay;  // NOLINT(build/unsigned)
+  uint32_t fine_delay = ept_config.fdelay; // NOLINT(build/unsigned)
+  uint32_t phase_delay = ept_config.pdelay; // NOLINT(build/unsigned)
   apply_endpoint_delay(ept_address, coarse_Delay, fine_delay, phase_delay, measure_rtt);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void
-MasterNodeInterface::enable_periodic_fl_cmd(uint32_t channel,
-                                            double rate,
-                                            bool poisson,
-                                            uint32_t clock_frequency_hz) const // NOLINT(build/unsigned)
+MasterNodeInterface::enable_periodic_fl_cmd(uint32_t channel, double rate, bool poisson, uint32_t clock_frequency_hz) const // NOLINT(build/unsigned)
 {
 
   // Configures the internal command generator to produce triggers at a defined frequency.
@@ -72,8 +68,7 @@ MasterNodeInterface::enable_periodic_fl_cmd(uint32_t channel,
     trigger_mode_stream << "periodic";
   }
   TLOG() << trigger_mode_stream.str();
-  getNode<FLCmdGeneratorNode>("scmd_gen")
-    .enable_fake_trigger(channel, fake_trigger_config.divisor, fake_trigger_config.prescale, poisson);
+  getNode<FLCmdGeneratorNode>("scmd_gen").enable_fake_trigger(channel, fake_trigger_config.divisor, fake_trigger_config.prescale, poisson);
 }
 //-----------------------------------------------------------------------------
 

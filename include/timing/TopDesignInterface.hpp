@@ -14,8 +14,8 @@
 
 // PDT Headers
 #include "TimingIssues.hpp"
-#include "timing/IONode.hpp"
 #include "timing/TimingNode.hpp"
+#include "timing/IONode.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -36,21 +36,20 @@ namespace timing {
 class TopDesignInterface : public TimingNode
 {
 public:
-  explicit TopDesignInterface(const uhal::Node& node)
-    : TimingNode(node)
-  {
-  }
+  explicit TopDesignInterface(const uhal::Node& node) 
+    : TimingNode(node) {}
   virtual ~TopDesignInterface() {}
 
   /**
    * @brief      Get io node pointer
    */
   virtual const IONode* get_io_node_plain() const = 0;
+  
 
   template<class IO>
   const IO* get_io_node() const
-  {
-    return dynamic_cast<const IO*>(get_io_node_plain());
+  { 
+    return dynamic_cast<const IO*>(get_io_node_plain()); 
   }
 
   /**
@@ -92,6 +91,7 @@ public:
    *
    */
   virtual void validate_firmware_version() const = 0;
+
 };
 
 } // namespace timing

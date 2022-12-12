@@ -13,8 +13,8 @@
 #define TIMING_INCLUDE_TIMING_MASTERDESIGNINTERFACE_HPP_
 
 // PDT Headers
-#include "timing/MasterNodeInterface.hpp"
 #include "timing/TopDesign.hpp"
+#include "timing/MasterNodeInterface.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -35,9 +35,8 @@ class MasterDesignInterface : virtual public TopDesignInterface
 
 public:
   explicit MasterDesignInterface(const uhal::Node& node)
-    : TopDesignInterface(node)
-  {
-  }
+  : TopDesignInterface(node)
+    {}
   virtual ~MasterDesignInterface() {}
 
   /**
@@ -52,7 +51,7 @@ public:
    *
    */
   virtual void sync_timestamp() const = 0;
-
+  
   /**
    * @brief      Measure the endpoint round trip time.
    *
@@ -74,9 +73,7 @@ public:
   /**
    * @brief     Configure fake trigger generator
    */
-  virtual void enable_periodic_fl_cmd(uint32_t channel,
-                                      double rate,
-                                      bool poisson = false) const = 0; // NOLINT(build/unsigned)
+  virtual void enable_periodic_fl_cmd(uint32_t channel, double rate, bool poisson = false) const = 0; // NOLINT(build/unsigned)
 
   /**
    * @brief      Get master node pointer
@@ -85,9 +82,10 @@ public:
 
   template<class MST>
   const MST* get_master_node() const
-  {
-    return dynamic_cast<const MST*>(get_master_node_plain());
+  { 
+    return dynamic_cast<const MST*>(get_master_node_plain()); 
   }
+
 };
 
 } // namespace timing

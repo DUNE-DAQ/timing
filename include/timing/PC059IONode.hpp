@@ -15,8 +15,8 @@
 // PDT Headers
 #include "TimingIssues.hpp"
 #include "timing/FanoutIONode.hpp"
-#include "timing/timinghardwareinfo/InfoNljs.hpp"
 #include "timing/timinghardwareinfo/InfoStructs.hpp"
+#include "timing/timinghardwareinfo/InfoNljs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -46,7 +46,7 @@ public:
    * @return     { description_of_the_return_value }
    */
   std::string get_uid_address_parameter_name() const override;
-
+  
   /**
    * @brief     Get status string, optionally print.
    */

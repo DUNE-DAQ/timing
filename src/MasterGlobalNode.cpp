@@ -20,8 +20,7 @@ UHAL_REGISTER_DERIVED_NODE(MasterGlobalNode)
 //-----------------------------------------------------------------------------
 MasterGlobalNode::MasterGlobalNode(const uhal::Node& node)
   : TimingNode(node)
-{
-}
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -35,7 +34,7 @@ MasterGlobalNode::get_status(bool print_out) const
   std::stringstream status;
   auto ctrl = read_sub_nodes(getNode("csr.ctrl"));
   status << format_reg_table(ctrl, "Master global controls");
-
+  
   auto stat = read_sub_nodes(getNode("csr.stat"));
   status << format_reg_table(stat, "Master global state");
   if (print_out)
@@ -68,7 +67,8 @@ MasterGlobalNode::enable_upstream_endpoint(uint32_t timeout) const // NOLINT(bui
 
     TLOG_DEBUG(6) << std::hex << "rx ready: 0x" << rx_ready.value() << ", cdr ready: " << cdr_ready.value();
 
-    if (rx_ready.value() && cdr_ready.value()) {
+    if (rx_ready.value() && cdr_ready.value())
+    {
       TLOG_DEBUG(4) << "Master endpoint and CDR ready!";
       break;
     }
@@ -107,7 +107,7 @@ MasterGlobalNode::reset_command_counters(uint32_t timeout) const // NOLINT(build
 
   std::chrono::milliseconds ms_since_start(0);
 
-  uhal::ValWord<uint32_t> counters_ready; // NOLINT(build/unsigned)
+  uhal::ValWord<uint32_t> counters_ready;  // NOLINT(build/unsigned)
 
   // Wait for the endpoint to be happy
   while (ms_since_start.count() < timeout) {

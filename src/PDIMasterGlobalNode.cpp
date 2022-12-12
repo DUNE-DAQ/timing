@@ -8,8 +8,8 @@
 
 #include "timing/PDIMasterGlobalNode.hpp"
 
-#include "logging/Logging.hpp"
 #include "timing/toolbox.hpp"
+#include "logging/Logging.hpp"
 
 #include <string>
 
@@ -21,8 +21,7 @@ UHAL_REGISTER_DERIVED_NODE(PDIMasterGlobalNode)
 //-----------------------------------------------------------------------------
 PDIMasterGlobalNode::PDIMasterGlobalNode(const uhal::Node& node)
   : TimingNode(node)
-{
-}
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -64,15 +63,13 @@ PDIMasterGlobalNode::read_spill_counter() const
 //-----------------------------------------------------------------------------
 void
 PDIMasterGlobalNode::select_partition() const
-{
-}
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void
 PDIMasterGlobalNode::lock_partition() const
-{
-}
+{}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -104,7 +101,7 @@ PDIMasterGlobalNode::enable_upstream_endpoint(uint32_t timeout) // NOLINT(build/
   std::chrono::milliseconds ms_since_start(0);
 
   uhal::ValWord<uint32_t> ept_state; // NOLINT(build/unsigned)
-  uhal::ValWord<uint32_t> ept_ready; // NOLINT(build/unsigned)
+  uhal::ValWord<uint32_t> ept_ready;  // NOLINT(build/unsigned)
 
   // Wait for the endpoint to be happy
   while (ms_since_start.count() < timeout) {
@@ -115,14 +112,13 @@ PDIMasterGlobalNode::enable_upstream_endpoint(uint32_t timeout) // NOLINT(build/
 
     ept_state = getNode("csr.stat.ep_stat").read();
     ept_ready = getNode("csr.stat.ep_rdy").read();
-
+    
     auto ept_edge = getNode("csr.stat.ep_edge").read();
     auto ept_fdel = getNode("csr.stat.ep_fdel").read();
-
+    
     getClient().dispatch();
 
-    TLOG_DEBUG(1) << "ept state: 0x" << std::hex << ept_state.value() << " ept ready: 0x" << ept_ready.value()
-                  << " ept edge: 0x" << ept_edge.value() << " ept fdel: 0x" << ept_fdel.value();
+    TLOG_DEBUG(1) << "ept state: 0x" << std::hex << ept_state.value() << " ept ready: 0x" << ept_ready.value() << " ept edge: 0x" << ept_edge.value() << " ept fdel: 0x" << ept_fdel.value();
 
     if (ept_ready.value() && ept_state.value() == 0x8) {
       TLOG_DEBUG(1) << "Endpoint locked: state= " << format_reg_value(ept_state);

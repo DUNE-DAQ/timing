@@ -12,8 +12,8 @@
 #ifndef TIMING_INCLUDE_TIMING_CRTNODE_HPP_
 #define TIMING_INCLUDE_TIMING_CRTNODE_HPP_
 
-#include "timing/EndpointNodeInterface.hpp"
 #include "timing/definitions.hpp"
+#include "timing/EndpointNodeInterface.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -70,7 +70,7 @@ public:
 
 private:
   void enable(uint32_t address = 0, uint32_t partition = 0) const override; // NOLINT(build/unsigned)
-  void reset(uint32_t address = 0, uint32_t partition = 0) const override;  // NOLINT(build/unsigned)
+  void reset(uint32_t address = 0, uint32_t partition = 0) const override; // NOLINT(build/unsigned)
 };
 
 } // namespace timing
