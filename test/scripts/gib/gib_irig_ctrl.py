@@ -54,6 +54,18 @@ def sw_rst(hw):
   lDevice.dispatch()
 
 #############################################################
+# Reset SID to 0
+
+def ctr_reset(hw):
+
+  # Reset the SID counter
+  hw.getNode('irig_top.csr.ctrl.clear_sid_ctr').write(0x1)
+  hw.dispatch()
+  hw.getNode('irig_top.csr.ctrl.clear_sid_ctr').write(0x0)
+  hw.dispatch()
+  print("Reset SID counter!")
+
+#############################################################
 # Enable TS Counter
 
 def enable_ts_ctr(hw, enable):
@@ -71,16 +83,27 @@ def enable_ts_ctr(hw, enable):
 def force_load(hw):
 
   print("Force loading counter")
+  hw.getNode('irig_top.csr.ctrl.soft_load').write(0x1)
   hw.getNode('irig_top.csr.ctrl.force_strobe').write(0x1)
   hw.dispatch()
                                                         
   hw.getNode('irig_top.csr.ctrl.force_strobe').write(0x0)
+  hw.getNode('irig_top.csr.ctrl.soft_load').write(0x0)
+  hw.dispatch()
+
+def software_load(hw):
+
+  print("Loading SID counter on next PPS")
+  hw.getNode('irig_top.csr.ctrl.soft_load').write(0x1)
+  hw.dispatch()
+                                                        
+  hw.getNode('irig_top.csr.ctrl.soft_load').write(0x0)
   hw.dispatch()
 
 #############################################################
 # Set timestmap
 
-def set_timestamp(hw, ts):
+def set_timestamp(hw, ts, force=False):
   '''
   ts_source = 0 = IPBus 
   '''
@@ -94,7 +117,13 @@ def set_timestamp(hw, ts):
   hw.getNode('irig_top.ctr.set').writeBlock([ ts_low, ts_hi ])
   hw.dispatch()
 
-  force_load(hw)
+  # Need to clear SID counter which also resets the load flag
+  ctr_reset(hw)
+
+  if force:
+    force_load(hw)
+  else:
+    software_load(hw)
   time.sleep(1)
   
   res_src = hw.getNode('irig_top.csr.stat.ts_source').read()
@@ -107,30 +136,43 @@ def set_timestamp(hw, ts):
 #############################################################
 # Set IRIG timestamp
 
-def set_irig_timestamp(hw):
+def set_irig_timestamp(hw, force=False):
+
   print("Set Timestamp source to IRIG=0x1")
   hw.getNode('irig_top.csr.ctrl.ts_source').write(0x1)
-  hw.getNode('irig_top.csr.ctrl.force_strobe').write(0x1)
   hw.dispatch()
 
-  hw.getNode('irig_top.csr.ctrl.force_strobe').write(0x0)
+  # Need to clear SID counter which also resets the load flag
+  ctr_reset(hw)
+
+  if force:
+    force_load(hw)
+  else:
+    software_load(hw)
+
   res_src = hw.getNode('irig_top.csr.stat.ts_source').read()
   hw.dispatch()
 
   print("Read Timestamp Source:", res_src)
 
 #############################################################
-# Enable Irig
+# Read SID
 
-def read_tstamp(hw):
+def read_sid_counter(hw):
   
-  tstamp_hi = hw.getNode('irig_top.sr_hi.sid_msw').read()
-  tstamp_low = hw.getNode('irig_top.sr_lo.sid_lsw').read()
+  tstamp_hi = hw.getNode('irig_top.sid_hi.sid_ctr_msw').read()
+  tstamp_low = hw.getNode('irig_top.sid_lo.sid_ctr_lsw').read()
   hw.dispatch()
 
-  print("Read Timestamp Upper:", tstamp_hi)
-  print("Read Timestamp Lower:", tstamp_low)
-  print("Read Timestamp:", tstamp_hi + tstamp_low)
+  print("Read SID Counter:", (tstamp_hi << 32) + tstamp_low)
+
+def read_loaded_sid(hw):
+  
+  tstamp_hi = hw.getNode('irig_top.load_hi.loaded_sid_msw').read()
+  tstamp_low = hw.getNode('irig_top.load_lo.loaded_sid_lsw').read()
+  hw.dispatch()
+
+  print("Read Loaded SID:   ", (tstamp_hi << 32) + tstamp_low)
 
 #############################################################
 # Read Error Bit
@@ -141,20 +183,96 @@ def read_sid_error_bit(hw):
 
   print("SID Error Bit:", res)
 
+#############################################################
+# Read Strobe Bit
+
+def read_sid_strobe_bit(hw):
+  res = hw.getNode('irig_top.csr.stat.sid_strobe').read()
+  hw.dispatch()
+
+  print("SID Strobe Bit:", res)
+
+#############################################################
+# Clear PPS Counter
+
+def clear_pps_counter(hw):
+  hw.getNode('irig_top.irig_time_source.csr.ctrl.clear_pps_ctr').write(0x1)
+  hw.getNode('irig_top.irig_time_source.csr.ctrl.clear_pps_ctr').write(0x0)
+  hw.dispatch()
+
+  print("Reset PPS Counter")
+
+#############################################################
+# Read PPS Counter
+
+def read_pps_counter(hw):
+  res = hw.getNode('irig_top.irig_time_source.ctr_reg.pps_ctr').read()
+  hw.dispatch()
+
+  print("PPS Count:", res)
+
+#############################################################
+# Read IRIG time
+
+def read_irig_time(hw):
+  year = hw.getNode('irig_top.irig_time_source.csr.stat.year').read()
+  day  = hw.getNode('irig_top.irig_time_source.csr.stat.day').read()
+  hour = hw.getNode('irig_top.irig_time_source.csr.stat.hour').read()
+  minute = hw.getNode('irig_top.irig_time_source.csr.stat.minute').read()
+  second = hw.getNode('irig_top.irig_time_source.csr2.second').read()
+  hw.dispatch()
+
+  print("Year:", year)
+  print("Day:", day)
+  print("Hour:", hour)
+  print("Minute:", minute)
+  print("Second:", second)
+
+def calc_timestamp(hw):
+
+  year = hw.getNode('irig_top.irig_time_source.csr.stat.year').read()
+  day  = hw.getNode('irig_top.irig_time_source.csr.stat.day').read()
+  hour = hw.getNode('irig_top.irig_time_source.csr.stat.hour').read()
+  minute = hw.getNode('irig_top.irig_time_source.csr.stat.minute').read()
+  second = hw.getNode('irig_top.irig_time_source.csr2.second').read()
+  hw.dispatch()
+
+  #unix_seconds_to_2000_offset = 0xD234CCF5243000
+  tai_ticks_to_1999_offset = 0x1651F5121779000
+  leap_years_since_2000 = 6
+  year_to_second = 0x1E13380
+  day_to_second = 0x15180
+  hour_to_second = 0xE10
+  minute_to_second = 0x3C
+
+  total_seconds = year * year_to_second + leap_years_since_2000 * year_to_second + day * day_to_second + hour * hour_to_second + minute * minute_to_second + second
+  total_seconds *= 62.5e6
+  total_seconds += tai_ticks_to_1999_offset
+
+  print(f"Expected Timestamp: {int(total_seconds)}")
+  read_loaded_sid(hw)
+
+
 #########################################33
 
-# Reset firmware and hardware
-#sw_rst(lDevice)
-
 enable_ts_ctr(lDevice, 1)
-read_tstamp(lDevice)
 
-set_timestamp(lDevice, 0)
-read_tstamp(lDevice) 
+read_sid_counter(lDevice)
+read_loaded_sid(lDevice)
 
-set_irig_timestamp(lDevice)
-read_tstamp(lDevice)
+read_loaded_sid(lDevice)
+
+set_irig_timestamp(lDevice, force=False)
+read_sid_counter(lDevice)
 
 read_sid_error_bit(lDevice)
+read_sid_strobe_bit(lDevice)
 
-enable_ts_ctr(lDevice, 0)
+read_pps_counter(lDevice)
+read_irig_time(lDevice)
+
+time.sleep(1)
+
+calc_timestamp(lDevice)
+read_sid_error_bit(lDevice)
+

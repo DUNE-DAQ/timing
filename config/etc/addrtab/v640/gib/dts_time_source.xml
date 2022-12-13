@@ -3,22 +3,32 @@
 		    <node id="ctrl" address="0x0">
 		        <node id="enable" mask="0x1"/>
 		        <node id="ts_source" mask="0x2"/>
-		        <node id="force_strobe" mask="0x4"/>
+		        <node id="soft_load" mask="0x4"/>
+		        <node id="force_strobe" mask="0x8"/>
+		        <node id="clear_sid_ctr" mask="0x10"/>
 		    </node>
 		    <node id="stat" address="0x1">
 		        <node id="enable" mask="0x1"/>
 		        <node id="ts_source" mask="0x2"/>
 		        <node id="sid_error" mask="0x4"/>
+		        <node id="sid_strobe" mask="0x8"/>
 		    </node>
 		</node>
-      <node id="sr_lo" address="0x4" fwinfo="endpoint;width=1">
-        <node id="sid_lsw" address="0x1" mask="0xffffffff"/>
+      <node id="sid_lo" address="0x4" fwinfo="endpoint;width=1">
+        <node id="sid_ctr_lsw" address="0x1" mask="0xffffffff"/>
       </node>
-      <node id="sr_hi" address="0x8" fwinfo="endpoint;width=1">
-        <node id="sid_msw" address="0x1" mask="0xffffffff"/>
+      <node id="sid_hi" address="0x8" fwinfo="endpoint;width=1">
+        <node id="sid_ctr_msw" address="0x1" mask="0xffffffff"/>
       </node>
-      <node id="ctr" address="0x10" fwinfo="endpoint;width=2">
+      <node id="load_lo" address="0x10" fwinfo="endpoint;width=1">
+        <node id="loaded_sid_lsw" address="0x1" mask="0xffffffff"/>
+      </node>
+      <node id="load_hi" address="0x20" fwinfo="endpoint;width=1">
+        <node id="loaded_sid_msw" address="0x1" mask="0xffffffff"/>
+      </node>
+      <node id="ctr" address="0x40" fwinfo="endpoint;width=2">
         <node id="set" address="0x0" mode="block" size="0x2"/>    
         <node id="val" address="0x2" mode="block" size="0x2"/>    
     </node>
+    <node id="irig_time_source" address="0x80" module="file://irig_ts_source.xml"/>
 </node>
