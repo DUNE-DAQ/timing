@@ -103,6 +103,11 @@ public:
   virtual void enable_periodic_fl_cmd(uint32_t channel, double rate, bool poisson, uint32_t clock_frequency_hz) const; // NOLINT(build/unsigned)
 
   /**
+   * @brief     Configure fake trigger generator
+   */
+  virtual void enable_periodic_fl_cmd(uint32_t command, uint32_t channel, double rate, bool poisson, uint32_t clock_frequency_hz) const; // NOLINT(build/unsigned)
+
+  /**
    * @brief     Clear fake trigger configuration
    */
   virtual void disable_periodic_fl_cmd(uint32_t channel) const; // NOLINT(build/unsigned)

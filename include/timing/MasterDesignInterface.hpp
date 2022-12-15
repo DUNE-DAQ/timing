@@ -76,6 +76,11 @@ public:
   virtual void enable_periodic_fl_cmd(uint32_t channel, double rate, bool poisson = false) const = 0; // NOLINT(build/unsigned)
 
   /**
+   * @brief     Configure fake trigger generator
+   */
+  virtual void enable_periodic_fl_cmd(uint32_t command, uint32_t channel, double rate, bool poisson = false) const = 0; // NOLINT(build/unsigned)
+
+  /**
    * @brief      Get master node pointer
    */
   virtual const MasterNodeInterface* get_master_node_plain() const = 0;

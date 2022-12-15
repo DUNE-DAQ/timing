@@ -58,6 +58,15 @@ public:
                            bool poisson) const;
 
   /**
+   * @brief     Configure fake trigger
+   */
+  void enable_fake_trigger(uint32_t command,  // NOLINT(build/unsigned)
+                           uint32_t channel,  // NOLINT(build/unsigned)
+                           uint32_t divisor,  // NOLINT(build/unsigned)
+                           uint32_t prescale, // NOLINT(build/unsigned)
+                           bool poisson) const;
+  
+  /**
    * @brief     Clear fake trigger configuration
    */
   void disable_fake_trigger(uint32_t channel) const; // NOLINT(build/unsigned)

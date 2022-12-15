@@ -34,8 +34,14 @@ register_top_designs(py::module& m)
     .def("validate_firmware_version", &timing::OverlordDesign::validate_firmware_version)
     .def("sync_timestamp", &timing::OverlordDesign::sync_timestamp)
     .def("get_status", &timing::OverlordDesign::get_status)
-    .def("enable_periodic_fl_cmd",
+    .def<void (timing::OverlordDesign::*)(uint32_t, double, bool) const>("enable_periodic_fl_cmd",
          &timing::OverlordDesign::enable_periodic_fl_cmd,
+         py::arg("channel"),
+         py::arg("rate"),
+         py::arg("poisson"))
+    .def<void (timing::OverlordDesign::*)(uint32_t, uint32_t, double, bool) const>("enable_periodic_fl_cmd",
+         &timing::OverlordDesign::enable_periodic_fl_cmd,
+         py::arg("command"),
          py::arg("channel"),
          py::arg("rate"),
          py::arg("poisson"))
@@ -62,8 +68,14 @@ register_top_designs(py::module& m)
     .def("validate_firmware_version", &timing::BoreasDesign::validate_firmware_version)
     .def("sync_timestamp", &timing::BoreasDesign::sync_timestamp)
     .def("get_status", &timing::BoreasDesign::get_status)
-    .def("enable_periodic_fl_cmd",
+    .def<void (timing::BoreasDesign::*)(uint32_t, double, bool) const>("enable_periodic_fl_cmd",
          &timing::BoreasDesign::enable_periodic_fl_cmd,
+         py::arg("channel"),
+         py::arg("rate"),
+         py::arg("poisson"))
+    .def<void (timing::BoreasDesign::*)(uint32_t, uint32_t, double, bool) const>("enable_periodic_fl_cmd",
+         &timing::BoreasDesign::enable_periodic_fl_cmd,
+         py::arg("command"),
          py::arg("channel"),
          py::arg("rate"),
          py::arg("poisson"))
@@ -96,8 +108,14 @@ register_top_designs(py::module& m)
     .def("read_firmware_version", &timing::FanoutDesign::read_firmware_version)
     .def("validate_firmware_version", &timing::FanoutDesign::validate_firmware_version)
     .def("sync_timestamp", &timing::FanoutDesign::sync_timestamp)
-    .def("enable_periodic_fl_cmd",
+    .def<void (timing::FanoutDesign::*)(uint32_t, double, bool) const>("enable_periodic_fl_cmd",
          &timing::FanoutDesign::enable_periodic_fl_cmd,
+         py::arg("channel"),
+         py::arg("rate"),
+         py::arg("poisson"))
+    .def<void (timing::FanoutDesign::*)(uint32_t, uint32_t, double, bool) const>("enable_periodic_fl_cmd",
+         &timing::FanoutDesign::enable_periodic_fl_cmd,
+         py::arg("command"),
          py::arg("channel"),
          py::arg("rate"),
          py::arg("poisson"))
@@ -123,8 +141,14 @@ register_top_designs(py::module& m)
     .def("read_firmware_version", &timing::OuroborosMuxDesign::read_firmware_version)
     .def("validate_firmware_version", &timing::OuroborosMuxDesign::validate_firmware_version)
     .def("sync_timestamp", &timing::OuroborosMuxDesign::sync_timestamp)
-    .def("enable_periodic_fl_cmd",
+    .def<void (timing::OuroborosMuxDesign::*)(uint32_t, double, bool) const>("enable_periodic_fl_cmd",
          &timing::OuroborosMuxDesign::enable_periodic_fl_cmd,
+         py::arg("channel"),
+         py::arg("rate"),
+         py::arg("poisson"))
+    .def<void (timing::OuroborosMuxDesign::*)(uint32_t, uint32_t, double, bool) const>("enable_periodic_fl_cmd",
+         &timing::OuroborosMuxDesign::enable_periodic_fl_cmd,
+         py::arg("command"),
          py::arg("channel"),
          py::arg("rate"),
          py::arg("poisson"))
@@ -150,8 +174,14 @@ register_top_designs(py::module& m)
     .def("read_firmware_version", &timing::MasterMuxDesign::read_firmware_version)
     .def("validate_firmware_version", &timing::MasterMuxDesign::validate_firmware_version)
     .def("sync_timestamp", &timing::MasterMuxDesign::sync_timestamp)
-    .def("enable_periodic_fl_cmd",
+    .def<void (timing::MasterMuxDesign::*)(uint32_t, double, bool) const>("enable_periodic_fl_cmd",
          &timing::MasterMuxDesign::enable_periodic_fl_cmd,
+         py::arg("channel"),
+         py::arg("rate"),
+         py::arg("poisson"))
+    .def<void (timing::MasterMuxDesign::*)(uint32_t, uint32_t, double, bool) const>("enable_periodic_fl_cmd",
+         &timing::MasterMuxDesign::enable_periodic_fl_cmd,
+         py::arg("command"),
          py::arg("channel"),
          py::arg("rate"),
          py::arg("poisson"))
@@ -178,8 +208,14 @@ register_top_designs(py::module& m)
     .def("validate_firmware_version", &timing::MasterDesign::validate_firmware_version)
     .def("sync_timestamp", &timing::MasterDesign::sync_timestamp)
     .def("get_status", &timing::MasterDesign::get_status)
-    .def("enable_periodic_fl_cmd",
+    .def<void (timing::MasterDesign::*)(uint32_t, double, bool) const>("enable_periodic_fl_cmd",
          &timing::MasterDesign::enable_periodic_fl_cmd,
+         py::arg("channel"),
+         py::arg("rate"),
+         py::arg("poisson"))
+    .def<void (timing::MasterDesign::*)(uint32_t, uint32_t, double, bool) const>("enable_periodic_fl_cmd",
+         &timing::MasterDesign::enable_periodic_fl_cmd,
+         py::arg("command"),
          py::arg("channel"),
          py::arg("rate"),
          py::arg("poisson"))
@@ -204,8 +240,14 @@ register_top_designs(py::module& m)
     .def("validate_firmware_version", &timing::OuroborosDesign::validate_firmware_version)
     .def("sync_timestamp", &timing::OuroborosDesign::sync_timestamp)
     .def("get_status", &timing::OuroborosDesign::get_status)
-    .def("enable_periodic_fl_cmd",
+    .def<void (timing::OuroborosDesign::*)(uint32_t, double, bool) const>("enable_periodic_fl_cmd",
          &timing::OuroborosDesign::enable_periodic_fl_cmd,
+         py::arg("channel"),
+         py::arg("rate"),
+         py::arg("poisson"))
+    .def<void (timing::OuroborosDesign::*)(uint32_t, uint32_t, double, bool) const>("enable_periodic_fl_cmd",
+         &timing::OuroborosDesign::enable_periodic_fl_cmd,
+         py::arg("command"),
          py::arg("channel"),
          py::arg("rate"),
          py::arg("poisson"))

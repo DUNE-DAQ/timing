@@ -104,7 +104,7 @@ local timingfirmwareinfo = {
         s.field("tx_err", self.uint,
                 doc="Tx error"),
         s.field("ctrs_rdy", self.uint,
-                doc="Counters error"),
+                doc="Counters ready"),
     ], doc="master monitor data"),
 
     hsi_fw_mon_data: s.record("HSIFirmwareMonitorData", 

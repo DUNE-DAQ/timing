@@ -590,5 +590,11 @@ MasterNode::scan_endpoints(const std::vector<uint>& endpoints) const
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+void MasterNode::configure_endpoint_command_decoder(uint16_t endpoint_address, uint8_t slot, uint8_t command) const
+{
+  write_endpoint_data(endpoint_address, 0x60+slot, {command}, true);
+}
+//-----------------------------------------------------------------------------
 } // namespace timing
 } // namespace dunedaq

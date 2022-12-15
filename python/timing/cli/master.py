@@ -139,10 +139,11 @@ def sendcmd(obj, cmd, chan, n):
 # ------------------------------------------------------------------------------
 @master.command('faketrig-conf')
 @click.pass_obj
+@click.argument('cmd', type=toolbox.IntRange(0x0,0xff))
 @click.argument('chan', type=int)
 @click.argument('rate', type=float)
 @click.option('--poisson', is_flag=True, default=False, help="Randomize time interval between consecutive triggers.")
-def faketriggen(obj, chan, rate, poisson):
+def faketriggen(obj, cmd, chan, rate, poisson):
     '''
     \b
     Enables the internal trigger generator.
@@ -159,7 +160,7 @@ def faketriggen(obj, chan, rate, poisson):
     # c) 1-in-n prescaling set by n = rate_div_p
 
     lTopDesign = obj.mTopDesign
-    lTopDesign.enable_periodic_fl_cmd(chan,rate,poisson)
+    lTopDesign.enable_periodic_fl_cmd(cmd,chan,rate,poisson)
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
@@ -281,4 +282,19 @@ def partstatus(obj, watch, period):
 @click.pass_obj
 def configure(obj):
     pass
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@master.command('configure-endpoint-cmd-decoder', short_help='Configure a slot of endpoint command decoder.')
+@click.pass_obj
+@click.argument('addr', type=toolbox.IntRange(0x0,0xffff))
+@click.argument('slot', type=toolbox.IntRange(0x0,0x7))
+@click.argument('cmd', type=toolbox.IntRange(0x0,0xff))
+def configureendpointcmddecoder(obj, addr, slot, cmd):
+    '''
+    Configure endpoint command decoder
+    '''
+
+    lMaster = obj.mMaster
+    lMaster.configure_endpoint_command_decoder(addr,slot,cmd)
 # ------------------------------------------------------------------------------
