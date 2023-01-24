@@ -80,6 +80,9 @@ public:
    * @brief    Give info to collector.
    */
   void get_info(opmonlib::InfoCollector& ic, int level) const override;
+private:
+  void validate_command(uint32_t command) const;
+  void validate_channel(uint32_t channel) const;
 };
 
 } // namespace timing
