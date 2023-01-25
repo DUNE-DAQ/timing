@@ -44,9 +44,34 @@ FLCmdGeneratorNode::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-FLCmdGeneratorNode::send_fl_cmd(FixedLengthCommandType command,
+FLCmdGeneratorNode::validate_command(uint32_t command) const // NOLINT(build/unsigned)
+{
+  if (command > 0xff)
+  {
+    throw InvalidFixedLatencyCommand(ERS_HERE, command);
+  }
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+FLCmdGeneratorNode::validate_channel(uint32_t channel) const // NOLINT(build/unsigned)
+{
+  if (channel > 0x4)
+  {
+    throw InvalidFixedLatencyCommandChannel(ERS_HERE, channel);
+  }
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+FLCmdGeneratorNode::send_fl_cmd(uint32_t command,       // NOLINT(build/unsigned)
                                 uint32_t channel) const // NOLINT(build/unsigned)
 {
+  validate_command(command);
+  validate_channel(channel);
+
   getNode("sel").write(channel);
 
   reset_sub_nodes(getNode("chan_ctrl"));
@@ -67,11 +92,25 @@ FLCmdGeneratorNode::enable_fake_trigger(uint32_t channel,  // NOLINT(build/unsig
                                         uint32_t prescale, // NOLINT(build/unsigned)
                                         bool poisson) const
 {
-  uint32_t trigger_cmd = 0x8 + channel; // NOLINT(build/unsigned)
+  validate_channel(channel);
+  enable_fake_trigger(0x8+channel, channel, divisor, prescale, poisson);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+FLCmdGeneratorNode::enable_fake_trigger(uint32_t command,  // NOLINT(build/unsigned)
+                                        uint32_t channel,  // NOLINT(build/unsigned)
+                                        uint32_t divisor,  // NOLINT(build/unsigned)
+                                        uint32_t prescale, // NOLINT(build/unsigned)
+                                        bool poisson) const
+{
+  validate_command(command);
+  validate_channel(channel);
 
   getNode("sel").write(channel);
 
-  getNode("chan_ctrl.type").write(trigger_cmd);
+  getNode("chan_ctrl.type").write(command);
   getNode("chan_ctrl.rate_div_d").write(divisor);
   getNode("chan_ctrl.rate_div_p").write(prescale);
   getNode("chan_ctrl.patt").write(poisson);
@@ -84,6 +123,8 @@ FLCmdGeneratorNode::enable_fake_trigger(uint32_t channel,  // NOLINT(build/unsig
 void
 FLCmdGeneratorNode::disable_fake_trigger(uint32_t channel) const // NOLINT(build/unsigned)
 {
+  validate_channel(channel);
+
   // Clear the internal trigger generator.
   getNode("sel").write(channel);
   reset_sub_nodes(getNode("chan_ctrl"));

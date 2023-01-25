@@ -299,6 +299,18 @@ ERS_DECLARE_ISSUE(timing,                          ///< Namespace
                   " Invalid AMC slot: " << amc_slot, ///< Message
                   ((std::string)amc_slot)          ///< Message parameters
 )
+
+ERS_DECLARE_ISSUE(timing,                                                                                    ///< Namespace
+                  InvalidFixedLatencyCommand,                                                                ///< Issue class name
+                  " Supplied fixed-latency broadcast command, 0x" << std::hex <<  command << " is invalid" , ///< Message
+                   ((uint)command)                                                                           ///< Message parameters
+)
+
+ERS_DECLARE_ISSUE(timing,                                                                                    ///< Namespace
+                  InvalidFixedLatencyCommandChannel,                                                                ///< Issue class name
+                  " Supplied fixed-latency broadcast command channel, 0x" << std::hex <<  channel << " is invalid" , ///< Message
+                   ((uint)channel)                                                                           ///< Message parameters
+)
 } // namespace dunedaq
 
 #endif // TIMING_INCLUDE_TIMING_TIMINGISSUES_HPP_

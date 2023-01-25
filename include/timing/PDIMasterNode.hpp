@@ -83,9 +83,9 @@ public:
   /**
    * @brief     Send a fixed length command
    */
-  void send_fl_cmd(FixedLengthCommandType command,
-                           uint32_t channel,                                // NOLINT(build/unsigned)
-                           uint32_t number_of_commands = 1) const override; // NOLINT(build/unsigned)
+  void send_fl_cmd(uint32_t command,                                // NOLINT(build/unsigned)
+                   uint32_t channel,                                // NOLINT(build/unsigned)
+                   uint32_t number_of_commands = 1) const override; // NOLINT(build/unsigned)
 
   /**
    * @brief      Measure the endpoint round trip time.
@@ -106,6 +106,12 @@ public:
 
   using MasterNodeInterface::apply_endpoint_delay;
 
+  /**
+   * @brief     Send a fixed length command
+   */
+  void send_fl_cmd(FixedLengthCommandType command,
+                           uint32_t channel,                       // NOLINT(build/unsigned)
+                           uint32_t number_of_commands = 1) const; // NOLINT(build/unsigned)
   /**
    * @brief      Get partition node
    *
@@ -131,7 +137,7 @@ public:
   /**
    * @brief     Fill the PD-I master monitoring structure.
    */
-  void get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const;
+  void get_info(timingfirmwareinfo::PDIMasterMonitorData& mon_data) const;
 
   /**
    * @brief    Give info to collector.

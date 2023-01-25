@@ -104,6 +104,16 @@ PDIMasterNode::send_fl_cmd(FixedLengthCommandType command,
 
 //-----------------------------------------------------------------------------
 void
+PDIMasterNode::send_fl_cmd(uint32_t command,
+                           uint32_t channel,                  // NOLINT(build/unsigned)
+                           uint32_t number_of_commands) const // NOLINT(build/unsigned)
+{
+  send_fl_cmd(static_cast<FixedLengthCommandType>(command), channel, number_of_commands);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
 PDIMasterNode::switch_endpoint_sfp(uint32_t address, bool turn_on) const // NOLINT(build/unsigned)
 {
   auto vl_cmd_node = getNode<VLCmdGeneratorNode>("acmd");
@@ -225,7 +235,7 @@ PDIMasterNode::read_in_spill() const
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const
+PDIMasterNode::get_info(timingfirmwareinfo::PDIMasterMonitorData& mon_data) const
 {
   auto timestamp = getNode<TimestampGeneratorNode>("tstamp").read_raw_timestamp();
   mon_data.timestamp = tstamp2int(timestamp);
@@ -236,7 +246,7 @@ PDIMasterNode::get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const
 void
 PDIMasterNode::get_info(opmonlib::InfoCollector& ic, int level) const
 {
-  timingfirmwareinfo::MasterMonitorData mon_data;
+  timingfirmwareinfo::PDIMasterMonitorData mon_data;
   this->get_info(mon_data);
   ic.add(mon_data);
 

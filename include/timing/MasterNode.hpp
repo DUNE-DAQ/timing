@@ -66,9 +66,9 @@ public:
   /**
    * @brief     Send a fixed length command
    */
-  void send_fl_cmd(FixedLengthCommandType command,
-                           uint32_t channel,                                // NOLINT(build/unsigned)
-                           uint32_t number_of_commands = 1) const override; // NOLINT(build/unsigned)
+  void send_fl_cmd(uint32_t command,                                // NOLINT(build/unsigned)
+                   uint32_t channel,                                // NOLINT(build/unsigned)
+                   uint32_t number_of_commands = 1) const override; // NOLINT(build/unsigned)
   
   /**
    * @brief      Measure the endpoint round trip time.
@@ -150,6 +150,17 @@ public:
    * @brief    Scan endpoints
    */
   std::vector<timingfirmware::EndpointCheckResult> scan_endpoints(const std::vector<uint>& endpoints) const override;
+
+  /**
+   * @brief    Configure endpoint command decoder
+   */
+  void configure_endpoint_command_decoder(uint16_t endpoint_address, uint8_t slot, uint8_t command) const;
+
+private:
+  /**
+  * @brief     Get the status tables.
+  */
+  std::string get_status_tables() const;
 };
 
 } // namespace timing

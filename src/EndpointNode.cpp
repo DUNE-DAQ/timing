@@ -101,42 +101,38 @@ EndpointNode::get_status(bool print_out) const
   std::vector<std::pair<std::string, std::string>> ept_summary;
 
   auto ept_timestamp = getNode("tstamp").readBlock(2);
-//  auto ept_event_counter = getNode("evtctr").read();
-//  auto ept_buffer_count = getNode("buf.count").read();
   auto ept_control = read_sub_nodes(getNode("csr.ctrl"), false);
   auto ept_state = read_sub_nodes(getNode("csr.stat"), false);
-  //auto ept_counters = getNode("ctrs").readBlock(g_command_number);
+  getNode("cmd_ctrs.addr").write(0x0);
+  auto counters = getNode("cmd_ctrs.data").readBlock(0xff);
   getClient().dispatch();
 
   ept_summary.push_back(std::make_pair("Enabled", std::to_string(ept_control.find("ep_en")->second.value())));
   ept_summary.push_back(std::make_pair("Address", std::to_string(ept_control.find("addr")->second.value())));
 
-//  auto ept_clock_frequency = read_clock_frequency();
-// 
-//  if (abs((ept_clock_frequency*1e6)-62.5e6) < 10e3) {
-//    ept_summary.push_back(std::make_pair("Timestamp", format_timestamp(ept_timestamp,62500000)));
-//  } else if (abs((ept_clock_frequency*1e6)-50e6) < 10e3) {
-//    ept_summary.push_back(std::make_pair("Timestamp", format_timestamp(ept_timestamp,50000000)));
-//  } else {
-//    ept_summary.push_back(std::make_pair("Timestamp", format_timestamp(ept_timestamp,ept_clock_frequency)));
-//  }
-//  
   ept_summary.push_back(std::make_pair("Timestamp (hex)", format_reg_value(tstamp2int(ept_timestamp))));
-//  ept_summary.push_back(std::make_pair("EventCounter", std::to_string(ept_event_counter.value())));
-//  std::string buffer_status_string = !ept_state.find("buf_err")->second.value() ? "OK" : "Error";
-//  ept_summary.push_back(std::make_pair("Buffer status", buffer_status_string));
-//  ept_summary.push_back(std::make_pair("Buffer occupancy", std::to_string(ept_buffer_count.value())));
-//
-//  std::vector<std::pair<std::string, std::string>> ept_command_counters;
-//
-//  for (auto& cmd:  g_command_map) { // NOLINT(build/unsigned)
-//    ept_command_counters.push_back(std::make_pair(cmd.second, std::to_string(ept_counters[cmd.first])));
-//  }
-//
+  ept_summary.push_back(std::make_pair("Timestamp", format_timestamp(ept_timestamp,62500000)));
+
   status << format_reg_table(ept_summary, "Endpoint summary", { "", "" }) << std::endl;
 //  status << "Endpoint frequency: " << ept_clock_frequency << " MHz" << std::endl;
   status << format_reg_table(ept_state, "Endpoint state") << std::endl;
-//  status << format_reg_table(ept_command_counters, "Endpoint counters", { "Command", "Counter" });
+  
+  std::vector<uint32_t> non_zero_counters;
+  std::vector<std::string> counter_labels;
+
+  for (uint i=0; i < counters.size(); ++i) 
+  {
+    auto counter = counters.at(i);
+    if (counter > 0)
+    {
+      counter_labels.push_back(format_reg_value(i));
+      non_zero_counters.push_back(counter);
+    }
+  }
+  std::vector<std::vector<uint32_t>> counters_container = { non_zero_counters }; // NOLINT(build/unsigned)
+
+  status << format_counters_table(counters_container, { "Received cmd counters" }, "Endpoint cmd counters (>0)", counter_labels);
+  status << std::endl;
 
   if (print_out)
     TLOG() << status.str();

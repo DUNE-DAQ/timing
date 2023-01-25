@@ -40,6 +40,14 @@ MasterNodeInterface::apply_endpoint_delay(const ActiveEndpointConfig& ept_config
 void
 MasterNodeInterface::enable_periodic_fl_cmd(uint32_t channel, double rate, bool poisson, uint32_t clock_frequency_hz) const // NOLINT(build/unsigned)
 {
+  enable_periodic_fl_cmd(0x8+channel, channel, rate, poisson, clock_frequency_hz);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+MasterNodeInterface::enable_periodic_fl_cmd(uint32_t command, uint32_t channel, double rate, bool poisson, uint32_t clock_frequency_hz) const // NOLINT(build/unsigned)
+{
 
   // Configures the internal command generator to produce triggers at a defined frequency.
   // Rate =  (clock_frequency_hz / 2^(d+8)) / p where n in [0,15] and p in [1,256]
@@ -55,8 +63,8 @@ MasterNodeInterface::enable_periodic_fl_cmd(uint32_t channel, double rate, bool 
 
   fake_trigger_config.print();
   std::stringstream trig_stream;
-  trig_stream << "> Trigger rate for FakeTrig" << channel << " (" << std::showbase << std::hex << 0x8 + channel
-              << ") set to " << std::setprecision(3) << std::scientific << fake_trigger_config.actual_rate << " Hz";
+  trig_stream << "> Periodic rate for command 0x" << std::hex << command << ", on channel 0x" << channel
+              << " set to " << std::setprecision(3) << std::scientific << fake_trigger_config.actual_rate << " Hz";
   TLOG() << trig_stream.str();
 
   std::stringstream trigger_mode_stream;
@@ -68,7 +76,7 @@ MasterNodeInterface::enable_periodic_fl_cmd(uint32_t channel, double rate, bool 
     trigger_mode_stream << "periodic";
   }
   TLOG() << trigger_mode_stream.str();
-  getNode<FLCmdGeneratorNode>("scmd_gen").enable_fake_trigger(channel, fake_trigger_config.divisor, fake_trigger_config.prescale, poisson);
+  getNode<FLCmdGeneratorNode>("scmd_gen").enable_fake_trigger(command, channel, fake_trigger_config.divisor, fake_trigger_config.prescale, poisson);
 }
 //-----------------------------------------------------------------------------
 

@@ -96,6 +96,15 @@ MasterDesign::enable_periodic_fl_cmd(uint32_t channel, double rate, bool poisson
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+void
+MasterDesign::enable_periodic_fl_cmd(uint32_t command, uint32_t channel, double rate, bool poisson) const // NOLINT(build/unsigned)
+{
+  auto dts_clock_frequency = this->get_io_node_plain()->read_firmware_frequency();
+  get_master_node_plain()->enable_periodic_fl_cmd(command, channel, rate, poisson, dts_clock_frequency);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 uint32_t
 MasterDesign::read_firmware_version() const // NOLINT(build/unsigned)
 {

@@ -31,9 +31,22 @@ PDIFLCmdGeneratorNode::~PDIFLCmdGeneratorNode() {}
 
 //-----------------------------------------------------------------------------
 void
+PDIFLCmdGeneratorNode::validate_channel(uint32_t channel) const // NOLINT(build/unsigned)
+{
+  if (channel > 0x4)
+  {
+    throw InvalidFixedLatencyCommandChannel(ERS_HERE, channel);
+  }
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
 PDIFLCmdGeneratorNode::send_fl_cmd(FixedLengthCommandType command,
                                 uint32_t channel) const // NOLINT(build/unsigned)
 {
+  validate_channel(channel);
+
   getNode("sel").write(channel);
 
   reset_sub_nodes(getNode("chan_ctrl"));
@@ -53,6 +66,8 @@ PDIFLCmdGeneratorNode::send_fl_cmd(FixedLengthCommandType command,
                                 uint32_t channel, // NOLINT(build/unsigned)
                                 const TimestampGeneratorNode& timestamp_gen_node) const
 {
+  validate_channel(channel);
+
   getNode("sel").write(channel);
 
   reset_sub_nodes(getNode("chan_ctrl"));

@@ -93,7 +93,7 @@ public:
   /**
    * @brief     Send a fixed length command
    */
-  virtual void send_fl_cmd(FixedLengthCommandType command,
+  virtual void send_fl_cmd(uint32_t command,                           // NOLINT(build/unsigned)
                            uint32_t channel,                           // NOLINT(build/unsigned)
                            uint32_t number_of_commands = 1) const = 0; // NOLINT(build/unsigned)
 
@@ -101,6 +101,11 @@ public:
    * @brief     Configure fake trigger generator
    */
   virtual void enable_periodic_fl_cmd(uint32_t channel, double rate, bool poisson, uint32_t clock_frequency_hz) const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief     Configure fake trigger generator
+   */
+  virtual void enable_periodic_fl_cmd(uint32_t command, uint32_t channel, double rate, bool poisson, uint32_t clock_frequency_hz) const; // NOLINT(build/unsigned)
 
   /**
    * @brief     Clear fake trigger configuration

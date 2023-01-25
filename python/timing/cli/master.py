@@ -124,7 +124,7 @@ def synctime(obj):
 # ------------------------------------------------------------------------------
 @master.command('send-cmd', short_help='Inject a single command.')
 @click.pass_obj
-@click.argument('cmd', type=click.Choice(defs.kCommandIDs.keys()))
+@click.argument('cmd', type=toolbox.IntRange(0x0,0xff))
 @click.argument('chan', type=int)
 @click.option('-n', type=int, default=1)
 def sendcmd(obj, cmd, chan, n):
@@ -133,16 +133,17 @@ def sendcmd(obj, cmd, chan, n):
     '''
 
     lMaster = obj.mMaster
-    lMaster.send_fl_cmd(defs.kCommandIDs[cmd],chan,n)
+    lMaster.send_fl_cmd(cmd,chan,n)
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
 @master.command('faketrig-conf')
 @click.pass_obj
+@click.argument('cmd', type=toolbox.IntRange(0x0,0xff))
 @click.argument('chan', type=int)
 @click.argument('rate', type=float)
 @click.option('--poisson', is_flag=True, default=False, help="Randomize time interval between consecutive triggers.")
-def faketriggen(obj, chan, rate, poisson):
+def faketriggen(obj, cmd, chan, rate, poisson):
     '''
     \b
     Enables the internal trigger generator.
@@ -159,7 +160,7 @@ def faketriggen(obj, chan, rate, poisson):
     # c) 1-in-n prescaling set by n = rate_div_p
 
     lTopDesign = obj.mTopDesign
-    lTopDesign.enable_periodic_fl_cmd(chan,rate,poisson)
+    lTopDesign.enable_periodic_fl_cmd(cmd,chan,rate,poisson)
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
@@ -178,8 +179,8 @@ def faketrigclear(obj, chan):
 # ------------------------------------------------------------------------------
 @master.command('write-ept-reg')
 @click.pass_obj
-@click.argument('adr', type=int)
-@click.argument('reg', type=int)
+@click.argument('adr', type=toolbox.IntRange(0x0,0xffff))
+@click.argument('reg', type=toolbox.IntRange(0x0,0x78))
 @click.argument('data', callback=toolbox.split_ints)
 @click.argument('mode', type=bool)
 def writeeptreg(obj, adr, reg, data, mode):
@@ -194,8 +195,8 @@ def writeeptreg(obj, adr, reg, data, mode):
 # ------------------------------------------------------------------------------
 @master.command('read-ept-reg')
 @click.pass_obj
-@click.argument('adr', type=int)
-@click.argument('reg', type=int)
+@click.argument('adr', type=toolbox.IntRange(0x0,0xffff))
+@click.argument('reg', type=toolbox.IntRange(0x0,0x78))
 @click.argument('length', type=int)
 @click.argument('mode', type=bool)
 def readeptreg(obj, adr, reg, length, mode):
@@ -281,4 +282,19 @@ def partstatus(obj, watch, period):
 @click.pass_obj
 def configure(obj):
     pass
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@master.command('configure-endpoint-cmd-decoder', short_help='Configure a slot of endpoint command decoder.')
+@click.pass_obj
+@click.argument('addr', type=toolbox.IntRange(0x0,0xffff))
+@click.argument('slot', type=toolbox.IntRange(0x0,0x7))
+@click.argument('cmd', type=toolbox.IntRange(0x0,0xff))
+def configureendpointcmddecoder(obj, addr, slot, cmd):
+    '''
+    Configure endpoint command decoder
+    '''
+
+    lMaster = obj.mMaster
+    lMaster.configure_endpoint_command_decoder(addr,slot,cmd)
 # ------------------------------------------------------------------------------

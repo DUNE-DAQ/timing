@@ -44,7 +44,13 @@ TriggerReceiverNode::get_status(bool print_out) const
   status << format_reg_table(controls, "Trigger rx controls");
 
   std::vector<uhal::ValVector<uint32_t>> counters_container = { counters }; // NOLINT(build/unsigned)
-  status << format_counters_table(counters_container, { "Counters" }, "Trig rx counters");
+
+  std::vector<std::string> counter_labels;
+  for (auto it = g_command_map.begin(); it != g_command_map.end(); ++it)
+  {
+      counter_labels.push_back(it->second);
+  }
+  status << format_counters_table(counters_container, { "Counters" }, "Trig rx counters", counter_labels);
 
   if (print_out)
     TLOG() << status.str();

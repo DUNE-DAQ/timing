@@ -85,6 +85,11 @@ public:
   void enable_periodic_fl_cmd(uint32_t channel, double rate, bool poisson = false) const override; // NOLINT(build/unsigned)
 
   /**
+   * @brief     Configure fake trigger generator
+   */
+  void enable_periodic_fl_cmd(uint32_t command, uint32_t channel, double rate, bool poisson = false) const override; // NOLINT(build/unsigned)
+
+  /**
    * @brief      Get master node pointer
    */
   const MasterNodeInterface* get_master_node_plain() const override { return dynamic_cast<const MasterNodeInterface*>(&uhal::Node::getNode("master")); }
