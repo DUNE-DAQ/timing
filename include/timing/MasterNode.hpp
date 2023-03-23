@@ -147,9 +147,9 @@ public:
   void enable_timestamp_broadcast() const;
 
   /**
-   * @brief    Scan endpoints
+   * @brief    Scan endpoint
    */
-  std::vector<timingfirmware::EndpointCheckResult> scan_endpoints(const std::vector<uint>& endpoints) const override;
+  timingfirmware::EndpointCheckResult scan_endpoint(uint16_t endpoint_address, bool control_sfp) const override;
 
   /**
    * @brief    Configure endpoint command decoder

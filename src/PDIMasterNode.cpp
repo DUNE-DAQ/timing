@@ -264,45 +264,46 @@ PDIMasterNode::get_info(opmonlib::InfoCollector& ic, int level) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-std::vector<timingfirmware::EndpointCheckResult>
-PDIMasterNode::scan_endpoints(const std::vector<uint>& endpoints) const
+timingfirmware::EndpointCheckResult
+PDIMasterNode::scan_endpoint(uint16_t endpoint_address, bool control_sfp) const
 {
-  std::vector<timingfirmware::EndpointCheckResult> results;
+  timingfirmware::EndpointCheckResult result;
   auto global = getNode<PDIMasterGlobalNode>("global");
   auto echo = getNode<EchoMonitorNode>("echo");
 
-  for (auto endpoint_address : endpoints)
-  {
-    timingfirmware::EndpointCheckResult endpoint_result;
-    endpoint_result.address = endpoint_address;
+  timingfirmware::EndpointCheckResult endpoint_result;
+  endpoint_result.address = endpoint_address;
 
+  if (control_sfp)
+  {
     switch_endpoint_sfp(endpoint_address, true);
 
     millisleep(100);
-    
-    try
-    {
-      global.enable_upstream_endpoint();
-    }
-    catch (const timing::EndpointNotReady& e)
-    {
-        switch_endpoint_sfp(endpoint_address, false);
-        results.push_back(endpoint_result);
-        
-        TLOG_DEBUG(9) << "Endpoint at address " << endpoint_address << " looks dead.";
+  }
 
-        continue;
-    }
+  try
+  {
+    global.enable_upstream_endpoint();
+  }
+  catch (const timing::EndpointNotReady& e)
+  {
+    switch_endpoint_sfp(endpoint_address, false);
 
-    endpoint_result.alive = true;
-    endpoint_result.round_trip_time = echo.send_echo_and_measure_delay();
-    TLOG_DEBUG(9) << "Endpoint at address " << endpoint_address << " alive. RTT: " << endpoint_result.round_trip_time;
+    TLOG_DEBUG(9) << "Endpoint at address " << endpoint_address << " looks dead.";
 
+    return endpoint_result;
+  }
 
-    results.push_back(endpoint_result);
+  endpoint_result.alive = true;
+  endpoint_result.round_trip_time = echo.send_echo_and_measure_delay();
+  TLOG_DEBUG(9) << "Endpoint at address " << endpoint_address << " alive. RTT: " << endpoint_result.round_trip_time;
+
+  if (control_sfp)
+  {
     switch_endpoint_sfp(endpoint_address, false);
   }
-  return results;
+
+  return endpoint_result;
 }
 //-----------------------------------------------------------------------------
 } // namespace timing
