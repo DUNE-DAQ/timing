@@ -145,9 +145,9 @@ public:
   void get_info(opmonlib::InfoCollector& ic, int level) const override;
 
   /**
-   * @brief    Scan endpoints
+   * @brief    Scan endpoint
    */
-  std::vector<timingfirmware::EndpointCheckResult> scan_endpoints(const std::vector<uint>& endpoints) const override;
+  timingfirmware::EndpointCheckResult scan_endpoint(uint16_t endpoint_address, bool control_sfp) const override;
 };
 
 } // namespace timing

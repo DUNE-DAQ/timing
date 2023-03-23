@@ -525,72 +525,76 @@ void MasterNode::enable_timestamp_broadcast() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-std::vector<timingfirmware::EndpointCheckResult>
-MasterNode::scan_endpoints(const std::vector<uint>& endpoints) const
+timingfirmware::EndpointCheckResult
+MasterNode::scan_endpoint(uint16_t endpoint_address, bool control_sfp) const
 {
-  std::vector<timingfirmware::EndpointCheckResult> results;
+  timingfirmware::EndpointCheckResult result;
   auto global = getNode<MasterGlobalNode>("global");
   auto echo = getNode<EchoMonitorNode>("echo_mon");
 
-  for (auto endpoint_address : endpoints)
-  {
-    timingfirmware::EndpointCheckResult endpoint_result;
-    endpoint_result.address = endpoint_address;
+  timingfirmware::EndpointCheckResult endpoint_result;
+  endpoint_result.address = endpoint_address;
 
+  // is endpoint sfp switched on?
+  // are any relevant muxes set to correct channel?
+  if (control_sfp)
+  {
     switch_endpoint_sfp(endpoint_address, true);
 
     millisleep(100);
-    
-    try
-    {
-      global.enable_upstream_endpoint();
-    }
-    catch (const timing::EndpointNotReady& e)
-    {
-        switch_endpoint_sfp(endpoint_address, false);
-        results.push_back(endpoint_result);
-        
-        TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << " looks dead.";
+  }
 
-        continue;
-    }
+  try
+  {
+    global.enable_upstream_endpoint();
+  }
+  catch (const timing::EndpointNotReady& e)
+  {
+      switch_endpoint_sfp(endpoint_address, false);
 
-    endpoint_result.alive = true;
-    endpoint_result.round_trip_time = echo.send_echo_and_measure_delay();
-    TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << " alive. RTT: " << endpoint_result.round_trip_time;
+      ers::error(MonitoredEndpointDead(ERS_HERE, endpoint_address));
 
-    auto ept_state = read_endpoint_data(endpoint_address, 0x71, 0x1, 0x1).at(0) & 0xf;
-    TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << " state: " << ept_state;
-    endpoint_result.state = ept_state;
+      return endpoint_result;
+  }
 
-    if (ept_state == 0x6)
-    {
-      TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << ", applying delays of: " << 0x0;
+  endpoint_result.alive = true;
+  endpoint_result.round_trip_time = echo.send_echo_and_measure_delay();
+  TLOG_DEBUG(5) << "Endpoint at address " << endpoint_address << " alive. RTT: " << endpoint_result.round_trip_time;
+
+  auto ept_state = read_endpoint_data(endpoint_address, 0x71, 0x1, 0x1).at(0) & 0xf;
+  TLOG_DEBUG(5) << "Endpoint at address " << endpoint_address << " state: " << ept_state;
+  endpoint_result.state = ept_state;
+
+  if (ept_state == 0x6)
+  {
+    TLOG_DEBUG(5) << "Endpoint at address " << endpoint_address << ", applying delays of: " << 0x0;
       
-      apply_endpoint_delay(endpoint_address, 0x0, 0x0, 0x0, false, false);
+    apply_endpoint_delay(endpoint_address, 0x0, 0x0, 0x0, false, false);
       
-      endpoint_result.applied_delay = 0x0;
+    endpoint_result.applied_delay = 0x0;
 
-      auto ept_state_after_delays = read_endpoint_data(endpoint_address, 0x71, 0x1, 0x1).at(0) & 0xf;
-      TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << ", state after delays apply: " << ept_state_after_delays;
-      endpoint_result.state_after_delay_apply = ept_state_after_delays;
+    auto ept_state_after_delays = read_endpoint_data(endpoint_address, 0x71, 0x1, 0x1).at(0) & 0xf;
+    TLOG_DEBUG(5) << "Endpoint at address " << endpoint_address << ", state after delays apply: " << ept_state_after_delays;
+    endpoint_result.state_after_delay_apply = ept_state_after_delays;
 
-      endpoint_result.round_trip_time_after_delay_apply = echo.send_echo_and_measure_delay();
-      TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << ", RTT after delays apply: " << endpoint_result.round_trip_time_after_delay_apply;
-    }
-    else if (ept_state == 0x7 || ept_state == 0x8)
-    {
-      TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << ", delays not needed";
-    }
-    else
-    {
-      TLOG_DEBUG(0) << "Endpoint at address " << endpoint_address << ", unexpected state"; 
-    }
+    endpoint_result.round_trip_time_after_delay_apply = echo.send_echo_and_measure_delay();
+    TLOG_DEBUG(5) << "Endpoint at address " << endpoint_address << ", RTT after delays apply: " << endpoint_result.round_trip_time_after_delay_apply;
+  }
+  else if (ept_state == 0x7 || ept_state == 0x8)
+  {
+    TLOG_DEBUG(5) << "Endpoint at address " << endpoint_address << ", delays not needed";
+  }
+  else
+  {
+    ers::error(MonitoredEndpointUnexpectedState(ERS_HERE, endpoint_address, ept_state));
+  }
 
-    results.push_back(endpoint_result);
+  if (control_sfp)
+  {
     switch_endpoint_sfp(endpoint_address, false);
   }
-  return results;
+
+  return endpoint_result;
 }
 //-----------------------------------------------------------------------------
 

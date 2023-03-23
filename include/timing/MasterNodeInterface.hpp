@@ -113,9 +113,9 @@ public:
   virtual void disable_periodic_fl_cmd(uint32_t channel) const; // NOLINT(build/unsigned)
 
   /**
-   * @brief    Scan endpoints
+   * @brief    Scan endpoint
    */
-  virtual std::vector<timingfirmware::EndpointCheckResult> scan_endpoints(const std::vector<uint>& endpoints) const = 0;
+  virtual timingfirmware::EndpointCheckResult scan_endpoint(uint16_t endpoint_address, bool control_sfp) const = 0;
 };
 
 } // namespace timing

@@ -311,6 +311,18 @@ ERS_DECLARE_ISSUE(timing,                                                       
                   " Supplied fixed-latency broadcast command channel, 0x" << std::hex <<  channel << " is invalid" , ///< Message
                    ((uint)channel)                                                                           ///< Message parameters
 )
+
+ERS_DECLARE_ISSUE(timing,                                                                              ///< Namespace
+                  MonitoredEndpointDead,                                                               ///< Issue class name
+                  "Monitored endpoint at address 0x" << std::hex << ept_address << " did not respond", ///< Message
+                  ((uint16_t)ept_address)                                                              ///< Message parameters
+)
+
+ERS_DECLARE_ISSUE(timing,                                                                                                         ///< Namespace
+                  MonitoredEndpointUnexpectedState,                                                                               ///< Issue class name
+                  "Monitored endpoint at address 0x" << std::hex << ept_address << " is in an unexpected state: 0x" << ept_state, ///< Message
+                  ((uint16_t)ept_address)((uint8_t)ept_state)                                                                     ///< Message parameters
+)
 } // namespace dunedaq
 
 #endif // TIMING_INCLUDE_TIMING_TIMINGISSUES_HPP_
