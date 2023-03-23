@@ -289,14 +289,14 @@ PDIMasterNode::scan_endpoint(uint16_t endpoint_address, bool control_sfp) const
   {
     switch_endpoint_sfp(endpoint_address, false);
 
-    TLOG_DEBUG(9) << "Endpoint at address " << endpoint_address << " looks dead.";
+    TLOG_DEBUG(5) << "Endpoint at address " << endpoint_address << " looks dead.";
 
     return endpoint_result;
   }
 
   endpoint_result.alive = true;
   endpoint_result.round_trip_time = echo.send_echo_and_measure_delay();
-  TLOG_DEBUG(9) << "Endpoint at address " << endpoint_address << " alive. RTT: " << endpoint_result.round_trip_time;
+  TLOG_DEBUG(5) << "Endpoint at address " << endpoint_address << " alive. RTT: " << endpoint_result.round_trip_time;
 
   if (control_sfp)
   {
