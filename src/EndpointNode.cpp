@@ -109,7 +109,7 @@ EndpointNode::get_status(bool print_out) const
 
   ept_summary.push_back(std::make_pair("Enabled", std::to_string(ept_control.find("ep_en")->second.value())));
   ept_summary.push_back(std::make_pair("Address", std::to_string(ept_control.find("addr")->second.value())));
-
+  ept_summary.push_back(std::make_pair("State", get_endpoint_state_map().at(ept_state.find("ep_stat")->second.value())));
   ept_summary.push_back(std::make_pair("Timestamp (hex)", format_reg_value(tstamp2int(ept_timestamp))));
   ept_summary.push_back(std::make_pair("Timestamp", format_timestamp(ept_timestamp,62500000)));
 

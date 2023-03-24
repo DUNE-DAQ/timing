@@ -374,5 +374,5 @@ def printCounters( aTopNode, aSubNodes, aNumCtrs=0x10, aTitle='Cmd', aLegend=def
 # ------------------------------------------------------------------------------
 def fmtEpState(aState):
     aState = aState.value()
-    return '{} ({})'.format(defs.kEpStates[aState], hex(aState)) if aState in defs.kEpStates else hex(aState)
+    return '{} ({})'.format(defs.kPDIEpStates[aState], hex(aState)) if aState in defs.kPDIEpStates else hex(aState)
 # ------------------------------------------------------------------------------

@@ -7,6 +7,7 @@
  */
 
 #include "timing/PDIHSIEndpointNode.hpp"
+#include "timing/PDIEndpointNode.hpp"
 
 #include "timing/definitions.hpp"
 #include "timing/toolbox.hpp"
@@ -74,7 +75,7 @@ PDIHSIEndpointNode::get_status(bool print_out) const
   auto ept_state = read_sub_nodes(getNode("csr.stat"), false);
   getClient().dispatch();
 
-  ept_summary.push_back(std::make_pair("State", g_endpoint_state_map.at(ept_state.find("ep_stat")->second.value())));
+  ept_summary.push_back(std::make_pair("State", PDIEndpointNode::get_endpoint_state_map().at(ept_state.find("ep_stat")->second.value())));
   ept_summary.push_back(std::make_pair("Partition", std::to_string(ept_control.find("tgrp")->second.value())));
   ept_summary.push_back(std::make_pair("Address", std::to_string(ept_control.find("addr")->second.value())));
 

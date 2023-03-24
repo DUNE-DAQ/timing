@@ -7,6 +7,8 @@
  */
 
 #include "timing/definitions.hpp"
+#include "timing/EndpointNode.hpp"
+#include "timing/PDIEndpointNode.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -107,7 +109,8 @@ register_definitions(py::module& m)
 	m.attr("kClockConfigMap") = timing::g_clock_config_map;
 	m.attr("kCommandNames") = timing::g_command_map;
 	m.attr("kCommandIDs") = swap_commands_map(timing::g_command_map);
-	m.attr("kEpStates") = timing::g_endpoint_state_map;
+	m.attr("kEpStates") = EndpointNode::get_endpoint_state_map();
+    m.attr("kPDIEpStates") = PDIEndpointNode::get_endpoint_state_map();
 	m.attr("kLibrarySupportedBoards") = timing::g_library_supported_boards;
     m.attr("kLibrarySupportedDesigns") = timing::g_library_supported_designs;
 	m.attr("kEventSize") = timing::g_event_size;
