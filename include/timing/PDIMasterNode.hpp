@@ -148,6 +148,25 @@ public:
    * @brief    Scan endpoint
    */
   timingfirmware::EndpointCheckResult scan_endpoint(uint16_t endpoint_address, bool control_sfp) const override;
+
+  /**
+   * @brief    Required major firmware version
+   */
+  uint32_t get_required_major_firmware_version() const override { return required_major_firmware_version; }
+
+  /**
+   * @brief    Required minor firmware version
+   */
+  uint32_t get_required_minor_firmware_version() const override { return required_minor_firmware_version; }
+
+  /**
+   * @brief    Required patch firmware version
+   */
+  uint32_t get_required_patch_firmware_version() const override { return required_patch_firmware_version; }
+
+  const static uint32_t required_major_firmware_version = 6;
+  const static uint32_t required_minor_firmware_version = 4;
+  const static uint32_t required_patch_firmware_version = 2;
 };
 
 } // namespace timing

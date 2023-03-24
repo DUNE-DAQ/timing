@@ -121,16 +121,16 @@ MasterDesign::validate_firmware_version() const
 {
   auto firmware_version = read_firmware_version();
 
-  int major_firmware_version = (firmware_version >> 16) & 0xff;
-  int minor_firmware_version = (firmware_version >> 8) & 0xff;
-  int patch_firmware_version = (firmware_version >> 0) & 0xff;
+  uint32_t major_firmware_version = (firmware_version >> 16) & 0xff;
+  uint32_t minor_firmware_version = (firmware_version >> 8) & 0xff;
+  uint32_t patch_firmware_version = (firmware_version >> 0) & 0xff;
 
-  if (major_firmware_version != g_required_major_master_firmware_version)
-    ers::error(IncompatibleMajorMasterFirmwareVersion(ERS_HERE, major_firmware_version, g_required_major_master_firmware_version));
-  if (minor_firmware_version != g_required_minor_master_firmware_version)
-    ers::warning(IncompatibleMinorMasterFirmwareVersion(ERS_HERE, minor_firmware_version, g_required_minor_master_firmware_version));
-  if (patch_firmware_version != g_required_patch_master_firmware_version)
-    ers::warning(IncompatiblePatchMasterFirmwareVersion(ERS_HERE, patch_firmware_version, g_required_patch_master_firmware_version));
+  if (major_firmware_version != get_master_node_plain()->get_required_major_firmware_version())
+    ers::error(IncompatibleMajorMasterFirmwareVersion(ERS_HERE, major_firmware_version, get_master_node_plain()->get_required_major_firmware_version()));
+  if (minor_firmware_version != get_master_node_plain()->get_required_minor_firmware_version())
+    ers::warning(IncompatibleMinorMasterFirmwareVersion(ERS_HERE, minor_firmware_version, get_master_node_plain()->get_required_minor_firmware_version()));
+  if (patch_firmware_version != get_master_node_plain()->get_required_patch_firmware_version())
+    ers::warning(IncompatiblePatchMasterFirmwareVersion(ERS_HERE, patch_firmware_version, get_master_node_plain()->get_required_patch_firmware_version()));
 }
 //-----------------------------------------------------------------------------
 

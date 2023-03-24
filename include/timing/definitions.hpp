@@ -107,14 +107,6 @@ const std::vector<BoardType> g_library_supported_boards = {
 const uint32_t g_event_size = 6;             // NOLINT(build/unsigned)
 const uint32_t g_hsi_event_size = 5;         // NOLINT(build/unsigned)
 
-const int g_required_major_master_firmware_version = 6;
-const int g_required_minor_master_firmware_version = 4;
-const int g_required_patch_master_firmware_version = 0;
-
-const int g_required_major_endpoint_firmware_version = 6;
-const int g_required_minor_endpoint_firmware_version = 4;
-const int g_required_patch_endpoint_firmware_version = 0;
-
 const std::map<BoardType, std::string> g_board_type_map = { { kBoardFMC, "fmc" },
                                                             { kBoardSim, "sim" },
                                                             { kBoardPC059, "pc059" },

@@ -116,6 +116,22 @@ public:
    * @brief    Scan endpoint
    */
   virtual timingfirmware::EndpointCheckResult scan_endpoint(uint16_t endpoint_address, bool control_sfp) const = 0;
+
+  /**
+   * @brief    Required major firmware version
+   */
+  virtual uint32_t get_required_major_firmware_version() const = 0;
+
+  /**
+   * @brief    Required minor firmware version
+   */
+  virtual uint32_t get_required_minor_firmware_version() const = 0;
+
+  /**
+   * @brief    Required patch firmware version
+   */
+  virtual uint32_t get_required_patch_firmware_version() const = 0;
+
 };
 
 } // namespace timing
