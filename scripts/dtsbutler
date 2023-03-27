@@ -18,12 +18,10 @@ import os
 import timing
 import timing.common.definitions as defs
 import timing.cli.toolbox as toolbox
-import timing.cli.system as system
 import timing.cli.io as io
 import timing.cli.master as master
 import timing.cli.align as align
 import timing.cli.endpoint as endpoint
-import timing.cli.crt as crt
 import timing.cli.debug as debug
 import timing.cli.hsi as hsi
 
@@ -38,7 +36,7 @@ from os.path import join, expandvars
 #    }
 
 
-class PDTContext: pass
+class DTSContext: pass
 
 
 DEFAULT_MAP = {'connections': '${TIMING_SHARE}/config/etc/connections.xml'}
@@ -90,17 +88,14 @@ def list(obj):
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
-    cli.add_command(system.overlord)
-    cli.add_command(system.vst)
     cli.add_command(io.io)
     cli.add_command(master.master)
     cli.add_command(endpoint.endpoint)
-    cli.add_command(crt.crt)
     cli.add_command(debug.debug)
     cli.add_command(hsi.hsi)
 
     try:
-        cli(obj=PDTContext())
+        cli(obj=DTSContext())
     except Exception as e:
         exc_type, exc_obj, exc_tb = sys.exc_info()
         lFirstFrame = traceback.extract_tb(exc_tb)[-1]
