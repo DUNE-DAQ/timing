@@ -25,7 +25,7 @@ from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardM
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord
 from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap
-from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns, kMasterFWMajorRequired, kMasterFWMinorRequired, kMasterFWPatchRequired
+from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
 
 from timing.common.toolbox import format_firmware_version
 # ------------------------------------------------------------------------------
@@ -180,7 +180,7 @@ def faketrigclear(obj, chan):
 @master.command('write-ept-reg')
 @click.pass_obj
 @click.argument('adr', type=toolbox.IntRange(0x0,0xffff))
-@click.argument('reg', type=toolbox.IntRange(0x0,0x78))
+@click.argument('reg', type=toolbox.IntRange(0x0,0x7b))
 @click.argument('data', callback=toolbox.split_ints)
 @click.argument('mode', type=bool)
 def writeeptreg(obj, adr, reg, data, mode):
@@ -196,7 +196,7 @@ def writeeptreg(obj, adr, reg, data, mode):
 @master.command('read-ept-reg')
 @click.pass_obj
 @click.argument('adr', type=toolbox.IntRange(0x0,0xffff))
-@click.argument('reg', type=toolbox.IntRange(0x0,0x78))
+@click.argument('reg', type=toolbox.IntRange(0x0,0x7b))
 @click.argument('length', type=int)
 @click.argument('mode', type=bool)
 def readeptreg(obj, adr, reg, length, mode):

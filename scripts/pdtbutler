@@ -18,13 +18,13 @@ import os
 import timing
 import timing.common.definitions as defs
 import timing.cli.pdt.toolbox as toolbox
-import timing.cli.system as system
+import timing.cli.pdt.system as system
 import timing.cli.io as io
 import timing.cli.pdt.master as master
 import timing.cli.pdt.exttrig as exttrig
 import timing.cli.pdt.align as align
 import timing.cli.pdt.endpoint as endpoint
-import timing.cli.crt as crt
+import timing.cli.pdt.crt as crt
 import timing.cli.debug as debug
 import timing.cli.hsi as hsi
 
@@ -42,7 +42,7 @@ from os.path import join, expandvars
 class PDTContext: pass
 
 
-DEFAULT_MAP = {'connections': '${TIMING_SHARE}/config/etc/connections.xml'}
+DEFAULT_MAP = {'connections': '${TIMING_SHARE}/config/etc/connections_v6xx.xml'}
 CONTEXT_SETTINGS = {
     'help_option_names': ['-h', '--help'],
     'default_map': DEFAULT_MAP,

@@ -107,14 +107,6 @@ const std::vector<BoardType> g_library_supported_boards = {
 const uint32_t g_event_size = 6;             // NOLINT(build/unsigned)
 const uint32_t g_hsi_event_size = 5;         // NOLINT(build/unsigned)
 
-const int g_required_major_master_firmware_version = 6;
-const int g_required_minor_master_firmware_version = 4;
-const int g_required_patch_master_firmware_version = 0;
-
-const int g_required_major_endpoint_firmware_version = 6;
-const int g_required_minor_endpoint_firmware_version = 4;
-const int g_required_patch_endpoint_firmware_version = 0;
-
 const std::map<BoardType, std::string> g_board_type_map = { { kBoardFMC, "fmc" },
                                                             { kBoardSim, "sim" },
                                                             { kBoardPC059, "pc059" },
@@ -332,24 +324,6 @@ const std::map<FixedLengthCommandType, std::string> g_command_map = {
 
 const uint32_t g_command_number = g_command_map.size(); // NOLINT(build/unsigned)
 
-// NOLINTNEXTLINE(build/unsigned)
-const std::map<uint32_t, std::string> g_endpoint_state_map = {
-  { 0x0, "Standing by (0x0)" },                              // 0b0000 when W_RST, -- Starting state after reset
-  { 0x1, "Waiting for SFP signal (0x1)" },                   // 0b0001 when W_LINK, -- Waiting for SFP LOS to go low
-  { 0x2, "Waiting for good frequency check (0x2)" },         // 0b0010 when W_FREQ, -- Waiting for good frequency check
-  { 0x3, "Waiting for phase adjustment to complete (0x3)" }, // 0b0011 when W_ADJUST, -- Waiting for phase adjustment to
-                                                             // complete
-  { 0x4, "Waiting for comma alignment (0x4)" }, // 0b0100 when W_ALIGN, -- Waiting for comma alignment, stable 62.5 (50)
-                                                // MHz phase
-  { 0x5, "Waiting for 8b10 decoder good packet (0x5)" }, // 0b0101 when W_LOCK, -- Waiting for 8b10 decoder good packet
-  { 0x6, "Waiting for phase adjustment command (0x6)" }, // 0b0110 when W_PHASE, -- Waiting for phase adjustment command
-  { 0x7, "Waiting for time stamp initialisation (0x7)" }, // 0b0111 when W_RDY, -- Waiting for time stamp initialisation
-  { 0x8, "Ready (0x8)" },                                 // 0b1000 when RUN, -- Good to go
-  { 0xc, "Error in Rx (0xc)" },                           // 0b1100 when ERR_R, -- Error in rx
-  { 0xd, "Error in time stamp check (0xd)" },             // 0b1101 when ERR_T; -- Error in time stamp check
-  { 0xe, "Error in physical layer after lock (0xe)" },    // 0b1110 when ERR_P; -- Physical layer error after lock
-};
-
 struct FakeTriggerConfig
 {
   double requested_rate;
@@ -419,23 +393,6 @@ struct ActiveEndpointConfig
     , cdelay(coarse_delayay)
     , fdelay(fine_delayay)
     , pdelay(0)
-  {}
-};
-
-struct EndpointRTTResult
-{
-  std::string id;
-  uint32_t adr; // NOLINT(build/unsigned)
-  int32_t fanout;
-  uint32_t mux; // NOLINT(build/unsigned)
-  int32_t measuredRTT;
-
-  EndpointRTTResult(ActiveEndpointConfig ept_config, uint32_t aMeasuredRTT) // NOLINT(build/unsigned)
-    : id(ept_config.id)
-    , adr(ept_config.adr)
-    , fanout(ept_config.fanout)
-    , mux(ept_config.mux)
-    , measuredRTT(aMeasuredRTT)
   {}
 };
 

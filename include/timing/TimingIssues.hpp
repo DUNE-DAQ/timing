@@ -246,6 +246,12 @@ ERS_DECLARE_ISSUE(timing,                                                       
                   ((std::string)ept_description)((uint32_t)ept_state)                  ///< Message parameters
 )
 
+ERS_DECLARE_ISSUE(timing,                                                                 ///< Namespace
+                  ReceiverNotReady,                                                       ///< Issue class name
+                  " Receiver not ready. CDR locked: " << cdr_locked << ", Rx ready: " << rx_ready, ///< Message
+                  ((uint32_t)cdr_locked)((uint32_t)rx_ready)                                    ///< Message parameters // NOLINT
+)
+
 ERS_DECLARE_ISSUE(timing, HSIBufferIssue, "HSI buffer in state: " << buffer_state, ((std::string)buffer_state))
 
 ERS_DECLARE_ISSUE(timing,                                                                       ///< Namespace

@@ -156,6 +156,24 @@ public:
    */
   void configure_endpoint_command_decoder(uint16_t endpoint_address, uint8_t slot, uint8_t command) const;
 
+  /**
+   * @brief    Required major firmware version
+   */
+  uint32_t get_required_major_firmware_version() const override { return required_major_firmware_version; }
+
+  /**
+   * @brief    Required minor firmware version
+   */
+  uint32_t get_required_minor_firmware_version() const override { return required_minor_firmware_version; }
+
+  /**
+   * @brief    Required patch firmware version
+   */
+  uint32_t get_required_patch_firmware_version() const override { return required_patch_firmware_version; }
+
+  const static uint32_t required_major_firmware_version = 7;
+  const static uint32_t required_minor_firmware_version = 0;
+  const static uint32_t required_patch_firmware_version = 0;
 private:
   /**
   * @brief     Get the status tables.

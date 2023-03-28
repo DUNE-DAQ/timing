@@ -3,7 +3,7 @@ import sys
 
 import collections
 
-from .. import toolbox
+from . import toolbox
 import timing.common.definitions as defs
 from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
 from timing.common.toolbox import format_firmware_version

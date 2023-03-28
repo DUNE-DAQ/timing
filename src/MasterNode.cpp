@@ -179,7 +179,7 @@ MasterNode::measure_endpoint_rtt(uint32_t address, bool control_sfp) const // NO
     {
       global.enable_upstream_endpoint();
     }
-    catch (const timing::EndpointNotReady& e)
+    catch (const timing::ReceiverNotReady& e)
     {
       if (control_sfp) {
         switch_endpoint_sfp(address, false);
@@ -225,7 +225,7 @@ MasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned
     {
       global.enable_upstream_endpoint();
     }
-    catch (const timing::EndpointNotReady& e)
+    catch (const timing::ReceiverNotReady& e)
     {
       if (control_sfp) {
         switch_endpoint_sfp(address, false);
@@ -269,7 +269,7 @@ MasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned
     {
       global.enable_upstream_endpoint();
     }
-    catch (const timing::EndpointNotReady& e)
+    catch (const timing::ReceiverNotReady& e)
     {
       if (control_sfp)
       {
@@ -548,7 +548,7 @@ MasterNode::scan_endpoint(uint16_t endpoint_address, bool control_sfp) const
   {
     global.enable_upstream_endpoint();
   }
-  catch (const timing::EndpointNotReady& e)
+  catch (const timing::ReceiverNotReady& e)
   {
       switch_endpoint_sfp(endpoint_address, false);
 

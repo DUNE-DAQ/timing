@@ -82,18 +82,19 @@ EndpointDesign::read_firmware_version() const
 void
 EndpointDesign::validate_firmware_version() const
 {
-  auto firmware_version = read_firmware_version();
-  
-  int major_firmware_version = (firmware_version >> 16) & 0xff;
-  int minor_firmware_version = (firmware_version >> 8) & 0xff;
-  int patch_firmware_version = (firmware_version >> 0) & 0xff;
-
-  if (major_firmware_version != g_required_major_endpoint_firmware_version)
-    ers::error(IncompatibleMajorEndpointFirmwareVersion(ERS_HERE, major_firmware_version, g_required_major_endpoint_firmware_version));
-  if (minor_firmware_version != g_required_minor_endpoint_firmware_version)
-    ers::warning(IncompatibleMinorEndpointFirmwareVersion(ERS_HERE, minor_firmware_version, g_required_minor_endpoint_firmware_version));
-  if (patch_firmware_version != g_required_patch_endpoint_firmware_version)
-    ers::warning(IncompatiblePatchEndpointFirmwareVersion(ERS_HERE, patch_firmware_version, g_required_patch_endpoint_firmware_version));
+// TODO
+//  auto firmware_version = read_firmware_version();
+//  
+//  int major_firmware_version = (firmware_version >> 16) & 0xff;
+//  int minor_firmware_version = (firmware_version >> 8) & 0xff;
+//  int patch_firmware_version = (firmware_version >> 0) & 0xff;
+//
+//  if (major_firmware_version != g_required_major_endpoint_firmware_version)
+//    ers::error(IncompatibleMajorEndpointFirmwareVersion(ERS_HERE, major_firmware_version, g_required_major_endpoint_firmware_version));
+//  if (minor_firmware_version != g_required_minor_endpoint_firmware_version)
+//    ers::warning(IncompatibleMinorEndpointFirmwareVersion(ERS_HERE, minor_firmware_version, g_required_minor_endpoint_firmware_version));
+//  if (patch_firmware_version != g_required_patch_endpoint_firmware_version)
+//    ers::warning(IncompatiblePatchEndpointFirmwareVersion(ERS_HERE, patch_firmware_version, g_required_patch_endpoint_firmware_version));
 }
 //-----------------------------------------------------------------------------
 } // namespace dunedaq::timing  

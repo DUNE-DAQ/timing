@@ -91,7 +91,7 @@ PDIEndpointNode::get_status(bool print_out) const
   auto ept_counters = getNode("ctrs").readBlock(g_command_number);
   getClient().dispatch();
 
-  ept_summary.push_back(std::make_pair("State", g_endpoint_state_map.at(ept_state.find("ep_stat")->second.value())));
+  ept_summary.push_back(std::make_pair("State", get_endpoint_state_map().at(ept_state.find("ep_stat")->second.value())));
   ept_summary.push_back(std::make_pair("Partition", std::to_string(ept_control.find("tgrp")->second.value())));
   ept_summary.push_back(std::make_pair("Address", std::to_string(ept_control.find("addr")->second.value())));
 

@@ -69,7 +69,7 @@ MasterGlobalNode::enable_upstream_endpoint(uint32_t timeout) const // NOLINT(bui
 
     if (rx_ready.value() && cdr_ready.value())
     {
-      TLOG_DEBUG(4) << "Master endpoint and CDR ready!";
+      TLOG_DEBUG(4) << "Master CDR and rx block ready!";
       break;
     }
 
@@ -77,7 +77,7 @@ MasterGlobalNode::enable_upstream_endpoint(uint32_t timeout) const // NOLINT(bui
     auto ms_since_start = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
 
     if (ms_since_start.count() > timeout)
-      throw EndpointNotReady(ERS_HERE, "Master upstream", rx_ready.value());
+      throw ReceiverNotReady(ERS_HERE, cdr_ready.value(), rx_ready.value());
 
     std::this_thread::sleep_for(std::chrono::microseconds(10));
   }
