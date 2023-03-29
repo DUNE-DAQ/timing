@@ -562,7 +562,7 @@ MasterNode::scan_endpoint(uint16_t endpoint_address, bool control_sfp) const
   TLOG_DEBUG(5) << "Endpoint at address " << endpoint_address << " alive. RTT: " << endpoint_result.round_trip_time;
 
   auto ept_state = read_endpoint_data(endpoint_address, 0x71, 0x1, 0x1).at(0) & 0xf;
-  TLOG_DEBUG(5) << "Endpoint at address " << endpoint_address << " state: " << ept_state;
+  TLOG_DEBUG(5) << "Endpoint at address " << endpoint_address << " state: 0x" << std::hex << ept_state;
   endpoint_result.state = ept_state;
 
   if (ept_state == 0x6)
