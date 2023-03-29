@@ -327,7 +327,7 @@ ERS_DECLARE_ISSUE(timing,                                                       
 ERS_DECLARE_ISSUE(timing,                                                                                                         ///< Namespace
                   MonitoredEndpointUnexpectedState,                                                                               ///< Issue class name
                   "Monitored endpoint at address 0x" << std::hex << ept_address << " is in an unexpected state: 0x" << ept_state, ///< Message
-                  ((uint16_t)ept_address)((uint8_t)ept_state)                                                                     ///< Message parameters
+                  ((uint16_t)ept_address)((uint32_t)ept_state)                                                                    ///< Message parameters
 )
 } // namespace dunedaq
 
