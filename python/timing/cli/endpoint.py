@@ -72,7 +72,7 @@ def freq(obj):
 # ------------------------------------------------------------------------------
 @endpoint.command('enable')
 @click.argument('action', default='on', type=click.Choice(['on', 'off', 'reset']))
-@click.option('--address', '-a', type=toolbox.IntRange(0x0,0x100), help='Address', default=0)
+@click.option('--address', '-a', type=toolbox.IntRange(0x0,0xffff), help='Address', default=0)
 @click.pass_obj
 @click.pass_context
 def enable(ctx, obj, action, address):
