@@ -329,6 +329,12 @@ ERS_DECLARE_ISSUE(timing,                                                       
                   "Monitored endpoint at address 0x" << std::hex << ept_address << " is in an unexpected state: 0x" << ept_state, ///< Message
                   ((uint16_t)ept_address)((uint32_t)ept_state)                                                                    ///< Message parameters
 )
+
+ERS_DECLARE_ISSUE(timing,                                               //< Namespace
+                  EndpointBroadcastMessageCountersNotReady,             ///< Issue class name
+                  "Endpoint broadcast message counters are not ready!", ///< Message
+                  ERS_EMPTY                                             ///< Message parameters
+)
 } // namespace dunedaq
 
 #endif // TIMING_INCLUDE_TIMING_TIMINGISSUES_HPP_
