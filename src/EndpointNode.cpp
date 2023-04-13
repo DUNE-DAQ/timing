@@ -63,8 +63,7 @@ EndpointNode::enable(uint32_t address, uint32_t /*partition*/) const // NOLINT(b
   }
 
   if (!counters_ready) {
-    TLOG() << "counters failed to clear";
-    // TODO throw something
+    ers::warning(EndpointBroadcastMessageCountersNotReady(ERS_HERE));
   }
 }
 //-----------------------------------------------------------------------------
@@ -85,6 +84,10 @@ EndpointNode::reset(uint32_t address, uint32_t /*partition*/) const // NOLINT(bu
 {
 
   getNode("csr.ctrl.ep_en").write(0x0);
+  getNode("csr.ctrl.ctr_rst").write(0x1);
+  getNode("csr.ctrl.ctr_rst").write(0x0);
+  getClient().dispatch();
+
   //getNode("csr.ctrl.buf_en").write(0x0);
 
   enable(address);
