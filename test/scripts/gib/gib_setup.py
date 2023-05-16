@@ -185,7 +185,8 @@ def config_pll(hw):
   echo("PLL version : "+style(hex(lSIVersion), fg='blue'))
   
   # upload a pll config file
-  lClockConfigPath = "SI5395Cfg/GIBDBG03-Registers.txt" # 312.5MHz all output enabled
+  # lClockConfigPath = "SI5395Cfg/GIBDBG03-Registers.txt" # 312.5MHz all output enabled
+  lClockConfigPath = "SI5395Cfg/GIB_Debug_01.txt" # 250MHz all output enabled
   
   lSIChip.configure(lClockConfigPath)
   echo("PLL configuration id: {}".format(style(lSIChip.read_config_id(), fg='green')))

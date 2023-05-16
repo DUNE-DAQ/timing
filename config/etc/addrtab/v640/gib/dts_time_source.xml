@@ -1,19 +1,19 @@
 <node id="dts_time_source" description="DTS Timestamp generator" fwinfo="endpoint" class="TimestampGeneratorNode">
-		<node id="csr" address="0x0" fwinfo="endpoint;width=2">
-		    <node id="ctrl" address="0x0">
-		        <node id="enable" mask="0x1"/>
-		        <node id="ts_source" mask="0x2"/>
-		        <node id="soft_load" mask="0x4"/>
-		        <node id="force_strobe" mask="0x8"/>
-		        <node id="clear_sid_ctr" mask="0x10"/>
-		    </node>
-		    <node id="stat" address="0x1">
-		        <node id="enable" mask="0x1"/>
-		        <node id="ts_source" mask="0x2"/>
-		        <node id="sid_error" mask="0x4"/>
-		        <node id="sid_strobe" mask="0x8"/>
-		    </node>
-		</node>
+	<node id="csr" address="0x0" fwinfo="endpoint;width=2">
+	    <node id="ctrl" address="0x0">
+	        <node id="enable" mask="0x1"/>
+	        <node id="ts_source" mask="0x2"/>
+	        <node id="soft_load" mask="0x4"/>
+	        <node id="force_strobe" mask="0x8"/>
+	        <node id="clear_sid_ctr" mask="0x10"/>
+	    </node>
+	    <node id="stat" address="0x1">
+	        <node id="enable" mask="0x1"/>
+	        <node id="ts_source" mask="0x2"/>
+	        <node id="sid_error" mask="0x4"/>
+	        <node id="sid_strobe" mask="0x8"/>
+	    </node>
+	</node>
       <node id="sid_lo" address="0x4" fwinfo="endpoint;width=1">
         <node id="sid_ctr_lsw" address="0x1" mask="0xffffffff"/>
       </node>

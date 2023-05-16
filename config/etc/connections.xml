@@ -17,7 +17,7 @@
 
   <connection id="PROD_MASTER_VDC"   uri="ipbusudp-2.0://10.73.137.84:50001"   address_table="file://${TIMING_SHARE}/config/etc/addrtab/v642/boreas_tlu/top_tlu.xml" />
   <connection id="PROD_MASTER_VDC_CH" uri="chtcp-2.0://np04-srv-012.cern.ch:10203?target=10.73.137.84:50001"   address_table="file://${TIMING_SHARE}/config/etc/addrtab/v642/boreas_tlu/top_tlu.xml" />
-  <connection id="GIB_PRIMARY"       uri="ipbusudp-2.0://192.168.200.16:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v640/gib/top.xml" />
+  <connection id="GIB_PRIMARY"       uri="ipbusudp-2.0://192.168.200.26:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v640/gib/top.xml" />
   
   <connection id="PROD_FANOUT_0"     uri="ipbusudp-2.0://192.168.200.65:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v642/fanout_pc059/top.xml" />
   <connection id="PROD_FANOUT_1"     uri="ipbusudp-2.0://192.168.200.66:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v642/fanout_pc059/top.xml" />
