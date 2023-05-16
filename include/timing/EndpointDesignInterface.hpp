@@ -62,28 +62,6 @@ public:
   }
 };
 
-/**
- * @brief      Base class for plain timing endpoint design nodes.
- */
-class PlainEndpointDesignInterface : virtual public EndpointDesignInterface
-{
-
-public:
-  explicit PlainEndpointDesignInterface(const uhal::Node& node)
-    : EndpointDesignInterface(node) {}
-  virtual ~PlainEndpointDesignInterface() {}
-
-  /**
-   * @brief      Return the timing endpoint node.
-   *
-   * @return     { description_of_the_return_value }
-   */
-  virtual const EndpointNode& get_endpoint_node(uint32_t ept_id) const // NOLINT(build/unsigned)
-  {
-    return dynamic_cast<const EndpointNode&>(*get_endpoint_node_plain(ept_id));
-  }
-};
-
 } // namespace timing
 } // namespace dunedaq
 

@@ -20,7 +20,7 @@ UHAL_REGISTER_DERIVED_NODE(PDIMasterNode)
 
 //-----------------------------------------------------------------------------
 PDIMasterNode::PDIMasterNode(const uhal::Node& node)
-  : MasterNode(node)
+  : MasterNodeInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
@@ -35,10 +35,43 @@ PDIMasterNode::get_status(bool print_out) const
   std::stringstream status;
   auto raw_timestamp = getNode<TimestampGeneratorNode>("tstamp").read_raw_timestamp();
   status << "Timestamp: 0x" << std::hex << tstamp2int(raw_timestamp) << std::endl << std::endl;
-  status << getNode<FLCmdGeneratorNode>("scmd_gen").get_cmd_counters_table();
+  status << getNode<PDIFLCmdGeneratorNode>("scmd_gen").get_cmd_counters_table();
   if (print_out)
     TLOG() << status.str();
   return status.str();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+uint64_t // NOLINT(build/unsigned)
+PDIMasterNode::read_timestamp() const
+{
+  return getNode<TimestampGeneratorNode>("tstamp").read_timestamp();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+PDIMasterNode::set_timestamp(uint64_t timestamp) const // NOLINT(build/unsigned)
+{
+  getNode<TimestampGeneratorNode>("tstamp").set_timestamp(timestamp);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+PDIMasterNode::sync_timestamp(uint32_t clock_frequency_hz) const // NOLINT(build/unsigned)
+{
+  const uint64_t old_timestamp = read_timestamp(); // NOLINT(build/unsigned)
+  TLOG() << "Reading old timestamp: " << format_reg_value(old_timestamp) << ", " << format_timestamp(old_timestamp, clock_frequency_hz);
+
+  const uint64_t now_timestamp = get_seconds_since_epoch() * clock_frequency_hz; // NOLINT(build/unsigned)
+  TLOG() << "Setting new timestamp: " << format_reg_value(now_timestamp) << ", " << format_timestamp(now_timestamp, clock_frequency_hz);
+
+  set_timestamp(now_timestamp);
+
+  const uint64_t new_timestamp = read_timestamp(); // NOLINT(build/unsigned)
+  TLOG() << "Reading new timestamp: " << format_reg_value(new_timestamp) << ", " << format_timestamp(new_timestamp, clock_frequency_hz);
 }
 //-----------------------------------------------------------------------------
 
@@ -59,6 +92,28 @@ PDIMasterNode::get_status_with_date(uint32_t clock_frequency_hz, bool print_out)
 
 //-----------------------------------------------------------------------------
 void
+PDIMasterNode::send_fl_cmd(FixedLengthCommandType command,
+                           uint32_t channel,                  // NOLINT(build/unsigned)
+                           uint32_t number_of_commands) const // NOLINT(build/unsigned)
+{
+  for (uint32_t i = 0; i < number_of_commands; i++) { // NOLINT(build/unsigned)
+    getNode<PDIFLCmdGeneratorNode>("scmd_gen").send_fl_cmd(command, channel, getNode<TimestampGeneratorNode>("tstamp"));
+  }
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+PDIMasterNode::send_fl_cmd(uint32_t command,
+                           uint32_t channel,                  // NOLINT(build/unsigned)
+                           uint32_t number_of_commands) const // NOLINT(build/unsigned)
+{
+  send_fl_cmd(static_cast<FixedLengthCommandType>(command), channel, number_of_commands);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
 PDIMasterNode::switch_endpoint_sfp(uint32_t address, bool turn_on) const // NOLINT(build/unsigned)
 {
   auto vl_cmd_node = getNode<VLCmdGeneratorNode>("acmd");
@@ -72,7 +127,7 @@ PDIMasterNode::switch_endpoint_sfp(uint32_t address, bool turn_on) const // NOLI
 void
 PDIMasterNode::enable_upstream_endpoint() const
 {
-  auto global = getNode<GlobalNode>("global");
+  auto global = getNode<PDIMasterGlobalNode>("global");
   global.enable_upstream_endpoint();
 }
 //-----------------------------------------------------------------------------
@@ -83,7 +138,7 @@ PDIMasterNode::measure_endpoint_rtt(uint32_t address, bool control_sfp) const //
 {
 
   auto vl_cmd_node = getNode<VLCmdGeneratorNode>("acmd");
-  auto global = getNode<GlobalNode>("global");
+  auto global = getNode<PDIMasterGlobalNode>("global");
   auto echo = getNode<EchoMonitorNode>("echo");
 
   if (control_sfp)
@@ -128,7 +183,7 @@ PDIMasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsig
 {
 
   auto vl_cmd_node = getNode<VLCmdGeneratorNode>("acmd");
-  auto global = getNode<GlobalNode>("global");
+  auto global = getNode<PDIMasterGlobalNode>("global");
   auto echo = getNode<EchoMonitorNode>("echo");
   
   if (measure_rtt) {
@@ -146,60 +201,13 @@ PDIMasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsig
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-PDIMasterNode::send_fl_cmd(FixedLengthCommandType command,
-                           uint32_t channel,                  // NOLINT(build/unsigned)
-                           uint32_t number_of_commands) const // NOLINT(build/unsigned)
+const PartitionNode&
+PDIMasterNode::get_partition_node(uint32_t partition_id) const // NOLINT(build/unsigned)
 {
-  for (uint32_t i = 0; i < number_of_commands; i++) { // NOLINT(build/unsigned)
-    getNode<FLCmdGeneratorNode>("scmd_gen").send_fl_cmd(command, channel, getNode<TimestampGeneratorNode>("tstamp"));
-  }
+  const std::string node_name = "partition" + std::to_string(partition_id);
+  return getNode<PartitionNode>(node_name);
 }
 //-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
-PDIMasterNode::enable_fake_trigger(uint32_t channel, double rate, bool poisson, uint32_t clock_frequency_hz) const // NOLINT(build/unsigned)
-{
-
-  // Configures the internal command generator to produce triggers at a defined frequency.
-  // Rate =  (clock_frequency_hz / 2^(d+8)) / p where n in [0,15] and p in [1,256]
-
-  // DIVIDER (int): Frequency divider.
-
-  // The division from clock_frequency_hz to the desired rate is done in three steps:
-  // a) A pre-division by 256
-  // b) Division by a power of two set by n = 2 ^ rate_div_d (ranging from 2^0 -> 2^15)
-  // c) 1-in-n prescaling set by n = rate_div_p
-
-  FakeTriggerConfig fake_trigger_config(rate, clock_frequency_hz);
-
-  fake_trigger_config.print();
-  std::stringstream trig_stream;
-  trig_stream << "> Trigger rate for FakeTrig" << channel << " (" << std::showbase << std::hex << 0x8 + channel
-              << ") set to " << std::setprecision(3) << std::scientific << fake_trigger_config.actual_rate << " Hz";
-  TLOG() << trig_stream.str();
-
-  std::stringstream trigger_mode_stream;
-  trigger_mode_stream << "> Trigger mode: ";
-
-  if (poisson) {
-    trigger_mode_stream << "poisson";
-  } else {
-    trigger_mode_stream << "periodic";
-  }
-  TLOG() << trigger_mode_stream.str();
-  getNode<FLCmdGeneratorNode>("scmd_gen").enable_fake_trigger(channel, fake_trigger_config.divisor, fake_trigger_config.prescale, poisson);
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
-PDIMasterNode::disable_fake_trigger(uint32_t channel) const // NOLINT(build/unsigned)
-{
-  getNode<FLCmdGeneratorNode>("scmd_gen").disable_fake_trigger(channel);
-}
-//------------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void
@@ -227,32 +235,10 @@ PDIMasterNode::read_in_spill() const
 
 //-----------------------------------------------------------------------------
 void
-PDIMasterNode::sync_timestamp(uint32_t clock_frequency_hz) const // NOLINT(build/unsigned)
-{
-  const uint64_t old_timestamp = read_timestamp(); // NOLINT(build/unsigned)
-  TLOG() << "Reading old timestamp: " << format_reg_value(old_timestamp) << ", " << format_timestamp(old_timestamp, clock_frequency_hz);
-
-  const uint64_t now_timestamp = get_seconds_since_epoch() * clock_frequency_hz; // NOLINT(build/unsigned)
-  TLOG() << "Setting new timestamp: " << format_reg_value(now_timestamp) << ", " << format_timestamp(now_timestamp, clock_frequency_hz);
-
-  set_timestamp(now_timestamp);
-
-  const uint64_t new_timestamp = read_timestamp(); // NOLINT(build/unsigned)
-  TLOG() << "Reading new timestamp: " << format_reg_value(new_timestamp) << ", " << format_timestamp(new_timestamp, clock_frequency_hz);
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
 PDIMasterNode::get_info(timingfirmwareinfo::PDIMasterMonitorData& mon_data) const
 {
   auto timestamp = getNode<TimestampGeneratorNode>("tstamp").read_raw_timestamp();
   mon_data.timestamp = tstamp2int(timestamp);
-
-  auto spill_interface_enabled = getNode("spill.csr.ctrl.en").read();
-  getClient().dispatch();
-
-  mon_data.spill_interface_enabled = spill_interface_enabled.value();
 }
 //-----------------------------------------------------------------------------
 
@@ -272,8 +258,52 @@ PDIMasterNode::get_info(opmonlib::InfoCollector& ic, int level) const
   }
 
   getNode<FLCmdGeneratorNode>("scmd_gen").get_info(ic, level);
+
+  getNode<SpillInterfaceNode>("spill").get_info(ic, level);
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+std::vector<timingfirmware::EndpointCheckResult>
+PDIMasterNode::scan_endpoints(const std::vector<uint>& endpoints) const
+{
+  std::vector<timingfirmware::EndpointCheckResult> results;
+  auto global = getNode<PDIMasterGlobalNode>("global");
+  auto echo = getNode<EchoMonitorNode>("echo");
+
+  for (auto endpoint_address : endpoints)
+  {
+    timingfirmware::EndpointCheckResult endpoint_result;
+    endpoint_result.address = endpoint_address;
+
+    switch_endpoint_sfp(endpoint_address, true);
+
+    millisleep(100);
+    
+    try
+    {
+      global.enable_upstream_endpoint();
+    }
+    catch (const timing::EndpointNotReady& e)
+    {
+        switch_endpoint_sfp(endpoint_address, false);
+        results.push_back(endpoint_result);
+        
+        TLOG_DEBUG(9) << "Endpoint at address " << endpoint_address << " looks dead.";
+
+        continue;
+    }
+
+    endpoint_result.alive = true;
+    endpoint_result.round_trip_time = echo.send_echo_and_measure_delay();
+    TLOG_DEBUG(9) << "Endpoint at address " << endpoint_address << " alive. RTT: " << endpoint_result.round_trip_time;
+
+
+    results.push_back(endpoint_result);
+    switch_endpoint_sfp(endpoint_address, false);
+  }
+  return results;
+}
+//-----------------------------------------------------------------------------
 } // namespace timing
 } // namespace dunedaq

@@ -46,9 +46,8 @@ public:
   /**
    * @brief     Send a fixed length command
    */
-  void send_fl_cmd(FixedLengthCommandType command,
-                   uint32_t channel, // NOLINT(build/unsigned)
-                   const TimestampGeneratorNode& timestamp_gen_node) const;
+  virtual void send_fl_cmd(uint32_t command,        // NOLINT(build/unsigned)
+                           uint32_t channel) const; // NOLINT(build/unsigned)
 
   /**
    * @brief     Configure fake trigger
@@ -58,6 +57,15 @@ public:
                            uint32_t prescale, // NOLINT(build/unsigned)
                            bool poisson) const;
 
+  /**
+   * @brief     Configure fake trigger
+   */
+  void enable_fake_trigger(uint32_t command,  // NOLINT(build/unsigned)
+                           uint32_t channel,  // NOLINT(build/unsigned)
+                           uint32_t divisor,  // NOLINT(build/unsigned)
+                           uint32_t prescale, // NOLINT(build/unsigned)
+                           bool poisson) const;
+  
   /**
    * @brief     Clear fake trigger configuration
    */
@@ -72,6 +80,9 @@ public:
    * @brief    Give info to collector.
    */
   void get_info(opmonlib::InfoCollector& ic, int level) const override;
+private:
+  void validate_command(uint32_t command) const;
+  void validate_channel(uint32_t channel) const;
 };
 
 } // namespace timing

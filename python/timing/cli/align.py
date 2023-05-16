@@ -24,18 +24,18 @@ def align(obj):
     lDevice = obj.mDevice
     lMaster = obj.mMaster
     obj.mGlobal = lMaster.getNode('global')
-    obj.mACmd = lMaster.getNode('acmd')
-    obj.mEcho = lMaster.getNode('echo')
-    obj.mIO = lDevice.getNode('io')
+    #obj.mACmd = lMaster.getNode('acmd')
+    #obj.mEcho = lMaster.getNode('echo')
+    #bj.mIO = lDevice.getNode('io')
 # ------------------------------------------------------------------------------
 
 
 # ------------------------------------------------------------------------------
 @align.command('apply-delay', short_help="Send delay adjust command endpoint")
-@click.argument('addr', type=toolbox.IntRange(0x0,0x100))
-@click.argument('cdelay', type=toolbox.IntRange(0x0,0x32))
-@click.argument('fdelay', type=toolbox.IntRange(0x0,0xf))
-@click.option('--mux', '-m', type=click.IntRange(0,7), help='Mux select')
+@click.argument('addr', type=toolbox.IntRange(0x0,0xffff))
+@click.argument('cdelay', type=toolbox.IntRange(0x0,0xf))
+@click.argument('fdelay', type=toolbox.IntRange(0x0,0xfff))
+@click.option('--mux', '-m', type=click.IntRange(0,12), help='Mux select')
 @click.option('--force', '-f', is_flag=True, default=False, help='Skip RTT measurement')
 @click.pass_obj
 @click.pass_context
@@ -62,8 +62,8 @@ def applydelay(ctx, obj, addr, cdelay, fdelay, mux, force):
 
 # ------------------------------------------------------------------------------
 @align.command('measure-delay', short_help="Measure endpoint round trip time")
-@click.argument('addr', type=toolbox.IntRange(0x0,0x100))
-@click.option('--mux', '-m', type=click.IntRange(0,7), help='Mux select (fanout only)')
+@click.argument('addr', type=toolbox.IntRange(0x0,0xffff))
+@click.option('--mux', '-m', type=click.IntRange(0,12), help='Mux select (fanout only)')
 @click.option('--sfp-control/--no-sfp-control', default=True, help='Control SFP or not')
 @click.pass_obj
 @click.pass_context
@@ -74,7 +74,7 @@ def measuredelay(ctx, obj, addr, mux, sfp_control):
     lTopDesign = obj.mTopDesign
     
     # or a different type of fanout board
-    if lBoardType in [kBoardPC059, kBoardFIB]:
+    if lBoardType in [kBoardPC059, kBoardFIB] and sfp_control == True:
         if mux is not None:
             echo("Endpoint (adr: {}, mux: {}) RTT: {}".format(addr,mux,lTopDesign.measure_endpoint_rtt(addr, sfp_control, mux)))
         else:
@@ -86,7 +86,7 @@ def measuredelay(ctx, obj, addr, mux, sfp_control):
 
 # ------------------------------------------------------------------------------
 @align.command('toggle-tx', short_help="Control the endpoint SFP Tx laser")
-@click.argument('addr', type=toolbox.IntRange(0x0,0x100))
+@click.argument('addr', type=toolbox.IntRange(0x0,0xffff))
 @click.option('--on/--off', default=True, help='enable/disable tx')
 @click.pass_obj
 def toggletx(obj, addr, on):

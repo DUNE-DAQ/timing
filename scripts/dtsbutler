@@ -1,0 +1,123 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+
+# Python imports
+import uhal
+import click
+import click_didyoumean
+import time
+import collections
+import traceback
+from io import StringIO
+# import operator
+import sys
+import os
+
+# PDT imports
+import timing
+import timing.common.definitions as defs
+import timing.cli.toolbox as toolbox
+import timing.cli.system as system
+import timing.cli.io as io
+import timing.cli.master as master
+import timing.cli.align as align
+import timing.cli.endpoint as endpoint
+import timing.cli.crt as crt
+import timing.cli.debug as debug
+import timing.cli.hsi as hsi
+
+
+from click import echo, style, secho
+from os.path import join, expandvars
+
+#kLogLevelMap = {
+#        0: pdt.core.kError,
+#        1: pdt.core.kWarning,
+#        2: pdt.core.kNotice,
+#    }
+
+
+class PDTContext: pass
+
+
+DEFAULT_MAP = {'connections': '${TIMING_SHARE}/config/etc/connections.xml'}
+CONTEXT_SETTINGS = {
+    'help_option_names': ['-h', '--help'],
+    'default_map': DEFAULT_MAP,
+    }
+
+# ------------------------------------------------------------------------------
+@click.group(
+    cls=click_didyoumean.DYMGroup,
+    context_settings=CONTEXT_SETTINGS,
+)
+@click.pass_context
+@click.option('-c', '--connections', help='Path to uhal connection file(s)')
+@click.option('-t', '--timeout', default=None, type=int, help='uhal timeout (sec)')
+@click.option('-v', '--verbose', count=True, default=2)
+@click.option('-g', '--gdb', is_flag=True)
+def cli(ctx, connections, timeout, verbose, gdb):
+    
+    if gdb:
+        toolbox.hookDebugger()
+
+    # Set uhal log level
+    uhal.setLogLevelTo(uhal.LogLevel.NOTICE)
+    #pdt.core.setLogThreshold(kLogLevelMap.get(verbose, pdt.core.kDebug1))
+
+    lConnections  = toolbox.sanitizeConnectionPaths(connections)
+
+    ctx.obj.mConnectionManager = uhal.ConnectionManager(str(lConnections))
+    ctx.obj.mTimeout = timeout
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+@cli.command()
+@click.pass_obj
+def list(obj):
+    '''
+    List known uhal devices.
+    '''
+    echo('Available IPBus devices')
+    for lId in obj.mConnectionManager.getDevices():
+        echo(' - '+lId)
+    
+    pass
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+if __name__ == '__main__':
+    cli.add_command(system.overlord)
+    cli.add_command(system.vst)
+    cli.add_command(io.io)
+    cli.add_command(master.master)
+    cli.add_command(endpoint.endpoint)
+    cli.add_command(crt.crt)
+    cli.add_command(debug.debug)
+    cli.add_command(hsi.hsi)
+
+    try:
+        cli(obj=PDTContext())
+    except Exception as e:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        lFirstFrame = traceback.extract_tb(exc_tb)[-1]
+
+        secho("ERROR ('{}' exception): '{}'\n\nFile \"{}\", line {}, in {}\n   {}".format(exc_type.__name__, e, lFirstFrame[0], lFirstFrame[1], lFirstFrame[2], lFirstFrame[3] ),fg='red')
+        
+        "File \"{}\", line {}, in {}"
+        # secho("{}".format(),fg='red')
+        # print(lFirstFrame)
+        # ipdb.set_trace()
+        # fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        # 'Error: exception of type {} throw'
+        # print(e, exc_type.__name__, fname, exc_tb.tb_lineno)
+        lExc = StringIO()
+        traceback.print_exc(file=lExc)
+        print ("Exception in user code:")
+        print ('-'*60)
+        secho(lExc.getvalue(), fg='red')
+        print ('-'*60)
+# ------------------------------------------------------------------------------

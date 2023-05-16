@@ -7,6 +7,8 @@
  */
 
 #include "timing/OverlordDesign.hpp"
+#include "timing/PDIMasterNode.hpp"
+
 
 #include <sstream>
 #include <string>
@@ -19,11 +21,9 @@ UHAL_REGISTER_DERIVED_NODE(OverlordDesign)
 OverlordDesign::OverlordDesign(const uhal::Node& node)
   : TopDesignInterface(node)
   , MasterDesignInterface(node)
-  , EndpointDesignInterface(node)
-  , MasterDesign<PDIMasterNode>(node)
+  , MasterDesign(node)
   , OverlordDesignInterface(node)
-  , PlainEndpointDesignInterface(node)
-
+  , EndpointDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
@@ -38,7 +38,7 @@ OverlordDesign::get_status(bool print_out) const
 {
   std::stringstream status;
   status << get_io_node_plain()->get_pll_status();
-  status << timing::MasterDesign<PDIMasterNode>::get_master_node().get_status();
+  status << get_master_node_plain()->get_status();
   status << get_external_triggers_endpoint_node().get_status();
   if (print_out)
     TLOG() << status.str();
@@ -58,7 +58,7 @@ OverlordDesign::configure() const
   sync_timestamp();
 
   // Enable spill interface
-  timing::MasterDesign<PDIMasterNode>::get_master_node().enable_spill_interface();
+  get_master_node<PDIMasterNode>()->enable_spill_interface();
 
   // Trigger interface configuration
   reset_external_triggers_endpoint();
@@ -71,7 +71,7 @@ void
 OverlordDesign::get_info(opmonlib::InfoCollector& ci, int level) const
 { 
   opmonlib::InfoCollector master_collector;
-  get_master_node().get_info(master_collector, level);
+  get_master_node_plain()->get_info(master_collector, level);
   ci.add("master", master_collector);
 
   opmonlib::InfoCollector hardware_collector;

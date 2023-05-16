@@ -7,6 +7,7 @@
  */
 
 #include "timing/PDIMasterNode.hpp"
+#include "timing/MasterNode.hpp"
 #include "timing/TriggerReceiverNode.hpp"
 
 #include <pybind11/pybind11.h>
@@ -38,18 +39,19 @@ register_master(py::module& m)
          py::arg("control_sfp") = true)
     .def("switch_endpoint_sfp", &timing::PDIMasterNode::switch_endpoint_sfp)
     .def("enable_upstream_endpoint", &timing::PDIMasterNode::enable_upstream_endpoint)
-    .def("send_fl_cmd",
+    .def<void (timing::PDIMasterNode::*)(FixedLengthCommandType, uint32_t, uint32_t) const>(
+         "send_fl_cmd",
          &timing::PDIMasterNode::send_fl_cmd,
          py::arg("command"),
          py::arg("channel"),
          py::arg("number_of_commands") = 1)
-    .def("enable_fake_trigger",
-         &timing::PDIMasterNode::enable_fake_trigger,
+    .def<void (timing::PDIMasterNode::*)(uint32_t, double, bool, uint32_t) const>("enable_periodic_fl_cmd",
+         &timing::PDIMasterNode::enable_periodic_fl_cmd,
          py::arg("channel"),
          py::arg("rate"),
          py::arg("poisson"),
          py::arg("clock_frequency_hz"))
-    .def("disable_fake_trigger", &timing::PDIMasterNode::disable_fake_trigger)
+    .def("disable_periodic_fl_cmd", &timing::PDIMasterNode::disable_periodic_fl_cmd)
     .def("enable_spill_interface", &timing::PDIMasterNode::enable_spill_interface)
     .def("enable_fake_spills",
          &timing::PDIMasterNode::enable_fake_spills,
@@ -58,6 +60,37 @@ register_master(py::module& m)
     .def("get_status", &timing::PDIMasterNode::get_status, py::arg("print_out") = false)
     .def("get_status_with_date", &timing::PDIMasterNode::get_status_with_date, py::arg("clock_frequency_hz"), py::arg("print_out") = false)
     .def("sync_timestamp", &timing::PDIMasterNode::sync_timestamp);
+
+  py::class_<timing::MasterNode, uhal::Node>(m, "MasterNode")
+    .def(py::init<const uhal::Node&>())
+    .def("switch_endpoint_sfp", &timing::MasterNode::switch_endpoint_sfp)
+    .def("enable_upstream_endpoint", &timing::MasterNode::enable_upstream_endpoint)
+    .def("reset_command_counters", &timing::MasterNode::reset_command_counters)
+    .def("transmit_async_packet", &timing::MasterNode::transmit_async_packet, py::arg("packet"), py::arg("timeout") = 500) //timeout [us]
+    .def("write_endpoint_data", &timing::MasterNode::write_endpoint_data)
+    .def("read_endpoint_data", &timing::MasterNode::read_endpoint_data)
+    .def("send_fl_cmd",
+         &timing::MasterNode::send_fl_cmd,
+         py::arg("command"),
+         py::arg("channel"),
+         py::arg("number_of_commands") = 1)
+    .def<void (timing::MasterNode::*)(uint32_t, uint32_t, double, bool, uint32_t) const>("enable_periodic_fl_cmd",
+         &timing::MasterNode::enable_periodic_fl_cmd,
+         py::arg("command"),
+         py::arg("channel"),
+         py::arg("rate"),
+         py::arg("poisson"),
+         py::arg("clock_frequency_hz"))
+    .def("disable_periodic_fl_cmd", &timing::MasterNode::disable_periodic_fl_cmd)
+    .def("get_status", &timing::MasterNode::get_status, py::arg("print_out") = false)
+    .def("get_status_with_date", &timing::MasterNode::get_status_with_date, py::arg("clock_frequency_hz"), py::arg("print_out") = false)
+    .def("sync_timestamp", &timing::MasterNode::sync_timestamp)
+    .def("disable_timestamp_broadcast", &timing::MasterNode::disable_timestamp_broadcast)
+    .def("enable_timestamp_broadcast", &timing::MasterNode::enable_timestamp_broadcast)
+    .def("configure_endpoint_command_decoder", &timing::MasterNode::configure_endpoint_command_decoder,
+     py::arg("endpoint_address"),
+     py::arg("slot"),
+     py::arg("command"));
 
   py::class_<timing::TriggerReceiverNode, uhal::Node>(m, "TriggerReceiverNode")
     .def(py::init<const uhal::Node&>())

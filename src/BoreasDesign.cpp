@@ -20,7 +20,7 @@ BoreasDesign::BoreasDesign(const uhal::Node& node)
   : TopDesignInterface(node)
   , MasterDesignInterface(node)
   , EndpointDesignInterface(node)
-  , MasterDesign<PDIMasterNode>(node)
+  , MasterDesign(node)
   , HSIDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
@@ -36,7 +36,8 @@ BoreasDesign::get_status(bool print_out) const
 {
   std::stringstream status;
   status << get_io_node_plain()->get_pll_status();
-  status << MasterDesign<PDIMasterNode>::get_master_node().get_status();
+  status << get_master_node_plain()->get_status();
+  status << get_endpoint_node_plain(0)->get_status();
   status << get_hsi_node().get_status();
   if (print_out)
     TLOG() << status.str();
@@ -65,12 +66,16 @@ void
 BoreasDesign::get_info(opmonlib::InfoCollector& ci, int level) const
 { 
   opmonlib::InfoCollector master_collector;
-  get_master_node().get_info(master_collector, level);
+  get_master_node_plain()->get_info(master_collector, level);
   ci.add("master", master_collector);
 
   opmonlib::InfoCollector hardware_collector;
   get_io_node_plain()->get_info(hardware_collector, level);
   ci.add("io", hardware_collector);
+
+  opmonlib::InfoCollector endpoint_collector;
+  get_endpoint_node_plain(0)->get_info(endpoint_collector, level);
+  ci.add("endpoint", endpoint_collector);
 
   opmonlib::InfoCollector hsi_collector;
   get_hsi_node().get_info(hsi_collector, level);

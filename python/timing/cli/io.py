@@ -7,6 +7,7 @@ import click_didyoumean
 import time
 import collections
 import math
+import sys
 import timing
 
 import timing.cli.toolbox as toolbox
@@ -167,7 +168,7 @@ def status(ctx, obj, verbose):
     lIO = lDevice.getNode('io')
 
     if lBoardType in kLibrarySupportedBoards:
-        echo(lIO.get_hardware_info())    
+        ctx.invoke(print_hardware_info)
         echo(lIO.get_status())
     else:
         secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
@@ -244,7 +245,7 @@ def sfpstatus(ctx, obj, sfp_id):
     
     
     if lBoardType in kLibrarySupportedBoards:
-        echo(lDevice.getNode('io').get_hardware_info())
+        ctx.invoke(print_hardware_info)
         if sfp_id is not None:
             echo(lIO.get_sfp_status(sfp_id))
         else:
@@ -291,7 +292,7 @@ def switchsfptx(ctx, obj, sfp_id, on):
     lIO = lDevice.getNode('io') 
 
     if lBoardType in kLibrarySupportedBoards:
-        echo(lDevice.getNode('io').get_hardware_info())
+        ctx.invoke(print_hardware_info)
         if sfp_id is not None:
             lIO.switch_sfp_soft_tx_control_bit(sfp_id, on)
             echo(lIO.get_sfp_status(sfp_id))
@@ -358,4 +359,26 @@ def switchupstreammux(obj):
         echo("Active upstream mux channel: {}".format(active_mux))
     else:
         raise RuntimeError('Board {} does not have/support an upstream mux!'.format(kBoardNameMap[lBoardType]))
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@io.command('print-hardware-info')
+@click.pass_obj
+@click.pass_context
+def print_hardware_info(ctx, obj):
+
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+    lIO = lDevice.getNode('io')
+
+    if lBoardType in kLibrarySupportedBoards:
+        try:
+            echo(lIO.get_hardware_info())
+        except:
+            secho("Failed to retrieve hardware information! I2C issue? Initial board reset needed?", fg='yellow')
+            e = sys.exc_info()[0]
+            secho("Error: {}".format(e), fg='red')
+    else:
+        secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
+        # do status printing here
 # ------------------------------------------------------------------------------

@@ -13,6 +13,7 @@
 #include "logging/Logging.hpp"
 
 #include <string>
+#include <chrono>
 
 namespace dunedaq {
 namespace timing {
@@ -52,45 +53,41 @@ EchoMonitorNode::send_echo_and_measure_delay(int64_t timeout) const
 
   auto start = std::chrono::high_resolution_clock::now();
 
-  std::chrono::milliseconds ms_since_start(0);
-
   uhal::ValWord<uint32_t> done; // NOLINT(build/unsigned)
-
-  while (ms_since_start.count() < timeout) {
-
-    auto now = std::chrono::high_resolution_clock::now();
-    ms_since_start = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
-
-    millisleep(100);
+  uhal::ValWord<uint32_t> delta_t;
+  
+  while (true) {
 
     done = getNode("csr.stat.rx_done").read();
+    delta_t = getNode("csr.stat.deltat").read();
     getClient().dispatch();
 
-    TLOG_DEBUG(0) << "rx done: " << std::hex << done.value();
+    TLOG_DEBUG(6) << "rx done: " << done.value() << ", delta_t: " << delta_t.value();
 
     if (done.value())
-      break;
+    {
+      if (delta_t.value() == 0xffff)
+      {
+        throw EchoReplyTimeout(ERS_HERE);
+      } 
+      else
+      {
+        break;
+      }
+    }
+    
+    auto now = std::chrono::high_resolution_clock::now();
+    auto ms_since_start = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
+
+    if (ms_since_start.count() > timeout)
+      throw EchoFlagTimeout(ERS_HERE, timeout);
+
+    std::this_thread::sleep_for(std::chrono::microseconds(10));
   }
 
-  if (!done.value()) {
-    throw EchoTimeout(ERS_HERE, timeout);
-  }
+  TLOG_DEBUG(4) << "delta t: " << format_reg_value(delta_t.value(), 10);
 
-  auto time_rx_l = getNode("csr.rx_l").read();
-  auto time_rx_h = getNode("csr.rx_h").read();
-
-  auto time_tx_l = getNode("csr.tx_l").read();
-  auto time_tx_h = getNode("csr.tx_h").read();
-
-  getClient().dispatch();
-
-  uint64_t time_rx = ((uint64_t)time_rx_h.value() << 32) + time_rx_l.value(); // NOLINT(build/unsigned)
-  uint64_t time_tx = ((uint64_t)time_tx_h.value() << 32) + time_tx_l.value(); // NOLINT(build/unsigned)
-
-  TLOG_DEBUG(0) << "tx ts: " << format_reg_value(time_tx);
-  TLOG_DEBUG(0) << "rx ts: " << format_reg_value(time_rx);
-
-  return time_rx - time_tx;
+  return delta_t.value();
 }
 //-----------------------------------------------------------------------------
 

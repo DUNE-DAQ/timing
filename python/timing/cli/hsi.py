@@ -8,7 +8,6 @@ import timing.common.definitions as defs
 from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
 
 from click import echo, style, secho
-from .click_texttable import Texttable
 import time
 
 # ------------------------------------------------------------------------------
@@ -44,13 +43,14 @@ def hsi(obj, device):
         try:
             echo(lDevice.getNode('io').get_hardware_info())
         except:
-            secho("Failed to retrieve hardware information I2C issue? Initial board reset needed?", fg='yellow')
+            secho("Failed to retrieve hardware information! I2C issue? Initial board reset needed?", fg='yellow')
             e = sys.exc_info()[0]
             secho("Error: {}".format(e), fg='red')
 
     obj.mDevice = lDevice
-    obj.mHSIEndpoint = lDevice.getNode('endpoint0')
+    obj.mEndpoint = lDevice.getNode('endpoint0')
     obj.mTopDesign = lDevice.getNode('')
+    obj.mHSI = obj.mTopDesign.get_hsi_node()
 # ------------------------------------------------------------------------------
 
 
@@ -64,8 +64,11 @@ def status(ctx, obj):
     '''
 
     lDevice = obj.mDevice
-    lHSIEpt = obj.mHSIEndpoint
-    echo(lHSIEpt.get_status())
+    lHSI = obj.mHSI
+    lEndpoint = obj.mEndpoint
+    
+    echo(lEndpoint.get_status())
+    echo(lHSI.get_status())
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
@@ -77,19 +80,20 @@ def status(ctx, obj):
 @click.option('--address', '-a', type=toolbox.IntRange(0x0,0x100), help='Address', default=0)
 def enable(ctx, obj, action, partition, address):
     '''
-    Activate the timing endpoint in the hsi wrapper block.
+    Activate the timing endpoint in the hsi design. Left in for compatibility reasons
     '''
 
     lDevice = obj.mDevice
-    lHSIEpt = obj.mHSIEndpoint
+    lEndpoint = obj.mEndpoint
+    lHSI = obj.mHSI
     
     if action == 'off':
-        lHSIEpt.disable()
+        lEndpoint.disable()
     elif action == 'on':
-        lHSIEpt.enable(partition, address)
+        lEndpoint.enable(address=address,partition=partition)
     elif action == 'reset':
-        lHSIEpt.reset(partition, address)
-        lHSIEpt.reset_hsi()
+        lEndpoint.reset(address=address,partition=partition)
+        lHSI.reset_hsi()
 
     time.sleep(0.1)
     ctx.invoke(status)
@@ -110,12 +114,12 @@ def configure(ctx, obj, src, re_mask, fe_mask, inv_mask, rate):
     '''
 
     lDevice = obj.mDevice
-    lHSIEpt = obj.mHSIEndpoint
+    lHSI = obj.mHSI
     lTopDesign = obj.mTopDesign
 
-    lHSIEpt.reset_hsi()
+    lHSI.reset_hsi()
     lTopDesign.configure_hsi(src, re_mask, fe_mask, inv_mask, rate)
-    lHSIEpt.start_hsi()
+    lHSI.start_hsi()
     secho("HSI configured (and started)", fg='green')
 
     time.sleep(0.1)
@@ -132,9 +136,9 @@ def readback(ctx, obj):
     Read the content of the endpoint master readout buffer.
     '''
     lDevice = obj.mDevice
-    lHSIEpt = obj.mHSIEndpoint
+    lHSI = obj.mHSI
 
-    lHSIEpt.start_hsi()
+    lHSI.start_hsi()
     secho("HSI start", fg='green')
 
     time.sleep(0.1)
@@ -150,9 +154,9 @@ def readback(ctx, obj):
     Read the content of the endpoint master readout buffer.
     '''
     lDevice = obj.mDevice
-    lHSIEpt = obj.mHSIEndpoint
+    lHSI = obj.mHSI
 
-    lHSIEpt.stop_hsi()
+    lHSI.stop_hsi()
     secho("HSI stop", fg='green')
 
     time.sleep(0.1)
@@ -169,7 +173,7 @@ def readback(ctx, obj, readall):
     Read the content of the endpoint master readout buffer.
     '''
     lDevice = obj.mDevice
-    lHSIEpt = obj.mHSIEndpoint
+    lHSI = obj.mHSI
     
-    echo(lHSIEpt.get_data_buffer_table(readall,False))
+    echo(lHSI.get_data_buffer_table(readall,False))
 # ------------------------------------------------------------------------------

@@ -14,7 +14,7 @@
 
 // PDT Headers
 #include "TimingIssues.hpp"
-#include "timing/EndpointNodeInterface.hpp"
+#include "timing/TimingNode.hpp"
 #include "timing/definitions.hpp"
 
 #include "timing/timingfirmwareinfo/InfoNljs.hpp"
@@ -33,7 +33,7 @@ namespace timing {
 /**
  * @brief      Class for HSI nodes.
  */
-class HSINode : public EndpointNodeInterface
+class HSINode : public TimingNode
 {
   UHAL_DERIVEDNODE(HSINode)
 public:
@@ -44,27 +44,6 @@ public:
    * @brief     Print the status of the timing node.
    */
   std::string get_status(bool print_out = false) const override;
-
-  /**
-   * @brief      Enable the endpoint
-   *
-   * @return     { description_of_the_return_value }
-   */
-  void enable(uint32_t partition = 0, uint32_t address = 0) const override; // NOLINT(build/unsigned)
-
-  /**
-   * @brief      Disable the endpoint
-   *
-   * @return     { description_of_the_return_value }
-   */
-  void disable() const override;
-
-  /**
-   * @brief      Reset the endpoint
-   *
-   * @return     { description_of_the_return_value }
-   */
-  void reset(uint32_t partition = 0, uint32_t address = 0) const override; // NOLINT(build/unsigned)
 
   /**
    * @brief      Read the number of words in the data buffer.
@@ -138,6 +117,12 @@ public:
    *
    */
   uint32_t read_buffer_state() const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief     Read signal source, 0 - hardware, 1 - internal emulation
+   *
+   */
+  uint32_t read_signal_source_mode() const; // NOLINT(build/unsigned)
 
   /**
    * @brief     Collect monitoring information for timing endpoint

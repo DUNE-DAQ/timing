@@ -14,9 +14,11 @@
 
 // PDT Headers
 #include "timing/definitions.hpp"
-#include "timing/FLCmdGeneratorNode.hpp"
-#include "timing/MasterNode.hpp"
+#include "timing/MasterNodeInterface.hpp"
+#include "timing/PDIMasterGlobalNode.hpp"
+#include "timing/PDIFLCmdGeneratorNode.hpp"
 #include "timing/SpillInterfaceNode.hpp"
+#include "timing/PartitionNode.hpp"
 
 #include "timing/timingfirmwareinfo/InfoNljs.hpp"
 #include "timing/timingfirmwareinfo/InfoStructs.hpp"
@@ -34,7 +36,7 @@ namespace timing {
 /**
  * @brief      Class for PD-I master timing nodes.
  */
-class PDIMasterNode : public MasterNode
+class PDIMasterNode : public MasterNodeInterface
 {
   UHAL_DERIVEDNODE(PDIMasterNode)
 public:
@@ -52,6 +54,23 @@ public:
   std::string get_status_with_date(uint32_t clock_frequency_hz, bool print_out = false) const; // NOLINT(build/unsigned)
 
   /**
+   * @brief      Read the current timestamp word.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  uint64_t read_timestamp() const override; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Set the timestamp to current time.
+   */
+  void set_timestamp(uint64_t timestamp) const override; // NOLINT(build/unsigned)
+
+  /**
+   * @brief     Set timestamp to current machine time
+   */
+  void sync_timestamp(uint32_t clock_frequency_hz) const override; // NOLINT(build/unsigned)
+
+  /**
    * @brief     Control the tx line of endpoint sfp
    */
   void switch_endpoint_sfp(uint32_t address, bool turn_on) const override; // NOLINT(build/unsigned)
@@ -60,6 +79,13 @@ public:
    * @brief     Enable RTT endpoint
    */
   void enable_upstream_endpoint() const override;
+
+  /**
+   * @brief     Send a fixed length command
+   */
+  void send_fl_cmd(uint32_t command,                                // NOLINT(build/unsigned)
+                   uint32_t channel,                                // NOLINT(build/unsigned)
+                   uint32_t number_of_commands = 1) const override; // NOLINT(build/unsigned)
 
   /**
    * @brief      Measure the endpoint round trip time.
@@ -78,24 +104,20 @@ public:
                             bool measure_rtt = false,
                             bool control_sfp = true) const override;
 
-  using MasterNode::apply_endpoint_delay;
+  using MasterNodeInterface::apply_endpoint_delay;
 
   /**
    * @brief     Send a fixed length command
    */
   void send_fl_cmd(FixedLengthCommandType command,
-                   uint32_t channel,                                // NOLINT(build/unsigned)
-                   uint32_t number_of_commands = 1) const override; // NOLINT(build/unsigned)
-
+                           uint32_t channel,                       // NOLINT(build/unsigned)
+                           uint32_t number_of_commands = 1) const; // NOLINT(build/unsigned)
   /**
-   * @brief     Configure fake trigger generator
+   * @brief      Get partition node
+   *
+   * @return     { description_of_the_return_value }
    */
-  void enable_fake_trigger(uint32_t channel, double rate, bool poisson, uint32_t clock_frequency_hz) const; // NOLINT(build/unsigned)
-
-  /**
-   * @brief     Clear fake trigger configuration
-   */
-  void disable_fake_trigger(uint32_t channel) const; // NOLINT(build/unsigned)
+  virtual const PartitionNode& get_partition_node(uint32_t partition_id) const; // NOLINT(build/unsigned)
 
   /**
    * @brief     Enable spill interface
@@ -113,11 +135,6 @@ public:
   bool read_in_spill() const;
 
   /**
-   * @brief     Set timestamp to current machine time
-   */
-  void sync_timestamp(uint32_t clock_frequency_hz) const; // NOLINT(build/unsigned)
-
-  /**
    * @brief     Fill the PD-I master monitoring structure.
    */
   void get_info(timingfirmwareinfo::PDIMasterMonitorData& mon_data) const;
@@ -126,6 +143,11 @@ public:
    * @brief    Give info to collector.
    */
   void get_info(opmonlib::InfoCollector& ic, int level) const override;
+
+  /**
+   * @brief    Scan endpoints
+   */
+  std::vector<timingfirmware::EndpointCheckResult> scan_endpoints(const std::vector<uint>& endpoints) const override;
 };
 
 } // namespace timing

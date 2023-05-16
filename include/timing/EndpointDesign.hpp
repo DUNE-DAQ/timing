@@ -32,7 +32,7 @@ namespace timing {
 /**
  * @brief      Base class for timing endpoint design nodes.
  */
-class EndpointDesign : public TopDesign, public PlainEndpointDesignInterface
+class EndpointDesign : public TopDesign, public EndpointDesignInterface
 {
   UHAL_DERIVEDNODE(EndpointDesign)
 public:
