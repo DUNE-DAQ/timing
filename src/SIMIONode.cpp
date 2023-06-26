@@ -81,19 +81,19 @@ SIMIONode::get_hardware_info(bool print_out) const
   std::vector<std::pair<std::string, std::string>> hardware_info;
 
   try {
-    hardware_info.push_back(std::make_pair("Board type", g_board_type_map.at(board_type)));
+    hardware_info.push_back(std::make_pair("Board type", get_board_type_map().at(board_type)));
   } catch (const std::out_of_range& e) {
     throw MissingBoardTypeMapEntry(ERS_HERE, format_reg_value(board_type), e);
   }
 
   try {
-    hardware_info.push_back(std::make_pair("Board revision", g_board_revision_map.at(board_revision)));
+    hardware_info.push_back(std::make_pair("Board revision", get_board_revision_map().at(board_revision)));
   } catch (const std::out_of_range& e) {
     throw MissingBoardRevisionMapEntry(ERS_HERE, format_reg_value(board_revision), e);
   }
 
   try {
-    hardware_info.push_back(std::make_pair("Carrier type", g_carrier_type_map.at(carrier_type)));
+    hardware_info.push_back(std::make_pair("Carrier type", get_carrier_type_map().at(carrier_type)));
   } catch (const std::out_of_range& e) {
     throw MissingCarrierTypeMapEntry(ERS_HERE, format_reg_value(carrier_type), e);
   }

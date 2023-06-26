@@ -10,6 +10,7 @@
 #include "timing/EndpointNode.hpp"
 #include "timing/PDIEndpointNode.hpp"
 #include "timing/MasterNode.hpp"
+#include "timing/IONode.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -104,12 +105,12 @@ register_definitions(py::module& m)
         .value("ExtFakeTrig", ExtFakeTrig)
         .export_values();
 
-	m.attr("kBoardNameMap") = timing::g_board_type_map;
-	m.attr("kCarrierNameMap") = timing::g_carrier_type_map;
+	m.attr("kBoardNameMap") = timing::IONode::get_board_type_map();
+	m.attr("kCarrierNameMap") = timing::IONode::get_carrier_type_map();
 	m.attr("kDesignNameMap") = timing::g_design_type_map;
-	m.attr("kBoardRevisionMap") = timing::g_board_revision_map;
-	m.attr("kUIDRevisionMap") = timing::g_board_uid_revision_map;
-	m.attr("kClockConfigMap") = timing::g_clock_config_map;
+	m.attr("kBoardRevisionMap") = timing::IONode::get_board_revision_map();
+	m.attr("kUIDRevisionMap") = timing::IONode::get_board_uid_revision_map();
+	m.attr("kClockConfigMap") = timing::IONode::get_clock_config_map();
 	m.attr("kCommandNames") = timing::g_command_map;
 	m.attr("kCommandIDs") = swap_commands_map(timing::g_command_map);
 	m.attr("kEpStates") = EndpointNode::get_endpoint_state_map();
