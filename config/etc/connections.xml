@@ -28,20 +28,20 @@
   <!-- Bristol -->
   <connection id="SIM_UDP"            uri="ipbusudp-2.0://localhost:50010" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/ouroboros_sim/top_sim.xml" />
   
-  <connection id="BOREAS_TLU"         uri="chtcp-2.0://cuthbert.phy.bris.ac.uk:10203?target=192.168.200.64:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/boreas_tlu/top_tlu.xml" />
+  <connection id="BOREAS_TLU"         uri="chtcp-2.0://kipper.phy.bris.ac.uk:10203?target=192.168.200.64:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/boreas_tlu/top_tlu.xml" />
   
-  <connection id="MASTER_PC059"       uri="chtcp-2.0://cuthbert.phy.bris.ac.uk:10203?target=192.168.200.65:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/master_pc059/top_pc059.xml" />
+  <connection id="MASTER_PC059"       uri="chtcp-2.0://kipper.phy.bris.ac.uk:10203?target=192.168.200.65:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/master_pc059/top_pc059.xml" />
 
-  <connection id="MST_FMC"             uri="chtcp-2.0://cuthbert.phy.bris.ac.uk:10203?target=192.168.200.22:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/master_fmc/top.xml" />
+  <connection id="MST_FMC"             uri="chtcp-2.0://kipper.phy.bris.ac.uk:10203?target=192.168.200.22:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/master_fmc/top.xml" />
 
-  <connection id="BOREAS_FMC"    uri="chtcp-2.0://cuthbert.phy.bris.ac.uk:10203?target=192.168.200.22:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/boreas_fmc/top_fmc.xml" />
+  <connection id="BOREAS_FMC"    uri="chtcp-2.0://kipper.phy.bris.ac.uk:10203?target=192.168.200.22:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/boreas_fmc/top_fmc.xml" />
 
-  <connection id="EPT_0"             uri="chtcp-2.0://cuthbert.phy.bris.ac.uk:10203?target=192.168.200.16:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/endpoint_fmc/top.xml" />
-  <connection id="EPT_1"             uri="chtcp-2.0://cuthbert.phy.bris.ac.uk:10203?target=192.168.200.17:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/endpoint_fmc/top.xml" />
-  <connection id="EPT_2"             uri="chtcp-2.0://cuthbert.phy.bris.ac.uk:10203?target=192.168.200.18:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/endpoint_fmc/top.xml" />
-  <connection id="EPT_3"             uri="chtcp-2.0://cuthbert.phy.bris.ac.uk:10203?target=192.168.200.22:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/endpoint_fmc/top.xml" />  
+  <connection id="EPT_0"             uri="chtcp-2.0://kipper.phy.bris.ac.uk:10203?target=192.168.200.16:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/endpoint_fmc/top.xml" />
+  <connection id="EPT_1"             uri="chtcp-2.0://kipper.phy.bris.ac.uk:10203?target=192.168.200.17:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/endpoint_fmc/top.xml" />
+  <connection id="EPT_2"             uri="chtcp-2.0://kipper.phy.bris.ac.uk:10203?target=192.168.200.18:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/endpoint_fmc/top.xml" />
+  <connection id="EPT_3"             uri="chtcp-2.0://kipper.phy.bris.ac.uk:10203?target=192.168.200.22:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/endpoint_fmc/top.xml" />
 
-  <connection id="CHRONOS_FMC"   uri="chtcp-2.0://cuthbert.phy.bris.ac.uk:10203?target=192.168.200.22:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/chronos_fmc/top_fmc.xml" />
+  <connection id="CHRONOS_FMC"   uri="chtcp-2.0://kipper.phy.bris.ac.uk:10203?target=192.168.200.22:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/chronos_fmc/top_fmc.xml" />
 
 </connections>
     
