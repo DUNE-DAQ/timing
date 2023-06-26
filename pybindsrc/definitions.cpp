@@ -44,6 +44,7 @@ register_definitions(py::module& m)
         .value("kBoardTLU", kBoardTLU)
         .value("kBoardFIB", kBoardFIB)
         .value("kBoardMIB", kBoardMIB)
+        .value("kBoardPC069", kBoardPC069)
         .value("kBoardUnknown", kBoardUnknown)
         .export_values();
 
@@ -57,6 +58,7 @@ register_definitions(py::module& m)
         .value("kSIMRev1", kSIMRev1)
         .value("kFIBRev1", kFIBRev1)
         .value("kMIBRev1", kMIBRev1)
+        .value("kPC069a", kPC069a)
         .export_values();
 
     py::enum_<CarrierType>(m, "CarrierType")
