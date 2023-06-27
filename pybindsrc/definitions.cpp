@@ -10,6 +10,9 @@
 #include "timing/EndpointNode.hpp"
 #include "timing/PDIEndpointNode.hpp"
 #include "timing/MasterNode.hpp"
+#include "timing/IONode.hpp"
+#include "timing/PDIFLCmdGeneratorNode.hpp"
+#include "timing/PartitionNode.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -104,19 +107,19 @@ register_definitions(py::module& m)
         .value("ExtFakeTrig", ExtFakeTrig)
         .export_values();
 
-	m.attr("kBoardNameMap") = timing::g_board_type_map;
-	m.attr("kCarrierNameMap") = timing::g_carrier_type_map;
-	m.attr("kDesignNameMap") = timing::g_design_type_map;
-	m.attr("kBoardRevisionMap") = timing::g_board_revision_map;
-	m.attr("kUIDRevisionMap") = timing::g_board_uid_revision_map;
-	m.attr("kClockConfigMap") = timing::g_clock_config_map;
-	m.attr("kCommandNames") = timing::g_command_map;
-	m.attr("kCommandIDs") = swap_commands_map(timing::g_command_map);
+	m.attr("kBoardNameMap") = timing::IONode::get_board_type_map();
+	m.attr("kCarrierNameMap") = timing::IONode::get_carrier_type_map();
+	m.attr("kDesignNameMap") = timing::IONode::get_design_type_map();
+	m.attr("kBoardRevisionMap") = timing::IONode::get_board_revision_map();
+	m.attr("kUIDRevisionMap") = timing::IONode::get_board_uid_revision_map();
+	m.attr("kClockConfigMap") = timing::IONode::get_clock_config_map();
+	m.attr("kCommandNames") = timing::PDIFLCmdGeneratorNode::get_command_map();
+	m.attr("kCommandIDs") = swap_commands_map(timing::PDIFLCmdGeneratorNode::get_command_map());
 	m.attr("kEpStates") = EndpointNode::get_endpoint_state_map();
     m.attr("kPDIEpStates") = PDIEndpointNode::get_endpoint_state_map();
-	m.attr("kLibrarySupportedBoards") = timing::g_library_supported_boards;
-    m.attr("kLibrarySupportedDesigns") = timing::g_library_supported_designs;
-	m.attr("kEventSize") = timing::g_event_size;
+	m.attr("kLibrarySupportedBoards") = timing::IONode::get_library_supported_boards();
+    m.attr("kLibrarySupportedDesigns") = timing::IONode::get_library_supported_designs();
+	m.attr("kEventSize") = timing::PartitionNode::kWordsPerEvent;
     m.attr("kMasterFWMajorRequired") = MasterNode::required_major_firmware_version;
 }
 

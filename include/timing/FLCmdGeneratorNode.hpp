@@ -48,11 +48,27 @@ public:
    */
   virtual void send_fl_cmd(uint32_t command,        // NOLINT(build/unsigned)
                            uint32_t channel) const; // NOLINT(build/unsigned)
+  /**
+   * @brief     Configure fake trigger
+   */
+  void enable_periodic_fl_cmd(uint32_t channel,  // NOLINT(build/unsigned)
+                              double rate,  // NOLINT(build/unsigned)
+                              bool poisson,
+                              uint32_t clock_frequency_hz) const; // NOLINT(build/unsigned)
 
   /**
    * @brief     Configure fake trigger
    */
-  void enable_fake_trigger(uint32_t channel,  // NOLINT(build/unsigned)
+  void enable_periodic_fl_cmd(uint32_t command,  // NOLINT(build/unsigned)
+                              uint32_t channel,  // NOLINT(build/unsigned)
+                              double rate, // NOLINT(build/unsigned)
+                              bool poisson,
+                              uint32_t clock_frequency_hz) const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief     Configure fake trigger
+   */
+  void enable_periodic_fl_cmd(uint32_t channel,  // NOLINT(build/unsigned)
                            uint32_t divisor,  // NOLINT(build/unsigned)
                            uint32_t prescale, // NOLINT(build/unsigned)
                            bool poisson) const;
@@ -60,7 +76,7 @@ public:
   /**
    * @brief     Configure fake trigger
    */
-  void enable_fake_trigger(uint32_t command,  // NOLINT(build/unsigned)
+  void enable_periodic_fl_cmd(uint32_t command,  // NOLINT(build/unsigned)
                            uint32_t channel,  // NOLINT(build/unsigned)
                            uint32_t divisor,  // NOLINT(build/unsigned)
                            uint32_t prescale, // NOLINT(build/unsigned)
@@ -80,6 +96,8 @@ public:
    * @brief    Give info to collector.
    */
   void get_info(opmonlib::InfoCollector& ic, int level) const override;
+
+  static void parse_periodic_fl_cmd_rate(double requested_rate, uint32_t clock_frequency_hz, double& actual_rate, uint32_t& divisor, uint32_t& prescale);
 private:
   void validate_command(uint32_t command) const;
   void validate_channel(uint32_t channel) const;

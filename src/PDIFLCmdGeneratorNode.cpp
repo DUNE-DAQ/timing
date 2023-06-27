@@ -80,7 +80,7 @@ PDIFLCmdGeneratorNode::send_fl_cmd(FixedLengthCommandType command,
 
   getNode("chan_ctrl.force").write(0x0);
   getClient().dispatch();
-  TLOG() << "Command sent " << g_command_map.at(command) << "(" << format_reg_value(command) << ") from generator "
+  TLOG() << "Command sent " << get_command_map().at(command) << "(" << format_reg_value(command) << ") from generator "
          << format_reg_value(channel) << " @time " << std::hex << std::showbase << tstamp2int(timestamp);
 }
 //-----------------------------------------------------------------------------

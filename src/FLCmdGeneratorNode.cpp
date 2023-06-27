@@ -87,19 +87,65 @@ FLCmdGeneratorNode::send_fl_cmd(uint32_t command,       // NOLINT(build/unsigned
 
 //-----------------------------------------------------------------------------
 void
-FLCmdGeneratorNode::enable_fake_trigger(uint32_t channel,  // NOLINT(build/unsigned)
-                                        uint32_t divisor,  // NOLINT(build/unsigned)
-                                        uint32_t prescale, // NOLINT(build/unsigned)
-                                        bool poisson) const
+FLCmdGeneratorNode::enable_periodic_fl_cmd(uint32_t channel,  // NOLINT(build/unsigned)
+                                           double rate,
+                                           bool poisson,
+                                           uint32_t clock_frequency_hz) const
 {
-  validate_channel(channel);
-  enable_fake_trigger(0x8+channel, channel, divisor, prescale, poisson);
+  enable_periodic_fl_cmd(0x8+channel, channel, rate, poisson, clock_frequency_hz);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void
-FLCmdGeneratorNode::enable_fake_trigger(uint32_t command,  // NOLINT(build/unsigned)
+FLCmdGeneratorNode::enable_periodic_fl_cmd(uint32_t command,  // NOLINT(build/unsigned)
+                                           uint32_t channel,  // NOLINT(build/unsigned)
+                                           double rate,
+                                           bool poisson,
+                                           uint32_t clock_frequency_hz) const
+{
+  uint32_t divisor;
+  uint32_t prescale;
+  double actual_rate;
+
+  parse_periodic_fl_cmd_rate(rate, clock_frequency_hz, actual_rate, divisor, prescale);
+
+  TLOG() << "Requested rate, actual rate: " << rate << ", " << actual_rate;
+  TLOG() << "prescale, divisor: " << prescale << ", " << divisor;
+
+  std::stringstream trig_stream;
+  trig_stream << "> Periodic rate for command 0x" << std::hex << command << ", on channel 0x" << channel
+              << " set to " << std::setprecision(3) << std::scientific << actual_rate << " Hz";
+  TLOG() << trig_stream.str();
+
+  std::stringstream trigger_mode_stream;
+  trigger_mode_stream << "> Trigger mode: ";
+
+  if (poisson) {
+    trigger_mode_stream << "poisson";
+  } else {
+    trigger_mode_stream << "periodic";
+  }
+  TLOG() << trigger_mode_stream.str();
+  enable_periodic_fl_cmd(command, channel, divisor, prescale, poisson);
+
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+FLCmdGeneratorNode::enable_periodic_fl_cmd(uint32_t channel,  // NOLINT(build/unsigned)
+                                        uint32_t divisor,  // NOLINT(build/unsigned)
+                                        uint32_t prescale, // NOLINT(build/unsigned)
+                                        bool poisson) const
+{
+  enable_periodic_fl_cmd(0x8+channel, channel, divisor, prescale, poisson);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+FLCmdGeneratorNode::enable_periodic_fl_cmd(uint32_t command,  // NOLINT(build/unsigned)
                                         uint32_t channel,  // NOLINT(build/unsigned)
                                         uint32_t divisor,  // NOLINT(build/unsigned)
                                         uint32_t prescale, // NOLINT(build/unsigned)
@@ -178,6 +224,42 @@ FLCmdGeneratorNode::get_info(opmonlib::InfoCollector& ic, int /*level*/) const
     cmd_counter_ic.add(cmd_counter);
     ic.add(channel, cmd_counter_ic);
   }
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void FLCmdGeneratorNode::parse_periodic_fl_cmd_rate(double requested_rate,
+                                                    uint32_t clock_frequency_hz,
+                                                    double& actual_rate,
+                                                    uint32_t& divisor,
+                                                    uint32_t& prescale)
+{
+  // Rate =  (clock_frequency_hz / 2^(d+8)) / p where n in [0,15] and p in [1,256]
+
+  // DIVIDER (int): Frequency divider.
+
+  // The division from clock_frequency_hz to the desired rate is done in three steps:
+  // a) A pre-division by 256
+  // b) Division by a power of two set by n = 2 ^ rate_div_d (ranging from 2^0 -> 2^15)
+  // c) 1-in-n prescaling set by n = rate_div_p
+
+  double div = ceil(log(clock_frequency_hz / (requested_rate * 256 * 256)) / log(2));
+  if (div < 0) {
+    divisor = 0;
+  } else if (div > 15) {
+    divisor = 15;
+  } else {
+    divisor = div;
+  }
+
+  uint32_t ps = (uint32_t)((clock_frequency_hz / (requested_rate * 256 * (1 << divisor))) + 0.5); // NOLINT(build/unsigned)
+  if (ps == 0 || ps > 256)
+  {
+    throw BadRequestedFakeTriggerRate(ERS_HERE, requested_rate, ps);
+  } else {
+    prescale = ps;
+  }
+  actual_rate = static_cast<double>(clock_frequency_hz) / (256 * prescale * (1 << divisor));
 }
 //-----------------------------------------------------------------------------
 

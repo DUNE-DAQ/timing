@@ -50,8 +50,18 @@ public:
    */
   void send_fl_cmd(FixedLengthCommandType command,
                    uint32_t channel) const; // NOLINT(build/unsigned)
+
+  static const std::map<FixedLengthCommandType, std::string>& get_command_map() {return command_map;}
+
+  static inline const size_t number_of_fl_cmds = get_command_map().size();
 private:
   void validate_channel(uint32_t channel) const;
+
+  static inline const std::map<FixedLengthCommandType, std::string> command_map = {
+    { TimeSync, "TimeSync" }, { Echo, "Echo" }, { SpillStart, "SpillStart" }, { SpillStop, "SpillStop" }, { RunStart, "RunStart" },
+    { RunStop, "RunStop" }, { WibCalib, "WibCalib" }, { SSPCalib, "SSPCalib" }, { FakeTrig0, "FakeTrig0" }, { FakeTrig1, "FakeTrig1" },
+    { FakeTrig2, "FakeTrig2" }, { FakeTrig3, "FakeTrig3" }, { BeamTrig, "BeamTrig" }, { NoBeamTrig, "NoBeamTrig" }, { ExtFakeTrig, "ExtFakeTrig" }
+  };
 };
 
 } // namespace timing

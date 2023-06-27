@@ -105,7 +105,7 @@ IONode::get_board_revision() const
 {
   auto uid = read_board_uid();
   try {
-    return g_board_uid_revision_map.at(uid);
+    return get_board_uid_revision_map().at(uid);
   } catch (const std::out_of_range& e) {
     ers::warning(UnknownBoardUID(ERS_HERE, format_reg_value(uid), e));
     return kBoardRevisionUnknown;
@@ -127,13 +127,13 @@ IONode::get_hardware_info(bool print_out) const
   std::vector<std::pair<std::string, std::string>> hardware_info;
 
   try {
-    hardware_info.push_back(std::make_pair("Board type", g_board_type_map.at(board_type)));
+    hardware_info.push_back(std::make_pair("Board type", get_board_type_map().at(board_type)));
   } catch (const std::out_of_range& e) {
     ers::error(MissingBoardTypeMapEntry(ERS_HERE, format_reg_value(board_type), e));
   }
 
   try {
-    hardware_info.push_back(std::make_pair("Board revision", g_board_revision_map.at(board_revision)));
+    hardware_info.push_back(std::make_pair("Board revision", get_board_revision_map().at(board_revision)));
   } catch (const std::out_of_range& e) {
     ers::error(MissingBoardRevisionMapEntry(ERS_HERE, format_reg_value(board_revision), e));
   }
@@ -141,13 +141,13 @@ IONode::get_hardware_info(bool print_out) const
   hardware_info.push_back(std::make_pair("Board UID", format_reg_value(read_board_uid())));
 
   try {
-    hardware_info.push_back(std::make_pair("Carrier type", g_carrier_type_map.at(carrier_type)));
+    hardware_info.push_back(std::make_pair("Carrier type", get_carrier_type_map().at(carrier_type)));
   } catch (const std::out_of_range& e) {
     ers::error(MissingCarrierTypeMapEntry(ERS_HERE, format_reg_value(carrier_type), e));
   }
 
   try {
-    hardware_info.push_back(std::make_pair("Design type", g_design_type_map.at(design_type)));
+    hardware_info.push_back(std::make_pair("Design type", get_design_type_map().at(design_type)));
   } catch (const std::out_of_range& e) {
     ers::error(MissingDesignTypeMapEntry(ERS_HERE, format_reg_value(design_type), e));
   }
@@ -183,7 +183,7 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
     const uint32_t firmware_frequency = read_firmware_frequency(); // NOLINT(build/unsigned)
 
     try {
-      clock_config_key << g_board_type_map.at(board_type) << "_";
+      clock_config_key << get_board_type_map().at(board_type) << "_";
     } catch (const std::out_of_range& e) {
       throw MissingBoardTypeMapEntry(ERS_HERE, format_reg_value(board_type), e);
     }
@@ -193,13 +193,13 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
     clock_config_key << std::hex << pll_model;
 
 //    try {
-//      clock_config_key = clock_config_key + g_carrier_type_map.at(carrier_type) + "_";
+//      clock_config_key = clock_config_key + get_carrier_type_map().at(carrier_type) + "_";
 //    } catch (const std::out_of_range& e) {
 //      throw MissingCarrierTypeMapEntry(ERS_HERE, format_reg_value(carrier_type), e);
 //    }
 
     try {
-      clock_config_key << "_" << g_design_type_map.at(design_type);
+      clock_config_key << "_" << get_design_type_map().at(design_type);
     } catch (const std::out_of_range& e) {
       throw MissingDesignTypeMapEntry(ERS_HERE, format_reg_value(design_type), e);
     }
@@ -225,7 +225,7 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
     TLOG_DEBUG(0) << "Using pll config key: " << clock_config_key.str();
 
     try {
-      config_file = g_clock_config_map.at(clock_config_key.str());
+      config_file = get_clock_config_map().at(clock_config_key.str());
     } catch (const std::out_of_range& e) {
       throw ClockConfigNotFound(ERS_HERE, clock_config_key.str(), e);
     }
