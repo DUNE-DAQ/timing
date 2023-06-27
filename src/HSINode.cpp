@@ -8,6 +8,7 @@
 
 #include "timing/HSINode.hpp"
 
+#include "timing/FLCmdGeneratorNode.hpp"
 #include "timing/toolbox.hpp"
 #include "logging/Logging.hpp"
 
@@ -117,11 +118,11 @@ HSINode::read_data_buffer(uint16_t& n_words, bool read_all, bool fail_on_error) 
     n_hsi_words = 1024;
   }
 
-  uint32_t events_to_read = n_hsi_words / g_hsi_event_size; // NOLINT(build/unsigned)
+  uint32_t events_to_read = n_hsi_words / hsi_buffer_event_words_number; // NOLINT(build/unsigned)
 
   TLOG_DEBUG(5) << "Events available in readout buffer:     " << format_reg_value(events_to_read);
 
-  uint32_t words_to_read = read_all ? n_hsi_words : events_to_read * g_hsi_event_size; // NOLINT(build/unsigned)
+  uint32_t words_to_read = read_all ? n_hsi_words : events_to_read * hsi_buffer_event_words_number; // NOLINT(build/unsigned)
 
   TLOG_DEBUG(5) << "Words to be read out in readout buffer: " << format_reg_value(words_to_read);
 
@@ -196,15 +197,21 @@ HSINode::configure_hsi(uint32_t src,      // NOLINT(build/unsigned)
   
   try
   {
-    FakeTriggerConfig fake_trigger_config(rate, clock_frequency_hz);
-    fake_trigger_config.print();
+    uint32_t divisor;
+    uint32_t prescale;
+    double actual_rate;
+
+    FLCmdGeneratorNode::parse_periodic_fl_cmd_rate(rate, clock_frequency_hz, actual_rate, divisor, prescale);
+
+    TLOG() << "Requested rate, actual rate: " << rate << ", " << actual_rate;
+    TLOG() << "prescale, divisor: " << prescale << ", " << divisor;
 
     std::stringstream trig_stream;
-    trig_stream << "> Random trigger rate for HSI set to " << std::setprecision(3) << std::scientific << fake_trigger_config.actual_rate << " Hz. d: " << fake_trigger_config.divisor << " p: " << fake_trigger_config.prescale;
+    trig_stream << "> Random trigger rate for HSI set to " << std::setprecision(3) << std::scientific << actual_rate << " Hz. d: " << divisor << " p: " << prescale;
     TLOG() << trig_stream.str();
     
-    getNode("csr.ctrl.rate_div_p").write(fake_trigger_config.prescale);
-    getNode("csr.ctrl.rate_div_d").write(fake_trigger_config.divisor);
+    getNode("csr.ctrl.rate_div_p").write(prescale);
+    getNode("csr.ctrl.rate_div_d").write(divisor);
   }
   catch (const timing::BadRequestedFakeTriggerRate& e)
   {

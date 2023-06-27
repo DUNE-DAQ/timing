@@ -7,6 +7,7 @@
  */
 
 #include "timing/PartitionNode.hpp"
+#include "timing/PDIFLCmdGeneratorNode.hpp"
 
 #include "timing/definitions.hpp"
 #include "timing/toolbox.hpp"
@@ -21,9 +22,6 @@ namespace dunedaq {
 namespace timing {
 
 UHAL_REGISTER_DERIVED_NODE(PartitionNode)
-
-// Static data member initialization
-const uint32_t PartitionNode::kWordsPerEvent = 6; // NOLINT(build/unsigned)
 
 //-----------------------------------------------------------------------------
 PartitionNode::PartitionNode(const uhal::Node& node)
@@ -294,9 +292,9 @@ PartitionNode::get_status(bool print_out) const
   std::vector<uhal::ValVector<uint32_t>> counters_container = { accepted_counters, rejected_counters }; // NOLINT(build/unsigned)
 
   std::vector<std::string> counter_labels;
-  for (auto it = g_command_map.begin(); it != g_command_map.end(); ++it)
+  for (auto& cmd : PDIFLCmdGeneratorNode::get_command_map())
   {
-      counter_labels.push_back(it->second);
+      counter_labels.push_back(cmd.second);
   }
 
   status << format_counters_table(counters_container, { "Accept counters", "Reject counters" }, "", counter_labels);
@@ -347,7 +345,7 @@ PartitionNode::get_info(opmonlib::InfoCollector& ic, int /*level*/) const
   getClient().dispatch();
 
 
-  for (auto& cmd: g_command_map) {
+  for (auto& cmd : PDIFLCmdGeneratorNode::get_command_map()) {
     timingfirmwareinfo::TimingFLCmdCounter cmd_counter;
     opmonlib::InfoCollector cmd_counter_ic;
 

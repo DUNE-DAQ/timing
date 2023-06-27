@@ -174,13 +174,16 @@ public:
   virtual void reset(int32_t fanout_mode, // NOLINT(build/unsigned)
                      const std::string& clock_config_file = "") const = 0;
 
-  static std::map<BoardType, std::string> get_board_type_map() { return board_type_map; }
+  static const std::map<BoardType, std::string>& get_board_type_map() { return board_type_map; }
 
-  static std::map<CarrierType, std::string> get_carrier_type_map() { return carrier_type_map; }
+  static const std::map<CarrierType, std::string>& get_carrier_type_map() { return carrier_type_map; }
 
-  static std::map<BoardRevision, std::string> get_board_revision_map() { return board_revision_map; }
-  static std::map<uint64_t, BoardRevision> get_board_uid_revision_map() { return board_uid_revision_map; }
-  static std::map<std::string, std::string> get_clock_config_map() { return clock_config_map; }
+  static const std::map<BoardRevision, std::string>& get_board_revision_map() { return board_revision_map; }
+  static const std::map<uint64_t, BoardRevision>& get_board_uid_revision_map() { return board_uid_revision_map; }
+  static const std::map<DesignType, std::string>& get_design_type_map() { return design_type_map; }
+  static const std::map<std::string, std::string>& get_clock_config_map() { return clock_config_map; }
+  static const std::vector<BoardType>& get_library_supported_boards() { return library_supported_boards; }
+  static const std::vector<DesignType>& get_library_supported_designs() { return library_supported_designs; }
 
 protected:
   const std::string m_uid_i2c_bus;
@@ -219,6 +222,20 @@ protected:
                                                                 { kPC059Rev1, "kPC059Rev1" }, { kTLURev1, "kTLURev1" }, { kSIMRev1, "kSIMRev1" },
                                                                 { kFIBRev1, "kFIBRev1" }, { kFMCRev4, "kFMCRev4" }, { kMIBRev1, "kMIBRev1" },
                                                                 { kPC069a, "pc069a" }, { kBoardRevisionUnknown, "unknown" }
+  };
+
+  static inline const std::map<DesignType, std::string> design_type_map = {
+                                                                { kDesignMaster, "master" },
+                                                                { kDesignOuroboros, "ouroboros" },
+                                                                { kDesignOuroborosSim, "ouroboros-sim" },
+                                                                { kDesignTest, "test-design" },
+                                                                { kDesignEndpoint, "endpoint" },
+                                                                { kDesignFanout, "fanout" },
+                                                                { kDesignOverlord, "overlord" },
+                                                                { kDesignEndpoBICRT, "endpoint-bi-crt" },
+                                                                { kDesignChronos, "chronos" },
+                                                                { kDesignBoreas, "boreas" },
+                                                                { kDesignUnknown, "unknown" },
   };
 
   // NOLINTNEXTLINE(build/unsigned)
@@ -382,6 +399,14 @@ protected:
         { "pc059_5345_fanout_mode0_50_mhz_cdr", "wr/FANOUT_PLL_WIDEBW_SFPIN.txt" }, // fanout mode
         { "pc059_5345_fanout_mode1_50_mhz_cdr", "devel/PDTS_PC059_FANOUT.txt" },    // stand-alone mode
         { "pc059_5345_fanout_50_mhz_cdr", "devel/PDTS_PC059_FANOUT.txt" },    // stand-alone mode
+  };
+
+  static inline const std::vector<BoardType> library_supported_boards = {
+    kBoardFMC, kBoardPC059, kBoardTLU, kBoardSim, kBoardFIB, kBoardMIB, kBoardPC069
+  };
+
+  static inline const std::vector<DesignType> library_supported_designs = {
+    kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord, kDesignEndpoBICRT, kDesignChronos, kDesignBoreas
   };
 
 };

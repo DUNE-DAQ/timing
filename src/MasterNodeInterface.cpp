@@ -49,34 +49,7 @@ void
 MasterNodeInterface::enable_periodic_fl_cmd(uint32_t command, uint32_t channel, double rate, bool poisson, uint32_t clock_frequency_hz) const // NOLINT(build/unsigned)
 {
 
-  // Configures the internal command generator to produce triggers at a defined frequency.
-  // Rate =  (clock_frequency_hz / 2^(d+8)) / p where n in [0,15] and p in [1,256]
-
-  // DIVIDER (int): Frequency divider.
-
-  // The division from clock_frequency_hz to the desired rate is done in three steps:
-  // a) A pre-division by 256
-  // b) Division by a power of two set by n = 2 ^ rate_div_d (ranging from 2^0 -> 2^15)
-  // c) 1-in-n prescaling set by n = rate_div_p
-
-  FakeTriggerConfig fake_trigger_config(rate, clock_frequency_hz);
-
-  fake_trigger_config.print();
-  std::stringstream trig_stream;
-  trig_stream << "> Periodic rate for command 0x" << std::hex << command << ", on channel 0x" << channel
-              << " set to " << std::setprecision(3) << std::scientific << fake_trigger_config.actual_rate << " Hz";
-  TLOG() << trig_stream.str();
-
-  std::stringstream trigger_mode_stream;
-  trigger_mode_stream << "> Trigger mode: ";
-
-  if (poisson) {
-    trigger_mode_stream << "poisson";
-  } else {
-    trigger_mode_stream << "periodic";
-  }
-  TLOG() << trigger_mode_stream.str();
-  getNode<FLCmdGeneratorNode>("scmd_gen").enable_fake_trigger(command, channel, fake_trigger_config.divisor, fake_trigger_config.prescale, poisson);
+  getNode<FLCmdGeneratorNode>("scmd_gen").enable_periodic_fl_cmd(command, channel, rate, poisson, clock_frequency_hz);
 }
 //-----------------------------------------------------------------------------
 

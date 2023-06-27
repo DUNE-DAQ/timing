@@ -7,6 +7,8 @@
  */
 
 #include "timing/PDIEndpointNode.hpp"
+#include "timing/PDIFLCmdGeneratorNode.hpp"
+#include "timing/PartitionNode.hpp"
 
 #include "timing/definitions.hpp"
 #include "timing/toolbox.hpp"
@@ -88,7 +90,7 @@ PDIEndpointNode::get_status(bool print_out) const
   auto ept_buffer_count = getNode("buf.count").read();
   auto ept_control = read_sub_nodes(getNode("csr.ctrl"), false);
   auto ept_state = read_sub_nodes(getNode("csr.stat"), false);
-  auto ept_counters = getNode("ctrs").readBlock(g_command_number);
+  auto ept_counters = getNode("ctrs").readBlock(PDIFLCmdGeneratorNode::number_of_fl_cmds);
   getClient().dispatch();
 
   ept_summary.push_back(std::make_pair("State", get_endpoint_state_map().at(ept_state.find("ep_stat")->second.value())));
@@ -113,7 +115,7 @@ PDIEndpointNode::get_status(bool print_out) const
 
   std::vector<std::pair<std::string, std::string>> ept_command_counters;
 
-  for (auto& cmd:  g_command_map) { // NOLINT(build/unsigned)
+  for (auto& cmd : PDIFLCmdGeneratorNode::get_command_map()) {
     ept_command_counters.push_back(std::make_pair(cmd.second, std::to_string(ept_counters[cmd.first])));
   }
 
@@ -158,11 +160,11 @@ PDIEndpointNode::read_data_buffer(bool read_all) const
 
   TLOG_DEBUG(0) << "Words available in readout buffer:      " << format_reg_value(buffer_count);
 
-  uint32_t events_to_read = buffer_count.value() / g_event_size; // NOLINT(build/unsigned)
+  uint32_t events_to_read = buffer_count.value() / PartitionNode::kWordsPerEvent; // NOLINT(build/unsigned)
 
   TLOG_DEBUG(0) << "Events available in readout buffer:     " << format_reg_value(events_to_read);
 
-  uint32_t words_to_read = read_all ? buffer_count.value() : events_to_read * g_event_size; // NOLINT(build/unsigned)
+  uint32_t words_to_read = read_all ? buffer_count.value() : events_to_read * PartitionNode::kWordsPerEvent; // NOLINT(build/unsigned)
 
   TLOG_DEBUG(0) << "Words to be read out in readout buffer: " << format_reg_value(words_to_read);
 
@@ -261,10 +263,10 @@ PDIEndpointNode::get_info(opmonlib::InfoCollector& ci, int /*level*/) const
   nlohmann::json cmd_data;
   timingendpointinfo::TimingFLCmdCounters received_fl_commands_counters;
   
-  auto counters = getNode("ctrs").readBlock(g_command_number);
+  auto counters = getNode("ctrs").readBlock(PDIFLCmdGeneratorNode::number_of_fl_cmds);
   getClient().dispatch();
   
-  for (auto& cmd:  g_command_map) {
+  for (auto& cmd : PDIFLCmdGeneratorNode::get_command_map()) {
     cmd_data[cmd.second] = counters.at(cmd.first);
   }
   timingendpointinfo::from_json(cmd_data, received_fl_commands_counters);

@@ -57,7 +57,7 @@ public:
   explicit PartitionNode(const uhal::Node& node);
   virtual ~PartitionNode();
 
-  static const uint32_t kWordsPerEvent; // NOLINT(build/unsigned)
+  static inline constexpr size_t kWordsPerEvent = 6;
 
   /**
    * @brief      Reads a command mask.

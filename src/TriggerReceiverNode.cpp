@@ -8,6 +8,8 @@
 
 #include "timing/TriggerReceiverNode.hpp"
 
+#include "timing/PDIFLCmdGeneratorNode.hpp"
+
 #include "timing/toolbox.hpp"
 #include "logging/Logging.hpp"
 
@@ -46,9 +48,9 @@ TriggerReceiverNode::get_status(bool print_out) const
   std::vector<uhal::ValVector<uint32_t>> counters_container = { counters }; // NOLINT(build/unsigned)
 
   std::vector<std::string> counter_labels;
-  for (auto it = g_command_map.begin(); it != g_command_map.end(); ++it)
+  for (auto cmd : PDIFLCmdGeneratorNode::get_command_map())
   {
-      counter_labels.push_back(it->second);
+      counter_labels.push_back(cmd.second);
   }
   status << format_counters_table(counters_container, { "Counters" }, "Trig rx counters", counter_labels);
 

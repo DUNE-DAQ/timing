@@ -147,7 +147,7 @@ IONode::get_hardware_info(bool print_out) const
   }
 
   try {
-    hardware_info.push_back(std::make_pair("Design type", g_design_type_map.at(design_type)));
+    hardware_info.push_back(std::make_pair("Design type", get_design_type_map().at(design_type)));
   } catch (const std::out_of_range& e) {
     ers::error(MissingDesignTypeMapEntry(ERS_HERE, format_reg_value(design_type), e));
   }
@@ -199,7 +199,7 @@ IONode::get_full_clock_config_file_path(const std::string& clock_config_file, in
 //    }
 
     try {
-      clock_config_key << "_" << g_design_type_map.at(design_type);
+      clock_config_key << "_" << get_design_type_map().at(design_type);
     } catch (const std::out_of_range& e) {
       throw MissingDesignTypeMapEntry(ERS_HERE, format_reg_value(design_type), e);
     }

@@ -135,6 +135,7 @@ public:
    */
   void get_info(opmonlib::InfoCollector& ci, int level) const override;
   
+  static inline constexpr size_t hsi_buffer_event_words_number = 5;
 };
 
 } // namespace timing
