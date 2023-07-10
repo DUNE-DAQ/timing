@@ -318,6 +318,8 @@ protected:
 
         { "pc059_5345_master", "devel/PDTS_PC059_FANOUT.txt" },
 
+        { "pc069_5395_master", "nocdr/Si5395-RevA-069a_mst-Registers.txt" },
+
         // 62.5 MHz mappings (with cdr)
         { "fmc_5344_endpoint_cdr", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
         { "fmc_5394_endpoint_cdr", "devel/Si5394-053endptr_62-5MHz_4kHz-Registers.txt" },
