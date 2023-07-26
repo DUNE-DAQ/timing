@@ -221,7 +221,7 @@ protected:
                                                                 { kFMCRev1, "kFMCRev1" },     { kFMCRev2, "kFMCRev2" }, { kFMCRev3, "kFMCRev3" },
                                                                 { kPC059Rev1, "kPC059Rev1" }, { kTLURev1, "kTLURev1" }, { kSIMRev1, "kSIMRev1" },
                                                                 { kFIBRev1, "kFIBRev1" }, { kFMCRev4, "kFMCRev4" }, { kMIBRev1, "kMIBRev1" },
-                                                                { kPC069a, "pc069a" }, { kBoardRevisionUnknown, "unknown" }
+                                                                { kPC069a, "pc069a" }, { kMIBRev2, "kMIBRev2" }, { kBoardRevisionUnknown, "unknown" }
   };
 
   static inline const std::map<DesignType, std::string> design_type_map = {
@@ -235,6 +235,7 @@ protected:
                                                                 { kDesignEndpoBICRT, "endpoint-bi-crt" },
                                                                 { kDesignChronos, "chronos" },
                                                                 { kDesignBoreas, "boreas" },
+                                                                { kDesignKerberos, "kerberos" },
                                                                 { kDesignUnknown, "unknown" },
   };
 
@@ -291,6 +292,7 @@ protected:
                                                                     { 0x5410ecbb6845, kTLURev1 },
                                                                     { 0x801f12ee6739, kMIBRev1 },
                                                                     { 0x801f12f5e183, kFIBRev1 },
+                                                                    { 0x49162b1d910,  kMIBRev2}
   };
 
   static inline const std::map<std::string, std::string> clock_config_map = {
@@ -408,7 +410,7 @@ protected:
   };
 
   static inline const std::vector<DesignType> library_supported_designs = {
-    kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord, kDesignEndpoBICRT, kDesignChronos, kDesignBoreas
+    kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord, kDesignEndpoBICRT, kDesignChronos, kDesignBoreas, kDesignKerberos
   };
 
 };

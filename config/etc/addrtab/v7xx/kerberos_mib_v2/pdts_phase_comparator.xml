@@ -1,0 +1,15 @@
+<node id="pdts_phase_comparator" description="Comparator of phase" fwinfo="endpoint">
+		<node id="csr" address="0x0" fwinfo="endpoint;width=5">
+			<node id="ctrl" address="0x0">
+				<node id="rst" mask="0x1"/>
+				<node id="go" mask="0x2"/>
+			</node>
+			<node id="stat" address="0x1">
+				<node id="valid" mask="0x1"/>
+			</node>
+			<node id="00" address="0x2"/>
+			<node id="01" address="0x3"/>
+			<node id="10" address="0x4"/>
+			<node id="11" address="0x5"/>
+		</node>
+</node>

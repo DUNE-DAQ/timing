@@ -14,6 +14,7 @@
 #include "timing/OuroborosMuxDesign.hpp"
 #include "timing/OverlordDesign.hpp"
 #include "timing/EndpointDesign.hpp"
+#include "timing/KerberosDesign.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -293,6 +294,39 @@ register_top_designs(py::module& m)
     .def("validate_firmware_version", &timing::CRTDesign::validate_firmware_version)
     .def("get_status", &timing::CRTDesign::get_status)
     .def("get_crt_node", &timing::CRTDesign::get_crt_node);
+
+  // Kerberos
+  py::class_<timing::KerberosDesign, uhal::Node>(m, "KerberosDesign")
+    .def("read_firmware_version", &timing::KerberosDesign::read_firmware_version)
+    .def("validate_firmware_version", &timing::KerberosDesign::validate_firmware_version)
+    .def("sync_timestamp", &timing::KerberosDesign::sync_timestamp)
+    .def<void (timing::KerberosDesign::*)(uint32_t, double, bool) const>("enable_periodic_fl_cmd",
+         &timing::KerberosDesign::enable_periodic_fl_cmd,
+         py::arg("channel"),
+         py::arg("rate"),
+         py::arg("poisson"))
+    .def<void (timing::KerberosDesign::*)(uint32_t, uint32_t, double, bool) const>("enable_periodic_fl_cmd",
+         &timing::KerberosDesign::enable_periodic_fl_cmd,
+         py::arg("command"),
+         py::arg("channel"),
+         py::arg("rate"),
+         py::arg("poisson"))
+//    .def("switch_downstream_mux_channel", &timing::FanoutDesign::switch_downstream_mux_channel)
+    .def("apply_endpoint_delay",
+          &timing::KerberosDesign::apply_endpoint_delay,
+          py::arg("address"),
+          py::arg("coarse_delay"),
+          py::arg("fine_delay"),
+          py::arg("phase_delay"),
+          py::arg("measure_rtt") = false,
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1)
+    .def("measure_endpoint_rtt",
+          &timing::KerberosDesign::measure_endpoint_rtt,
+          py::arg("address"),
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1)
+    ;
 } // NOLINT
 
 } // namespace python

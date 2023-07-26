@@ -62,6 +62,7 @@ register_definitions(py::module& m)
         .value("kFIBRev1", kFIBRev1)
         .value("kMIBRev1", kMIBRev1)
         .value("kPC069a", kPC069a)
+        .value("kMIBRev2", kMIBRev2)
         .export_values();
 
     py::enum_<CarrierType>(m, "CarrierType")
@@ -86,6 +87,7 @@ register_definitions(py::module& m)
         .value("kDesignEndpoBICRT", kDesignEndpoBICRT)
         .value("kDesignChronos", kDesignChronos)
         .value("kDesignBoreas", kDesignBoreas)
+        .value("kDesignKerberos", kDesignKerberos)
         .value("kDesignUnknown", kDesignUnknown)
         .export_values();
 

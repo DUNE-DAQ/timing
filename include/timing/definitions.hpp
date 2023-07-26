@@ -63,6 +63,7 @@ enum DesignType
   kDesignEndpoBICRT,
   kDesignChronos,
   kDesignBoreas,
+  kDesignKerberos,
   kDesignUnknown = 256
 };
 
@@ -78,6 +79,7 @@ enum BoardRevision
   kFIBRev1,
   kMIBRev1,
   kPC069a,
+  kMIBRev2,
   kBoardRevisionUnknown = 256
 };
 
