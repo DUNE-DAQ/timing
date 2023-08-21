@@ -1,0 +1,12 @@
+<node id="TOP" class="KerberosDesign">
+    <node id="io" address="0x0" module="file://pdts_mib_v2_io.xml"/>
+    <node id="endpoint0" address="0x100" module="file://pdts_ep_mon.xml"/>
+    <node id="endpoint1" address="0x200" module="file://pdts_ep_mon.xml"/>
+    <node id="endpoint2" address="0x300" module="file://pdts_ep_mon.xml"/>
+    <node id="timing_source_mux" address="0x400" module="file://pdts_timing_source_mux.xml"/>
+    <node id="phase_comparator" address="0x500" module="file://pdts_phase_comparator.xml"/>
+    <node id="timestamp_comparator" address="0x600" module="file://pdts_timestamp_comparator.xml"/>
+    <node id="master" address="0x700" module="file://pdts_master.xml"/>
+    <node id="cdr0" address="0x1000" module="file://pdts_upstream_cdr.xml"/>
+    <node id="cdr1" address="0x1100" module="file://pdts_upstream_cdr.xml"/>
+</node>

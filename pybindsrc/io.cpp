@@ -14,6 +14,7 @@
 #include "timing/TLUIONode.hpp"
 #include "timing/MIBIONode.hpp"
 #include "timing/SwitchyardNode.hpp"
+#include "timing/MIBV2IONode.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -135,6 +136,22 @@ register_io(py::module& m)
       .def("configure_master_source", &timing::SwitchyardNode::configure_master_source, py::arg("master_source"), py::arg("dispatch") = true)
       .def("configure_endpoint_source", &timing::SwitchyardNode::configure_endpoint_source, py::arg("endpoint_source"), py::arg("dispatch") = true);
 
+  py::class_<timing::MIBV2IONode, timing::IONode, uhal::Node>(m, "MIBV2IONode")
+    .def(py::init<const uhal::Node&>())
+    .def<void (timing::MIBV2IONode::*)(const std::string&) const>(
+      "reset", &timing::MIBV2IONode::reset, py::arg("clock_config_file") = "")
+    .def<void (timing::MIBV2IONode::*)(int32_t, const std::string&) const>(
+      "reset", &timing::MIBV2IONode::reset, py::arg("fanout_mode"), py::arg("clock_config_file") = "")
+    .def("soft_reset", &timing::MIBV2IONode::soft_reset)
+    .def("read_firmware_frequency", &timing::MIBV2IONode::read_firmware_frequency)
+    .def("get_clock_frequencies_table", &timing::MIBV2IONode::get_clock_frequencies_table, py::arg("print_out") = false)
+    .def("get_status", &timing::MIBV2IONode::get_status, py::arg("print_out") = false)
+    .def("get_pll_status", &timing::MIBV2IONode::get_pll_status, py::arg("print_out") = false)
+    .def("get_pll", &timing::MIBV2IONode::get_pll)
+    .def("get_hardware_info", &timing::MIBV2IONode::get_hardware_info, py::arg("print_out") = false)
+    .def("get_sfp_status", &timing::MIBV2IONode::get_sfp_status, py::arg("sfp_id"), py::arg("print_out") = false)
+    .def("switch_sfp_soft_tx_control_bit", &timing::MIBV2IONode::switch_sfp_soft_tx_control_bit)
+    ;
 } // NOLINT
 
 } // namespace python

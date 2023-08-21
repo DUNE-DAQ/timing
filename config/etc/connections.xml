@@ -43,5 +43,7 @@
 
   <connection id="CHRONOS_FMC"   uri="chtcp-2.0://kipper.phy.bris.ac.uk:10203?target=192.168.200.22:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/chronos_fmc/top_fmc.xml" />
 
+  <connection id="MIB" uri="ipbusudp-2.0://192.168.121.70:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/kerberos_mib_v2/top_mib_v2.xml" />
+
 </connections>
     

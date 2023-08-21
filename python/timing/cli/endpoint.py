@@ -20,7 +20,8 @@ import time
 @click.group('ept', invoke_without_command=True)
 @click.pass_obj
 @click.argument('device', callback=toolbox.validate_device, shell_complete=toolbox.completeDevices)
-def endpoint(obj, device):
+@click.argument('id', type=int)
+def endpoint(obj, id, device):
     '''
     Endpoint master commands.
 
@@ -49,8 +50,16 @@ def endpoint(obj, device):
             e = sys.exc_info()[0]
             secho("Error: {}".format(e), fg='red')
 
+    # Ensure that target endpoint exists
+    lEPNames = lDevice.getNodes(f"endpoint{id}")
+
+    if len(lEPNames) == 0:
+        raise click.ClickException(f"Endpoint {id} does not exist")
+    elif len(lEPNames) > 1:
+        raise click.ClickException(f"Multiple endpoint {id} matches")
+
     obj.mDevice = lDevice
-    obj.mEndpoint = lDevice.getNode('endpoint0')
+    obj.mEndpoint = lDevice.getNode(f"endpoint{id}")
     obj.mIO = lDevice.getNode('io')
 # ------------------------------------------------------------------------------
 
