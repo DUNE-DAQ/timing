@@ -56,11 +56,6 @@ public:
    */
   void configure() const override;
 
-  ///**
-  // * @brief      Reset timing fanout node.
-  // */
-  // void reset(const std::string& clock_config_file="") const override;
-
   /**
    * @brief      Reset timing fanout node.
    */

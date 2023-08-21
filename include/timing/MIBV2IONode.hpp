@@ -2,7 +2,7 @@
  * @file MIBV2IONode.hpp
  *
  * MIBV2IONode is a class providing an interface
- * to the FMC IO firmware block.
+ * to the MIB V2 IO firmware block.
  *
  * This is part of the DUNE DAQ Software Suite, copyright 2020.
  * Licensing/copyright details are in the COPYING file that you should have
@@ -31,7 +31,7 @@ namespace timing {
 /**
  * @brief      Class for the timing FMC board.
  */
-class MIBV2IONode : public FanoutIONode
+class MIBV2IONode : public IONode
 {
   UHAL_DERIVEDNODE(MIBV2IONode)
 
@@ -51,12 +51,6 @@ public:
    */
   std::string get_status(bool print_out = false) const override;
 
-  
-  /**
-   * @brief      Print status of on-board PLL.
-   */
- // std::string get_pll_status(bool print_out = false) const override;
-
   /**
    * @brief      Reset FMC IO.
    */
@@ -67,25 +61,6 @@ public:
    */
   void reset(int32_t fanout_mode = -1, // NOLINT(build/unsigned)
                      const std::string& clock_config_file = "") const override;
-  /**
-   * @brief     Switch the SFP mux channel
-   */
-  void switch_downstream_mux_channel(uint32_t mux_channel) const override; // NOLINT(build/unsigned)
-
-  /**
-   * @brief     Read the active SFP mux channel
-   */
-  uint32_t read_active_downstream_mux_channel() const override; // NOLINT(build/unsigned)
-  
-  /**
-   * @brief     Switch the SFP mux channel
-   */
-  //void switch_upstream_mux_channel(uint32_t mux_channel) const; // NOLINT(build/unsigned)
-
-  /**
-   * @brief     Read the active SFP mux channel
-   */
-  //uint32_t read_active_upstream_mux_channel() const; // NOLINT(build/unsigned)
 
   /**
    * @brief      Print status of on-board SFP.
@@ -100,7 +75,7 @@ public:
   /**
    * @brief      Fill hardware monitoring structure.
    */
-  void get_info(timinghardwareinfo::TimingMIBMonitorData& mon_data) const;
+  //void get_info(timinghardwareinfo::TimingMIBV2MonitorData& mon_data) const;
 
   /**
    * @brief    Give info to collector.
@@ -115,4 +90,4 @@ private:
 } // namespace timing
 } // namespace dunedaq
 
-#endif // TIMING_INCLUDE_TIMING_MIBIONODE_HPP_
+#endif // TIMING_INCLUDE_TIMING_MIBV2IONODE_HPP_

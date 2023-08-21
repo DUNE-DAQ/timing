@@ -58,13 +58,6 @@ void
 KerberosDesign::reset_io(int32_t fanout_mode, const std::string& clock_config_file) const
 {
   get_io_node_plain()->reset(fanout_mode, clock_config_file);
-  // 0 - fanout mode, outgoing data comes from sfp
-  // 1 - standalone mode, outgoing data comes from local master
-  //if (fanout_mode < 0) {
-  //  TLOG() << "Fanout mode not supplied, defaulting to: 1 (standalone - built in master)";
-  //  fanout_mode=1;
-  //}
-  //uhal::Node::getNode<SwitchyardNode>("switch").configure_master_source(fanout_mode);
 }
 //-----------------------------------------------------------------------------
 
@@ -72,15 +65,6 @@ KerberosDesign::reset_io(int32_t fanout_mode, const std::string& clock_config_fi
 uint32_t
 KerberosDesign::measure_endpoint_rtt(uint32_t address, bool control_sfp, int sfp_mux) const
 {
-//  auto fanout_mode = uhal::Node::getNode("switch.csr.ctrl.master_src").read();
-//  uhal::Node::getClient().dispatch();
-//
-//  if (!fanout_mode.value()) {
-//    std::ostringstream message;
-//    message << " Fanout unit " << uhal::Node::getId()
-//         << " is in fanout mode. Measure endpoint RTT should be called from master device.";
-//    throw UnsupportedFunction(ERS_HERE, message.str());
-//  }
   return MasterMuxDesign::measure_endpoint_rtt(address, control_sfp, sfp_mux);
 }
 //-----------------------------------------------------------------------------
@@ -95,15 +79,6 @@ KerberosDesign::apply_endpoint_delay(uint32_t address,
                                             bool control_sfp,
                                             int sfp_mux) const
 {
-//  auto fanout_mode = uhal::Node::getNode("switch.csr.ctrl.master_src").read();
-//  uhal::Node::getClient().dispatch();
-//
-//  if (!fanout_mode.value()) {
-//    std::ostringstream message;
-//    message << "Fanout unit " << uhal::Node::getId()
-//         << " is in fanout mode. Apply endpoint delay should be called from master device.";
-//    throw UnsupportedFunction(ERS_HERE, message.str());
-//  }
   MasterMuxDesign::apply_endpoint_delay(
     address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp, sfp_mux);
 }

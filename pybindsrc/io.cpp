@@ -150,11 +150,7 @@ register_io(py::module& m)
     .def("get_pll", &timing::MIBV2IONode::get_pll)
     .def("get_hardware_info", &timing::MIBV2IONode::get_hardware_info, py::arg("print_out") = false)
     .def("get_sfp_status", &timing::MIBV2IONode::get_sfp_status, py::arg("sfp_id"), py::arg("print_out") = false)
-    //.def("switch_sfp_soft_tx_control_bit", &timing::MIBV2IONode::switch_sfp_soft_tx_control_bit)
-    //.def("switch_downstream_mux_channel", &timing::MIBV2IONode::switch_downstream_mux_channel, py::arg("mux_channel"))
-    //.def("read_active_downstream_mux_channel", &timing::MIBV2IONode::read_active_downstream_mux_channel)
-    //.def("switch_upstream_mux_channel", &timing::MIBV2IONode::switch_upstream_mux_channel, py::arg("mux_channel"))
-    //.def("read_active_upstream_mux_channel", &timing::MIBV2IONode::read_active_upstream_mux_channel)
+    .def("switch_sfp_soft_tx_control_bit", &timing::MIBV2IONode::switch_sfp_soft_tx_control_bit)
     ;
 } // NOLINT
 
