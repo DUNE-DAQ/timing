@@ -1,7 +1,7 @@
 /**
- * @file KerberosDesign.hpp
+ * @file GaiaDesign.hpp
  *
- * KerberosDesign is a class providing an interface
+ * GaiaDesign is a class providing an interface
  * to the fanout firmware design.
  *
  * This is part of the DUNE DAQ Software Suite, copyright 2020.
@@ -9,8 +9,8 @@
  * received with this code.
  */
 
-#ifndef TIMING_INCLUDE_TIMING_KERBEROSDESIGN_HPP_
-#define TIMING_INCLUDE_TIMING_KERBEROSDESIGN_HPP_
+#ifndef TIMING_INCLUDE_TIMING_GAIADESIGN_HPP_
+#define TIMING_INCLUDE_TIMING_GAIADESIGN_HPP_
 
 // PDT Headers
 #include "timing/MasterMuxDesign.hpp"
@@ -32,12 +32,12 @@ namespace timing {
 /**
  * @brief      Class for timing fanout designs.
  */
-class KerberosDesign : public MasterMuxDesign, public EndpointDesignInterface
+class GaiaDesign : public MasterMuxDesign, public EndpointDesignInterface
 {
-  UHAL_DERIVEDNODE(KerberosDesign)
+  UHAL_DERIVEDNODE(GaiaDesign)
 public:
-  explicit KerberosDesign(const uhal::Node& node);
-  virtual ~KerberosDesign();
+  explicit GaiaDesign(const uhal::Node& node);
+  virtual ~GaiaDesign();
 
   /**
    * @brief     Get status string, optionally print.
@@ -84,4 +84,4 @@ public:
 } // namespace timing
 } // namespace dunedaq
 
-#endif // TIMING_INCLUDE_TIMING_KERBEROSDESIGN_HPP_
+#endif // TIMING_INCLUDE_TIMING_GAIADESIGN_HPP_

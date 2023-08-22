@@ -36,6 +36,7 @@ enum BoardType
   kBoardFIB,
   kBoardMIB,
   kBoardPC069,
+  kBoardGIB,
   kBoardUnknown = 256
 };
 
@@ -64,6 +65,7 @@ enum DesignType
   kDesignChronos,
   kDesignBoreas,
   kDesignKerberos,
+  kDesignGaia,
   kDesignUnknown = 256
 };
 
@@ -80,6 +82,7 @@ enum BoardRevision
   kMIBRev1,
   kPC069a,
   kMIBRev2,
+  kGIBRev1,
   kBoardRevisionUnknown = 256
 };
 

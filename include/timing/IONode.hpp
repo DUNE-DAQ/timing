@@ -205,6 +205,7 @@ protected:
                                                             { kBoardFIB, "fib" },
                                                             { kBoardMIB, "mib" },
                                                             { kBoardPC069, "pc069" },
+                                                            { kBoardGIB, "gib" },
                                                             { kBoardUnknown, "unknown" }
                                                             };
 
@@ -221,7 +222,8 @@ protected:
                                                                 { kFMCRev1, "kFMCRev1" },     { kFMCRev2, "kFMCRev2" }, { kFMCRev3, "kFMCRev3" },
                                                                 { kPC059Rev1, "kPC059Rev1" }, { kTLURev1, "kTLURev1" }, { kSIMRev1, "kSIMRev1" },
                                                                 { kFIBRev1, "kFIBRev1" }, { kFMCRev4, "kFMCRev4" }, { kMIBRev1, "kMIBRev1" },
-                                                                { kPC069a, "pc069a" }, { kMIBRev2, "kMIBRev2" }, { kBoardRevisionUnknown, "unknown" }
+                                                                { kPC069a, "pc069a" }, { kMIBRev2, "kMIBRev2" }, { kGIBRev1, "kGIBRev1" },
+                                                                { kBoardRevisionUnknown, "unknown" }
   };
 
   static inline const std::map<DesignType, std::string> design_type_map = {
@@ -236,6 +238,7 @@ protected:
                                                                 { kDesignChronos, "chronos" },
                                                                 { kDesignBoreas, "boreas" },
                                                                 { kDesignKerberos, "kerberos" },
+                                                                { kDesignGaia, "gaia" },
                                                                 { kDesignUnknown, "unknown" },
   };
 
@@ -292,7 +295,9 @@ protected:
                                                                     { 0x5410ecbb6845, kTLURev1 },
                                                                     { 0x801f12ee6739, kMIBRev1 },
                                                                     { 0x801f12f5e183, kFIBRev1 },
-                                                                    { 0x49162b1d910,  kMIBRev2}
+                                                                    { 0x49162b1d910,  kMIBRev2 },
+                                                                    { 0x801f12ee56f3, kGIBRev1 },
+                                                                    { 0x80342874c33d, kPC069a}
   };
 
   static inline const std::map<std::string, std::string> clock_config_map = {
@@ -321,6 +326,11 @@ protected:
         { "pc059_5345_master", "devel/PDTS_PC059_FANOUT.txt" },
 
         { "pc069_5395_master", "nocdr/Si5395-RevA-069a_mst-Registers.txt" },
+
+        { "pc069_5395_endpoint", "nocdr/Si5395-RevA-069a_ep-Registers.txt" },
+        { "pc069_5395_chronos", "nocdr/Si5395-RevA-069a_ep-Registers.txt" },
+
+        { "gib_5395_gaia", "nocdr/GIB_Debug_01.txt" },
 
         // 62.5 MHz mappings (with cdr)
         { "fmc_5344_endpoint_cdr", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
@@ -406,11 +416,11 @@ protected:
   };
 
   static inline const std::vector<BoardType> library_supported_boards = {
-    kBoardFMC, kBoardPC059, kBoardTLU, kBoardSim, kBoardFIB, kBoardMIB, kBoardPC069
+    kBoardFMC, kBoardPC059, kBoardTLU, kBoardSim, kBoardFIB, kBoardMIB, kBoardPC069, kBoardGIB
   };
 
   static inline const std::vector<DesignType> library_supported_designs = {
-    kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord, kDesignEndpoBICRT, kDesignChronos, kDesignBoreas, kDesignKerberos
+    kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord, kDesignEndpoBICRT, kDesignChronos, kDesignBoreas, kDesignKerberos, kDesignGaia
   };
 
 };

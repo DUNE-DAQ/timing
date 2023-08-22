@@ -40,10 +40,12 @@
   <connection id="EPT_1"             uri="chtcp-2.0://kipper.phy.bris.ac.uk:10203?target=192.168.200.17:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/endpoint_fmc/top.xml" />
   <connection id="EPT_2"             uri="chtcp-2.0://kipper.phy.bris.ac.uk:10203?target=192.168.200.18:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/endpoint_fmc/top.xml" />
   <connection id="EPT_3"             uri="chtcp-2.0://kipper.phy.bris.ac.uk:10203?target=192.168.200.22:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/endpoint_fmc/top.xml" />
+  <connection id="EPT_4"             uri="chtcp-2.0://kipper.phy.bris.ac.uk:10203?target=192.168.200.20:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/endpoint_fmc/top.xml" />
 
   <connection id="CHRONOS_FMC"   uri="chtcp-2.0://kipper.phy.bris.ac.uk:10203?target=192.168.200.22:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/chronos_fmc/top_fmc.xml" />
 
   <connection id="MIB" uri="ipbusudp-2.0://192.168.121.70:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/kerberos_mib_v2/top_mib_v2.xml" />
+  <connection id="GIB" uri="ipbusudp-2.0://192.168.200.26:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/gaia_gib/top.xml" />
 
 </connections>
     
