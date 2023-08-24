@@ -102,4 +102,22 @@ GaiaDesign::get_info(opmonlib::InfoCollector& ci, int level) const
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+void
+GaiaDesign::switch_upstream_mux_channel(uint8_t mux_channel) const // NOLINT(build/unsigned)
+{
+  getNode("us_mux.csr.ctrl.src").write(mux_channel);
+  getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+uint8_t
+GaiaDesign::read_upstream_mux_channel() const // NOLINT(build/unsigned)
+{
+  auto active_sfp_mux_channel = getNode("us_mux.csr.ctrl.src").read();
+  getClient().dispatch();
+  return active_sfp_mux_channel.value();
+}
+//-----------------------------------------------------------------------------
 }

@@ -79,6 +79,16 @@ public:
                             bool measure_rtt = false,
                             bool control_sfp = true,
                             int sfp_mux = -1) const override;
+
+  /**
+   * @brief      Change active upstream SFP
+   */
+  void switch_upstream_mux_channel(uint8_t mux_channel) const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Read active upstream SFP
+   */
+  uint8_t read_upstream_mux_channel() const; // NOLINT(build/unsigned)
 };
 
 } // namespace timing
