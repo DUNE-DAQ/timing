@@ -10,6 +10,8 @@
 
 // PDT headers
 #include "ers/ers.hpp"
+#include "logging/Logging.hpp"
+
 #include "timing/toolbox.hpp"
 
 #include <boost/algorithm/string/predicate.hpp>
@@ -46,7 +48,16 @@ SI534xSlave::read_config_id() const
   std::string id;
 
   for (size_t i(0); i < 8; ++i) {
-    id += static_cast<char>(read_clock_register(0x26b + i));
+    char id_char = static_cast<char>(read_clock_register(0x26b + i));
+    // in case null paddding was used for spaces
+    if (id_char == '\0')
+    {
+      id += ' ';
+    }
+    else
+    {
+      id += id_char;
+    }
   }
   return id;
 }
@@ -232,7 +243,7 @@ SI534xSlave::configure(const std::string& filename) const
     std::ostringstream message;
     message << "Post-configuration check failed: Loaded design ID " << chip_design_id
          << " does not match the configurationd design id " << conf_design_id << std::endl;
-    throw SI534xConfigError(ERS_HERE, message.str());
+    ers::error(SI534xConfigError(ERS_HERE, message.str()));
   }
 }
 //-----------------------------------------------------------------------------
