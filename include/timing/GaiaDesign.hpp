@@ -88,7 +88,7 @@ public:
   /**
    * @brief      Read active upstream SFP
    */
-  uint8_t read_upstream_mux_channel() const; // NOLINT(build/unsigned)
+  uint8_t read_active_upstream_mux_channel() const; // NOLINT(build/unsigned)
 };
 
 } // namespace timing

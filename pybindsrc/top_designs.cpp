@@ -360,6 +360,8 @@ register_top_designs(py::module& m)
           py::arg("address"),
           py::arg("control_sfp") = true,
           py::arg("sfp_mux") = -1)
+    .def("switch_upstream_mux_channel", &timing::GaiaDesign::switch_upstream_mux_channel, py::arg("mux_channel"))
+    .def("read_active_upstream_mux_channel", &timing::GaiaDesign::read_active_upstream_mux_channel);
     ;
 } // NOLINT
 

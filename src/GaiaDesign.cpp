@@ -106,6 +106,7 @@ GaiaDesign::get_info(opmonlib::InfoCollector& ci, int level) const
 void
 GaiaDesign::switch_upstream_mux_channel(uint8_t mux_channel) const // NOLINT(build/unsigned)
 {
+  // TODO add mux channel validity check
   getNode("us_mux.csr.ctrl.src").write(mux_channel);
   getClient().dispatch();
 }
@@ -113,7 +114,7 @@ GaiaDesign::switch_upstream_mux_channel(uint8_t mux_channel) const // NOLINT(bui
 
 //-----------------------------------------------------------------------------
 uint8_t
-GaiaDesign::read_upstream_mux_channel() const // NOLINT(build/unsigned)
+GaiaDesign::read_active_upstream_mux_channel() const // NOLINT(build/unsigned)
 {
   auto active_sfp_mux_channel = getNode("us_mux.csr.ctrl.src").read();
   getClient().dispatch();

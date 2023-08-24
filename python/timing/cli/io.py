@@ -336,9 +336,9 @@ def switchdownstreammux(obj, mux):
 @click.pass_obj
 def switchupstreammux(obj, mux):
     
-    lDevice = obj.mDevice
+    lTopDesign = obj.mDevice.getNode('')
     lBoardType = obj.mBoardType
-    lIO = lDevice.getNode('io')
+    lIO = lTopDesign.getNode('io')
 
     ## TODO address interface divergence
     if lBoardType == kBoardMIB:
@@ -346,7 +346,7 @@ def switchupstreammux(obj, mux):
         lIO.switch_upstream_mux_channel(mux)
     elif lBoardType == kBoardGIB:
         echo("Setting upstream mux channel: {}".format(mux))
-        lDevice.switch_upstream_mux_channel(mux)
+        lTopDesign.switch_upstream_mux_channel(mux)
     else:
         raise RuntimeError('Board {} does not have/support an upstream mux!'.format(kBoardNameMap[lBoardType]))
 # ------------------------------------------------------------------------------
@@ -356,16 +356,16 @@ def switchupstreammux(obj, mux):
 @click.pass_obj
 def switchupstreammux(obj):
     
-    lDevice = obj.mDevice
+    lTopDesign = obj.mDevice.getNode('')
     lBoardType = obj.mBoardType
-    lIO = lDevice.getNode('io')
+    lIO = lTopDesign.getNode('io')
 
     ## TODO address interface divergence
     if lBoardType == kBoardMIB:
         active_mux = lIO.read_active_upstream_mux_channel()
         echo("Active upstream mux channel: {}".format(active_mux))
     elif lBoardType == kBoardGIB:
-        active_mux = lDevice.read_upstream_mux_channel(mux)
+        active_mux = lTopDesign.read_active_upstream_mux_channel()
         echo("Active upstream mux channel: {}".format(active_mux))
     else:
         raise RuntimeError('Board {} does not have/support an upstream mux!'.format(kBoardNameMap[lBoardType]))
