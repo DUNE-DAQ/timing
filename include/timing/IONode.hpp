@@ -297,7 +297,8 @@ protected:
                                                                     { 0x801f12f5e183, kFIBRev1 },
                                                                     { 0x49162b1d910,  kMIBRev2 },
                                                                     { 0x801f12ee56f3, kGIBRev1 },
-                                                                    { 0x80342874c33d, kPC069a}
+                                                                    { 0x80342874c33d, kPC069a },
+                                                                    { 0x803428748902, kPC069a },
   };
 
   static inline const std::map<std::string, std::string> clock_config_map = {
@@ -326,6 +327,7 @@ protected:
         { "pc059_5345_master", "devel/PDTS_PC059_FANOUT.txt" },
 
         { "pc069_5395_master", "nocdr/Si5395-RevA-069a_mst-Registers.txt" },
+        { "pc069_5395_boreas", "nocdr/Si5395-RevA-069a_mst-Registers.txt" },
 
         { "pc069_5395_endpoint", "nocdr/Si5395-RevA-069a_ep-Registers.txt" },
         { "pc069_5395_chronos", "nocdr/Si5395-RevA-069a_ep-Registers.txt" },
