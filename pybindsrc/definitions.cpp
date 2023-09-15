@@ -48,6 +48,7 @@ register_definitions(py::module& m)
         .value("kBoardFIB", kBoardFIB)
         .value("kBoardMIB", kBoardMIB)
         .value("kBoardPC069", kBoardPC069)
+        .value("kBoardGIB", kBoardGIB)
         .value("kBoardUnknown", kBoardUnknown)
         .export_values();
 
@@ -63,6 +64,7 @@ register_definitions(py::module& m)
         .value("kMIBRev1", kMIBRev1)
         .value("kPC069a", kPC069a)
         .value("kMIBRev2", kMIBRev2)
+        .value("kGIBRev1", kGIBRev1)
         .export_values();
 
     py::enum_<CarrierType>(m, "CarrierType")
@@ -88,6 +90,7 @@ register_definitions(py::module& m)
         .value("kDesignChronos", kDesignChronos)
         .value("kDesignBoreas", kDesignBoreas)
         .value("kDesignKerberos", kDesignKerberos)
+        .value("kDesignGaia", kDesignGaia)
         .value("kDesignUnknown", kDesignUnknown)
         .export_values();
 

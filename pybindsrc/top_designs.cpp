@@ -15,6 +15,7 @@
 #include "timing/OverlordDesign.hpp"
 #include "timing/EndpointDesign.hpp"
 #include "timing/KerberosDesign.hpp"
+#include "timing/GaiaDesign.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -326,6 +327,41 @@ register_top_designs(py::module& m)
           py::arg("address"),
           py::arg("control_sfp") = true,
           py::arg("sfp_mux") = -1)
+    ;
+
+  // Gaia
+  py::class_<timing::GaiaDesign, uhal::Node>(m, "GaiaDesign")
+    .def("read_firmware_version", &timing::GaiaDesign::read_firmware_version)
+    .def("validate_firmware_version", &timing::GaiaDesign::validate_firmware_version)
+    .def("sync_timestamp", &timing::GaiaDesign::sync_timestamp)
+    .def<void (timing::GaiaDesign::*)(uint32_t, double, bool) const>("enable_periodic_fl_cmd",
+         &timing::GaiaDesign::enable_periodic_fl_cmd,
+         py::arg("channel"),
+         py::arg("rate"),
+         py::arg("poisson"))
+    .def<void (timing::GaiaDesign::*)(uint32_t, uint32_t, double, bool) const>("enable_periodic_fl_cmd",
+         &timing::GaiaDesign::enable_periodic_fl_cmd,
+         py::arg("command"),
+         py::arg("channel"),
+         py::arg("rate"),
+         py::arg("poisson"))
+//    .def("switch_downstream_mux_channel", &timing::FanoutDesign::switch_downstream_mux_channel)
+    .def("apply_endpoint_delay",
+          &timing::GaiaDesign::apply_endpoint_delay,
+          py::arg("address"),
+          py::arg("coarse_delay"),
+          py::arg("fine_delay"),
+          py::arg("phase_delay"),
+          py::arg("measure_rtt") = false,
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1)
+    .def("measure_endpoint_rtt",
+          &timing::GaiaDesign::measure_endpoint_rtt,
+          py::arg("address"),
+          py::arg("control_sfp") = true,
+          py::arg("sfp_mux") = -1)
+    .def("switch_upstream_mux_channel", &timing::GaiaDesign::switch_upstream_mux_channel, py::arg("mux_channel"))
+    .def("read_active_upstream_mux_channel", &timing::GaiaDesign::read_active_upstream_mux_channel);
     ;
 } // NOLINT
 

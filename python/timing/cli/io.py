@@ -17,10 +17,10 @@ from click import echo, style, secho
 from os.path import join, expandvars, basename
 from timing.core import SI534xSlave, I2CExpanderSlave, DACSlave
 
-from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB, kBoardMIB, kBoardPC069
-from timing.common.definitions import kFMCRev1, kFMCRev2, kFMCRev3, kFMCRev4, kPC059Rev1, kTLURev1, kSIMRev1, kFIBRev1, kMIBRev1
+from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB, kBoardMIB, kBoardPC069, kBoardGIB
+from timing.common.definitions import kFMCRev1, kFMCRev2, kFMCRev3, kFMCRev4, kPC059Rev1, kTLURev1, kSIMRev1, kFIBRev1, kMIBRev1, kGIBRev1
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed, kCarrierNexusVideo, kCarrierTrenzTE0712
-from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignChronos, kDesignBoreas, kDesignTest, kDesignKerberos
+from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignChronos, kDesignBoreas, kDesignTest, kDesignKerberos, kDesignGaia
 from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap, kUIDRevisionMap, kClockConfigMap
 from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
 
@@ -123,7 +123,7 @@ def reset(ctx, obj, soft, fanout, downstream_mux_sel, forcepllcfg):
                 lIO.switch_downstream_mux_channel(downstream_mux_sel)
                 secho("Active downstream mux " + hex(downstream_mux_sel), fg='cyan')
         else:
-            lIO.reset(lPLLConfigFilePath)            
+            lIO.reset(lPLLConfigFilePath)
     
         ctx.invoke(clkstatus)
 
@@ -259,6 +259,8 @@ def sfpstatus(ctx, obj, sfp_id):
                     lSFPIDRange = 8
                 elif lBoardType == kBoardMIB:
                     lSFPIDRange = 3
+                elif lBoardType == kBoardGIB:
+                    lSFPIDRange = 6
                 for i in range(lSFPIDRange):
                     try:
                         echo(lIO.get_sfp_status(i))
@@ -334,13 +336,17 @@ def switchdownstreammux(obj, mux):
 @click.pass_obj
 def switchupstreammux(obj, mux):
     
-    lDevice = obj.mDevice
+    lTopDesign = obj.mDevice.getNode('')
     lBoardType = obj.mBoardType
-    lIO = lDevice.getNode('io')
+    lIO = lTopDesign.getNode('io')
 
+    ## TODO address interface divergence
     if lBoardType == kBoardMIB:
         echo("Setting upstream mux channel: {}".format(mux))
         lIO.switch_upstream_mux_channel(mux)
+    elif lBoardType == kBoardGIB:
+        echo("Setting upstream mux channel: {}".format(mux))
+        lTopDesign.switch_upstream_mux_channel(mux)
     else:
         raise RuntimeError('Board {} does not have/support an upstream mux!'.format(kBoardNameMap[lBoardType]))
 # ------------------------------------------------------------------------------
@@ -350,12 +356,16 @@ def switchupstreammux(obj, mux):
 @click.pass_obj
 def switchupstreammux(obj):
     
-    lDevice = obj.mDevice
+    lTopDesign = obj.mDevice.getNode('')
     lBoardType = obj.mBoardType
-    lIO = lDevice.getNode('io')
+    lIO = lTopDesign.getNode('io')
 
+    ## TODO address interface divergence
     if lBoardType == kBoardMIB:
         active_mux = lIO.read_active_upstream_mux_channel()
+        echo("Active upstream mux channel: {}".format(active_mux))
+    elif lBoardType == kBoardGIB:
+        active_mux = lTopDesign.read_active_upstream_mux_channel()
         echo("Active upstream mux channel: {}".format(active_mux))
     else:
         raise RuntimeError('Board {} does not have/support an upstream mux!'.format(kBoardNameMap[lBoardType]))
