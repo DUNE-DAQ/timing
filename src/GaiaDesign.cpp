@@ -86,7 +86,7 @@ GaiaDesign::apply_endpoint_delay(uint32_t address,
 
 //-----------------------------------------------------------------------------
 void
-GaiaDesign::get_info(opmonlib::InfoCollector& ci, int level) const
+GaiaDesign::get_info(opmonlib::InfoCollector& /*ci*/, int /*level*/) const
 { 
 //  opmonlib::InfoCollector master_collector;
 //  this->get_master_node_plain()->get_info(master_collector, level);
