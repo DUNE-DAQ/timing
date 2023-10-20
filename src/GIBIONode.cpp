@@ -86,6 +86,7 @@ GIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) cons
   millisleep(1);
 
   // End reset 
+  getNode<I2CMasterNode>(m_uid_i2c_bus).get_slave("AX3_Switch").write_i2c(0x01, 0x7f);
   getNode("csr.ctrl.i2c_sw_rst").write(0x1);
   getNode("csr.ctrl.i2c_exten_rst").write(0x1);
   getNode("csr.ctrl.clk_gen_rst").write(0x1);
