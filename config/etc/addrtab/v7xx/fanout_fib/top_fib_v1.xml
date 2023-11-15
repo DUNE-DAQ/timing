@@ -1,0 +1,16 @@
+<node id="TOP" class="FanoutDesign">
+    <node id="io" address="0x0" module="file://pdts_fib_v1_io.xml"/>
+    <node id="switch" address="0x100" module="file://switchyard_dcsk.xml"/>
+    <node id="master" address="0x200" module="file://pdts_master.xml"/>
+    <node id="endpoint0" address="0x0400" module="file://pdts_ep_mon.xml"/>
+    <node id="cdr" address=  "0x0600" module="file://pdts_upstream_cdr.xml"/>
+    <node id="sfp_cdr0" address="0x0800" module="file://pdts_upstream_cdr.xml"/>
+    <node id="sfp_cdr1" address="0x0A00" module="file://pdts_upstream_cdr.xml"/>
+    <node id="sfp_cdr2" address="0x0C00" module="file://pdts_upstream_cdr.xml"/>
+    <node id="sfp_cdr3" address="0x0E00" module="file://pdts_upstream_cdr.xml"/>
+    <node id="sfp_cdr4" address="0x1000" module="file://pdts_upstream_cdr.xml"/>
+    <node id="sfp_cdr5" address="0x1200" module="file://pdts_upstream_cdr.xml"/>
+    <node id="sfp_cdr6" address="0x1400" module="file://pdts_upstream_cdr.xml"/>
+    <node id="sfp_cdr7" address="0x1600" module="file://pdts_upstream_cdr.xml"/>
+</node>
+
