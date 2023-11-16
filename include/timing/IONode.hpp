@@ -299,6 +299,17 @@ protected:
                                                                     { 0x801f12ee56f3, kGIBRev1 },
                                                                     { 0x80342874c33d, kPC069a },
                                                                     { 0x803428748902, kPC069a },
+                                                                    { 0x8034287498ea, kPC069a },
+                                                                    { 0xfc0fe700bece, kPC069b },
+                                                                    { 0xfc0fe700c286, kPC069b },
+                                                                    { 0xfc0fe700d293, kPC069b },
+                                                                    { 0xfc0fe700bec4, kPC069b },
+                                                                    { 0xfc0fe700c281, kPC069b },
+                                                                    { 0xfc0fe700bec9, kPC069b },
+                                                                    { 0xfc0fe700d28e, kPC069b },
+                                                                    { 0xfc0fe700d289, kPC069b },
+                                                                    { 0xfc0fe700d298, kPC069b },
+                                                                    { 0xfc0fe700c28b, kPC069b },
   };
 
   static inline const std::map<std::string, std::string> clock_config_map = {
