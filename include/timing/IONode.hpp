@@ -348,7 +348,7 @@ protected:
         { "pc069_5345_master", "nocdr/Si5345-RevD-pc69bmst-Registers.txt" },
         { "pc069_5345_boreas", "nocdr/Si5345-RevD-pc69bmst-Registers.txt" },
 
-        { "pc069_5345_chronos", "nocdr/Si5345-RevD-pc69bept-Registers.txt" }
+        { "pc069_5345_chronos", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
         { "pc069_5345_charon", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
 
         // 62.5 MHz mappings (with cdr)
