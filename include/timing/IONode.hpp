@@ -222,7 +222,7 @@ protected:
                                                                 { kFMCRev1, "kFMCRev1" },     { kFMCRev2, "kFMCRev2" }, { kFMCRev3, "kFMCRev3" },
                                                                 { kPC059Rev1, "kPC059Rev1" }, { kTLURev1, "kTLURev1" }, { kSIMRev1, "kSIMRev1" },
                                                                 { kFIBRev1, "kFIBRev1" }, { kFMCRev4, "kFMCRev4" }, { kMIBRev1, "kMIBRev1" },
-                                                                { kPC069a, "pc069a" }, { kMIBRev2, "kMIBRev2" }, { kGIBRev1, "kGIBRev1" },
+                                                                { kPC069a, "pc069a" }, { kPC069b, "pc069b" }, { kMIBRev2, "kMIBRev2" }, { kGIBRev1, "kGIBRev1" },
                                                                 { kBoardRevisionUnknown, "unknown" }
   };
 
@@ -297,7 +297,19 @@ protected:
                                                                     { 0x801f12f5e183, kFIBRev1 },
                                                                     { 0x49162b1d910,  kMIBRev2 },
                                                                     { 0x801f12ee56f3, kGIBRev1 },
-                                                                    { 0x80342874c33d, kPC069a}
+                                                                    { 0x80342874c33d, kPC069a },
+                                                                    { 0x803428748902, kPC069a },
+                                                                    { 0x8034287498ea, kPC069a },
+                                                                    { 0xfc0fe700bece, kPC069b },
+                                                                    { 0xfc0fe700c286, kPC069b },
+                                                                    { 0xfc0fe700d293, kPC069b },
+                                                                    { 0xfc0fe700bec4, kPC069b },
+                                                                    { 0xfc0fe700c281, kPC069b },
+                                                                    { 0xfc0fe700bec9, kPC069b },
+                                                                    { 0xfc0fe700d28e, kPC069b },
+                                                                    { 0xfc0fe700d289, kPC069b },
+                                                                    { 0xfc0fe700d298, kPC069b },
+                                                                    { 0xfc0fe700c28b, kPC069b },
   };
 
   static inline const std::map<std::string, std::string> clock_config_map = {
@@ -326,11 +338,18 @@ protected:
         { "pc059_5345_master", "devel/PDTS_PC059_FANOUT.txt" },
 
         { "pc069_5395_master", "nocdr/Si5395-RevA-069a_mst-Registers.txt" },
+        { "pc069_5395_boreas", "nocdr/Si5395-RevA-069a_mst-Registers.txt" },
 
         { "pc069_5395_endpoint", "nocdr/Si5395-RevA-069a_ep-Registers.txt" },
         { "pc069_5395_chronos", "nocdr/Si5395-RevA-069a_ep-Registers.txt" },
 
         { "gib_5395_gaia", "nocdr/GIB_Debug_01.txt" },
+
+        { "pc069_5345_master", "nocdr/Si5345-RevD-pc69bmst-Registers.txt" },
+        { "pc069_5345_boreas", "nocdr/Si5345-RevD-pc69bmst-Registers.txt" },
+
+        { "pc069_5345_chronos", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
+        { "pc069_5345_charon", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
 
         // 62.5 MHz mappings (with cdr)
         { "fmc_5344_endpoint_cdr", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
