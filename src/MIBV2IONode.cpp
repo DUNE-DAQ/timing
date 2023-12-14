@@ -123,7 +123,7 @@ MIBV2IONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const
 
 //-----------------------------------------------------------------------------
 void
-MIBV2IONode::get_info(opmonlib::InfoCollector& ci, int level) const
+MIBV2IONode::get_info(opmonlib::InfoCollector& /*ci*/, int /*level*/) const
 {
   // TO DO
 }

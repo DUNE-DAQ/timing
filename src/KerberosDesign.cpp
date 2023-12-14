@@ -86,7 +86,7 @@ KerberosDesign::apply_endpoint_delay(uint32_t address,
 
 //-----------------------------------------------------------------------------
 void
-KerberosDesign::get_info(opmonlib::InfoCollector& ci, int level) const
+KerberosDesign::get_info(opmonlib::InfoCollector& /*ci*/, int /*level*/) const
 { 
 //  opmonlib::InfoCollector master_collector;
 //  this->get_master_node_plain()->get_info(master_collector, level);
