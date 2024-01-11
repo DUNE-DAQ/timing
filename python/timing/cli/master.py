@@ -111,6 +111,33 @@ def status(obj):
     echo(lMaster.get_status_with_date(firmware_clock_frequency_hz))
 # ------------------------------------------------------------------------------
 
+# ------------------------------------------------------------------------------
+@master.command('cdr-status', short_help="Print upstream CDR status")
+@click.option('--id', type=int)
+@click.pass_obj
+def status(obj, id):
+
+    if id is None:
+        cdr_node = obj.mDevice.getNode('cdr')
+    else:
+        cdr_node = obj.mDevice.getNode(f"cdr{id}")
+
+    echo(cdr_node.get_status())
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@master.command('resync-cdr', short_help="Resync upstream CDR")
+@click.option('--id', type=int)
+@click.pass_obj
+def status(obj, id):
+
+    if id is None:
+        cdr_node = obj.mDevice.getNode('cdr')
+    else:
+        cdr_node = obj.mDevice.getNode(f"cdr{id}")
+
+    cdr_node.resync()
+# ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
 @master.command('synctime', short_help="Sync timestamps with computer local time.")

@@ -1,4 +1,4 @@
-<node id="upstream_cdr" description="CDR block for upstream rx" fwinfo="endpoint;width=1">
+<node id="upstream_cdr" description="CDR block for upstream rx" fwinfo="endpoint;width=1" class="UpstreamCDRNode">
 	<node id="ctrl" address="0x0">
 		<node id="resync" mask="0x1"/>
 	</node>
