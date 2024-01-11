@@ -74,6 +74,10 @@ FIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) cons
 	// Reset I2C
 	getNode("csr.ctrl.rstb_i2c").write(0x1);
 	getNode("csr.ctrl.rstb_i2c").write(0x0);
+
+	getNode("csr.ctrl.rst").write(0x1);
+	getNode("csr.ctrl.rst").write(0x0);
+
 	getClient().dispatch();
 
 	const CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
