@@ -117,7 +117,6 @@ def reset(ctx, obj, soft, fanout, downstream_mux_sel, forcepllcfg):
                 secho("local master: standalone mode", fg='green')
 
             lIO.reset(fanout, lPLLConfigFilePath)
-            lDevice.getNode('switch').configure_master_source(fanout)
             
             if lBoardType in [ kBoardPC059, kBoardFIB, kBoardMIB ] and downstream_mux_sel is not None:
                 lIO.switch_downstream_mux_channel(downstream_mux_sel)

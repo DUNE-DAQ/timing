@@ -1,12 +1,9 @@
 <node id="TOP" class="FanoutDesign">
     <node id="io" address="0x0" module="file://pdts_fib_v1_io.xml"/>
-    <node id="us_mux" address="0x100" module="file://pdts_upstream_mux.xml"/>
-    <node id="master" address="0x200" module="file://pdts_master.xml"/>
-    <node id="endpoint0" address="0x0400" module="file://pdts_ep_mon.xml"/>
+    <node id="endpoint0" address="0x100" module="file://pdts_ep_mon.xml"/>
+    <node id="us_mux" address="0x400" module="file://pdts_upstream_mux.xml"/>
     <node id="cdr0" address=  "0x0600" module="file://pdts_upstream_cdr.xml"/>
     <node id="cdr1" address="0x0800" module="file://pdts_upstream_cdr.xml"/>
     <node id="cdr2" address="0x0A00" module="file://pdts_upstream_cdr.xml"/>
     <node id="cdr3" address="0x0C00" module="file://pdts_upstream_cdr.xml"/>
-    <node id="cdr4" address="0x0E00" module="file://pdts_upstream_cdr.xml"/>
 </node>
-

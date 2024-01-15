@@ -6,6 +6,8 @@
 					<node id="rst" mask="0x4"/>
 					<node id="rstb_i2c" mask="0x8"/>
 					<node id="inmux" mask="0x70"/>
+					<node id="bp_tx_edge" mask="0x80"/>
+					<node id="sfp_tx_edge" mask="0x100"/>
 				</node>
 				<node id="stat" address="0x1">
 					<node id="mmcm_ok" mask="0x1"/>
