@@ -201,7 +201,7 @@ MasterNode::measure_endpoint_rtt(uint32_t address, bool control_sfp) const // NO
 void
 MasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned)
                                     uint32_t coarse_delay, // NOLINT(build/unsigned)
-                                    uint32_t /*fine_delay*/,   // NOLINT(build/unsigned)
+                                    uint32_t fine_delay,   // NOLINT(build/unsigned)
                                     uint32_t /*phase_delay*/,  // NOLINT(build/unsigned)
                                     bool measure_rtt,
                                     bool control_sfp) const
@@ -247,7 +247,12 @@ MasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned
                                         // packet to write coarse delay
                                         (0x1 << 7UL) | 0x72, // write transaction on 0x72
                                         (address_mode << 7UL) | 0x1, // transaction length of 0x1
-                                        coarse_delay & 0xf,
+                                        ((fine_delay & 0xf) << 4UL) | coarse_delay & 0xf,
+
+                                        // packet to write fine delay
+                                        (0x1 << 7UL) | 0x73, // write transaction on 0x73
+                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
+                                        (fine_delay >> 4UL) & 0xff,
 
                                         // packet to set skew done
                                         (0x1 << 7UL) | 0x70, // write transaction on 0x70
