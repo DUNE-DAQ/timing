@@ -345,6 +345,9 @@ protected:
 
         { "gib_5395_gaia", "nocdr/GIB_Debug_01.txt" },
 
+        { "fib_5395_fanout_mode0",
+          "nocdr/Si5395-RevA-FIB_FAN_AFCv4-FIBBP250-Registers.txt" }, // fanout mode, data and clock from backplane
+
         { "pc069_5345_master", "nocdr/Si5345-RevD-pc69bmst-Registers.txt" },
         { "pc069_5345_boreas", "nocdr/Si5345-RevD-pc69bmst-Registers.txt" },
 

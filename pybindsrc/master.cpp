@@ -9,6 +9,7 @@
 #include "timing/PDIMasterNode.hpp"
 #include "timing/MasterNode.hpp"
 #include "timing/TriggerReceiverNode.hpp"
+#include "timing/UpstreamCDRNode.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -100,6 +101,12 @@ register_master(py::module& m)
     .def("enable_triggers", &timing::TriggerReceiverNode::enable_triggers)
     .def("disable_triggers", &timing::TriggerReceiverNode::disable_triggers)
     .def("get_status", &timing::TriggerReceiverNode::get_status, py::arg("print_out") = false);
+
+  py::class_<timing::UpstreamCDRNode, uhal::Node>(m, "UpstreamCDRNode")
+    .def(py::init<const uhal::Node&>())
+    .def("get_status", &timing::UpstreamCDRNode::get_status, py::arg("print_out") = false)
+    .def("resync", &timing::UpstreamCDRNode::resync);
+
 }
 
 } // namespace python
