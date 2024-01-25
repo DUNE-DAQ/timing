@@ -171,7 +171,7 @@ IONode::get_full_clock_config_file_path(const ClockSource& clock_source) const
 
   const BoardType board_type = convert_value_to_board_type(read_board_type());
 //    const BoardRevision board_revision = get_board_revision();
-//    const CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
+  const CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
   const DesignType design_type = convert_value_to_design_type(read_design_type());
   const uint32_t firmware_frequency = read_firmware_frequency(); // NOLINT(build/unsigned)
 
@@ -179,6 +179,15 @@ IONode::get_full_clock_config_file_path(const ClockSource& clock_source) const
     clock_config_key << get_board_type_map().at(board_type) << "_";
   } catch (const std::out_of_range& e) {
     throw MissingBoardTypeMapEntry(ERS_HERE, format_reg_value(board_type), e);
+  }
+
+  // enclustra i2c switch stuff
+  if (carrier_type == kCarrierEnclustraA35) {
+    try {
+      getNode<I2CMasterNode>(m_uid_i2c_bus).get_slave("AX3_Switch").write_i2c(0x01, 0x7f);
+    } catch (const std::exception& e) {
+      ers::warning(EnclustraSwitchFailure(ERS_HERE, e));
+    }
   }
 
   auto pll = get_pll();
