@@ -149,6 +149,12 @@ ERS_DECLARE_ISSUE(timing,                                                 ///< N
                   ((std::string)design_type)                              ///< Message parameters
 )
 
+ERS_DECLARE_ISSUE(timing,                                                 ///< Namespace
+                  MissingClockSourceMapEntry,                              ///< Issue class name
+                  " Clock source not in clock source map: " << clock_source, ///< Message
+                  ((std::string)clock_source)                              ///< Message parameters
+)
+
 ERS_DECLARE_ISSUE(timing,                                                ///< Namespace
                   ClockConfigNotFound,                                   ///< Issue class name
                   " Clock config file not found for key: " << clock_key, ///< Message

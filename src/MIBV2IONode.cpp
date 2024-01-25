@@ -52,19 +52,14 @@ MIBV2IONode::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-MIBV2IONode::reset(int32_t fanout_mode, const std::string& clock_config_file) const
+MIBV2IONode::reset(const std::string& clock_config_file) const
 {
-  
   write_soft_reset_register();
 
   millisleep(1000);
-  
-  // Find the right pll config file
-  std::string clock_config_path = get_full_clock_config_file_path(clock_config_file, fanout_mode);
-  TLOG() << "PLL configuration file : " << clock_config_path;
 
   // Upload config file to PLL
-  configure_pll(clock_config_path);
+  configure_pll(clock_config_file);
 
   // Reset mmcm
   getNode("csr.ctrl.rst").write(0x1);
@@ -78,9 +73,23 @@ MIBV2IONode::reset(int32_t fanout_mode, const std::string& clock_config_file) co
 
 //-----------------------------------------------------------------------------
 void
-MIBV2IONode::reset(const std::string& clock_config_file) const
+MIBV2IONode::reset(const ClockSource& clock_source) const
 {
-  reset(-1, clock_config_file);
+  IONode::reset(clock_source);
+
+  switch_clock_source(clock_source);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+MIBV2IONode::switch_clock_source(const ClockSource& clock_source) const
+{
+  if (clock_source != kFreeRun)
+  {
+    getNode("csr.ctrl.pll_in_sel").write(clock_source);
+    getClient().dispatch();
+  }
 }
 //-----------------------------------------------------------------------------
 

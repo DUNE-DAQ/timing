@@ -58,7 +58,7 @@ public:
   /**
    * @brief      Reset timing node.
    */
-  void reset_io(const std::string& clock_config_file = "") const override
+  void reset_io(const std::string& clock_config_file) const override
   {
     get_io_node_plain()->reset(clock_config_file);
   }
@@ -66,10 +66,9 @@ public:
   /**
    * @brief      Reset timing node.
    */
-  void reset_io(int32_t fanout_mode, // NOLINT(build/unsigned)
-                        const std::string& clock_config_file = "") const override
+  void reset_io(const ClockSource& clock_source) const override
   {
-    get_io_node_plain()->reset(fanout_mode, clock_config_file);
+    get_io_node_plain()->reset(clock_source);
   }
 
   /**

@@ -56,11 +56,6 @@ public:
   void configure() const override;
 
   /**
-   * @brief      Reset timing fanout node.
-   */
-  void reset_io(int32_t fanout_mode, const std::string& clock_config_file = "") const override; // NOLINT(build/unsigned)
-
-  /**
    * @brief      Measure the endpoint round trip time.
    *
    * @return     { description_of_the_return_value }

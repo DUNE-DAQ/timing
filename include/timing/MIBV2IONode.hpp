@@ -52,15 +52,19 @@ public:
   std::string get_status(bool print_out = false) const override;
 
   /**
-   * @brief      Reset FMC IO.
+   * @brief      Reset MIB v2 IO.
    */
-  void reset(const std::string& clock_config_file = "") const override;
+  void reset(const std::string& clock_config_file) const override;
 
   /**
-   * @brief     Reset FMC IO.
+   * @brief      Reset IO, with clock file look up.
    */
-  void reset(int32_t fanout_mode = -1, // NOLINT(build/unsigned)
-                     const std::string& clock_config_file = "") const override;
+  void reset(const ClockSource& clock_source) const override;
+
+  /**
+   * @brief      Switch clock input, with clock file look up and upload if necessary
+   */
+  void switch_clock_source(const ClockSource& clock_source) const;
 
   /**
    * @brief      Print status of on-board SFP.

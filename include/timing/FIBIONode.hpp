@@ -47,16 +47,16 @@ public:
      * @brief     Get status string, optionally print.
      */
     std::string get_status(bool print_out=false) const override;
-    
-    /**
-     * @brief      Reset FIB node.
-     */
-    void reset(int32_t fanout_mode, const std::string& clock_config_file="") const override;
 
     /**
      * @brief      Reset FIB node.
      */
-    void reset(const std::string& clock_config_file="") const override;
+    void reset(const std::string& clock_config_file) const override;
+
+    /**
+     * @brief      Reset IO, with clock file look up.
+     */
+    using IONode::reset;
 
     /**
      * @brief     Switch the SFP mux channel

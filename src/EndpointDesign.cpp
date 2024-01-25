@@ -51,7 +51,7 @@ void
 EndpointDesign::configure() const
 {
   // Hard resets
-  reset_io();
+  this->reset_io(kInput1); // endpoint FMC SFP is normally on input 1; add posibility override clock source via config in future
 }
 //-----------------------------------------------------------------------------
 

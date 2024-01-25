@@ -55,12 +55,12 @@ public:
   /**
    * @brief      Reset pc059 node.
    */
-  void reset(int32_t fanout_mode, const std::string& clock_config_file = "") const override; // NOLINT(build/unsigned)
+  void reset(const std::string& clock_config_file) const override;
 
   /**
-   * @brief      Reset pc059 node.
+   * @brief      Reset IO, with clock file look up.
    */
-  void reset(const std::string& clock_config_file = "") const override;
+  using IONode::reset;
 
   /**
    * @brief     Switch the SFP mux channel

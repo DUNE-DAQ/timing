@@ -49,7 +49,7 @@ OuroborosDesign::configure() const
 {
 
   // Hard resets
-  this->reset_io();
+  this->reset_io(kFreeRun); // ouroboros design is normally stand-alone; add posibility override clock source via config in future
 
   // Set timestamp to current time
   this->sync_timestamp();

@@ -37,7 +37,9 @@ register_io(py::module& m)
   py::class_<timing::FMCIONode, timing::IONode, uhal::Node>(m, "FMCIONode")
     .def(py::init<const uhal::Node&>())
     .def<void (timing::FMCIONode::*)(const std::string&) const>(
-      "reset", &timing::FMCIONode::reset, py::arg("clock_config_file") = "")
+      "reset", &timing::FMCIONode::reset, py::arg("clock_config_file"))
+    .def<void (timing::FMCIONode::*)(const timing::ClockSource&) const>(
+      "reset", &timing::FMCIONode::reset, py::arg("clock_source"))
     .def("soft_reset", &timing::FMCIONode::soft_reset)
     .def("read_firmware_frequency", &timing::FMCIONode::read_firmware_frequency)
     .def("get_clock_frequencies_table", &timing::FMCIONode::get_clock_frequencies_table, py::arg("print_out") = false)
@@ -50,9 +52,9 @@ register_io(py::module& m)
   py::class_<timing::PC059IONode, timing::IONode, uhal::Node>(m, "PC059IONode")
     .def(py::init<const uhal::Node&>())
     .def<void (timing::PC059IONode::*)(const std::string&) const>(
-      "reset", &timing::PC059IONode::reset, py::arg("clock_config_file") = "")
-    .def<void (timing::PC059IONode::*)(int32_t, const std::string&) const>(
-      "reset", &timing::PC059IONode::reset, py::arg("fanout_mode"), py::arg("clock_config_file") = "")
+      "reset", &timing::PC059IONode::reset, py::arg("clock_config_file"))
+    .def<void (timing::PC059IONode::*)(const timing::ClockSource&) const>(
+      "reset", &timing::PC059IONode::reset, py::arg("clock_source"))
     .def("soft_reset", &timing::PC059IONode::soft_reset)
     .def("read_firmware_frequency", &timing::PC059IONode::read_firmware_frequency)
     .def("get_clock_frequencies_table", &timing::PC059IONode::get_clock_frequencies_table, py::arg("print_out") = false)
@@ -67,9 +69,9 @@ register_io(py::module& m)
     py::class_<timing::FIBIONode, timing::IONode, uhal::Node>(m, "FIBIONode")
     .def(py::init<const uhal::Node&>())
     .def<void (timing::FIBIONode::*)(const std::string&) const>(
-      "reset", &timing::FIBIONode::reset, py::arg("clock_config_file") = "")
-    .def<void (timing::FIBIONode::*)(int32_t, const std::string&) const>(
-      "reset", &timing::FIBIONode::reset, py::arg("fanout_mode"), py::arg("clock_config_file") = "")
+      "reset", &timing::FIBIONode::reset, py::arg("clock_config_file"))
+    .def<void (timing::FIBIONode::*)(const timing::ClockSource&) const>(
+      "reset", &timing::FIBIONode::reset, py::arg("clock_source"))
     .def("soft_reset", &timing::FIBIONode::soft_reset)
     .def("read_firmware_frequency", &timing::FIBIONode::read_firmware_frequency)
     .def("get_clock_frequencies_table", &timing::FIBIONode::get_clock_frequencies_table, py::arg("print_out") = false)
@@ -84,7 +86,9 @@ register_io(py::module& m)
   py::class_<timing::TLUIONode, timing::IONode, uhal::Node>(m, "TLUIONode")
     .def(py::init<const uhal::Node&>())
     .def<void (timing::TLUIONode::*)(const std::string&) const>(
-      "reset", &timing::TLUIONode::reset, py::arg("clock_config_file") = "")
+      "reset", &timing::TLUIONode::reset, py::arg("clock_config_file"))
+    .def<void (timing::TLUIONode::*)(const timing::ClockSource&) const>(
+      "reset", &timing::TLUIONode::reset, py::arg("clock_source"))
     .def("soft_reset", &timing::TLUIONode::soft_reset)
     .def("read_firmware_frequency", &timing::TLUIONode::read_firmware_frequency)
     .def("get_clock_frequencies_table", &timing::TLUIONode::get_clock_frequencies_table, py::arg("print_out") = false)
@@ -102,7 +106,9 @@ register_io(py::module& m)
   py::class_<timing::SIMIONode, timing::IONode, uhal::Node>(m, "SIMIONode")
     .def(py::init<const uhal::Node&>())
     .def<void (timing::SIMIONode::*)(const std::string&) const>(
-      "reset", &timing::SIMIONode::reset, py::arg("clock_config_file") = "")
+      "reset", &timing::SIMIONode::reset, py::arg("clock_config_file"))
+    .def<void (timing::SIMIONode::*)(const timing::ClockSource&) const>(
+      "reset", &timing::SIMIONode::reset, py::arg("clock_source"))
     .def("soft_reset", &timing::SIMIONode::soft_reset)
     .def("read_firmware_frequency", &timing::SIMIONode::read_firmware_frequency)
     .def("get_clock_frequencies_table", &timing::SIMIONode::get_clock_frequencies_table, py::arg("print_out") = false)
@@ -115,9 +121,9 @@ register_io(py::module& m)
   py::class_<timing::MIBIONode, timing::IONode, uhal::Node>(m, "MIBIONode")
     .def(py::init<const uhal::Node&>())
     .def<void (timing::MIBIONode::*)(const std::string&) const>(
-      "reset", &timing::MIBIONode::reset, py::arg("clock_config_file") = "")
-    .def<void (timing::MIBIONode::*)(int32_t, const std::string&) const>(
-      "reset", &timing::MIBIONode::reset, py::arg("fanout_mode"), py::arg("clock_config_file") = "")
+      "reset", &timing::MIBIONode::reset, py::arg("clock_config_file"))
+    .def<void (timing::MIBIONode::*)(const timing::ClockSource&) const>(
+      "reset", &timing::MIBIONode::reset, py::arg("clock_source"))
     .def("soft_reset", &timing::MIBIONode::soft_reset)
     .def("read_firmware_frequency", &timing::MIBIONode::read_firmware_frequency)
     .def("get_clock_frequencies_table", &timing::MIBIONode::get_clock_frequencies_table, py::arg("print_out") = false)
@@ -140,9 +146,9 @@ register_io(py::module& m)
     py::class_<timing::MIBV2IONode, timing::IONode, uhal::Node>(m, "MIBV2IONode")
     .def(py::init<const uhal::Node&>())
     .def<void (timing::MIBV2IONode::*)(const std::string&) const>(
-      "reset", &timing::MIBV2IONode::reset, py::arg("clock_config_file") = "")
-    .def<void (timing::MIBV2IONode::*)(int32_t, const std::string&) const>(
-      "reset", &timing::MIBV2IONode::reset, py::arg("fanout_mode"), py::arg("clock_config_file") = "")
+      "reset", &timing::MIBV2IONode::reset, py::arg("clock_config_file"))
+    .def<void (timing::MIBV2IONode::*)(const timing::ClockSource&) const>(
+      "reset", &timing::MIBV2IONode::reset, py::arg("clock_source"))
     .def("soft_reset", &timing::MIBV2IONode::soft_reset)
     .def("read_firmware_frequency", &timing::MIBV2IONode::read_firmware_frequency)
     .def("get_clock_frequencies_table", &timing::MIBV2IONode::get_clock_frequencies_table, py::arg("print_out") = false)
@@ -157,9 +163,9 @@ register_io(py::module& m)
     py::class_<timing::GIBIONode, timing::IONode, uhal::Node>(m, "GIBIONode")
     .def(py::init<const uhal::Node&>())
     .def<void (timing::GIBIONode::*)(const std::string&) const>(
-      "reset", &timing::GIBIONode::reset, py::arg("clock_config_file") = "")
-    .def<void (timing::GIBIONode::*)(int32_t, const std::string&) const>(
-      "reset", &timing::GIBIONode::reset, py::arg("fanout_mode"), py::arg("clock_config_file") = "")
+      "reset", &timing::GIBIONode::reset, py::arg("clock_config_file"))
+    .def<void (timing::GIBIONode::*)(const timing::ClockSource&) const>(
+      "reset", &timing::GIBIONode::reset, py::arg("clock_source"))
     .def("soft_reset", &timing::GIBIONode::soft_reset)
     .def("read_firmware_frequency", &timing::GIBIONode::read_firmware_frequency)
     .def("get_clock_frequencies_table", &timing::GIBIONode::get_clock_frequencies_table, py::arg("print_out") = false)

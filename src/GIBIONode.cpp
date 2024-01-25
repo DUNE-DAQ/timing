@@ -72,7 +72,7 @@ GIBIONode::get_hardware_info(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-GIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) const
+GIBIONode::reset(const std::string& clock_config_file) const
 {
   
   write_soft_reset_register();
@@ -99,12 +99,8 @@ GIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) cons
   getNode("csr.ctrl.gps_clk_fltr_b").write(0x0);
   getClient().dispatch();
 
-  // Find the right pll config file
-  std::string clock_config_path = get_full_clock_config_file_path(clock_config_file, fanout_mode);
-  TLOG() << "PLL configuration file : " << clock_config_path;
-
   // Upload config file to PLL
-  configure_pll(clock_config_path);
+  configure_pll(clock_config_file);
 
   getNode("csr.ctrl.rst").write(0x1);
   getNode("csr.ctrl.rst").write(0x0);
@@ -131,14 +127,6 @@ GIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) cons
   sfp_expander_1->set_outputs(1, 0xC0);
 
   TLOG() << "Reset done";
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
-GIBIONode::reset(const std::string& clock_config_file) const
-{
-  reset(-1, clock_config_file);
 }
 //-----------------------------------------------------------------------------
 

@@ -73,12 +73,8 @@ TLUIONode::reset(const std::string& clock_config_file) const
     ers::warning(EnclustraSwitchFailure(ERS_HERE, e));
   }
 
-  // Find the right pll config file
-  std::string clock_config_path = get_full_clock_config_file_path(clock_config_file);
-  TLOG() << "PLL configuration file : " << clock_config_path;
-
   // Upload config file to PLL
-  configure_pll(clock_config_path);
+  configure_pll(clock_config_file);
 
   // Tweak the PLL swing
   auto si_chip = get_pll();
@@ -122,15 +118,6 @@ TLUIONode::reset(const std::string& clock_config_file) const
   TLOG_DEBUG(0) << "DAC1 and DAC2 set to " << std::hex << bi_signal_threshold;
 
   TLOG() << "Reset done";
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
-TLUIONode::reset(int32_t /*fanout_mode*/, // NOLINT(build/unsigned)
-                     const std::string& clock_config_file) const
-{
-  reset(clock_config_file);
 }
 //-----------------------------------------------------------------------------
 

@@ -109,34 +109,9 @@ register_top_designs(py::module& m)
   py::class_<timing::FanoutDesign, uhal::Node>(m, "FanoutDesign")
     .def("read_firmware_version", &timing::FanoutDesign::read_firmware_version)
     .def("validate_firmware_version", &timing::FanoutDesign::validate_firmware_version)
-    .def("sync_timestamp", &timing::FanoutDesign::sync_timestamp)
-    .def<void (timing::FanoutDesign::*)(uint32_t, double, bool) const>("enable_periodic_fl_cmd",
-         &timing::FanoutDesign::enable_periodic_fl_cmd,
-         py::arg("channel"),
-         py::arg("rate"),
-         py::arg("poisson"))
-    .def<void (timing::FanoutDesign::*)(uint32_t, uint32_t, double, bool) const>("enable_periodic_fl_cmd",
-         &timing::FanoutDesign::enable_periodic_fl_cmd,
-         py::arg("command"),
-         py::arg("channel"),
-         py::arg("rate"),
-         py::arg("poisson"))
-    .def("switch_downstream_mux_channel", &timing::FanoutDesign::switch_downstream_mux_channel)
-    .def("apply_endpoint_delay", 
-          &timing::FanoutDesign::apply_endpoint_delay,
-          py::arg("address"),
-          py::arg("coarse_delay"),
-          py::arg("fine_delay"),
-          py::arg("phase_delay"),
-          py::arg("measure_rtt") = false,
-          py::arg("control_sfp") = true,
-          py::arg("sfp_mux") = -1)
-    .def("measure_endpoint_rtt", 
-          &timing::FanoutDesign::measure_endpoint_rtt,
-          py::arg("address"),
-          py::arg("control_sfp") = true,
-          py::arg("sfp_mux") = -1)
-    .def("scan_sfp_mux", &timing::FanoutDesign::scan_sfp_mux);
+    //.def("switch_downstream_mux_channel", &timing::FanoutDesign::switch_downstream_mux_channel)
+    //.def("scan_sfp_mux", &timing::FanoutDesign::scan_sfp_mux)
+    ;
 
   // Ouroboros mux
   py::class_<timing::OuroborosMuxDesign, uhal::Node>(m, "OuroborosMuxDesign")

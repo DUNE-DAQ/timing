@@ -123,15 +123,6 @@ SIMIONode::reset(const std::string& /*clock_config_file*/) const
 
 //-----------------------------------------------------------------------------
 void
-SIMIONode::reset(int32_t /*fanout_mode*/, // NOLINT(build/unsigned)
-                     const std::string& clock_config_file) const
-{
-  reset(clock_config_file);
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
 SIMIONode::configure_pll(const std::string& /*clock_config_file*/) const
 {
   TLOG_DEBUG(0) << "Simulation does not support PLL config";

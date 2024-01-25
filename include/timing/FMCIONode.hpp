@@ -54,14 +54,13 @@ public:
   /**
    * @brief      Reset FMC IO.
    */
-  void reset(const std::string& clock_config_file = "") const override;
+  void reset(const std::string& clock_config_file) const override;
 
   /**
-   * @brief     Reset FMC IO.
+   * @brief      Reset IO, with clock file look up.
    */
-  void reset(int32_t fanout_mode = -1, // NOLINT(build/unsigned)
-                     const std::string& clock_config_file = "") const override;
-  
+  using IONode::reset;
+
   /**
     * @brief      Read frequencies of on-board clocks.
     */

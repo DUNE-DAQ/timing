@@ -40,24 +40,14 @@ GaiaDesign::get_status(bool print_out) const
 void
 GaiaDesign::configure() const
 {
-  // fanout mode hard-coded, to be passed in as parameter in future
-  uint32_t fanout_mode = 0;
-
+  ClockSource clock_source = kInput0;
   // Hard reset
-  this->reset_io(fanout_mode);
+  this->reset_io(clock_source); // gaia normally takes clock from upstream GPS; add posibility override clock source via config in future
 
-  if (!fanout_mode) {
+  if (clock_source == kFreeRun) {
     // Set timestamp to current time
     this->sync_timestamp();
   }
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
-GaiaDesign::reset_io(int32_t fanout_mode, const std::string& clock_config_file) const
-{
-  get_io_node_plain()->reset(fanout_mode, clock_config_file);
 }
 //-----------------------------------------------------------------------------
 

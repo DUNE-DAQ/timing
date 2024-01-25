@@ -111,7 +111,7 @@ public:
    *
    * @return     { description_of_the_return_value }
    */
-  virtual std::string get_full_clock_config_file_path(const std::string& clock_config_file, int32_t mode = -1) const;
+  virtual std::string get_full_clock_config_file_path(const ClockSource& clock_source) const;
 
   /**
    * @brief      Get the an I2C chip.
@@ -166,13 +166,12 @@ public:
   /**
    * @brief      Reset timing node.
    */
-  virtual void reset(const std::string& clock_config_file = "") const = 0;
+  virtual void reset(const std::string& clock_config_file) const = 0;
 
   /**
-   * @brief     Reset fanout board
+   * @brief     Reset timing node with clock file lookup
    */
-  virtual void reset(int32_t fanout_mode, // NOLINT(build/unsigned)
-                     const std::string& clock_config_file = "") const = 0;
+  virtual void reset(const ClockSource& clock_source) const;
 
   static const std::map<BoardType, std::string>& get_board_type_map() { return board_type_map; }
 
@@ -312,129 +311,64 @@ protected:
                                                                     { 0xfc0fe700c28b, kPC069b },
   };
 
+  static inline const std::map<ClockSource, std::string> clock_source_map = {
+                                                            { kFreeRun, "free_run" },
+                                                            { kInput0, "input_0" },
+                                                            { kInput1, "input_1" },
+                                                            { kInput2, "input_2" },
+                                                            { kInput3, "input_3" },
+                                                            };
+
   static inline const std::map<std::string, std::string> clock_config_map = {
 
         // 62.5 MHz mappings (no cdr)
-        { "fmc_5344_ouroboros", "SI5344/PDTS0003.txt" },
-        { "fmc_5394_ouroboros", "SI5344/PDTS0003.txt" },
+        { "fmc_5344_ouroboros_free_run", "SI5344/PDTS0003.txt" },
+        { "fmc_5394_ouroboros_free_run", "SI5344/PDTS0003.txt" },
 
-        { "fmc_5344_master", "SI5344/PDTS0003.txt" },
-        { "fmc_5394_master", "SI5344/PDTS0003.txt" },
+        { "fmc_5344_master_free_run", "SI5344/PDTS0003.txt" },
+        { "fmc_5394_master_free_run", "SI5344/PDTS0003.txt" },
 
-        { "fmc_5344_overlord", "SI5344/PDTS0003.txt" },
-        { "fmc_5394_overlord", "SI5344/PDTS0003.txt" },
+        { "fmc_5344_overlord_free_run", "SI5344/PDTS0003.txt" },
+        { "fmc_5394_overlord_free_run", "SI5344/PDTS0003.txt" },
 
-        { "fmc_5344_boreas", "SI5344/PDTS0003.txt" },
-        { "fmc_5394_boreas", "SI5344/PDTS0003.txt" },
+        { "fmc_5344_boreas_free_run", "SI5344/PDTS0003.txt" },
+        { "fmc_5394_boreas_free_run", "SI5344/PDTS0003.txt" },
 
-        { "fmc_5344_endpoint", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
-        { "fmc_5394_endpoint", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
+        { "fmc_5344_endpoint_input_1", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
+        { "fmc_5394_endpoint_input_1", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
 
-        { "fmc_5344_chronos", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
-        { "fmc_5394_chronos", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
+        { "fmc_5344_chronos_input_1", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
+        { "fmc_5394_chronos_input_1", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
 
-        { "tlu_5345_boreas", "nocdr/DUNE_TLU-4_45_M-Registers.txt" },
+        { "tlu_5345_boreas_free_run", "nocdr/DUNE_TLU-4_45_M-Registers.txt" },
 
-        { "pc059_5345_master", "devel/PDTS_PC059_FANOUT.txt" },
+        { "pc059_5345_master_free_run", "devel/PDTS_PC059_FANOUT.txt" },
 
-        { "pc069_5395_master", "nocdr/Si5395-RevA-069a_mst-Registers.txt" },
-        { "pc069_5395_boreas", "nocdr/Si5395-RevA-069a_mst-Registers.txt" },
+        { "pc069_5395_master_free_run", "nocdr/Si5395-RevA-069a_mst-Registers.txt" },
+        { "pc069_5395_boreas_free_run", "nocdr/Si5395-RevA-069a_mst-Registers.txt" },
 
-        { "pc069_5395_endpoint", "nocdr/Si5395-RevA-069a_ep-Registers.txt" },
-        { "pc069_5395_chronos", "nocdr/Si5395-RevA-069a_ep-Registers.txt" },
+        { "pc069_5395_endpoint_input_1", "nocdr/Si5395-RevA-069a_ep-Registers.txt" },
+        { "pc069_5395_chronos_input_1", "nocdr/Si5395-RevA-069a_ep-Registers.txt" },
 
-        { "gib_5395_gaia", "nocdr/GIB_Debug_01.txt" },
+        { "pc069_5345_master_free_run", "nocdr/Si5345-RevD-pc69bmst-Registers.txt" },
+        { "pc069_5345_boreas_free_run", "nocdr/Si5345-RevD-pc69bmst-Registers.txt" },
 
-        { "fib_5395_fanout_mode0",
-          "nocdr/Si5395-RevA-FIB_FAN_AFCv4-FIBBP250-Registers.txt" }, // fanout mode, data and clock from backplane
+        { "pc069_5345_chronos_input_1", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
+        { "pc069_5345_charon_input_1", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
 
-        { "pc069_5345_master", "nocdr/Si5345-RevD-pc69bmst-Registers.txt" },
-        { "pc069_5345_boreas", "nocdr/Si5345-RevD-pc69bmst-Registers.txt" },
+        { "gib_5395_gaia_free_run", "nocdr/GIB_Debug_01.txt" },
 
-        { "pc069_5345_chronos", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
-        { "pc069_5345_charon", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
+        { "mib_5395_kerberos_free_run",
+          "nocdr/Si5395-RevA-MIB_FREE-Registers.txt" },
+        { "mib_5395_kerberos_input_0",
+          "nocdr/Si5395-RevA-MIB_INSW-Registers.txt" },
+        { "mib_5395_kerberos_input_1",
+          "nocdr/Si5395-RevA-MIB_INSW-Registers.txt" },
+        { "mib_5395_kerberos_input_2",
+          "nocdr/Si5395-RevA-MIB_INSW-Registers.txt" },
 
-        // 62.5 MHz mappings (with cdr)
-        { "fmc_5344_endpoint_cdr", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
-        { "fmc_5394_endpoint_cdr", "devel/Si5394-053endptr_62-5MHz_4kHz-Registers.txt" },
-
-        { "fmc_5344_endpoint-bi-crt_cdr", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
-        { "fmc_5394_endpoint-bi-crt_cdr", "devel/Si5394-053endptr_62-5MHz_4kHz-Registers.txt" },
-
-        { "fmc_5344_chronos_cdr", "devel/endpoint_si5344_312_mhz-e_44_312-Registers.txt" },
-        { "fmc_5394_chronos_cdr", "devel/Si5394-053endptr_62-5MHz_4kHz-Registers.txt" },
-
-        { "fmc_5344_ouroboros_cdr", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
-        { "fmc_5394_ouroboros_cdr", "devel/Si5394-RevA-94mst625-Registers.txt" },
-
-        { "fmc_5344_master_cdr", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
-        { "fmc_5394_master_cdr", "devel/Si5394-RevA-94mst625-Registers.txt" },
-
-        { "fmc_5344_overlord_cdr", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
-        { "fmc_5394_overlord_cdr", "devel/Si5394-RevA-94mst625-Registers.txt" },
-
-        { "fmc_5344_boreas_cdr", "devel/Si5344-053master_312.5_mhz-Registers.txt" },
-        { "fmc_5394_boreas_cdr", "devel/Si5394-RevA-94mst625-Registers.txt" },
-
-        { "tlu_5345_overlord_cdr", "devel/DUNE_TLU-DUNTLU09-Registers_62.5_mhz.txt" },
-        { "tlu_5345_boreas_cdr", "devel/DUNE_TLU-DUNTLU09-Registers_62.5_mhz.txt" },
-
-        { "pc059_5345_ouroboros_cdr", "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" },
-        { "pc059_5345_fanout_mode0_cdr",
-          "devel/pc059_sfp_in_312_mhz-059_0s62-Registers.txt" }, // fanout mode, assuming sfp is the upstream input
-        { "pc059_5345_fanout_mode1_cdr",
-          "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" }, // stand-alone mode
-        { "pc059_5345_fanout_cdr",
-          "devel/pc059_standalone_312_mhz-059_1_62-Registers.txt" }, // stand-alone mode
-
-        { "fib_5395_fanout_mode0_cdr",
-          "devel/Si5395-RevA-FIB_fanout-65_FA_31-Registers.txt" }, // fanout mode, data and clock from backplane
-        { "fib_5395_fanout_mode1_cdr",
-          "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" }, // stand-alone mode
-        { "fib_5395_fanout_cdr",
-          "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" }, // stand-alone mode  
-
-        { "mib_5395_fanout_mode0_cdr",
-          "devel/Si5395-RevA-MIB_62_1-Registers.txt" }, // fanout mode, data and clock always from upstream sfp 1
-        { "mib_5395_fanout_mode1_cdr",
-          "devel/Si5395-RevA-MIB_62_1-Registers.txt" }, // stand-alone mode
-
-        { "fib_5395_ouroboros_cdr", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" },
-        { "fib_5395_ouroboros_cdr", "devel/Si5395-RevA-FIB_ouroboros-65_SA_31-Registers.txt" },
-
-        // 50 MHz mappings
-        { "fmc_5344_endpoint_50_mhz_cdr", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
-        { "fmc_5394_endpoint_50_mhz_cdr", "devel/ENDPOINT-Si5344-50MHzRef.txt"},
-
-        { "fmc_5344_endpoint-bi-crt_50_mhz_cdr", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
-        { "fmc_5394_endpoint-bi-crt_50_mhz_cdr", "devel/Si5344-PDTSCRT1NoZdm-RevD-400HzBW-Registers.txt" },
-
-        { "fmc_5344_chronos_50_mhz_cdr", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
-        { "fmc_5394_chronos_50_mhz_cdr", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
-
-        //{ "kFMCRev1_ouroboros_50_mhz", "SI5344/PDTS0000.txt" },
-        { "fmc_5344_ouroboros_50_mhz_cdr", "SI5344/PDTS0003.txt" },
-        { "fmc_5394_ouroboros_50_mhz_cdr", "SI5344/PDTS0003.txt" },
-
-        //{ "kFMCRev1_master_50_mhz", "SI5344/PDTS0000.txt" },
-        { "fmc_5344_master_50_mhz_cdr", "SI5344/PDTS0003.txt" },
-        { "fmc_5394_master_50_mhz_cdr", "SI5344/PDTS0003.txt" },
-
-        //{ "kFMCRev1_overlord_50_mhz", "SI5344/PDTS0000.txt" },
-        { "fmc_5344_overlord_50_mhz_cdr", "SI5344/PDTS0003.txt" },
-        { "fmc_5394_overlord_50_mhz_cdr", "SI5344/PDTS0003.txt" },
-
-        //{ "kFMCRev1_boreas_50_mhz", "SI5344/PDTS0000.txt" },
-        { "fmc_5344_boreas_50_mhz_cdr", "SI5344/PDTS0003.txt" },
-        { "fmc_5394_boreas_50_mhz_cdr", "SI5344/PDTS0003.txt" },
-
-        { "tlu_5345_overlord_50_mhz_cdr", "wr/TLU_EXTCLK_10MHZ_NOZDM.txt" },
-        { "tlu_5345_boreas_50_mhz_cdr", "wr/TLU_EXTCLK_10MHZ_NOZDM.txt" },
-
-        { "pc059_5345_ouroboros_50_mhz_cdr", "SI5345/PDTS0005.txt" },
-        { "pc059_5345_fanout_mode0_50_mhz_cdr", "wr/FANOUT_PLL_WIDEBW_SFPIN.txt" }, // fanout mode
-        { "pc059_5345_fanout_mode1_50_mhz_cdr", "devel/PDTS_PC059_FANOUT.txt" },    // stand-alone mode
-        { "pc059_5345_fanout_50_mhz_cdr", "devel/PDTS_PC059_FANOUT.txt" },    // stand-alone mode
+        { "fib_5395_fanout_input_1",
+          "nocdr/Si5395-RevA-FIB_FAN_AFCv4-FIBBP625-Registers.txt" }, // fanout design, data and clock from backplane
   };
 
   static inline const std::vector<BoardType> library_supported_boards = {
@@ -444,6 +378,18 @@ protected:
   static inline const std::vector<DesignType> library_supported_designs = {
     kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord, kDesignEndpoBICRT, kDesignChronos, kDesignBoreas, kDesignKerberos, kDesignGaia
   };
+
+  static inline std::string clock_source_to_string(const ClockSource& source)
+  {
+     if (auto source_it = clock_source_map.find(source); source_it != clock_source_map.end())
+     {
+      return source_it->second;
+     }
+     else
+     {
+      throw MissingClockSourceMapEntry(ERS_HERE, format_reg_value(source));
+     }
+  }
 
 };
 
