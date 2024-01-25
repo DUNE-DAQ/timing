@@ -271,32 +271,6 @@ FIBIONode::validate_sfp_id(uint32_t sfp_id) const { // NOLINT(build/unsigned)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-std::vector<double>
-FIBIONode::read_clock_frequencies() const
-{
-	std::vector<std::string> fib_clock_names( {"PLL", "CDR", "BKP"});
-  return getNode<FrequencyCounterNode>("freq").measure_frequencies(fib_clock_names.size());
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-std::string
-FIBIONode::get_clock_frequencies_table(bool print_out) const
-{
-	std::vector<std::string> fib_clock_names( {"PLL", "CDR", "BKP"});
-  std::stringstream table;
-  std::vector<double> frequencies = read_clock_frequencies();
-  for (uint8_t i = 0; i < frequencies.size(); ++i) { // NOLINT(build/unsigned)
-    table << fib_clock_names.at(i) << " freq: " << std::setprecision(12) << frequencies.at(i) << std::endl;
-  }
-  // TODO add freq validation Stoyan Trilov stoyan.trilov@cern.ch
-  if (print_out)
-    TLOG() << table.str();
-  return table.str();
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
 void
 FIBIONode::get_info(timinghardwareinfo::TimingFIBMonitorData& mon_data) const
 {
