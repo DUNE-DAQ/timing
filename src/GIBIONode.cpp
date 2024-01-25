@@ -18,7 +18,7 @@ UHAL_REGISTER_DERIVED_NODE(GIBIONode)
 
 //-----------------------------------------------------------------------------
 GIBIONode::GIBIONode(const uhal::Node& node)
-  : IONode(node, "i2c", "i2c", { "PLL" }, { "PLL", "SFP 0", "SFP 1", "SFP 2", "SFP 3", "SFP 4", "SFP 5" }, { "i2c", "i2c", "i2c", "i2c", "i2c", "i2c" })
+  : IONode(node, "i2c", "i2c", { "PLL" }, { "PLL", "SFP CDR 0", "SFP CDR 1", "SFP CDR 2", "SFP CDR 3", "SFP CDR 4", "SFP CDR 5" }, { "i2c", "i2c", "i2c", "i2c", "i2c", "i2c" })
 {
 }
 //-----------------------------------------------------------------------------
@@ -67,6 +67,26 @@ GIBIONode::get_hardware_info(bool print_out) const
   // enable pll/uid channel 0 only
   set_i2c_mux_channels(0x1);
   return IONode::get_hardware_info(print_out);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+GIBIONode::reset(const ClockSource& clock_source) const
+{
+  getNode("csr.ctrl.i2c_sw_rst").write(0x0);
+  getNode("csr.ctrl.i2c_exten_rst").write(0x0);
+  getNode("csr.ctrl.clk_gen_rst").write(0x0);
+  getClient().dispatch();
+  millisleep(1);
+  getNode("csr.ctrl.i2c_sw_rst").write(0x1);
+  getNode("csr.ctrl.i2c_exten_rst").write(0x1);
+  getNode("csr.ctrl.clk_gen_rst").write(0x1);
+  getClient().dispatch();
+
+  // Find the right pll config file
+  std::string clock_config = get_full_clock_config_file_path(clock_source);
+  reset(clock_config);
 }
 //-----------------------------------------------------------------------------
 

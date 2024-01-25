@@ -67,9 +67,9 @@ public:
   void reset(const std::string& clock_config_file)  const override;
 
   /**
-   * @brief      Reset IO, with clock file look up.
+   * @brief     Reset timing node with clock file lookup
    */
-  using IONode::reset;
+  void reset(const ClockSource& clock_source) const override;
 
   /**
    * @brief      Print status of on-board SFP.
