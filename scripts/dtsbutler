@@ -24,7 +24,7 @@ import timing.cli.align as align
 import timing.cli.endpoint as endpoint
 import timing.cli.debug as debug
 import timing.cli.hsi as hsi
-
+import timing.cli.design as design
 
 from click import echo, style, secho
 from os.path import join, expandvars
@@ -93,6 +93,7 @@ if __name__ == '__main__':
     cli.add_command(endpoint.endpoint)
     cli.add_command(debug.debug)
     cli.add_command(hsi.hsi)
+    cli.add_command(design.design)
 
     try:
         cli(obj=DTSContext())
