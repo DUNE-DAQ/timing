@@ -14,7 +14,7 @@
 
 // PDT Headers
 #include "TimingIssues.hpp"
-#include "timing/FanoutIONode.hpp"
+#include "timing/IONode.hpp"
 #include "timing/timinghardwareinfo/InfoStructs.hpp"
 #include "timing/timinghardwareinfo/InfoNljs.hpp"
 

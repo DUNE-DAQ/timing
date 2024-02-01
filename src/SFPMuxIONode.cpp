@@ -1,12 +1,12 @@
 /**
- * @file FanoutIONode.cpp
+ * @file SFPMuxIONode.cpp
  *
  * This is part of the DUNE DAQ Software Suite, copyright 2020.
  * Licensing/copyright details are in the COPYING file that you should have
  * received with this code.
  */
 
-#include "timing/FanoutIONode.hpp"
+#include "timing/SFPMuxIONode.hpp"
 
 #include <string>
 #include <vector>
@@ -15,7 +15,7 @@ namespace dunedaq {
 namespace timing {
 
 //-----------------------------------------------------------------------------
-FanoutIONode::FanoutIONode(const uhal::Node& node,
+SFPMuxIONode::SFPMuxIONode(const uhal::Node& node,
                            std::string uid_i2c_bus,
                            std::string pll_i2c_bus,
                            std::string pll_i2c_device,
@@ -26,7 +26,7 @@ FanoutIONode::FanoutIONode(const uhal::Node& node,
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-FanoutIONode::~FanoutIONode() {}
+SFPMuxIONode::~SFPMuxIONode() {}
 //-----------------------------------------------------------------------------
 
 } // namespace timing

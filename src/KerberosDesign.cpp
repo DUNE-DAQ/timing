@@ -10,10 +10,10 @@ UHAL_REGISTER_DERIVED_NODE(KerberosDesign)
 //-----------------------------------------------------------------------------
 KerberosDesign::KerberosDesign(const uhal::Node& node)
   : TopDesignInterface(node)
-  , MuxDesignInterface(node)
   , MasterDesignInterface(node)
-  , MasterMuxDesign(node)
+  , MasterDesign(node)
   , EndpointDesignInterface(node)
+  , CDRMuxDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
@@ -48,29 +48,6 @@ KerberosDesign::configure() const
     // Set timestamp to current time
     this->sync_timestamp();
   }
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-uint32_t
-KerberosDesign::measure_endpoint_rtt(uint32_t address, bool control_sfp, int sfp_mux) const
-{
-  return MasterMuxDesign::measure_endpoint_rtt(address, control_sfp, sfp_mux);
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
-KerberosDesign::apply_endpoint_delay(uint32_t address,
-                                            uint32_t coarse_delay,
-                                            uint32_t fine_delay,
-                                            uint32_t phase_delay,
-                                            bool measure_rtt,
-                                            bool control_sfp,
-                                            int sfp_mux) const
-{
-  MasterMuxDesign::apply_endpoint_delay(
-    address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp, sfp_mux);
 }
 //-----------------------------------------------------------------------------
 

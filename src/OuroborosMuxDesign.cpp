@@ -18,7 +18,7 @@ UHAL_REGISTER_DERIVED_NODE(OuroborosMuxDesign)
 //-----------------------------------------------------------------------------
 OuroborosMuxDesign::OuroborosMuxDesign(const uhal::Node& node)
   : TopDesignInterface(node)
-  , MuxDesignInterface(node)
+  , SFPMuxDesignInterface(node)
   , MasterDesignInterface(node)
   , MasterMuxDesign(node)
   , EndpointDesignInterface(node)

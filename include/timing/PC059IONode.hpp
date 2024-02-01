@@ -14,7 +14,7 @@
 
 // PDT Headers
 #include "TimingIssues.hpp"
-#include "timing/FanoutIONode.hpp"
+#include "timing/SFPMuxIONode.hpp"
 #include "timing/timinghardwareinfo/InfoStructs.hpp"
 #include "timing/timinghardwareinfo/InfoNljs.hpp"
 
@@ -32,7 +32,7 @@ namespace timing {
 /**
  * @brief      Class for the PC059 board.
  */
-class PC059IONode : public FanoutIONode
+class PC059IONode : public SFPMuxIONode
 {
   UHAL_DERIVEDNODE(PC059IONode)
 

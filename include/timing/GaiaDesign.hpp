@@ -13,8 +13,9 @@
 #define TIMING_INCLUDE_TIMING_GAIADESIGN_HPP_
 
 // PDT Headers
-#include "timing/MasterMuxDesign.hpp"
+#include "timing/MasterDesign.hpp"
 #include "timing/EndpointDesignInterface.hpp"
+#include "timing/CDRMuxDesignInterface.hpp"
 
 #include "TimingIssues.hpp"
 
@@ -32,7 +33,7 @@ namespace timing {
 /**
  * @brief      Class for timing fanout designs.
  */
-class GaiaDesign : public MasterMuxDesign, public EndpointDesignInterface
+class GaiaDesign : public MasterDesign, public EndpointDesignInterface, public CDRMuxDesignInterface
 {
   UHAL_DERIVEDNODE(GaiaDesign)
 public:
@@ -54,36 +55,6 @@ public:
    *
    */
   void configure() const override;
-
-  /**
-   * @brief      Measure the endpoint round trip time.
-   *
-   * @return     { description_of_the_return_value }
-   */
-  uint32_t measure_endpoint_rtt(uint32_t address, // NOLINT(build/unsigned)
-                                        bool control_sfp = true,
-                                        int sfp_mux = -1) const override;
-
-  /**
-   * @brief      Apply delay to endpoint
-   */
-  void apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned)
-                            uint32_t coarse_delay, // NOLINT(build/unsigned)
-                            uint32_t fine_delay,   // NOLINT(build/unsigned)
-                            uint32_t phase_delay,  // NOLINT(build/unsigned)
-                            bool measure_rtt = false,
-                            bool control_sfp = true,
-                            int sfp_mux = -1) const override;
-
-  /**
-   * @brief      Change active upstream SFP
-   */
-  void switch_upstream_mux_channel(uint8_t mux_channel) const; // NOLINT(build/unsigned)
-
-  /**
-   * @brief      Read active upstream SFP
-   */
-  uint8_t read_active_upstream_mux_channel() const; // NOLINT(build/unsigned)
 };
 
 } // namespace timing

@@ -13,9 +13,9 @@
 #define TIMING_INCLUDE_TIMING_FANOUTDESIGN_HPP_
 
 // PDT Headers
-#include "timing/MasterMuxDesign.hpp"
+#include "timing/TopDesign.hpp"
 #include "timing/EndpointDesignInterface.hpp"
-#include "timing/SwitchyardNode.hpp"
+#include "timing/CDRMuxDesignInterface.hpp"
 
 #include "TimingIssues.hpp"
 
@@ -33,7 +33,7 @@ namespace timing {
 /**
  * @brief      Class for timing fanout designs.
  */
-class FanoutDesign : public TopDesign, public EndpointDesignInterface
+class FanoutDesign : public TopDesign, public EndpointDesignInterface, public CDRMuxDesignInterface
 {
   UHAL_DERIVEDNODE(FanoutDesign)
 public:

@@ -20,7 +20,7 @@ UHAL_REGISTER_DERIVED_NODE(FIBIONode)
 
 //-----------------------------------------------------------------------------
 FIBIONode::FIBIONode(const uhal::Node& aNode) :
-	FanoutIONode(aNode, "i2c", "i2c", "SI5345", {"PLL", "BKP DATA"}, {"i2c_sfp0", "i2c_sfp1", "i2c_sfp2", "i2c_sfp3", "i2c_sfp4", "i2c_sfp5", "i2c_sfp6", "i2c_sfp7"}) {
+	SFPMuxIONode(aNode, "i2c", "i2c", "SI5345", {"PLL", "BKP DATA"}, {"i2c_sfp0", "i2c_sfp1", "i2c_sfp2", "i2c_sfp3", "i2c_sfp4", "i2c_sfp5", "i2c_sfp6", "i2c_sfp7"}) {
 }
 //-----------------------------------------------------------------------------
 

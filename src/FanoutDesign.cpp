@@ -12,6 +12,7 @@ FanoutDesign::FanoutDesign(const uhal::Node& node)
   : TopDesignInterface(node)
   , TopDesign(node)
   , EndpointDesignInterface(node)
+  , CDRMuxDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 

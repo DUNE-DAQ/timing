@@ -13,7 +13,7 @@
 #define TIMING_INCLUDE_TIMING_FIBIONODE_HPP_
 
 // Timing Headers
-#include "timing/FanoutIONode.hpp"
+#include "timing/SFPMuxIONode.hpp"
 #include "timing/TimingIssues.hpp"
 
 // uHal Headers
@@ -29,7 +29,7 @@ namespace timing {
 /**
  * @brief      Class for the FIB board.
  */
-class FIBIONode : public FanoutIONode {
+class FIBIONode : public SFPMuxIONode {
     UHAL_DERIVEDNODE(FIBIONode)
 
 public:

@@ -10,10 +10,10 @@ UHAL_REGISTER_DERIVED_NODE(GaiaDesign)
 //-----------------------------------------------------------------------------
 GaiaDesign::GaiaDesign(const uhal::Node& node)
   : TopDesignInterface(node)
-  , MuxDesignInterface(node)
   , MasterDesignInterface(node)
-  , MasterMuxDesign(node)
+  , MasterDesign(node)
   , EndpointDesignInterface(node)
+  , CDRMuxDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
@@ -52,29 +52,6 @@ GaiaDesign::configure() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-uint32_t
-GaiaDesign::measure_endpoint_rtt(uint32_t address, bool control_sfp, int sfp_mux) const
-{
-  return MasterMuxDesign::measure_endpoint_rtt(address, control_sfp, sfp_mux);
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
-GaiaDesign::apply_endpoint_delay(uint32_t address,
-                                            uint32_t coarse_delay,
-                                            uint32_t fine_delay,
-                                            uint32_t phase_delay,
-                                            bool measure_rtt,
-                                            bool control_sfp,
-                                            int sfp_mux) const
-{
-  MasterMuxDesign::apply_endpoint_delay(
-    address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp, sfp_mux);
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
 void
 GaiaDesign::get_info(opmonlib::InfoCollector& /*ci*/, int /*level*/) const
 { 
@@ -89,26 +66,6 @@ GaiaDesign::get_info(opmonlib::InfoCollector& /*ci*/, int /*level*/) const
 //  opmonlib::InfoCollector endpoint_collector;
 //  get_endpoint_node_plain(0)->get_info(endpoint_collector, level);
 //  ci.add("endpoint", endpoint_collector);
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
-GaiaDesign::switch_upstream_mux_channel(uint8_t mux_channel) const // NOLINT(build/unsigned)
-{
-  // TODO add mux channel validity check
-  getNode("us_mux.csr.ctrl.src").write(mux_channel);
-  getClient().dispatch();
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-uint8_t
-GaiaDesign::read_active_upstream_mux_channel() const // NOLINT(build/unsigned)
-{
-  auto active_sfp_mux_channel = getNode("us_mux.csr.ctrl.src").read();
-  getClient().dispatch();
-  return active_sfp_mux_channel.value();
 }
 //-----------------------------------------------------------------------------
 }

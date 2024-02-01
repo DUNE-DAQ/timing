@@ -19,7 +19,7 @@ UHAL_REGISTER_DERIVED_NODE(PC059IONode)
 
 //-----------------------------------------------------------------------------
 PC059IONode::PC059IONode(const uhal::Node& node)
-  : FanoutIONode(node, "i2c", "i2c", "SI5345", { "PLL", "CDR" }, { "usfp_i2c", "i2c" })
+  : SFPMuxIONode(node, "i2c", "i2c", "SI5345", { "PLL", "CDR" }, { "usfp_i2c", "i2c" })
 {}
 //-----------------------------------------------------------------------------
 

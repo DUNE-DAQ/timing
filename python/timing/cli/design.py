@@ -100,9 +100,9 @@ def status(obj):
 @click.pass_obj
 def cdrswitch(obj, mux):
 
-    obj.mDevice.getNode('us_mux.csr.ctrl.src').write(mux)
-    active_mux=obj.mDevice.getNode('us_mux.csr.ctrl.src').read()
-    obj.mDevice.dispatch()
+    lTopDesign = obj.mTopDesign
+    lTopDesign.switch_cdr_mux(mux)
+    active_mux=lTopDesign.read_active_cdr_mux()
 
     echo(f"cdr mux set to {active_mux}")
 # ------------------------------------------------------------------------------
@@ -111,7 +111,8 @@ def cdrswitch(obj, mux):
 @design.command('cdr-status', short_help="Print upstream CDR status")
 @click.option('--id', type=int)
 @click.pass_obj
-def cdrstatus(obj, id):
+@click.pass_context
+def cdrstatus(ctx, obj, id):
 
     if id is None:
         cdr_node = obj.mDevice.getNode('cdr')
@@ -135,5 +136,7 @@ def cdrresync(ctx, obj, id):
 
     cdr_node.resync()
 
-    #ctx.invoke(cdrstatus)
+    time.sleep(0.5)
+
+    ctx.forward(cdrstatus)
 # ------------------------------------------------------------------------------

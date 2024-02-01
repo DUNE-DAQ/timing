@@ -14,7 +14,7 @@
 
 // PDT Headers
 #include "TimingIssues.hpp"
-#include "timing/FanoutIONode.hpp"
+#include "timing/SFPMuxIONode.hpp"
 #include "timing/timinghardwareinfo/InfoStructs.hpp"
 #include "timing/timinghardwareinfo/InfoNljs.hpp"
 #include "timing/I2C9546SwitchNode.hpp"
@@ -32,7 +32,7 @@ namespace timing {
 /**
  * @brief      Class for the timing FMC board.
  */
-class MIBIONode : public FanoutIONode
+class MIBIONode : public SFPMuxIONode
 {
   UHAL_DERIVEDNODE(MIBIONode)
 

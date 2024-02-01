@@ -18,7 +18,7 @@ UHAL_REGISTER_DERIVED_NODE(MIBIONode)
 
 //-----------------------------------------------------------------------------
 MIBIONode::MIBIONode(const uhal::Node& node)
-  : FanoutIONode(node, "i2c", "i2c", { "PLL" }, { "PLL", "CDR 0", "CDR 1" }, { "i2c" })
+  : SFPMuxIONode(node, "i2c", "i2c", { "PLL" }, { "PLL", "CDR 0", "CDR 1" }, { "i2c" })
 {
 }
 //-----------------------------------------------------------------------------
