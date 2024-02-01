@@ -358,6 +358,8 @@ protected:
 
         { "gib_5395_gaia_free_run", "nocdr/GIB_Debug_01.txt" },
 
+        { "gib_5395_gaia_input_0", "nocdr/Si5395-RevA-GIB10MHZ-Registers.txt" },
+
         { "mib_5395_kerberos_free_run",
           "nocdr/Si5395-RevA-MIB_FREE-Registers.txt" },
         { "mib_5395_kerberos_input_0",
