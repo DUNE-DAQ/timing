@@ -36,19 +36,19 @@ def endpoint(obj, id, device):
     echo('Created endpoint device ' + style(lDevice.id(), fg='blue'))
     lTopDesign = lDevice.getNode('')
 
-    lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
-    lDevice.dispatch()
-
-    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards and lBoardInfo['design_type'].value() in kLibrarySupportedDesigns:
-        
-        lTopDesign.validate_firmware_version()
-
-        try:
-            echo(lDevice.getNode('io').get_hardware_info())
-        except:
-            secho("Failed to retrieve hardware information! I2C issue? Initial board reset needed?", fg='yellow')
-            e = sys.exc_info()[0]
-            secho("Error: {}".format(e), fg='red')
+#    lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
+#    lDevice.dispatch()
+#
+#    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards and lBoardInfo['design_type'].value() in kLibrarySupportedDesigns:
+#        
+#        lTopDesign.validate_firmware_version()
+#
+#        try:
+#            echo(lDevice.getNode('io').get_hardware_info())
+#        except:
+#            secho("Failed to retrieve hardware information! I2C issue? Initial board reset needed?", fg='yellow')
+#            e = sys.exc_info()[0]
+#            secho("Error: {}".format(e), fg='red')
 
     # Ensure that target endpoint exists
     lEPNames = lDevice.getNodes(f"endpoint{id}")
@@ -60,7 +60,7 @@ def endpoint(obj, id, device):
 
     obj.mDevice = lDevice
     obj.mEndpoint = lDevice.getNode(f"endpoint{id}")
-    obj.mIO = lDevice.getNode('io')
+    #obj.mIO = lDevice.getNode('io')
 # ------------------------------------------------------------------------------
 
 
