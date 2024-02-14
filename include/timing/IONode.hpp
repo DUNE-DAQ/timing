@@ -370,7 +370,7 @@ protected:
           "nocdr/Si5395-RevA-MIB_INSW-Registers.txt" },
 
         { "fib_5395_fanout_input_1",
-          "nocdr/Si5395-RevA-FIB_FAN_AFCv4-FIBBP625-Registers.txt" }, // fanout design, data and clock from backplane
+          "nocdr/Si5395-RevA-FIB_FAN_AFCv4-FIBBP250-Registers.txt" }, // fanout design, data and clock from backplane
   };
 
   static inline const std::vector<BoardType> library_supported_boards = {
