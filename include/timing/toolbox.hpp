@@ -164,7 +164,7 @@ format_reg_table(T data, std::string title = "", std::vector<std::string> header
  * @return
  */
 int64_t
-get_seconds_since_epoch();
+get_milliseconds_since_epoch();
 
 /**
  * ""
