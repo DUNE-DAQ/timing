@@ -173,7 +173,7 @@ public:
 
   const static uint32_t required_major_firmware_version = 7;
   const static uint32_t required_minor_firmware_version = 3;
-  const static uint32_t required_patch_firmware_version = 1;
+  const static uint32_t required_patch_firmware_version = 0;
 private:
   /**
   * @brief     Get the status tables.
