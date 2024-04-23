@@ -1,0 +1,11 @@
+<node id="pdts_echo_mon" description="Echo command monitor" fwinfo="endpoint" class="EchoMonitorNode">
+		<node id="csr" address="0x0" fwinfo="endpoint;width=1">
+			<node id="ctrl" address="0x0">
+				<node id="go" mask="0x1"/>
+			</node>
+			<node id="stat" address="0x1">
+				<node id="rx_done" mask="0x1"/>
+				<node id="deltat" mask="0xffff0000"/>
+			</node>
+		</node>
+</node>
