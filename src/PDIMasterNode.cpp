@@ -64,14 +64,8 @@ PDIMasterNode::sync_timestamp(uint32_t clock_frequency_hz) const // NOLINT(build
 {
   const uint64_t old_timestamp = read_timestamp(); // NOLINT(build/unsigned)
   TLOG() << "Reading old timestamp: " << format_reg_value(old_timestamp) << ", " << format_timestamp(old_timestamp, clock_frequency_hz);
-
-  const auto milliseconds_since_epoch = get_milliseconds_since_epoch();
   
-  const uint64_t now_timestamp = milliseconds_since_epoch * (clock_frequency_hz / 1000) ; // NOLINT(build/unsigned)
-  
-  TLOG() << "Clock frequency (Hz) " << clock_frequency_hz ; 
-  TLOG() << "Milliseconds since epoch " << milliseconds_since_epoch;
-  TLOG() << "Timestamp (raw) " << now_timestamp;
+  const uint64_t now_timestamp = get_milliseconds_since_epoch() * (clock_frequency_hz / 1000); // NOLINT(build/unsigned)
   TLOG() << "Setting new timestamp: " << format_reg_value(now_timestamp) << ", " << format_timestamp(now_timestamp, clock_frequency_hz);
 
   set_timestamp(now_timestamp);
