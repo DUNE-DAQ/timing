@@ -94,26 +94,26 @@ SpillInterfaceNode::read_in_spill() const
 //------------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-SpillInterfaceNode::get_info(timingfirmwareinfo::PDISpillInterfaceMonitorData& mon_data) const
-{
-  auto ctrl_nodes = read_sub_nodes(getNode("csr.ctrl"));
-  auto stat_nodes = read_sub_nodes(getNode("csr.stat"));
+// void
+// SpillInterfaceNode::get_info(timingfirmwareinfo::PDISpillInterfaceMonitorData& mon_data) const
+// {
+//   auto ctrl_nodes = read_sub_nodes(getNode("csr.ctrl"));
+//   auto stat_nodes = read_sub_nodes(getNode("csr.stat"));
 
-  mon_data.spill_interface_enabled = ctrl_nodes["en"];
-  mon_data.source = ctrl_nodes["src"];
-  mon_data.in_spill = stat_nodes["in_spill"];
-}
-//-----------------------------------------------------------------------------
+//   mon_data.spill_interface_enabled = ctrl_nodes["en"];
+//   mon_data.source = ctrl_nodes["src"];
+//   mon_data.in_spill = stat_nodes["in_spill"];
+// }
+// //-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-void
-SpillInterfaceNode::get_info(opmonlib::InfoCollector& ic, int /*level*/) const
-{
-  timingfirmwareinfo::PDISpillInterfaceMonitorData mon_data;
-  this->get_info(mon_data);
-  ic.add(mon_data);
-}
+// //-----------------------------------------------------------------------------
+// void
+// SpillInterfaceNode::get_info(opmonlib::InfoCollector& ic, int /*level*/) const
+// {
+//   timingfirmwareinfo::PDISpillInterfaceMonitorData mon_data;
+//   this->get_info(mon_data);
+//   ic.add(mon_data);
+// }
 //-----------------------------------------------------------------------------
 
 } // namespace timing

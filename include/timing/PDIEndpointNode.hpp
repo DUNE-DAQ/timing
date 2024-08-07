@@ -17,9 +17,6 @@
 #include "timing/FrequencyCounterNode.hpp"
 #include "timing/EndpointNodeInterface.hpp"
 
-#include "timing/timingendpointinfo/InfoNljs.hpp"
-#include "timing/timingendpointinfo/InfoStructs.hpp"
-
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
@@ -110,16 +107,16 @@ public:
    */
   virtual uint32_t read_version() const; // NOLINT(build/unsigned)
 
-  /**
-   * @brief     Collect monitoring information for timing endpoint
-   *
-   */
-  virtual void get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const;
+  // /**
+  //  * @brief     Collect monitoring information for timing endpoint
+  //  *
+  //  */
+  // virtual void get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const;
 
-  /**
-   * @brief    Give info to collector.
-   */
-  void get_info(opmonlib::InfoCollector& ci, int level) const override;
+  // /**
+  //  * @brief    Give info to collector.
+  //  */
+  // void get_info(opmonlib::InfoCollector& ci, int level) const override;
 
   /**
    * @brief    Get the states map

@@ -17,9 +17,6 @@
 #include "timing/TimingNode.hpp"
 #include "timing/definitions.hpp"
 
-#include "timing/timingfirmwareinfo/InfoNljs.hpp"
-#include "timing/timingfirmwareinfo/InfoStructs.hpp"
-
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
@@ -124,16 +121,16 @@ public:
    */
   uint32_t read_signal_source_mode() const; // NOLINT(build/unsigned)
 
-  /**
-   * @brief     Collect monitoring information for timing endpoint
-   *
-   */
-  void get_info(timingfirmwareinfo::HSIFirmwareMonitorData& mon_data) const;
+  // /**
+  //  * @brief     Collect monitoring information for timing endpoint
+  //  *
+  //  */
+  // void get_info(timingfirmwareinfo::HSIFirmwareMonitorData& mon_data) const;
 
-  /**
-   * @brief    Give info to collector.
-   */
-  void get_info(opmonlib::InfoCollector& ci, int level) const override;
+  // /**
+  //  * @brief    Give info to collector.
+  //  */
+  // void get_info(opmonlib::InfoCollector& ci, int level) const override;
   
   static inline constexpr size_t hsi_buffer_event_words_number = 5;
 };

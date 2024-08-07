@@ -18,8 +18,6 @@
 #include "timing/FLCmdGeneratorNode.hpp"
 #include "timing/MasterNodeInterface.hpp"
 #include "timing/MasterGlobalNode.hpp"
-#include "timing/timingfirmwareinfo/InfoNljs.hpp"
-#include "timing/timingfirmwareinfo/InfoStructs.hpp"
 #include "timing/timingfirmware/Nljs.hpp"
 #include "timing/timingfirmware/Structs.hpp"
 
@@ -106,15 +104,10 @@ public:
    */
   void set_timestamp(uint64_t timestamp) const override; // NOLINT(build/unsigned)
 
-  /**
-   * @brief     Fill the PD-I master monitoring structure.
-   */
-  void get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const;
-
-  /**
-   * @brief    Give info to collector.
-   */
-  void get_info(opmonlib::InfoCollector& ic, int level) const override;
+  // /**
+  //  * @brief     Fill the PD-I master monitoring structure.
+  //  */
+  // void get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const;
 
   /**
    * @brief    Read some data from endpoint registers

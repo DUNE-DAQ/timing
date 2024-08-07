@@ -304,59 +304,59 @@ PartitionNode::get_status(bool print_out) const
   return status.str();
 }
 //-----------------------------------------------------------------------------
-void
-PartitionNode::get_info(timingfirmwareinfo::TimingPartitionMonitorData& mon_data) const
-{
-  auto controls = read_sub_nodes(getNode("csr.ctrl"), false);
-  auto state = read_sub_nodes(getNode("csr.stat"), false);
+// void
+// PartitionNode::get_info(timingfirmwareinfo::TimingPartitionMonitorData& mon_data) const
+// {
+//   auto controls = read_sub_nodes(getNode("csr.ctrl"), false);
+//   auto state = read_sub_nodes(getNode("csr.stat"), false);
 
-  auto event_counter = getNode("evtctr").read();
-  auto buffer_count = getNode("buf.count").read();
+//   auto event_counter = getNode("evtctr").read();
+//   auto buffer_count = getNode("buf.count").read();
 
-  getClient().dispatch();
+//   getClient().dispatch();
 
-  mon_data.enabled = controls.at("part_en").value();
-  mon_data.spill_interface_enabled = controls.at("spill_gate_en").value();
-  mon_data.trig_enabled = controls.at("trig_en").value();
-  mon_data.trig_mask = controls.at("trig_mask").value();
-  mon_data.rate_ctrl_enabled = controls.at("rate_ctrl_en").value();
-  mon_data.frag_mask = controls.at("frag_mask").value();
-  mon_data.buffer_enabled = controls.at("buf_en").value();
+//   mon_data.enabled = controls.at("part_en").value();
+//   mon_data.spill_interface_enabled = controls.at("spill_gate_en").value();
+//   mon_data.trig_enabled = controls.at("trig_en").value();
+//   mon_data.trig_mask = controls.at("trig_mask").value();
+//   mon_data.rate_ctrl_enabled = controls.at("rate_ctrl_en").value();
+//   mon_data.frag_mask = controls.at("frag_mask").value();
+//   mon_data.buffer_enabled = controls.at("buf_en").value();
 
-  mon_data.in_run = state.at("in_run").value();
-  mon_data.in_spill = state.at("in_spill").value();
+//   mon_data.in_run = state.at("in_run").value();
+//   mon_data.in_spill = state.at("in_spill").value();
 
-  mon_data.buffer_warning = state.at("buf_warn").value();
-  mon_data.buffer_error = state.at("buf_err").value();
-  mon_data.buffer_occupancy = buffer_count.value();
-}
+//   mon_data.buffer_warning = state.at("buf_warn").value();
+//   mon_data.buffer_error = state.at("buf_err").value();
+//   mon_data.buffer_occupancy = buffer_count.value();
+// }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-PartitionNode::get_info(opmonlib::InfoCollector& ic, int /*level*/) const
-{
-  timingfirmwareinfo::TimingPartitionMonitorData mon_data;
-  this->get_info(mon_data);
-  ic.add(mon_data);
+// void
+// PartitionNode::get_info(opmonlib::InfoCollector& ic, int /*level*/) const
+// {
+//   timingfirmwareinfo::TimingPartitionMonitorData mon_data;
+//   this->get_info(mon_data);
+//   ic.add(mon_data);
 
-  auto accepted_counters = getNode("actrs").readBlock(getNode("actrs").getSize());
-  auto rejected_counters = getNode("rctrs").readBlock(getNode("actrs").getSize());
-  getClient().dispatch();
+//   auto accepted_counters = getNode("actrs").readBlock(getNode("actrs").getSize());
+//   auto rejected_counters = getNode("rctrs").readBlock(getNode("actrs").getSize());
+//   getClient().dispatch();
 
 
-  for (auto& cmd : PDIFLCmdGeneratorNode::get_command_map()) {
-    timingfirmwareinfo::TimingFLCmdCounter cmd_counter;
-    opmonlib::InfoCollector cmd_counter_ic;
+//   for (auto& cmd : PDIFLCmdGeneratorNode::get_command_map()) {
+//     timingfirmwareinfo::TimingFLCmdCounter cmd_counter;
+//     opmonlib::InfoCollector cmd_counter_ic;
 
-    cmd_counter.accepted = accepted_counters.at(cmd.first);
-    cmd_counter.rejected = rejected_counters.at(cmd.first);
+//     cmd_counter.accepted = accepted_counters.at(cmd.first);
+//     cmd_counter.rejected = rejected_counters.at(cmd.first);
 
-    cmd_counter_ic.add(cmd_counter);
-    ic.add(cmd.second, cmd_counter_ic);
-  }
+//     cmd_counter_ic.add(cmd_counter);
+//     ic.add(cmd.second, cmd_counter_ic);
+//   }
 
-}
+// }
 //-----------------------------------------------------------------------------
 
 } // namespace timing

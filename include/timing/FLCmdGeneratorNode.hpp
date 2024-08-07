@@ -16,8 +16,6 @@
 #include "timing/definitions.hpp"
 #include "timing/TimestampGeneratorNode.hpp"
 #include "timing/TimingNode.hpp"
-#include "timing/timingfirmwareinfo/InfoStructs.hpp"
-#include "timing/timingfirmwareinfo/InfoNljs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -91,11 +89,6 @@ public:
    * @brief     Get command counters status string
    */
   std::string get_cmd_counters_table(bool print_out = false) const;
-
-  /**
-   * @brief    Give info to collector.
-   */
-  void get_info(opmonlib::InfoCollector& ic, int level) const override;
 
   static void parse_periodic_fl_cmd_rate(double requested_rate, uint32_t clock_frequency_hz, double& actual_rate, uint32_t& divisor, uint32_t& prescale);
 private:
