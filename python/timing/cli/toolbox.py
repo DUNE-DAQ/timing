@@ -259,59 +259,6 @@ def tstamp2int( aRawTStamp ):
 
 
 # ------------------------------------------------------------------------------
-def printCounters( aTopNode, aSubNodes, aNumCtrs=0x10, aTitle='Cmd', aLegend=defs.kCommandNames ):
-
-    lBlocks = []
-
-    # try:
-    #     aTopNode.getClient().dispatch()
-    # except uhal.exception as e:
-    #     for b in lBlocks:
-    #         print (b.valid())
-    #     raise SystemExit(0)
-    
-    for lKey in aSubNodes:
-        try:
-            ctrs = aTopNode.getNode(lKey).readBlock(aNumCtrs)
-            aTopNode.getClient().dispatch()
-            lBlocks.append(ctrs.value())
-
-        except uhal.exception as e:
-            print ('Failed to read ', lKey)
-            lBlocks.append([None]*aNumCtrs)
-
-    # Just a bit of math
-    lCellWidth = 12
-    kCellFmt = ' {{:^{}}} '.format(lCellWidth)
-    kTitleCellFmt = ' {{:^{}}} '.format((lCellWidth+1)*2+1)
-
-    lLineLen = (lCellWidth+2+1)*(len(aSubNodes)*2+1)+1
-
-    # Build the title
-    lLine = [kCellFmt.format('')]+[style(kTitleCellFmt.format(aSubNodes[lName]), fg='green') for lName in aSubNodes]
- 
-    lTitle = '|'.join(['']+lLine+[''])
-    echo ( '-'*lLineLen)
-    # print ( '-'*len(lTitle))
-    echo ( lTitle )
-
-    # Build the title
-    lLine = [aTitle] +( ['cnts', 'hex' ]*len(aSubNodes) )
-    lHdr = '|'.join(['']+[kCellFmt.format(lCell) for lCell in lLine]+[''])
-    print ( '-'*lLineLen)
-    print ( lHdr )
-    print ( '-'*lLineLen)
-
-    for lId in range(aNumCtrs):
-
-        lLine = [ (aLegend.get(lId,hex(lId))) ]
-        for lBlock in lBlocks:
-            lLine += [lBlock[lId],hex(lBlock[lId])] if lBlock[lId] is not None else ['fail']*2
-        print( '|'.join(['']+[kCellFmt.format(lCell) for lCell in lLine]+['']))
-    print ( '-'*lLineLen)
-# ------------------------------------------------------------------------------
-
-# ------------------------------------------------------------------------------
 def fmtEpState(aState):
     aState = aState.value()
     return '{} ({})'.format(defs.kEpStates[aState], hex(aState)) if aState in defs.kEpStates else hex(aState)

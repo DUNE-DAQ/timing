@@ -31,36 +31,6 @@ local timingfirmwareinfo = {
     double_val: s.number("DoubleValue", "f8", 
         doc="A double"),
 
-    // firmware monitoring structures
-    timing_partition_mon_data: s.record("TimingPartitionMonitorData", 
-    [
-        s.field("enabled", self.bool_data, 0,
-                doc="Partition enabled flag"),
-        s.field("spill_interface_enabled", self.bool_data, 0,
-                doc="Partition spill interface enabled flag"),
-        s.field("trig_enabled", self.bool_data, 0,
-                doc="Partition triggering enabled flag"),
-        s.field("trig_mask", self.uint,
-                doc="Partition trigger mask"),
-        s.field("rate_ctrl_enabled", self.bool_data, 0,
-                doc="Partition rate control enabled flag"),
-        s.field("frag_mask", self.uint,
-                doc="Partition fragment mask"),
-        s.field("in_run", self.bool_data, 0,
-                doc="Partition in run flag"),
-        s.field("in_spill", self.bool_data, 0,
-                doc="Partition in spill flag"),
-        s.field("buffer_enabled", self.bool_data, 0,
-                doc="Buffer enabled flag"),
-        s.field("buffer_warning", self.bool_data, 0,
-                doc="Buffer warning flag"),
-        s.field("buffer_error", self.bool_data, 0,
-                doc="Buffer error flag"),
-        s.field("buffer_occupancy", self.uint,
-                doc="Buffer occupancy"),
-    ], 
-    doc="Timing partition monitor data"),
-
     timing_fl_cmd_counter: s.record("TimingFLCmdCounter",
     [
         s.field("accepted", self.uint,
@@ -77,22 +47,6 @@ local timingfirmwareinfo = {
     ],
     doc="Sent command counters structure"),
     
-    spill_interface_mon_data: s.record("PDISpillInterfaceMonitorData",
-    [
-        s.field("spill_interface_enabled", self.bool_data,
-                doc="Partition spill interface enabled flag"),
-        s.field("source", self.bool_data,
-                doc="configured source"),
-        s.field("in_spill", self.bool_data,
-                doc="In spill flag")
-    ], doc="PDI spill interface node monitor data"),
-
-    pdi_master_fw_mon_data: s.record("PDIMasterMonitorData", 
-    [
-        s.field("timestamp", self.l_uint,
-                doc="Timestamp"),
-    ], doc="master monitor data"),
-
     master_fw_mon_data: s.record("MasterMonitorData", 
     [
         s.field("timestamp", self.l_uint,

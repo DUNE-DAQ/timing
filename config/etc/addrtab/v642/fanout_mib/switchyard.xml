@@ -1,8 +1,0 @@
-<node id="switchyard" description="Fanout design switchyard" fwinfo="endpoint" class="SwitchyardNode">
-		<node id="csr" address="0x0" fwinfo="endpoint;width=0">
-			<node id="ctrl" address="0x0">
-				<node id="master_src" mask="0x1"/>
-				<node id="ep_src" mask="0x2"/>
-			</node>
-		</node>
-</node>
