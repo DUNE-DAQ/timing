@@ -51,12 +51,12 @@ public:
   /**
    * @brief      Set the timestamp to current time.
    */
-  virtual void set_timestamp(uint64_t timestamp) const = 0; // NOLINT(build/unsigned)
+  virtual void set_timestamp(uint8_t mode) const = 0; // NOLINT(build/unsigned)
 
   /**
    * @brief     Set timestamp to current machine time
    */
-  virtual void sync_timestamp(uint32_t clock_frequency_hz) const = 0; // NOLINT(build/unsigned)
+  virtual void sync_timestamp(uint8_t mode) const = 0; // NOLINT(build/unsigned)
 
   /**
    * @brief     Control the tx line of endpoint sfp

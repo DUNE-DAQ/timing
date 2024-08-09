@@ -56,9 +56,23 @@ public:
   uint64_t read_timestamp() const; // NOLINT(build/unsigned)
 
   /**
+   * @brief      Read the starting timestamp words.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  uint64_t read_start_timestamp() const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Read the software init timestamp words.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  uint64_t read_sw_init_timestamp() const; // NOLINT(build/unsigned)
+
+  /**
    * @brief      Read the current timestamp words.
    */
-  void set_timestamp(uint64_t timestamp) const; // NOLINT(build/unsigned)
+  void set_timestamp(uint8_t mode) const; // NOLINT(build/unsigned)
 };
 
 } // namespace timing

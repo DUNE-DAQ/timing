@@ -112,12 +112,14 @@ def status(obj):
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-@master.command('synctime', short_help="Sync timestamps with computer local time.")
+@master.command('synctime', short_help="Sync timestamp, and enable broadcast.")
 @click.pass_obj
-def synctime(obj):
+@click.argument('mode', type=toolbox.IntRange(0x0,0x2, help="0: TS from external; 1: TS from SW; 2: TS value from SW, strobe from external"))
+def synctime(obj, mode):
 
     lDesign = obj.mTopDesign
-    lDesign.sync_timestamp()
+    lMaster = obj.mMaster
+    lMaster.sync_timestamp(mode)
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------

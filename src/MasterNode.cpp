@@ -34,6 +34,9 @@ MasterNode::get_status_tables() const
 {
   std::stringstream status;
 
+  status << getNode<TimestampGeneratorNode>("tstamp").get_status();
+  status << std::endl;
+
   status << getNode<MasterGlobalNode>("global").get_status();
   status << std::endl;
 
@@ -294,18 +297,9 @@ MasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned
 
 //-----------------------------------------------------------------------------
 void
-MasterNode::sync_timestamp(uint32_t clock_frequency_hz) const // NOLINT(build/unsigned)
+MasterNode::sync_timestamp(uint8_t mode) const // NOLINT(build/unsigned)
 {
-  const uint64_t old_timestamp = read_timestamp(); // NOLINT(build/unsigned)
-  TLOG() << "Reading old timestamp: " << format_reg_value(old_timestamp) << ", " << format_timestamp(old_timestamp, clock_frequency_hz);
-  
-  const uint64_t now_timestamp = get_milliseconds_since_epoch() * (clock_frequency_hz / 1000); // NOLINT(build/unsigned)
-  TLOG() << "Setting new timestamp: " << format_reg_value(now_timestamp) << ", " << format_timestamp(now_timestamp, clock_frequency_hz);
-
-  set_timestamp(now_timestamp);
-
-  const uint64_t new_timestamp = read_timestamp(); // NOLINT(build/unsigned)
-  TLOG() << "Reading new timestamp: " << format_reg_value(new_timestamp) << ", " << format_timestamp(new_timestamp, clock_frequency_hz);
+  set_timestamp(mode);
 
   enable_timestamp_broadcast();
   TLOG() << "Timestamp broadcast enabled";
@@ -322,9 +316,9 @@ MasterNode::read_timestamp() const
 
 //-----------------------------------------------------------------------------
 void
-MasterNode::set_timestamp(uint64_t timestamp) const // NOLINT(build/unsigned)
+MasterNode::set_timestamp(uint8_t mode) const // NOLINT(build/unsigned)
 {
-  getNode<TimestampGeneratorNode>("tstamp").set_timestamp(timestamp);
+  getNode<TimestampGeneratorNode>("tstamp").set_timestamp(mode);
 }
 //-----------------------------------------------------------------------------
 

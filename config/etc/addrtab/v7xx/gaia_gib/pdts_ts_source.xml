@@ -1,18 +1,20 @@
 <!-- https://dunescience.slack.com/archives/G01CH2K070X/p1684404277486259 -->
 
 <node id="pdts_ts_source" description="Timestamp generator" fwinfo="endpoint" class="TimestampGeneratorNode">
-		<node id="csr" address="0x0" fwinfo="endpoint;width=1">
-		    <node id="ctrl" address="0x0">
-		        <node id="src" mask="0x1"/>
-		        <node id="irigb_rst" mask="0x2"/>
-		    </node>
-			<node id="stat" address="0x1">
-				<node id="irigb_lock" mask="0x1"/>
-			</node>
-		</node>
-    <node id="ctr" address="0x4" fwinfo="endpoint;width=2">
-      <node id="set" address="0x0" mode="block" size="0x2"/>    
-      <node id="val" address="0x2" mode="block" size="0x2"/>    
+  <node id="csr" address="0x0" fwinfo="endpoint;width=3">
+    <node id="ctrl" address="0x0">
+      <node id="tstamp_source_sel" mask="0x3"/>
+      <node id="tstamp_load" mask="0x4"/>
     </node>
+    <node id="tstamp_sw_init_l" address="0x1"/>
+    <node id="tstamp_sw_init_h" address="0x2"/>
+    <node id="stat" address="0x4">
+      <node id="tstamp_loaded" mask="0x1"/>
+      <node id="tstamp_error" mask="0x2"/>
+    </node>
+    <node id="tstamp_start_l" address="0x5"/>
+    <node id="tstamp_start_h" address="0x6"/>
+  </node>
+  <node id="ctr" mode="block" size="0x2" address="0x8" fwinfo="endpoint;width=2"/>
 </node>
 
