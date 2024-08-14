@@ -135,16 +135,16 @@ MasterDesign::validate_firmware_version() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-MasterDesign::get_info(opmonlib::InfoCollector& ci, int level) const
-{ 
-  opmonlib::InfoCollector master_collector;
-  this->get_master_node_plain()->get_info(master_collector, level);
-  ci.add("master", master_collector);
+// void
+// MasterDesign::get_info(opmonlib::InfoCollector& ci, int level) const
+// { 
+//   opmonlib::InfoCollector master_collector;
+//   this->get_master_node_plain()->get_info(master_collector, level);
+//   ci.add("master", master_collector);
 
-  opmonlib::InfoCollector hardware_collector;
-  this->get_io_node_plain()->get_info(hardware_collector, level);
-  ci.add("io", hardware_collector);
-}
+//   opmonlib::InfoCollector hardware_collector;
+//   this->get_io_node_plain()->get_info(hardware_collector, level);
+//   ci.add("io", hardware_collector);
+// }
 //-----------------------------------------------------------------------------
 }

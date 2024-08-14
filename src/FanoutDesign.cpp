@@ -118,21 +118,21 @@ FanoutDesign::apply_endpoint_delay(uint32_t address,
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-FanoutDesign::get_info(opmonlib::InfoCollector& ci, int level) const
-{ 
-  opmonlib::InfoCollector master_collector;
-  this->get_master_node_plain()->get_info(master_collector, level);
-  ci.add("master", master_collector);
+// void
+// FanoutDesign::get_info(opmonlib::InfoCollector& ci, int level) const
+// { 
+//   opmonlib::InfoCollector master_collector;
+//   this->get_master_node_plain()->get_info(master_collector, level);
+//   ci.add("master", master_collector);
 
-  opmonlib::InfoCollector hardware_collector;
-  this->get_io_node_plain()->get_info(hardware_collector, level);
-  ci.add("io", hardware_collector);
+//   opmonlib::InfoCollector hardware_collector;
+//   this->get_io_node_plain()->get_info(hardware_collector, level);
+//   ci.add("io", hardware_collector);
 
-  opmonlib::InfoCollector endpoint_collector;
-  get_endpoint_node_plain(0)->get_info(endpoint_collector, level);
-  ci.add("endpoint", endpoint_collector);
-}
+//   opmonlib::InfoCollector endpoint_collector;
+//   get_endpoint_node_plain(0)->get_info(endpoint_collector, level);
+//   ci.add("endpoint", endpoint_collector);
+// }
 //-----------------------------------------------------------------------------
 
 }

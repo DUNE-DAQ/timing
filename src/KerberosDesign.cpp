@@ -72,22 +72,22 @@ KerberosDesign::measure_endpoint_rtt(uint32_t address, bool control_sfp, int sfp
 //-----------------------------------------------------------------------------
 void
 KerberosDesign::apply_endpoint_delay(uint32_t address,
-                                            uint32_t coarse_delay,
-                                            uint32_t fine_delay,
-                                            uint32_t phase_delay,
-                                            bool measure_rtt,
-                                            bool control_sfp,
-                                            int sfp_mux) const
+				     uint32_t coarse_delay,
+				     uint32_t fine_delay,
+				     uint32_t phase_delay,
+				     bool measure_rtt,
+				     bool control_sfp,
+				     int sfp_mux) const
 {
   MasterMuxDesign::apply_endpoint_delay(
-    address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp, sfp_mux);
+					address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp, sfp_mux);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-KerberosDesign::get_info(opmonlib::InfoCollector& /*ci*/, int /*level*/) const
-{ 
+// void
+// KerberosDesign::get_info(opmonlib::InfoCollector& /*ci*/, int /*level*/) const
+// { 
 //  opmonlib::InfoCollector master_collector;
 //  this->get_master_node_plain()->get_info(master_collector, level);
 //  ci.add("master", master_collector);
@@ -99,7 +99,7 @@ KerberosDesign::get_info(opmonlib::InfoCollector& /*ci*/, int /*level*/) const
 //  opmonlib::InfoCollector endpoint_collector;
 //  get_endpoint_node_plain(0)->get_info(endpoint_collector, level);
 //  ci.add("endpoint", endpoint_collector);
-}
+// }
 //-----------------------------------------------------------------------------
 
 }

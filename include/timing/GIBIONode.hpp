@@ -15,8 +15,6 @@
 // PDT Headers
 #include "TimingIssues.hpp"
 #include "timing/IONode.hpp"
-#include "timing/timinghardwareinfo/InfoStructs.hpp"
-#include "timing/timinghardwareinfo/InfoNljs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -87,10 +85,10 @@ public:
    */
   //void get_info(timinghardwareinfo::TimingGIBMonitorData& mon_data) const;
 
-  /**
-   * @brief    Give info to collector.
-   */
-  void get_info(opmonlib::InfoCollector& ci, int level) const override;
+  // /**
+  //  * @brief    Give info to collector.
+  //  */
+  // void get_info(opmonlib::InfoCollector& ci, int level) const override;
 
   /**
    * @brief    Configure which mux channels are on using a bitmask

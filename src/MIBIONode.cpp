@@ -203,73 +203,73 @@ MIBIONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-MIBIONode::get_info(timinghardwareinfo::TimingMIBMonitorData& mon_data) const
-{
+// void
+// MIBIONode::get_info(timinghardwareinfo::TimingMIBMonitorData& mon_data) const
+// {
 
-  auto subnodes = read_sub_nodes(getNode("csr.stat"));
+//   auto subnodes = read_sub_nodes(getNode("csr.stat"));
 
-  mon_data.cdr_0_lol = subnodes.at("cdr_lol").value() & 0x1;
-  mon_data.cdr_1_lol = subnodes.at("cdr_lol").value() & 0x2;
+//   mon_data.cdr_0_lol = subnodes.at("cdr_lol").value() & 0x1;
+//   mon_data.cdr_1_lol = subnodes.at("cdr_lol").value() & 0x2;
 
-  mon_data.cdr_0_los = subnodes.at("cdr_los").value() & 0x1;
-  mon_data.cdr_1_los = subnodes.at("cdr_los").value() & 0x2;
+//   mon_data.cdr_0_los = subnodes.at("cdr_los").value() & 0x1;
+//   mon_data.cdr_1_los = subnodes.at("cdr_los").value() & 0x2;
 
-  mon_data.mmcm_ok = subnodes.at("mmcm_ok").value();
-  mon_data.mmcm_sticky = subnodes.at("mmcm_sticky").value();
+//   mon_data.mmcm_ok = subnodes.at("mmcm_ok").value();
+//   mon_data.mmcm_sticky = subnodes.at("mmcm_sticky").value();
   
-  mon_data.sfp_0_flt = subnodes.at("sfp_flt").value() & 0x1;
-  mon_data.sfp_1_flt = subnodes.at("sfp_flt").value() & 0x2;
+//   mon_data.sfp_0_flt = subnodes.at("sfp_flt").value() & 0x1;
+//   mon_data.sfp_1_flt = subnodes.at("sfp_flt").value() & 0x2;
 
-  mon_data.sfp_0_los = subnodes.at("sfp_los").value() & 0x1;
-  mon_data.sfp_1_los = subnodes.at("sfp_los").value() & 0x2;
+//   mon_data.sfp_0_los = subnodes.at("sfp_los").value() & 0x1;
+//   mon_data.sfp_1_los = subnodes.at("sfp_los").value() & 0x2;
 
-  // TODO 3rd SFP?
-}
-//-----------------------------------------------------------------------------
+//   // TODO 3rd SFP?
+// }
+// //-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-void
-MIBIONode::get_info(opmonlib::InfoCollector& ci, int level) const
-{
-  auto i2c_switch = get_i2c_device<I2C9546SwitchSlave>("i2c", "TCA9546_Switch");
+// //-----------------------------------------------------------------------------
+// void
+// MIBIONode::get_info(opmonlib::InfoCollector& ci, int level) const
+// {
+//   auto i2c_switch = get_i2c_device<I2C9546SwitchSlave>("i2c", "TCA9546_Switch");
 
-  if (level >= 2) {
-    i2c_switch->set_channels_states(8);
+//   if (level >= 2) {
+//     i2c_switch->set_channels_states(8);
 
-    timinghardwareinfo::TimingPLLMonitorData pll_mon_data;
-    get_pll()->get_info(pll_mon_data);
-    ci.add(pll_mon_data);
+//     timinghardwareinfo::TimingPLLMonitorData pll_mon_data;
+//     get_pll()->get_info(pll_mon_data);
+//     ci.add(pll_mon_data);
     
-    for (uint i=0; i < 3; ++i)
-    {
-      opmonlib::InfoCollector sfp_ic;
+//     for (uint i=0; i < 3; ++i)
+//     {
+//       opmonlib::InfoCollector sfp_ic;
       
-      // enable i2c path for sfp
-      i2c_switch->set_channels_states(1UL << i);
+//       // enable i2c path for sfp
+//       i2c_switch->set_channels_states(1UL << i);
 
-      auto sfp = this->get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
+//       auto sfp = this->get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
       
-      try
-      {
-        sfp->get_info(sfp_ic, level);
-      }
-      catch (timing::SFPUnreachable& e)
-      {
-        // It is valid that an SFP may not be installed, currently no good way of knowing whether they it should be
-        TLOG_DEBUG(2) << "Failed to communicate with SFP " << i <<  " on I2C switch channel " << (1UL << i) << " on i2c bus" << m_sfp_i2c_buses.at(0);
-        continue;
-      }
-      ci.add("sfp_"+std::to_string(i),sfp_ic);
-    }
-    i2c_switch->set_channels_states(8);
-  }
-  if (level >= 1) {
-    timinghardwareinfo::TimingMIBMonitorData mon_data;
-    this->get_info(mon_data);
-    ci.add(mon_data);
-  }
-}
+//       try
+//       {
+//         sfp->get_info(sfp_ic, level);
+//       }
+//       catch (timing::SFPUnreachable& e)
+//       {
+//         // It is valid that an SFP may not be installed, currently no good way of knowing whether they it should be
+//         TLOG_DEBUG(2) << "Failed to communicate with SFP " << i <<  " on I2C switch channel " << (1UL << i) << " on i2c bus" << m_sfp_i2c_buses.at(0);
+//         continue;
+//       }
+//       ci.add("sfp_"+std::to_string(i),sfp_ic);
+//     }
+//     i2c_switch->set_channels_states(8);
+//   }
+//   if (level >= 1) {
+//     timinghardwareinfo::TimingMIBMonitorData mon_data;
+//     this->get_info(mon_data);
+//     ci.add(mon_data);
+//   }
+// }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

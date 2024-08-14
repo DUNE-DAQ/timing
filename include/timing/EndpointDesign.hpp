@@ -50,10 +50,10 @@ public:
    */
   void configure() const override;
 
-  /**
-   * @brief    Give info to collector.
-   */  
-  void get_info(opmonlib::InfoCollector& ci, int level) const override;
+  // /**
+  //  * @brief    Give info to collector.
+  //  */  
+  // void get_info(opmonlib::InfoCollector& ci, int level) const override;
 
   /**
    * @brief      Read endpoint firmware version.

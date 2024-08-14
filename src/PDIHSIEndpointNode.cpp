@@ -90,28 +90,28 @@ PDIHSIEndpointNode::get_status(bool print_out) const
 
 
 //-----------------------------------------------------------------------------
-void
-PDIHSIEndpointNode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const
-{
-  auto endpoint_control = read_sub_nodes(getNode("csr.ctrl"), false);
-  auto endpoint_state = read_sub_nodes(getNode("csr.stat"), false);
-  getClient().dispatch();
+// void
+// PDIHSIEndpointNode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const
+// {
+//   auto endpoint_control = read_sub_nodes(getNode("csr.ctrl"), false);
+//   auto endpoint_state = read_sub_nodes(getNode("csr.stat"), false);
+//   getClient().dispatch();
 
-  mon_data.state = endpoint_state.at("ep_stat").value();
-  mon_data.ready = endpoint_state.at("ep_rdy").value();
-  mon_data.partition = endpoint_control.at("tgrp").value();
-  mon_data.address = endpoint_control.at("addr").value();
-}
-//-----------------------------------------------------------------------------
+//   mon_data.state = endpoint_state.at("ep_stat").value();
+//   mon_data.ready = endpoint_state.at("ep_rdy").value();
+//   mon_data.partition = endpoint_control.at("tgrp").value();
+//   mon_data.address = endpoint_control.at("addr").value();
+// }
+// //-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-void
-PDIHSIEndpointNode::get_info(opmonlib::InfoCollector& ci, int /*level*/) const
-{
-  timingendpointinfo::TimingEndpointInfo mon_data;
-  this->get_info(mon_data);
-  ci.add(mon_data);
-}
+// //-----------------------------------------------------------------------------
+// void
+// PDIHSIEndpointNode::get_info(opmonlib::InfoCollector& ci, int /*level*/) const
+// {
+//   timingendpointinfo::TimingEndpointInfo mon_data;
+//   this->get_info(mon_data);
+//   ci.add(mon_data);
+// }
 //-----------------------------------------------------------------------------
 
 } // namespace timing

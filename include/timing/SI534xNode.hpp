@@ -14,7 +14,6 @@
 
 #include "timing/I2CMasterNode.hpp"
 #include "timing/SIChipSlave.hpp"
-#include "timing/timinghardwareinfo/InfoStructs.hpp"
 
 #include "ers/Issue.hpp"
 
@@ -65,7 +64,7 @@ public:
 
   std::string read_config_id() const;
 
-  void get_info(timinghardwareinfo::TimingPLLMonitorData& mon_data) const;
+  //  void get_info(timinghardwareinfo::TimingPLLMonitorData& mon_data) const;
 
 private:
   typedef boost::tuple<uint16_t, uint8_t> RegisterSetting_t; // NOLINT(build/unsigned)

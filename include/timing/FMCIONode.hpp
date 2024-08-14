@@ -15,8 +15,6 @@
 // PDT Headers
 #include "TimingIssues.hpp"
 #include "timing/IONode.hpp"
-#include "timing/timinghardwareinfo/InfoStructs.hpp"
-#include "timing/timinghardwareinfo/InfoNljs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -72,15 +70,15 @@ public:
     */
   std::string get_clock_frequencies_table(bool print_out = false) const override;
 
-  /**
-   * @brief      Fill hardware monitoring structure.
-   */
-  void get_info(timinghardwareinfo::TimingFMCMonitorData& mon_data) const;
+  // /**
+  //  * @brief      Fill hardware monitoring structure.
+  //  */
+  // void get_info(timinghardwareinfo::TimingFMCMonitorData& mon_data) const;
 
-  /**
-   * @brief    Give info to collector.
-   */
-  void get_info(opmonlib::InfoCollector& ci, int level) const override;
+  // /**
+  //  * @brief    Give info to collector.
+  //  */
+  // void get_info(opmonlib::InfoCollector& ci, int level) const override;
 };
 
 } // namespace timing

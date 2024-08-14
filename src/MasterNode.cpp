@@ -329,53 +329,53 @@ MasterNode::set_timestamp(uint64_t timestamp) const // NOLINT(build/unsigned)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-MasterNode::get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const
-{
-  mon_data.timestamp = read_timestamp();
-}
+// void
+// MasterNode::get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const
+// {
+//   mon_data.timestamp = read_timestamp();
+// }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-MasterNode::get_info(opmonlib::InfoCollector& ic, int level) const
-{
-  timingfirmwareinfo::MasterMonitorData mon_data;
-  this->get_info(mon_data);
+// void
+// MasterNode::get_info(opmonlib::InfoCollector& ic, int level) const
+// {
+//   timingfirmwareinfo::MasterMonitorData mon_data;
+//   this->get_info(mon_data);
 
-  auto control = read_sub_nodes(getNode("global.csr.ctrl"), false);
-  auto state = read_sub_nodes(getNode("global.csr.stat"), false);
-  getClient().dispatch();
+//   auto control = read_sub_nodes(getNode("global.csr.ctrl"), false);
+//   auto state = read_sub_nodes(getNode("global.csr.stat"), false);
+//   getClient().dispatch();
 
-  mon_data.ts_en = control.at("ts_en").value();
-  mon_data.ts_err = state.at("ts_err").value();
-  mon_data.tx_err = state.at("tx_err").value();
-  mon_data.ctrs_rdy = state.at("ctrs_rdy").value();
+//   mon_data.ts_en = control.at("ts_en").value();
+//   mon_data.ts_err = state.at("ts_err").value();
+//   mon_data.tx_err = state.at("tx_err").value();
+//   mon_data.ctrs_rdy = state.at("ctrs_rdy").value();
 
-  ic.add(mon_data);
+//   ic.add(mon_data);
 
-  uint number_of_commands = 0xff;
+//   uint number_of_commands = 0xff;
 
-  getNode("cmd_ctrs.addr").write(0x0);
-  auto counters = getNode("cmd_ctrs.data").readBlock(number_of_commands);
-  getClient().dispatch();
+//   getNode("cmd_ctrs.addr").write(0x0);
+//   auto counters = getNode("cmd_ctrs.data").readBlock(number_of_commands);
+//   getClient().dispatch();
 
-  for (uint i = 0; i < number_of_commands; ++i) { // NOLINT(build/unsigned)
+//   for (uint i = 0; i < number_of_commands; ++i) { // NOLINT(build/unsigned)
 
-    timingfirmwareinfo::SentCommandCounter cmd_counter;
-    opmonlib::InfoCollector cmd_counter_ic;
+//     timingfirmwareinfo::SentCommandCounter cmd_counter;
+//     opmonlib::InfoCollector cmd_counter_ic;
 
-    cmd_counter.counts = counters.at(i);
+//     cmd_counter.counts = counters.at(i);
 
-    std::stringstream channel;
-    channel << "cmd_0x" << std::hex << i;
+//     std::stringstream channel;
+//     channel << "cmd_0x" << std::hex << i;
 
-    cmd_counter_ic.add(cmd_counter);
-    ic.add(channel.str(), cmd_counter_ic);
-  }
+//     cmd_counter_ic.add(cmd_counter);
+//     ic.add(channel.str(), cmd_counter_ic);
+//   }
 
-  getNode<FLCmdGeneratorNode>("scmd_gen").get_info(ic, level);
-}
+//   getNode<FLCmdGeneratorNode>("scmd_gen").get_info(ic, level);
+// }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

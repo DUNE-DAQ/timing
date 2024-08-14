@@ -209,82 +209,82 @@ PC059IONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-PC059IONode::get_info(timinghardwareinfo::TimingPC059MonitorData& mon_data) const
-{
-  auto subnodes = read_sub_nodes(getNode("csr.stat"));
+// void
+// PC059IONode::get_info(timinghardwareinfo::TimingPC059MonitorData& mon_data) const
+// {
+//   auto subnodes = read_sub_nodes(getNode("csr.stat"));
 
-  mon_data.cdr_lol = subnodes.at("cdr_lol").value();
-  mon_data.cdr_los = subnodes.at("cdr_los").value();
+//   mon_data.cdr_lol = subnodes.at("cdr_lol").value();
+//   mon_data.cdr_los = subnodes.at("cdr_los").value();
   
-  mon_data.mmcm_ok = subnodes.at("mmcm_ok").value();
-  mon_data.mmcm_sticky = subnodes.at("mmcm_sticky").value();
+//   mon_data.mmcm_ok = subnodes.at("mmcm_ok").value();
+//   mon_data.mmcm_sticky = subnodes.at("mmcm_sticky").value();
   
-  mon_data.pll_lol = subnodes.at("pll_lol").value();
-  mon_data.pll_ok = subnodes.at("pll_ok").value();
-  mon_data.pll_sticky = subnodes.at("pll_sticky").value();
+//   mon_data.pll_lol = subnodes.at("pll_lol").value();
+//   mon_data.pll_ok = subnodes.at("pll_ok").value();
+//   mon_data.pll_sticky = subnodes.at("pll_sticky").value();
   
-  mon_data.sfp_los = subnodes.at("sfp_los").value();
+//   mon_data.sfp_los = subnodes.at("sfp_los").value();
 
-  mon_data.ucdr_lol = subnodes.at("ucdr_lol").value();
-  mon_data.ucdr_los = subnodes.at("ucdr_los").value();
+//   mon_data.ucdr_lol = subnodes.at("ucdr_lol").value();
+//   mon_data.ucdr_los = subnodes.at("ucdr_los").value();
 
-  mon_data.usfp_flt = subnodes.at("usfp_flt").value();
-  mon_data.usfp_los = subnodes.at("usfp_los").value();
-}
+//   mon_data.usfp_flt = subnodes.at("usfp_flt").value();
+//   mon_data.usfp_los = subnodes.at("usfp_los").value();
+// }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-PC059IONode::get_info(opmonlib::InfoCollector& ci, int level) const
-{
-  if (level >= 2)
-  {
-    timinghardwareinfo::TimingPLLMonitorData pll_mon_data;
-    this->get_pll()->get_info(pll_mon_data);
-    ci.add(pll_mon_data);
+// void
+// PC059IONode::get_info(opmonlib::InfoCollector& ci, int level) const
+// {
+//   if (level >= 2)
+//   {
+//     timinghardwareinfo::TimingPLLMonitorData pll_mon_data;
+//     this->get_pll()->get_info(pll_mon_data);
+//     ci.add(pll_mon_data);
 
-    timinghardwareinfo::TimingSFPMonitorData upstream_sfp_mon_data;
-    auto upstream_sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
-    try {
-      upstream_sfp->get_info(upstream_sfp_mon_data);
-      opmonlib::InfoCollector upstream_sfp_ic;
-      upstream_sfp_ic.add(upstream_sfp_mon_data);
-      ci.add("upstream_sfp", upstream_sfp_ic);
-    }
-    catch (timing::SFPUnreachable& e) {
-      // It is valid that an SFP may not be installed, currently no good way of knowing whether they it should be
-      TLOG_DEBUG(2) << "Failed to communicate with upstream SFP on i2c bus" << m_sfp_i2c_buses.at(0);
-    }
+//     timinghardwareinfo::TimingSFPMonitorData upstream_sfp_mon_data;
+//     auto upstream_sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
+//     try {
+//       upstream_sfp->get_info(upstream_sfp_mon_data);
+//       opmonlib::InfoCollector upstream_sfp_ic;
+//       upstream_sfp_ic.add(upstream_sfp_mon_data);
+//       ci.add("upstream_sfp", upstream_sfp_ic);
+//     }
+//     catch (timing::SFPUnreachable& e) {
+//       // It is valid that an SFP may not be installed, currently no good way of knowing whether they it should be
+//       TLOG_DEBUG(2) << "Failed to communicate with upstream SFP on i2c bus" << m_sfp_i2c_buses.at(0);
+//     }
 
 
-    for (uint sfp_id=0; sfp_id < 8; ++sfp_id) {
-      TLOG_DEBUG(5) << "checking sfp: " << sfp_id;
-      switch_sfp_i2c_mux_channel(sfp_id);
+//     for (uint sfp_id=0; sfp_id < 8; ++sfp_id) {
+//       TLOG_DEBUG(5) << "checking sfp: " << sfp_id;
+//       switch_sfp_i2c_mux_channel(sfp_id);
       
-      auto sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(1), "SFP_EEProm");
-      timinghardwareinfo::TimingSFPMonitorData sfp_data;
+//       auto sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(1), "SFP_EEProm");
+//       timinghardwareinfo::TimingSFPMonitorData sfp_data;
 
-      try {
-        sfp->get_info(sfp_data);
-      } catch (timing::SFPUnreachable& e) {
-        // It is valid that an SFP may not be installed, currently no good way of knowing whether they it should be
-        TLOG_DEBUG(2) << "Failed to communicate with downstream SFP: " << sfp_id << " on i2c bus" << m_sfp_i2c_buses.at(1);
-        continue;
-      }
+//       try {
+//         sfp->get_info(sfp_data);
+//       } catch (timing::SFPUnreachable& e) {
+//         // It is valid that an SFP may not be installed, currently no good way of knowing whether they it should be
+//         TLOG_DEBUG(2) << "Failed to communicate with downstream SFP: " << sfp_id << " on i2c bus" << m_sfp_i2c_buses.at(1);
+//         continue;
+//       }
 
-      opmonlib::InfoCollector sfp_ic;
-      sfp_ic.add(sfp_data);
-      ci.add("sfp_"+std::to_string(sfp_id), sfp_ic);
-    }
-  }
+//       opmonlib::InfoCollector sfp_ic;
+//       sfp_ic.add(sfp_data);
+//       ci.add("sfp_"+std::to_string(sfp_id), sfp_ic);
+//     }
+//   }
 
-  if (level >= 1) {
-    timinghardwareinfo::TimingPC059MonitorData mon_data;
-    this->get_info(mon_data);
-    ci.add(mon_data);
-  }  
-}
+//   if (level >= 1) {
+//     timinghardwareinfo::TimingPC059MonitorData mon_data;
+//     this->get_info(mon_data);
+//     ci.add(mon_data);
+//   }  
+// }
 //-----------------------------------------------------------------------------
 
 } // namespace timing

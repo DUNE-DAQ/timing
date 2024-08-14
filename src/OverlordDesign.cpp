@@ -67,22 +67,22 @@ OverlordDesign::configure() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-OverlordDesign::get_info(opmonlib::InfoCollector& ci, int level) const
-{ 
-  opmonlib::InfoCollector master_collector;
-  get_master_node_plain()->get_info(master_collector, level);
-  ci.add("master", master_collector);
+// void
+// OverlordDesign::get_info(opmonlib::InfoCollector& ci, int level) const
+// { 
+//   opmonlib::InfoCollector master_collector;
+//   get_master_node_plain()->get_info(master_collector, level);
+//   ci.add("master", master_collector);
 
-  opmonlib::InfoCollector hardware_collector;
-  get_io_node_plain()->get_info(hardware_collector, level);
-  ci.add("io", hardware_collector);
+//   opmonlib::InfoCollector hardware_collector;
+//   get_io_node_plain()->get_info(hardware_collector, level);
+//   ci.add("io", hardware_collector);
 
-  // TODO full trix info
-  //auto trig_interface_enabled = uhal::Node::getNode("trig_rx.csr.ctrl.ext_trig_en").read();
-  //uhal::Node::getClient().dispatch();
-  //data.trig_interface_enabled = trig_interface_enabled.value();
-}
+//   // TODO full trix info
+//   //auto trig_interface_enabled = uhal::Node::getNode("trig_rx.csr.ctrl.ext_trig_en").read();
+//   //uhal::Node::getClient().dispatch();
+//   //data.trig_interface_enabled = trig_interface_enabled.value();
+// }
 //-----------------------------------------------------------------------------
 
 } // namespace dunedaq::timing  
