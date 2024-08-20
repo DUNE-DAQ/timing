@@ -113,15 +113,15 @@ public:
      */
     void switch_sfp_tx(uint32_t sfp_id, bool turn_on) const; // NOLINT(build/unsigned)
 
-    /**
-    * @brief      Fill hardware monitoring structure.
-    */
-    void get_info(timinghardwareinfo::TimingFIBMonitorData& mon_data) const;
+    // /**
+    // * @brief      Fill hardware monitoring structure.
+    // */
+    // void get_info(timinghardwareinfo::TimingFIBMonitorData& mon_data) const;
 
-    /**
-     * @brief    Give info to collector.
-     */
-    void get_info(opmonlib::InfoCollector& ci, int level) const override;
+    // /**
+    //  * @brief    Give info to collector.
+    //  */
+    // void get_info(opmonlib::InfoCollector& ci, int level) const override;
 
 private:
 

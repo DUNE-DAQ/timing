@@ -16,9 +16,6 @@
 #include "timing/TimestampGeneratorNode.hpp"
 #include "timing/TimingNode.hpp"
 
-#include "timing/timingfirmwareinfo/InfoNljs.hpp"
-#include "timing/timingfirmwareinfo/InfoStructs.hpp"
-
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
@@ -62,15 +59,15 @@ public:
    */
   bool read_in_spill() const;
 
-  /**
-   * @brief     Fill the PD-I master monitoring structure.
-   */
-  void get_info(timingfirmwareinfo::PDISpillInterfaceMonitorData& mon_data) const;
+  // /**
+  //  * @brief     Fill the PD-I master monitoring structure.
+  //  */
+  // void get_info(timingfirmwareinfo::PDISpillInterfaceMonitorData& mon_data) const;
 
-  /**
-   * @brief    Give info to collector.
-   */
-  void get_info(opmonlib::InfoCollector& ic, int level) const override;
+  // /**
+  //  * @brief    Give info to collector.
+  //  */
+  // void get_info(opmonlib::InfoCollector& ic, int level) const override;
 };
 
 } // namespace timing

@@ -15,8 +15,6 @@
 // PDT Headers
 #include "TimingIssues.hpp"
 #include "timing/TimingNode.hpp"
-#include "timing/timingfirmwareinfo/InfoStructs.hpp"
-#include "timing/timingfirmwareinfo/InfoNljs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -174,15 +172,15 @@ public:
    */
   std::string get_status(bool print_out = false) const override;
 
-  /**
-   * @brief     Fill the partition monitoring structure.
-   */
-  void get_info(timingfirmwareinfo::TimingPartitionMonitorData& mon_data) const;
+  // /**
+  //  * @brief     Fill the partition monitoring structure.
+  //  */
+  // void get_info(timingfirmwareinfo::TimingPartitionMonitorData& mon_data) const;
 
-  /**
-   * @brief    Give info to collector.
-   */
-  void get_info(opmonlib::InfoCollector& ic, int level) const override;
+  // /**
+  //  * @brief    Give info to collector.
+  //  */
+  // void get_info(opmonlib::InfoCollector& ic, int level) const override;
 };
 
 } // namespace timing

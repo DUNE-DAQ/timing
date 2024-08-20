@@ -311,40 +311,40 @@ HSINode::read_signal_source_mode() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-HSINode::get_info(timingfirmwareinfo::HSIFirmwareMonitorData& mon_data) const
-{
-  auto hsi_control = read_sub_nodes(getNode("csr.ctrl"), false);
-  auto hsi_state = read_sub_nodes(getNode("csr.stat"), false);
+// void
+// HSINode::get_info(timingfirmwareinfo::HSIFirmwareMonitorData& mon_data) const
+// {
+//   auto hsi_control = read_sub_nodes(getNode("csr.ctrl"), false);
+//   auto hsi_state = read_sub_nodes(getNode("csr.stat"), false);
 
-  auto hsi_buffer_count = getNode("buf.count").read();
+//   auto hsi_buffer_count = getNode("buf.count").read();
 
-  auto hsi_re_mask = getNode("csr.re_mask").read();
-  auto hsi_fe_mask = getNode("csr.fe_mask").read();
-  auto hsi_inv_mask = getNode("csr.inv_mask").read();
+//   auto hsi_re_mask = getNode("csr.re_mask").read();
+//   auto hsi_fe_mask = getNode("csr.fe_mask").read();
+//   auto hsi_inv_mask = getNode("csr.inv_mask").read();
 
-  getClient().dispatch();
+//   getClient().dispatch();
 
-  mon_data.source = hsi_control.find("src")->second.value();
-  mon_data.re_mask = hsi_re_mask.value();
-  mon_data.fe_mask = hsi_fe_mask.value();
-  mon_data.inv_mask = hsi_inv_mask.value();
-  mon_data.buffer_enabled = hsi_control.find("buf_en")->second.value();
-  mon_data.buffer_error = hsi_state.find("buf_err")->second.value();
-  mon_data.buffer_warning = hsi_state.find("buf_warn")->second.value();
-  mon_data.buffer_occupancy = hsi_buffer_count.value();
-  mon_data.enabled = hsi_control.find("en")->second.value();
-}
-//-----------------------------------------------------------------------------
+//   mon_data.source = hsi_control.find("src")->second.value();
+//   mon_data.re_mask = hsi_re_mask.value();
+//   mon_data.fe_mask = hsi_fe_mask.value();
+//   mon_data.inv_mask = hsi_inv_mask.value();
+//   mon_data.buffer_enabled = hsi_control.find("buf_en")->second.value();
+//   mon_data.buffer_error = hsi_state.find("buf_err")->second.value();
+//   mon_data.buffer_warning = hsi_state.find("buf_warn")->second.value();
+//   mon_data.buffer_occupancy = hsi_buffer_count.value();
+//   mon_data.enabled = hsi_control.find("en")->second.value();
+// }
+// //-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-void
-HSINode::get_info(opmonlib::InfoCollector& ci, int /*level*/) const
-{
-  timingfirmwareinfo::HSIFirmwareMonitorData mon_data;
-  this->get_info(mon_data);
-  ci.add(mon_data);
-}
+// //-----------------------------------------------------------------------------
+// void
+// HSINode::get_info(opmonlib::InfoCollector& ci, int /*level*/) const
+// {
+//   timingfirmwareinfo::HSIFirmwareMonitorData mon_data;
+//   this->get_info(mon_data);
+//   ci.add(mon_data);
+// }
 //-----------------------------------------------------------------------------
 } // namespace timing
 } // namespace dunedaq

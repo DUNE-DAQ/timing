@@ -15,8 +15,6 @@
 // PDT Headers
 #include "TimingIssues.hpp"
 #include "timing/IONode.hpp"
-#include "timing/timinghardwareinfo/InfoStructs.hpp"
-#include "timing/timinghardwareinfo/InfoNljs.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -84,7 +82,7 @@ public:
   /**
    * @brief    Give info to collector.
    */
-  void get_info(opmonlib::InfoCollector& ci, int level) const override;
+  //  void get_info(opmonlib::InfoCollector& ci, int level) const override;
 
 private:
   void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)
