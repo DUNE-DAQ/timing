@@ -79,16 +79,11 @@ public:
    */
   //virtual double read_clock_frequency() const;
 
-  // /**
-  //  * @brief     Collect monitoring information for timing endpoint
-  //  *
-  //  */
-  // virtual void get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const;
-
-  // /**
-  //  * @brief    Give info to collector.
-  //  */
-  // void get_info(opmonlib::InfoCollector& ci, int level) const override;
+  /**
+   * @brief     Collect monitoring information for timing endpoint
+   *
+   */
+  void get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const override;
 
   /**
    * @brief    Get the states map

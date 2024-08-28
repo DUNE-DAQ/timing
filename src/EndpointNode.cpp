@@ -154,30 +154,20 @@ EndpointNode::read_timestamp() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-// void
-// EndpointNode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const
-// {
-//   auto timestamp = getNode("tstamp").readBlock(2);
-//   auto endpoint_control = read_sub_nodes(getNode("csr.ctrl"), false);
-//   auto endpoint_state = read_sub_nodes(getNode("csr.stat"), false);
-//   getClient().dispatch();
+void
+EndpointNode::get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const
+{
+  auto timestamp = getNode("tstamp").readBlock(2);
+  auto endpoint_control = read_sub_nodes(getNode("csr.ctrl"), false);
+  auto endpoint_state = read_sub_nodes(getNode("csr.stat"), false);
+  getClient().dispatch();
 
-//   mon_data.state = endpoint_state.at("ep_stat").value();
-//   mon_data.ready = endpoint_state.at("ep_rdy").value();
-//   mon_data.address = endpoint_control.at("addr").value();
-//   mon_data.timestamp = tstamp2int(timestamp);
-//   mon_data.sfp_tx_disable = !endpoint_state.at("ep_txen").value();
-// }
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-// void
-// EndpointNode::get_info(opmonlib::InfoCollector& ci, int /*level*/) const
-// {
-//   timingendpointinfo::TimingEndpointInfo mon_data;
-//   this->get_info(mon_data);
-//   ci.add(mon_data);
-// }
+  mon_data.state = endpoint_state.at("ep_stat").value();
+  mon_data.ready = endpoint_state.at("ep_rdy").value();
+  mon_data.address = endpoint_control.at("addr").value();
+  mon_data.timestamp = tstamp2int(timestamp);
+  mon_data.sfp_tx_disable = !endpoint_state.at("ep_txen").value();
+}
 //-----------------------------------------------------------------------------
 
 } // namespace timing

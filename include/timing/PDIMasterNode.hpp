@@ -132,15 +132,10 @@ public:
    */
   bool read_in_spill() const;
 
-  // /**
-  //  * @brief     Fill the PD-I master monitoring structure.
-  //  */
-  // void get_info(timingfirmwareinfo::PDIMasterMonitorData& mon_data) const;
-
-  // /**
-  //  * @brief    Give info to collector.
-  //  */
-  // void get_info(opmonlib::InfoCollector& ic, int level) const override;
+  /**
+   * @brief     Fill the PD-I master monitoring structure.
+   */
+  void get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const override;
 
   /**
    * @brief    Scan endpoint

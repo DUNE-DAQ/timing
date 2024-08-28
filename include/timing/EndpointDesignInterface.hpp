@@ -17,6 +17,9 @@
 #include "timing/TopDesignInterface.hpp"
 #include "timing/EndpointNode.hpp"
 
+#include "timing/timingendpointinfo/Nljs.hpp"
+#include "timing/timingendpointinfo/Structs.hpp"
+
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
@@ -59,6 +62,14 @@ public:
   {
     std::string regex_string = "endpoint[0-9]+";
     return uhal::Node::getNodes(regex_string).size();
+  }
+
+  /**
+   * @brief    Give info to collector.
+   */
+  virtual void get_info(uint32_t ept_id, timingendpointinfo::TimingEndpointInfo& mon_data) const
+  {
+    get_endpoint_node_plain(ept_id)->get_info(mon_data);
   }
 };
 

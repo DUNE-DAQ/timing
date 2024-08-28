@@ -234,33 +234,12 @@ PDIMasterNode::read_in_spill() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-// void
-// PDIMasterNode::get_info(timingfirmwareinfo::PDIMasterMonitorData& mon_data) const
-// {
-//   auto timestamp = getNode<TimestampGeneratorNode>("tstamp").read_raw_timestamp();
-//   mon_data.timestamp = tstamp2int(timestamp);
-// }
-// //-----------------------------------------------------------------------------
-
-// //-----------------------------------------------------------------------------
-// void
-// PDIMasterNode::get_info(opmonlib::InfoCollector& ic, int level) const
-// {
-//   timingfirmwareinfo::PDIMasterMonitorData mon_data;
-//   this->get_info(mon_data);
-//   ic.add(mon_data);
-
-//   for (int i=0; i < 4; ++i)
-//   {
-//     opmonlib::InfoCollector partition_ic;
-//     get_partition_node(i).get_info(partition_ic, level);
-//     ic.add("partition"+std::to_string(i),partition_ic);
-//   }
-
-//   getNode<FLCmdGeneratorNode>("scmd_gen").get_info(ic, level);
-
-//   getNode<SpillInterfaceNode>("spill").get_info(ic, level);
-// }
+void
+PDIMasterNode::get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const
+{
+  auto timestamp = getNode<TimestampGeneratorNode>("tstamp").read_raw_timestamp();
+  mon_data.timestamp = tstamp2int(timestamp);
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

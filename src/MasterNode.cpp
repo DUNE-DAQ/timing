@@ -329,28 +329,19 @@ MasterNode::set_timestamp(uint64_t timestamp) const // NOLINT(build/unsigned)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-// void
-// MasterNode::get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const
-// {
-//   mon_data.timestamp = read_timestamp();
-// }
-//-----------------------------------------------------------------------------
+void
+MasterNode::get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const
+{
+  mon_data.timestamp = read_timestamp();
 
-//-----------------------------------------------------------------------------
-// void
-// MasterNode::get_info(opmonlib::InfoCollector& ic, int level) const
-// {
-//   timingfirmwareinfo::MasterMonitorData mon_data;
-//   this->get_info(mon_data);
+  auto control = read_sub_nodes(getNode("global.csr.ctrl"), false);
+  auto state = read_sub_nodes(getNode("global.csr.stat"), false);
+  getClient().dispatch();
 
-//   auto control = read_sub_nodes(getNode("global.csr.ctrl"), false);
-//   auto state = read_sub_nodes(getNode("global.csr.stat"), false);
-//   getClient().dispatch();
-
-//   mon_data.ts_en = control.at("ts_en").value();
-//   mon_data.ts_err = state.at("ts_err").value();
-//   mon_data.tx_err = state.at("tx_err").value();
-//   mon_data.ctrs_rdy = state.at("ctrs_rdy").value();
+  mon_data.ts_en = control.at("ts_en").value();
+  mon_data.ts_err = state.at("ts_err").value();
+  mon_data.tx_err = state.at("tx_err").value();
+  mon_data.ctrs_rdy = state.at("ctrs_rdy").value();
 
 //   ic.add(mon_data);
 
@@ -375,7 +366,7 @@ MasterNode::set_timestamp(uint64_t timestamp) const // NOLINT(build/unsigned)
 //   }
 
 //   getNode<FLCmdGeneratorNode>("scmd_gen").get_info(ic, level);
-// }
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

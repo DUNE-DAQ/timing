@@ -17,6 +17,9 @@
 #include "timing/TimingNode.hpp"
 #include "timing/IONode.hpp"
 
+#include "timing/timingfirmwareinfo/Structs.hpp"
+#include "timing/timingfirmwareinfo/Nljs.hpp"
+
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
@@ -90,6 +93,11 @@ public:
    *
    */
   virtual void validate_firmware_version() const = 0;
+
+  /**
+   * @brief    Give info to collector.
+   */
+  virtual void get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const = 0;
 
 };
 

@@ -91,6 +91,11 @@ public:
     return dynamic_cast<const MST*>(get_master_node_plain()); 
   }
 
+  /**
+   * @brief    Give info to collector.
+   */
+  virtual void get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const = 0;
+
 };
 
 } // namespace timing

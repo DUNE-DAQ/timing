@@ -23,6 +23,9 @@
 #include "timing/timingfirmware/Nljs.hpp"
 #include "timing/timingfirmware/Structs.hpp"
 
+#include "timing/timingfirmwareinfo/Nljs.hpp"
+#include "timing/timingfirmwareinfo/Structs.hpp"
+
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
@@ -131,6 +134,11 @@ public:
    * @brief    Required patch firmware version
    */
   virtual uint32_t get_required_patch_firmware_version() const = 0;
+
+  /**
+   * @brief    Give info to collector.
+   */
+  virtual void get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const = 0;
 
 };
 

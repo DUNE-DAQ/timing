@@ -107,10 +107,18 @@ public:
    */
   void validate_firmware_version() const override;
 
-  // /**
-  //  * @brief    Give info to collector.
-  //  */  
-  // void get_info(opmonlib::InfoCollector& ci, int level) const override;
+  /**
+   * @brief    Give info to collector.
+   */
+  void get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const override;
+
+  /**
+   * @brief    Give info to collector.
+   */
+  void get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const override
+  {
+    get_master_node_plain()->get_info(mon_data);
+  }
 };
 
 } // namespace timing
