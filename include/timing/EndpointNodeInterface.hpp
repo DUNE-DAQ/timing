@@ -19,6 +19,9 @@
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
+#include "timing/timingendpointinfo/Nljs.hpp"
+#include "timing/timingendpointinfo/Structs.hpp"
+
 // C++ Headers
 #include <chrono>
 #include <string>
@@ -70,6 +73,12 @@ public:
    */
   virtual uint32_t read_endpoint_state() const; // NOLINT(build/unsigned)
 
+  /**
+   * @brief     Collect monitoring information for timing endpoint
+   *
+   */
+  virtual void get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const {}
+  // TODO make pure virtual
 };
 
 } // namespace timing

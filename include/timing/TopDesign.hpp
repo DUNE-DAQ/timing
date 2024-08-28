@@ -16,6 +16,9 @@
 #include "TimingIssues.hpp"
 #include "timing/TopDesignInterface.hpp"
 
+#include "timing/timingfirmwareinfo/Structs.hpp"
+#include "timing/timingfirmwareinfo/Nljs.hpp"
+
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
@@ -58,7 +61,7 @@ public:
   /**
    * @brief      Reset timing node.
    */
-  void reset_io(const std::string& clock_config_file = "") const override
+  void reset_io(const std::string& clock_config_file) const override
   {
     get_io_node_plain()->reset(clock_config_file);
   }
@@ -66,10 +69,9 @@ public:
   /**
    * @brief      Reset timing node.
    */
-  void reset_io(int32_t fanout_mode, // NOLINT(build/unsigned)
-                        const std::string& clock_config_file = "") const override
+  void reset_io(const ClockSource& clock_source) const override
   {
-    get_io_node_plain()->reset(fanout_mode, clock_config_file);
+    get_io_node_plain()->reset(clock_source);
   }
 
   /**
@@ -81,6 +83,14 @@ public:
     if (print_out)
       TLOG() << info;
     return info;
+  }
+
+  /**
+   * @brief    Give info to collector.
+   */
+  void get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const override
+  {
+    get_io_node_plain()->get_pll()->get_info(mon_data.pll_info);
   }
 };
 

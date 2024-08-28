@@ -21,6 +21,7 @@ from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardM
 from timing.common.definitions import kFMCRev1, kFMCRev2, kFMCRev3, kFMCRev4, kPC059Rev1, kTLURev1, kSIMRev1, kFIBRev1, kMIBRev1, kGIBRev1
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed, kCarrierNexusVideo, kCarrierTrenzTE0712
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignChronos, kDesignBoreas, kDesignTest, kDesignKerberos, kDesignGaia
+from timing.common.definitions import ClockSource, kFreeRun, kInput0, kInput1, kInput2, kInput3
 from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap, kUIDRevisionMap, kClockConfigMap
 from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
 
@@ -67,28 +68,21 @@ def io(obj, device):
     
 # ------------------------------------------------------------------------------
 
-
 # ------------------------------------------------------------------------------
 @io.command('reset', short_help="Perform a hard reset on the timing master.")
 @click.option('--soft', '-s', is_flag=True, default=False, help='Soft reset i.e. skip the clock chip configuration.')
-@click.option('--fanout-mode', 'fanout', type=click.IntRange(0, 1), default=0, help='Configures the board in fanout mode (pc059 only)')
-@click.option('--downstream-mux-sel', 'downstream_mux_sel', type=int, help='Configures the downstream mux on the fib/mib/pc059')
-@click.option('--force-pll-cfg', 'forcepllcfg', type=click.Path(exists=True))
+@click.option('--clock-source', 'clocksource', type=click.Choice(ClockSource.__members__.keys()), help='Manually specify clock source, free-running, upstream, etc..')
+@click.option('--force-pll-cfg', 'forcepllcfg', type=click.Path(exists=True), help='Manually specify clock config file' )
 @click.pass_obj
 @click.pass_context
-def reset(ctx, obj, soft, fanout, downstream_mux_sel, forcepllcfg):
+def reset(ctx, obj, soft, clocksource, forcepllcfg):
     '''
-    Perform a hard reset on the timing master, including
+    Perform a hard reset on a timing board, including
 
     \b
     - ipbus registers
     - i2c buses
     - pll and pll configuration
-
-    \b
-    Fanout mode:
-    0 = sfp - fanout mode
-    1 = local master - standalone mode
     '''
 
     echo('Resetting ' + click.style(obj.mDevice.id(), fg='blue'))
@@ -99,38 +93,37 @@ def reset(ctx, obj, soft, fanout, downstream_mux_sel, forcepllcfg):
 
     lIO = lDevice.getNode('io')
 
-    lPLLConfigFilePath=""
-    if forcepllcfg is not None:
-        lPLLConfigFilePath = forcepllcfg
-
     if lBoardType in kLibrarySupportedBoards:
 
         if soft:
             lIO.soft_reset()
             return
         
-        if lDesignType == kDesignFanout:
+        if forcepllcfg is not None:
+            if clocksource is not None:
+                secho("You specified both a clock source for automatic clock config file look-up, and an explicit clock config file. Explicit clock config file will take precedence.", fg='yellow')
             
-            if fanout == 0:
-                secho("Fanout mode enabled", fg='green')
-            else:
-                secho("local master: standalone mode", fg='green')
-
-            lIO.reset(fanout, lPLLConfigFilePath)
-            
-            if lBoardType in [ kBoardPC059, kBoardFIB, kBoardMIB ] and downstream_mux_sel is not None:
-                lIO.switch_downstream_mux_channel(downstream_mux_sel)
-                secho("Active downstream mux " + hex(downstream_mux_sel), fg='cyan')
+            lIO.reset(forcepllcfg)
         else:
-            lIO.reset(lPLLConfigFilePath)
-    
-        ctx.invoke(clkstatus)
+            if clocksource is None:
+                if lDesignType in [kDesignMaster, kDesignBoreas, kDesignOuroboros, kDesignOuroborosSim]:
+                    lClockSource=kFreeRun
+                elif lDesignType in [kDesignEndpoint, kDesignChronos, kDesignFanout]:
+                    lClockSource=kInput1
+                elif lDesignType in [kDesignGaia, kDesignKerberos]:
+                    lClockSource=kInput0
+                else:
+                    secho("Unable to match a default clock source for design {}\nReset failed!".format(lDesignType), fg='red')
+                    return
+            else:
+                lClockSource=ClockSource.__members__[clocksource]
 
+            lIO.reset(lClockSource)
+        ctx.invoke(clkstatus)
     else:
         secho("Board identifier {} not supported by timing library".format(lBoardType), fg='yellow')
         # board not supported by library, do reset here
 # ------------------------------------------------------------------------------
-
 
 # ------------------------------------------------------------------------------
 @io.command('freq', short_help="Measure some frequencies.")
@@ -154,7 +147,6 @@ def freq(obj):
             secho('MIB clock freqs', fg='green')
 # ------------------------------------------------------------------------------
 
-
 # ------------------------------------------------------------------------------
 @io.command('status')
 @click.pass_obj
@@ -173,7 +165,6 @@ def status(ctx, obj, verbose):
         secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
         # do status printing here
 # ------------------------------------------------------------------------------
-
 
 # ------------------------------------------------------------------------------
 @io.command('clk-status')
@@ -204,7 +195,6 @@ def clkstatus(ctx, obj, verbose):
         # do freq measurement here
 # ------------------------------------------------------------------------------
 
-
 # ------------------------------------------------------------------------------
 @io.command('dac-setup')
 @click.argument('value', type=click.IntRange(0,0xffff))
@@ -223,7 +213,6 @@ def dacsetup(ctx, obj, value):
     else:
         secho("DAC setup only supported for TLU")
 # ------------------------------------------------------------------------------
-
 
 # ------------------------------------------------------------------------------
 @io.command('sfp-status', short_help="Read SFP parameters.")
@@ -272,7 +261,6 @@ def sfpstatus(ctx, obj, sfp_id):
         secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
         # do sfp status here
 # ------------------------------------------------------------------------------
-
 
 # ------------------------------------------------------------------------------
 @io.command('switch-sfp-tx', short_help="Control sfp tx")

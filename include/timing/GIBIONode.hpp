@@ -60,15 +60,14 @@ public:
   std::string get_hardware_info(bool print_out) const override;
   
   /**
-   * @brief      Reset FMC IO.
+   * @brief      Reset GIB IO.
    */
-  void reset(const std::string& clock_config_file = "") const override;
+  void reset(const std::string& clock_config_file)  const override;
 
   /**
-   * @brief     Reset FMC IO.
+   * @brief     Reset timing node with clock file lookup
    */
-  void reset(int32_t fanout_mode = -1, // NOLINT(build/unsigned)
-                     const std::string& clock_config_file = "") const override;
+  void reset(const ClockSource& clock_source) const override;
 
   /**
    * @brief      Print status of on-board SFP.

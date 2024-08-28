@@ -7,6 +7,18 @@
     <node id="phase_comparator" address="0x500" module="file://pdts_phase_comparator.xml"/>
     <node id="timestamp_comparator" address="0x600" module="file://pdts_timestamp_comparator.xml"/>
     <node id="master" address="0x700" module="file://pdts_master.xml"/>
-    <node id="cdr0" address="0x1000" module="file://pdts_upstream_cdr.xml"/>
-    <node id="cdr1" address="0x1100" module="file://pdts_upstream_cdr.xml"/>
+    <node id="us_mux" address="0x800" module="file://pdts_upstream_mux.xml"/>
+    <node id="cdr0"  address="0x1000" module="file://pdts_upstream_cdr.xml"/>
+    <node id="cdr1"  address="0x1100" module="file://pdts_upstream_cdr.xml"/>
+    <node id="cdr2"  address="0x1200" module="file://pdts_upstream_cdr.xml"/>
+    <node id="cdr3"  address="0x1300" module="file://pdts_upstream_cdr.xml"/>
+    <node id="cdr4"  address="0x1400" module="file://pdts_upstream_cdr.xml"/>
+    <node id="cdr5"  address="0x1500" module="file://pdts_upstream_cdr.xml"/>
+    <node id="cdr6"  address="0x1600" module="file://pdts_upstream_cdr.xml"/>
+    <node id="cdr7"  address="0x1700" module="file://pdts_upstream_cdr.xml"/>
+    <node id="cdr8"  address="0x1800" module="file://pdts_upstream_cdr.xml"/>
+    <node id="cdr9"  address="0x1900" module="file://pdts_upstream_cdr.xml"/>
+    <node id="cdr10" address="0x1a00" module="file://pdts_upstream_cdr.xml"/>
+    <node id="cdr11" address="0x1b00" module="file://pdts_upstream_cdr.xml"/>
+
 </node>

@@ -51,7 +51,7 @@ BoreasDesign::configure() const
 {
 
   // Hard resets
-  reset_io();
+  reset_io(kFreeRun); // boreas design is normally stand-alone; add posibility override clock source via config in future
 
   // Set timestamp to current time
   sync_timestamp();
@@ -62,24 +62,15 @@ BoreasDesign::configure() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-// void
-// BoreasDesign::get_info(opmonlib::InfoCollector& ci, int level) const
-// { 
-//   opmonlib::InfoCollector master_collector;
-//   get_master_node_plain()->get_info(master_collector, level);
-//   ci.add("master", master_collector);
-
-//   opmonlib::InfoCollector hardware_collector;
-//   get_io_node_plain()->get_info(hardware_collector, level);
-//   ci.add("io", hardware_collector);
-
-//   opmonlib::InfoCollector endpoint_collector;
-//   get_endpoint_node_plain(0)->get_info(endpoint_collector, level);
-//   ci.add("endpoint", endpoint_collector);
+void
+BoreasDesign::get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const
+{
+  MasterDesign::get_info(mon_data);
+  EndpointDesignInterface::get_info(0, mon_data.endpoint_info);
 
 //   opmonlib::InfoCollector hsi_collector;
 //   get_hsi_node().get_info(hsi_collector, level);
 //   ci.add("hsi", hsi_collector);
-// }
+}
 //-----------------------------------------------------------------------------
 } // namespace dunedaq::timing

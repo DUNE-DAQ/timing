@@ -14,7 +14,7 @@
 
 // PDT Headers
 #include "TimingIssues.hpp"
-#include "timing/FanoutIONode.hpp"
+#include "timing/SFPMuxIONode.hpp"
 #include "timing/I2C9546SwitchNode.hpp"
 
 // uHal Headers
@@ -30,7 +30,7 @@ namespace timing {
 /**
  * @brief      Class for the timing FMC board.
  */
-class MIBIONode : public FanoutIONode
+class MIBIONode : public SFPMuxIONode
 {
   UHAL_DERIVEDNODE(MIBIONode)
 
@@ -61,15 +61,15 @@ public:
   std::string get_pll_status(bool print_out = false) const override;
 
   /**
-   * @brief      Reset FMC IO.
+   * @brief      Reset MIB IO.
    */
-  void reset(const std::string& clock_config_file = "") const override;
+  void reset(const std::string& clock_config_file) const override;
 
   /**
-   * @brief     Reset FMC IO.
+   * @brief      Reset IO, with clock file look up.
    */
-  void reset(int32_t fanout_mode = -1, // NOLINT(build/unsigned)
-                     const std::string& clock_config_file = "") const override;
+  using IONode::reset;
+
   /**
    * @brief     Switch the SFP mux channel
    */

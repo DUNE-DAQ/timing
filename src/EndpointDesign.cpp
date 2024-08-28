@@ -51,22 +51,8 @@ void
 EndpointDesign::configure() const
 {
   // Hard resets
-  reset_io();
+  this->reset_io(kInput1); // endpoint FMC SFP is normally on input 1; add posibility override clock source via config in future
 }
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-// void
-// EndpointDesign::get_info(opmonlib::InfoCollector& ci, int level) const
-// { 
-//   opmonlib::InfoCollector endpoint_collector;
-//   get_endpoint_node_plain(0)->get_info(endpoint_collector, level);
-//   ci.add("endpoint", endpoint_collector);
-
-//   opmonlib::InfoCollector hardware_collector;
-//   get_io_node_plain()->get_info(hardware_collector, level);
-//   ci.add("io", hardware_collector);
-// }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -97,4 +83,11 @@ EndpointDesign::validate_firmware_version() const
 //    ers::warning(IncompatiblePatchEndpointFirmwareVersion(ERS_HERE, patch_firmware_version, g_required_patch_endpoint_firmware_version));
 }
 //-----------------------------------------------------------------------------
+
+void
+EndpointDesign::get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const
+{
+  TopDesign::get_info(mon_data);
+  EndpointDesignInterface::get_info(0, mon_data.endpoint_info);
+}
 } // namespace dunedaq::timing  

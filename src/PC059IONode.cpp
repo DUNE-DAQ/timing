@@ -19,7 +19,7 @@ UHAL_REGISTER_DERIVED_NODE(PC059IONode)
 
 //-----------------------------------------------------------------------------
 PC059IONode::PC059IONode(const uhal::Node& node)
-  : FanoutIONode(node, "i2c", "i2c", "SI5345", { "PLL", "CDR" }, { "usfp_i2c", "i2c" })
+  : SFPMuxIONode(node, "i2c", "i2c", "SI5345", { "PLL", "CDR" }, { "usfp_i2c", "i2c" })
 {}
 //-----------------------------------------------------------------------------
 
@@ -51,9 +51,8 @@ PC059IONode::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-PC059IONode::reset(int32_t fanout_mode, const std::string& clock_config_file) const
+PC059IONode::reset(const std::string& clock_config_file) const
 {
-
   // Soft reset
   write_soft_reset_register();
 
@@ -78,12 +77,8 @@ PC059IONode::reset(int32_t fanout_mode, const std::string& clock_config_file) co
       ers::warning(EnclustraSwitchFailure(ERS_HERE, e));
   }
 
-  // Find the right pll config file
-  std::string clock_config_path = get_full_clock_config_file_path(clock_config_file, fanout_mode);
-  TLOG() << "PLL configuration file : " << clock_config_path;
-
   // Upload config file to PLL
-  configure_pll(clock_config_path);
+  configure_pll(clock_config_file);
 
   // Reset mmcm
   getNode("csr.ctrl.rst").write(0x1);
@@ -113,14 +108,6 @@ PC059IONode::reset(int32_t fanout_mode, const std::string& clock_config_file) co
   //getClient().dispatch();
 
   TLOG() << "Reset done";
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
-PC059IONode::reset(const std::string& clock_config_file) const
-{
-  reset(-1, clock_config_file);
 }
 //-----------------------------------------------------------------------------
 

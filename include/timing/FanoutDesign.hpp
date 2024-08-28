@@ -13,9 +13,9 @@
 #define TIMING_INCLUDE_TIMING_FANOUTDESIGN_HPP_
 
 // PDT Headers
-#include "timing/MasterMuxDesign.hpp"
+#include "timing/TopDesign.hpp"
 #include "timing/EndpointDesignInterface.hpp"
-#include "timing/SwitchyardNode.hpp"
+#include "timing/CDRMuxDesignInterface.hpp"
 
 #include "TimingIssues.hpp"
 
@@ -33,7 +33,7 @@ namespace timing {
 /**
  * @brief      Class for timing fanout designs.
  */
-class FanoutDesign : public MasterMuxDesign, public EndpointDesignInterface
+class FanoutDesign : public TopDesign, public EndpointDesignInterface, public CDRMuxDesignInterface
 {
   UHAL_DERIVEDNODE(FanoutDesign)
 public:
@@ -56,35 +56,18 @@ public:
    */
   void configure() const override;
 
-  ///**
-  // * @brief      Reset timing fanout node.
-  // */
-  // void reset(const std::string& clock_config_file="") const override;
-
   /**
-   * @brief      Reset timing fanout node.
-   */
-  void reset_io(int32_t fanout_mode, const std::string& clock_config_file = "") const override; // NOLINT(build/unsigned)
-
-  /**
-   * @brief      Measure the endpoint round trip time.
+   * @brief      Validate endpoint firmware version.
    *
-   * @return     { description_of_the_return_value }
    */
-  uint32_t measure_endpoint_rtt(uint32_t address, // NOLINT(build/unsigned)
-                                        bool control_sfp = true,
-                                        int sfp_mux = -1) const override;
+  void validate_firmware_version() const override { /*firmware version in fanout design right now*/}
+
+  uint32_t read_firmware_version() const override { /*firmware version in fanout design right now*/}
 
   /**
-   * @brief      Apply delay to endpoint
+   * @brief    Give info to collector.
    */
-  void apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned)
-                            uint32_t coarse_delay, // NOLINT(build/unsigned)
-                            uint32_t fine_delay,   // NOLINT(build/unsigned)
-                            uint32_t phase_delay,  // NOLINT(build/unsigned)
-                            bool measure_rtt = false,
-                            bool control_sfp = true,
-                            int sfp_mux = -1) const override;
+  void get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const override;
 };
 
 } // namespace timing

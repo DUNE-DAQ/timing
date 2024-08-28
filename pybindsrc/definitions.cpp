@@ -112,6 +112,14 @@ register_definitions(py::module& m)
         .value("ExtFakeTrig", ExtFakeTrig)
         .export_values();
 
+    py::enum_<ClockSource>(m, "ClockSource")
+        .value("kFreeRun", kFreeRun)
+        .value("kInput0", kInput0)
+        .value("kInput1", kInput1)
+        .value("kInput2", kInput2)
+        .value("kInput3", kInput3)
+        .export_values();
+
 	m.attr("kBoardNameMap") = timing::IONode::get_board_type_map();
 	m.attr("kCarrierNameMap") = timing::IONode::get_carrier_type_map();
 	m.attr("kDesignNameMap") = timing::IONode::get_design_type_map();

@@ -20,7 +20,7 @@ UHAL_REGISTER_DERIVED_NODE(FIBIONode)
 
 //-----------------------------------------------------------------------------
 FIBIONode::FIBIONode(const uhal::Node& aNode) :
-	FanoutIONode(aNode, "i2c", "i2c", "SI5345", {"PLL", "CDR"}, {"i2c_sfp0", "i2c_sfp1", "i2c_sfp2", "i2c_sfp3", "i2c_sfp4", "i2c_sfp5", "i2c_sfp6", "i2c_sfp7"}) {
+	SFPMuxIONode(aNode, "i2c", "i2c", "SI5345", {"PLL", "BKP DATA"}, {"i2c_sfp0", "i2c_sfp1", "i2c_sfp2", "i2c_sfp3", "i2c_sfp4", "i2c_sfp5", "i2c_sfp6", "i2c_sfp7"}) {
 }
 //-----------------------------------------------------------------------------
 
@@ -64,7 +64,7 @@ FIBIONode::get_status(bool print_out) const {
 
 //-----------------------------------------------------------------------------
 void
-FIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) const {
+FIBIONode::reset(const std::string& clock_config_file) const {
 	
 	// Soft reset
 	write_soft_reset_register();
@@ -121,13 +121,9 @@ FIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) cons
 
 	// reset pll via I2C IO expanders
 	reset_pll();
-	
-	// Find the right pll config file
-	std::string clock_config_path = get_full_clock_config_file_path(clock_config_file, fanout_mode);
-	TLOG() << "PLL configuration file : " << clock_config_path;
 
 	// Upload config file to PLL
-	configure_pll(clock_config_path);
+	configure_pll(clock_config_file);
 	
 	//getNode("csr.ctrl.inmux").write(0);
 	//getClient().dispatch();
@@ -140,15 +136,6 @@ FIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) cons
 	TLOG() << "Reset done";
 }
 //-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-void
-FIBIONode::reset(const std::string& clock_config_file) const {
-	reset(-1, clock_config_file);
-}
-//-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 void
@@ -284,35 +271,9 @@ FIBIONode::validate_sfp_id(uint32_t sfp_id) const { // NOLINT(build/unsigned)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-std::vector<double>
-FIBIONode::read_clock_frequencies() const
-{
-	std::vector<std::string> fib_clock_names( {"PLL", "CDR", "BKP"});
-  return getNode<FrequencyCounterNode>("freq").measure_frequencies(fib_clock_names.size());
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-std::string
-FIBIONode::get_clock_frequencies_table(bool print_out) const
-{
-	std::vector<std::string> fib_clock_names( {"PLL", "CDR", "BKP"});
-  std::stringstream table;
-  std::vector<double> frequencies = read_clock_frequencies();
-  for (uint8_t i = 0; i < frequencies.size(); ++i) { // NOLINT(build/unsigned)
-    table << fib_clock_names.at(i) << " freq: " << std::setprecision(12) << frequencies.at(i) << std::endl;
-  }
-  // TODO add freq validation Stoyan Trilov stoyan.trilov@cern.ch
-  if (print_out)
-    TLOG() << table.str();
-  return table.str();
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-// void
-// FIBIONode::get_info(timinghardwareinfo::TimingFIBMonitorData& mon_data) const
-// {
+//void
+//FIBIONode::get_info(timinghardwareinfo::TimingFIBMonitorData& mon_data) const
+//{
 
 //   auto stat_subnodes = read_sub_nodes(getNode("csr.stat"));
 //   auto ctrl_subnodes = read_sub_nodes(getNode("csr.ctrl"));

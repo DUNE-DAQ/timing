@@ -18,7 +18,7 @@ UHAL_REGISTER_DERIVED_NODE(MIBIONode)
 
 //-----------------------------------------------------------------------------
 MIBIONode::MIBIONode(const uhal::Node& node)
-  : FanoutIONode(node, "i2c", "i2c", { "PLL" }, { "PLL", "CDR 0", "CDR 1" }, { "i2c" })
+  : SFPMuxIONode(node, "i2c", "i2c", { "PLL" }, { "PLL", "CDR 0", "CDR 1" }, { "i2c" })
 {
 }
 //-----------------------------------------------------------------------------
@@ -74,19 +74,14 @@ MIBIONode::get_pll_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-MIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) const
+MIBIONode::reset(const std::string& clock_config_file) const
 {
-  
   write_soft_reset_register();
 
   millisleep(1000);
-  
-  // Find the right pll config file
-  std::string clock_config_path = get_full_clock_config_file_path(clock_config_file, fanout_mode);
-  TLOG() << "PLL configuration file : " << clock_config_path;
 
   // Upload config file to PLL
-  configure_pll(clock_config_path);
+  configure_pll(clock_config_file);
 
   // Reset mmcm
   getNode("csr.ctrl.rst").write(0x1);
@@ -99,14 +94,6 @@ MIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) cons
   getClient().dispatch();
 
   TLOG() << "Reset done";
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
-MIBIONode::reset(const std::string& clock_config_file) const
-{
-  reset(-1, clock_config_file);
 }
 //-----------------------------------------------------------------------------
 

@@ -13,7 +13,7 @@
 #define TIMING_INCLUDE_TIMING_FIBIONODE_HPP_
 
 // Timing Headers
-#include "timing/FanoutIONode.hpp"
+#include "timing/SFPMuxIONode.hpp"
 #include "timing/TimingIssues.hpp"
 
 // uHal Headers
@@ -29,7 +29,7 @@ namespace timing {
 /**
  * @brief      Class for the FIB board.
  */
-class FIBIONode : public FanoutIONode {
+class FIBIONode : public SFPMuxIONode {
     UHAL_DERIVEDNODE(FIBIONode)
 
 public:
@@ -47,16 +47,16 @@ public:
      * @brief     Get status string, optionally print.
      */
     std::string get_status(bool print_out=false) const override;
-    
-    /**
-     * @brief      Reset FIB node.
-     */
-    void reset(int32_t fanout_mode, const std::string& clock_config_file="") const override;
 
     /**
      * @brief      Reset FIB node.
      */
-    void reset(const std::string& clock_config_file="") const override;
+    void reset(const std::string& clock_config_file) const override;
+
+    /**
+     * @brief      Reset IO, with clock file look up.
+     */
+    using IONode::reset;
 
     /**
      * @brief     Switch the SFP mux channel
@@ -77,16 +77,6 @@ public:
      * @brief      control tx laser of on-board SFP softly (I2C command)
      */
     void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
-
-    /**
-    * @brief      Read frequencies of on-board clocks.
-    */
-    std::vector<double> read_clock_frequencies() const override;
-
-    /**
-    * @brief      Print frequencies of on-board clocks.
-    */
-    std::string get_clock_frequencies_table(bool print_out = false) const override;
 
     /**
      * @brief      reset on-board PLL using I2C IO expanders

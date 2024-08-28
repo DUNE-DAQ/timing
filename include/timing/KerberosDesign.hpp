@@ -13,8 +13,9 @@
 #define TIMING_INCLUDE_TIMING_KERBEROSDESIGN_HPP_
 
 // PDT Headers
-#include "timing/MasterMuxDesign.hpp"
+#include "timing/MasterDesign.hpp"
 #include "timing/EndpointDesignInterface.hpp"
+#include "timing/CDRMuxDesignInterface.hpp"
 
 #include "TimingIssues.hpp"
 
@@ -32,7 +33,7 @@ namespace timing {
 /**
  * @brief      Class for timing fanout designs.
  */
-class KerberosDesign : public MasterMuxDesign, public EndpointDesignInterface
+class KerberosDesign : public MasterDesign, public EndpointDesignInterface, public CDRMuxDesignInterface
 {
   UHAL_DERIVEDNODE(KerberosDesign)
 public:
@@ -54,33 +55,7 @@ public:
    *
    */
   void configure() const override;
-
-  /**
-   * @brief      Reset timing fanout node.
-   */
-  void reset_io(int32_t fanout_mode, const std::string& clock_config_file = "") const override; // NOLINT(build/unsigned)
-
-  /**
-   * @brief      Measure the endpoint round trip time.
-   *
-   * @return     { description_of_the_return_value }
-   */
-  uint32_t measure_endpoint_rtt(uint32_t address, // NOLINT(build/unsigned)
-                                        bool control_sfp = true,
-                                        int sfp_mux = -1) const override;
-
-  /**
-   * @brief      Apply delay to endpoint
-   */
-  void apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned)
-                            uint32_t coarse_delay, // NOLINT(build/unsigned)
-                            uint32_t fine_delay,   // NOLINT(build/unsigned)
-                            uint32_t phase_delay,  // NOLINT(build/unsigned)
-                            bool measure_rtt = false,
-                            bool control_sfp = true,
-                            int sfp_mux = -1) const override;
 };
-
 } // namespace timing
 } // namespace dunedaq
 

@@ -106,6 +106,15 @@ enum FixedLengthCommandType
   ExtFakeTrig
 };
 
+enum ClockSource
+{
+  kInput0 = 0,
+  kInput1 = 1,
+  kInput2 = 2,
+  kInput3 = 3,
+  kFreeRun = 255
+};
+
 struct ActiveEndpointConfig
 {
   std::string id;

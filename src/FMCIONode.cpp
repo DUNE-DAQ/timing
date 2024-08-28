@@ -59,7 +59,6 @@ FMCIONode::get_status(bool print_out) const
 void
 FMCIONode::reset(const std::string& clock_config_file) const
 {
-
   write_soft_reset_register();
 
   millisleep(1000);
@@ -80,12 +79,8 @@ FMCIONode::reset(const std::string& clock_config_file) const
     }
   }
 
-  // Find the right pll config file
-  std::string clock_config_path = get_full_clock_config_file_path(clock_config_file);
-  TLOG() << "PLL configuration file : " << clock_config_path;
-
   // Upload config file to PLL
-  configure_pll(clock_config_path);
+  configure_pll(clock_config_file);
 
   // Reset mmcm
   getNode("csr.ctrl.rst").write(0x1);
@@ -116,15 +111,6 @@ FMCIONode::reset(const std::string& clock_config_file) const
   getClient().dispatch();
 
   TLOG() << "Reset done";
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
-FMCIONode::reset(int32_t /*fanout_mode*/, // NOLINT(build/unsigned)
-                     const std::string& clock_config_file) const
-{
-  reset(clock_config_file);
 }
 //-----------------------------------------------------------------------------
 

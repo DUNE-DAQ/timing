@@ -64,8 +64,8 @@ PDIMasterNode::sync_timestamp(uint32_t clock_frequency_hz) const // NOLINT(build
 {
   const uint64_t old_timestamp = read_timestamp(); // NOLINT(build/unsigned)
   TLOG() << "Reading old timestamp: " << format_reg_value(old_timestamp) << ", " << format_timestamp(old_timestamp, clock_frequency_hz);
-
-  const uint64_t now_timestamp = get_seconds_since_epoch() * clock_frequency_hz; // NOLINT(build/unsigned)
+  
+  const uint64_t now_timestamp = get_milliseconds_since_epoch() * (clock_frequency_hz / 1000); // NOLINT(build/unsigned)
   TLOG() << "Setting new timestamp: " << format_reg_value(now_timestamp) << ", " << format_timestamp(now_timestamp, clock_frequency_hz);
 
   set_timestamp(now_timestamp);
@@ -234,33 +234,12 @@ PDIMasterNode::read_in_spill() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-// void
-// PDIMasterNode::get_info(timingfirmwareinfo::PDIMasterMonitorData& mon_data) const
-// {
-//   auto timestamp = getNode<TimestampGeneratorNode>("tstamp").read_raw_timestamp();
-//   mon_data.timestamp = tstamp2int(timestamp);
-// }
-// //-----------------------------------------------------------------------------
-
-// //-----------------------------------------------------------------------------
-// void
-// PDIMasterNode::get_info(opmonlib::InfoCollector& ic, int level) const
-// {
-//   timingfirmwareinfo::PDIMasterMonitorData mon_data;
-//   this->get_info(mon_data);
-//   ic.add(mon_data);
-
-//   for (int i=0; i < 4; ++i)
-//   {
-//     opmonlib::InfoCollector partition_ic;
-//     get_partition_node(i).get_info(partition_ic, level);
-//     ic.add("partition"+std::to_string(i),partition_ic);
-//   }
-
-//   getNode<FLCmdGeneratorNode>("scmd_gen").get_info(ic, level);
-
-//   getNode<SpillInterfaceNode>("spill").get_info(ic, level);
-// }
+void
+PDIMasterNode::get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const
+{
+  auto timestamp = getNode<TimestampGeneratorNode>("tstamp").read_raw_timestamp();
+  mon_data.timestamp = tstamp2int(timestamp);
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

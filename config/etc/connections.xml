@@ -26,7 +26,7 @@
   <connection id="BOREAS_TLU_ICEBERG" uri="ipbusudp-2.0://192.168.121.10:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/boreas_tlu/top_tlu.xml" />
   
   <!-- Bristol -->
-  <connection id="SIM_UDP"            uri="ipbusudp-2.0://localhost:50010" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/ouroboros_sim/top_sim.xml" />
+  <connection id="SIM_UDP"            uri="ipbusudp-2.0://localhost:50010" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/ouroboros_sim/top.xml" />
   
   <connection id="BOREAS_TLU"         uri="chtcp-2.0://kipper.phy.bris.ac.uk:10203?target=192.168.200.64:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/boreas_tlu/top_tlu.xml" />
   

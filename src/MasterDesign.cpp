@@ -40,7 +40,7 @@ MasterDesign::configure() const
 {
 
   // Hard resets
-  this->reset_io();
+  this->reset_io(kFreeRun); // master design is normally stand-alone; add posibility override clock source via config in future
 
   // Set timestamp to current time
   this->sync_timestamp();
@@ -135,16 +135,11 @@ MasterDesign::validate_firmware_version() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-// void
-// MasterDesign::get_info(opmonlib::InfoCollector& ci, int level) const
-// { 
-//   opmonlib::InfoCollector master_collector;
-//   this->get_master_node_plain()->get_info(master_collector, level);
-//   ci.add("master", master_collector);
-
-//   opmonlib::InfoCollector hardware_collector;
-//   this->get_io_node_plain()->get_info(hardware_collector, level);
-//   ci.add("io", hardware_collector);
-// }
+void
+MasterDesign::get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const
+{
+  TopDesign::get_info(mon_data);
+  get_info(mon_data.master_info);
+}
 //-----------------------------------------------------------------------------
 }

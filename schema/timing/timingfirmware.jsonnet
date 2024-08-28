@@ -22,7 +22,7 @@ local timingfirmware = {
         doc="64 bit uint"),
 
     l_int: s.number("LongInt", "i8",
-        doc="64 bit uint"),
+        doc="64 bit int"),
 
     double_val: s.number("DoubleValue", "f8", 
         doc="A double"),

@@ -13,7 +13,7 @@
 #define TIMING_INCLUDE_TIMING_MASTERMUXDESIGN_HPP_
 
 // PDT Headers
-#include "timing/MuxDesignInterface.hpp"
+#include "timing/SFPMuxDesignInterface.hpp"
 #include "timing/MasterDesign.hpp"
 
 // uHal Headers
@@ -32,7 +32,7 @@ namespace timing {
  * @brief      Class for PDI timing master design on mux board
  */
 class MasterMuxDesign
-  : virtual public MuxDesignInterface, public MasterDesign
+  : virtual public SFPMuxDesignInterface, public MasterDesign
 {
   UHAL_DERIVEDNODE(MasterMuxDesign)
 public:

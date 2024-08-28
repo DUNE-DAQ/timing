@@ -1,20 +1,20 @@
 /**
- * @file MuxDesignInterface.hpp
+ * @file SFPMuxDesignInterface.hpp
  *
- * MuxDesignInterface is a base class providing an interface
- * to for top level firmware designs on boards with muxes.
+ * SFPMuxDesignInterface is a base class providing an interface
+ * for top level firmware designs on boards with physical muxes.
  *
  * This is part of the DUNE DAQ Software Suite, copyright 2020.
  * Licensing/copyright details are in the COPYING file that you should have
  * received with this code.
  */
 
-#ifndef TIMING_INCLUDE_TIMING_MUXDESIGNINTERFACE_HPP_
-#define TIMING_INCLUDE_TIMING_MUXDESIGNINTERFACE_HPP_
+#ifndef TIMING_INCLUDE_TIMING_SFPMUXDESIGNINTERFACE_HPP_
+#define TIMING_INCLUDE_TIMING_SFPMUXDESIGNINTERFACE_HPP_
 
 // PDT Headers
 #include "timing/TopDesignInterface.hpp"
-#include "timing/FanoutIONode.hpp"
+#include "timing/SFPMuxIONode.hpp"
 #include "TimingIssues.hpp"
 
 // uHal Headers
@@ -32,13 +32,13 @@ namespace timing {
 /**
  * @brief      Class for timing fanout designs.
  */
-class MuxDesignInterface : virtual public TopDesignInterface
+class SFPMuxDesignInterface : virtual public TopDesignInterface
 {
 
 public:
-  explicit MuxDesignInterface(const uhal::Node& node)
+  explicit SFPMuxDesignInterface(const uhal::Node& node)
   : TopDesignInterface(node) {}
-  virtual ~MuxDesignInterface() {}
+  virtual ~SFPMuxDesignInterface() {}
 
   /**
    * @brief     Switch the SFP mux channel
@@ -50,7 +50,7 @@ public:
    */
   virtual uint32_t read_active_downstream_mux_channel() const // NOLINT(build/unsigned)
   {
-    return TopDesignInterface::get_io_node<timing::FanoutIONode>()->read_active_downstream_mux_channel();
+    return TopDesignInterface::get_io_node<timing::SFPMuxIONode>()->read_active_downstream_mux_channel();
   }
 
   /**
@@ -62,4 +62,4 @@ public:
 } // namespace timing
 } // namespace dunedaq
 
-#endif // TIMING_INCLUDE_TIMING_MUXDESIGNINTERFACE_HPP_
+#endif // TIMING_INCLUDE_TIMING_SFPMUXDESIGNINTERFACE_HPP_

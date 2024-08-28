@@ -10,7 +10,7 @@ UHAL_REGISTER_DERIVED_NODE(MasterMuxDesign)
 //-----------------------------------------------------------------------------
 MasterMuxDesign::MasterMuxDesign(const uhal::Node& node)
   : TopDesignInterface(node)
-  , MuxDesignInterface(node)
+  , SFPMuxDesignInterface(node)
   , MasterDesignInterface(node)
   , MasterDesign(node)
 {}
@@ -86,7 +86,7 @@ MasterMuxDesign::apply_endpoint_delay(uint32_t address,
 void
 MasterMuxDesign::switch_downstream_mux_channel(uint32_t sfp_id, bool wait_for_rtt_ept_lock) const
 {
-  TopDesignInterface::get_io_node<timing::FanoutIONode>()->switch_downstream_mux_channel(sfp_id);
+  TopDesignInterface::get_io_node<timing::SFPMuxIONode>()->switch_downstream_mux_channel(sfp_id);
   if (wait_for_rtt_ept_lock) {
     this->get_master_node_plain()->enable_upstream_endpoint();
   }

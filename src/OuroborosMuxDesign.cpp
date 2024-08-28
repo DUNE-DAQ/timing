@@ -18,7 +18,7 @@ UHAL_REGISTER_DERIVED_NODE(OuroborosMuxDesign)
 //-----------------------------------------------------------------------------
 OuroborosMuxDesign::OuroborosMuxDesign(const uhal::Node& node)
   : TopDesignInterface(node)
-  , MuxDesignInterface(node)
+  , SFPMuxDesignInterface(node)
   , MasterDesignInterface(node)
   , MasterMuxDesign(node)
   , EndpointDesignInterface(node)
@@ -52,7 +52,7 @@ OuroborosMuxDesign::configure() const
 {
 
   // Hard resets
-  this->reset_io();
+  this->reset_io(kFreeRun); // ouroboros design is normally stand-alone; add posibility override clock source via config in future
 
   // Set timestamp to current time
   this->sync_timestamp();

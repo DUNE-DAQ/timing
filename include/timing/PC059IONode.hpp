@@ -14,7 +14,7 @@
 
 // PDT Headers
 #include "TimingIssues.hpp"
-#include "timing/FanoutIONode.hpp"
+#include "timing/SFPMuxIONode.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -30,7 +30,7 @@ namespace timing {
 /**
  * @brief      Class for the PC059 board.
  */
-class PC059IONode : public FanoutIONode
+class PC059IONode : public SFPMuxIONode
 {
   UHAL_DERIVEDNODE(PC059IONode)
 
@@ -53,12 +53,12 @@ public:
   /**
    * @brief      Reset pc059 node.
    */
-  void reset(int32_t fanout_mode, const std::string& clock_config_file = "") const override; // NOLINT(build/unsigned)
+  void reset(const std::string& clock_config_file) const override;
 
   /**
-   * @brief      Reset pc059 node.
+   * @brief      Reset IO, with clock file look up.
    */
-  void reset(const std::string& clock_config_file = "") const override;
+  using IONode::reset;
 
   /**
    * @brief     Switch the SFP mux channel

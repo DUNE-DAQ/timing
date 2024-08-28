@@ -17,6 +17,9 @@
 #include "timing/TimingNode.hpp"
 #include "timing/IONode.hpp"
 
+#include "timing/timingfirmwareinfo/Structs.hpp"
+#include "timing/timingfirmwareinfo/Nljs.hpp"
+
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
@@ -60,13 +63,12 @@ public:
   /**
    * @brief      Reset timing node.
    */
-  virtual void reset_io(const std::string& clock_config_file = "") const = 0;
+  virtual void reset_io(const std::string& clock_config_file) const = 0;
 
   /**
    * @brief      Reset timing node.
    */
-  virtual void reset_io(int32_t fanout_mode, // NOLINT(build/unsigned)
-                        const std::string& clock_config_file = "") const = 0;
+  virtual void reset_io(const ClockSource& clock_source) const = 0;
 
   /**
    * @brief      Prepare the timing device for data taking.
@@ -91,6 +93,11 @@ public:
    *
    */
   virtual void validate_firmware_version() const = 0;
+
+  /**
+   * @brief    Give info to collector.
+   */
+  virtual void get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const = 0;
 
 };
 

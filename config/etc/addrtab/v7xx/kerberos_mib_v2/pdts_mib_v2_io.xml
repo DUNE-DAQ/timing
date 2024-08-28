@@ -4,10 +4,9 @@
 					<node id="soft_rst" mask="0x1"/>
 					<node id="nuke" mask="0x2"/>
 					<node id="rst" mask="0x4"/>
-					<node id="sfp0_tx_dis" mask="0x8"/>
-					<node id="sfp1_tx_dis" mask="0x10"/>
-					<node id="sfp1_tx_dis" mask="0x20"/>
-					<node id="clk_sel" mask="0xc0"/>
+					<node id="pll_in_sel" mask="0x18"/>
+					<node id="bp_tx_edge" mask="0x20"/>
+					<node id="usfp_tx_edge" mask="0x40"/>
 				</node>
 				<node id="stat" address="0x1">
 					<node id="sfp0_flt" mask="0x1"/>

@@ -31,7 +31,7 @@ namespace timing {
 /**
  * @brief      Class for timing master with integrated HSI designs.
  */
-class ChronosDesign : public TopDesign, public HSIDesignInterface
+class ChronosDesign : public TopDesign, public HSIDesignInterface // TODO Should inherit from EndpointDesign?
 {
   UHAL_DERIVEDNODE(ChronosDesign)
 public:

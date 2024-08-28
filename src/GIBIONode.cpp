@@ -18,7 +18,7 @@ UHAL_REGISTER_DERIVED_NODE(GIBIONode)
 
 //-----------------------------------------------------------------------------
 GIBIONode::GIBIONode(const uhal::Node& node)
-  : IONode(node, "i2c", "i2c", { "PLL" }, { "PLL", "SFP 0", "SFP 1", "SFP 2", "SFP 3", "SFP 4", "SFP 5" }, { "i2c", "i2c", "i2c", "i2c", "i2c", "i2c" })
+  : IONode(node, "i2c", "i2c", { "PLL" }, { "PLL", "SFP CDR 0", "SFP CDR 1", "SFP CDR 2", "SFP CDR 3", "SFP CDR 4", "SFP CDR 5" }, { "i2c", "i2c", "i2c", "i2c", "i2c", "i2c" })
 {
 }
 //-----------------------------------------------------------------------------
@@ -72,7 +72,27 @@ GIBIONode::get_hardware_info(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-GIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) const
+GIBIONode::reset(const ClockSource& clock_source) const
+{
+  getNode("csr.ctrl.i2c_sw_rst").write(0x0);
+  getNode("csr.ctrl.i2c_exten_rst").write(0x0);
+  getNode("csr.ctrl.clk_gen_rst").write(0x0);
+  getClient().dispatch();
+  millisleep(1);
+  getNode("csr.ctrl.i2c_sw_rst").write(0x1);
+  getNode("csr.ctrl.i2c_exten_rst").write(0x1);
+  getNode("csr.ctrl.clk_gen_rst").write(0x1);
+  getClient().dispatch();
+
+  // Find the right pll config file
+  std::string clock_config = get_full_clock_config_file_path(clock_source);
+  reset(clock_config);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+GIBIONode::reset(const std::string& clock_config_file) const
 {
   
   write_soft_reset_register();
@@ -86,12 +106,22 @@ GIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) cons
   millisleep(1);
 
   // End reset 
-  getNode<I2CMasterNode>(m_uid_i2c_bus).get_slave("AX3_Switch").write_i2c(0x01, 0x7f);
   getNode("csr.ctrl.i2c_sw_rst").write(0x1);
   getNode("csr.ctrl.i2c_exten_rst").write(0x1);
   getNode("csr.ctrl.clk_gen_rst").write(0x1);
   getClient().dispatch();
   
+  CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
+
+  // enclustra i2c switch stuff
+  if (carrier_type == kCarrierEnclustraA35) {
+    try {
+      getNode<I2CMasterNode>(m_uid_i2c_bus).get_slave("AX3_Switch").write_i2c(0x01, 0x7f);
+    } catch (const std::exception& e) {
+      ers::warning(EnclustraSwitchFailure(ERS_HERE, e));
+    }
+  }
+
   getNode("csr.ctrl.gps_clk_en").write(0x0);
 
   // Set filter to full bandwidth mode A = B = 0x0
@@ -99,12 +129,8 @@ GIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) cons
   getNode("csr.ctrl.gps_clk_fltr_b").write(0x0);
   getClient().dispatch();
 
-  // Find the right pll config file
-  std::string clock_config_path = get_full_clock_config_file_path(clock_config_file, fanout_mode);
-  TLOG() << "PLL configuration file : " << clock_config_path;
-
   // Upload config file to PLL
-  configure_pll(clock_config_path);
+  configure_pll(clock_config_file);
 
   getNode("csr.ctrl.rst").write(0x1);
   getNode("csr.ctrl.rst").write(0x0);
@@ -131,14 +157,6 @@ GIBIONode::reset(int32_t fanout_mode, const std::string& clock_config_file) cons
   sfp_expander_1->set_outputs(1, 0xC0);
 
   TLOG() << "Reset done";
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
-GIBIONode::reset(const std::string& clock_config_file) const
-{
-  reset(-1, clock_config_file);
 }
 //-----------------------------------------------------------------------------
 
