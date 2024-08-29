@@ -343,6 +343,7 @@ protected:
         { "tlu_5345_boreas_free_run", "nocdr/DUNE_TLU-4_45_M-Registers.txt" },
 
         { "pc059_5345_master_free_run", "devel/PDTS_PC059_FANOUT.txt" },
+        { "pc059_5345_fanout_input_1", "devel/PDTS_PC059_FANOUT_SFP_IN.txt" },
 
         { "pc069_5395_master_free_run", "nocdr/Si5395-RevA-069a_mst-Registers.txt" },
         { "pc069_5395_boreas_free_run", "nocdr/Si5395-RevA-069a_mst-Registers.txt" },
