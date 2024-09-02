@@ -156,46 +156,46 @@ FMCIONode::get_clock_frequencies_table(bool print_out) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-FMCIONode::get_info(timinghardwareinfo::TimingFMCMonitorData& mon_data) const
-{
+// void
+// FMCIONode::get_info(timinghardwareinfo::TimingFMCMonitorData& mon_data) const
+// {
 
-  auto subnodes = read_sub_nodes(getNode("csr.stat"));
+//   auto subnodes = read_sub_nodes(getNode("csr.stat"));
 
-  mon_data.cdr_lol = subnodes.at("cdr_lol").value();
-  mon_data.cdr_los = subnodes.at("cdr_los").value();
-  mon_data.mmcm_ok = subnodes.at("mmcm_ok").value();
-  mon_data.mmcm_sticky = subnodes.at("mmcm_sticky").value();
-  mon_data.sfp_flt = subnodes.at("sfp_flt").value();
-  mon_data.sfp_los = subnodes.at("sfp_los").value();
-}
+//   mon_data.cdr_lol = subnodes.at("cdr_lol").value();
+//   mon_data.cdr_los = subnodes.at("cdr_los").value();
+//   mon_data.mmcm_ok = subnodes.at("mmcm_ok").value();
+//   mon_data.mmcm_sticky = subnodes.at("mmcm_sticky").value();
+//   mon_data.sfp_flt = subnodes.at("sfp_flt").value();
+//   mon_data.sfp_los = subnodes.at("sfp_los").value();
+// }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-FMCIONode::get_info(opmonlib::InfoCollector& ci, int level) const
-{
-  if (level >= 2) {
-    timinghardwareinfo::TimingPLLMonitorData pll_mon_data;
-    this->get_pll()->get_info(pll_mon_data);
-    ci.add(pll_mon_data);
+// void
+// FMCIONode::get_info(opmonlib::InfoCollector& ci, int level) const
+// {
+//   if (level >= 2) {
+//     timinghardwareinfo::TimingPLLMonitorData pll_mon_data;
+//     this->get_pll()->get_info(pll_mon_data);
+//     ci.add(pll_mon_data);
 
-    timinghardwareinfo::TimingSFPMonitorData sfp_mon_data;
-    auto sfp = this->get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
-    try {
-      sfp->get_info(sfp_mon_data);
-      ci.add(sfp_mon_data);
-    } catch (timing::SFPUnreachable& e) {
-      // It is valid that an SFP may not be installed, currently no good way of knowing whether they it should be
-      TLOG_DEBUG(2) << "Failed to communicate with SFP on i2c bus" << m_sfp_i2c_buses.at(0);
-    }
-  }
-  if (level >= 1) {
-    timinghardwareinfo::TimingFMCMonitorData mon_data;
-    this->get_info(mon_data);
-    ci.add(mon_data);
-  }
-}
+//     timinghardwareinfo::TimingSFPMonitorData sfp_mon_data;
+//     auto sfp = this->get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(0), "SFP_EEProm");
+//     try {
+//       sfp->get_info(sfp_mon_data);
+//       ci.add(sfp_mon_data);
+//     } catch (timing::SFPUnreachable& e) {
+//       // It is valid that an SFP may not be installed, currently no good way of knowing whether they it should be
+//       TLOG_DEBUG(2) << "Failed to communicate with SFP on i2c bus" << m_sfp_i2c_buses.at(0);
+//     }
+//   }
+//   if (level >= 1) {
+//     timinghardwareinfo::TimingFMCMonitorData mon_data;
+//     this->get_info(mon_data);
+//     ci.add(mon_data);
+//   }
+// }
 //-----------------------------------------------------------------------------
 } // namespace timing
 } // namespace dunedaq

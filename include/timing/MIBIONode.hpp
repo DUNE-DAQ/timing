@@ -15,8 +15,6 @@
 // PDT Headers
 #include "TimingIssues.hpp"
 #include "timing/SFPMuxIONode.hpp"
-#include "timing/timinghardwareinfo/InfoStructs.hpp"
-#include "timing/timinghardwareinfo/InfoNljs.hpp"
 #include "timing/I2C9546SwitchNode.hpp"
 
 // uHal Headers
@@ -102,15 +100,15 @@ public:
    */
   void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
 
-  /**
-   * @brief      Fill hardware monitoring structure.
-   */
-  void get_info(timinghardwareinfo::TimingMIBMonitorData& mon_data) const;
+  // /**
+  //  * @brief      Fill hardware monitoring structure.
+  //  */
+  // void get_info(timinghardwareinfo::TimingMIBMonitorData& mon_data) const;
 
-  /**
-   * @brief    Give info to collector.
-   */
-  void get_info(opmonlib::InfoCollector& ci, int level) const override;
+  // /**
+  //  * @brief    Give info to collector.
+  //  */
+  // void get_info(opmonlib::InfoCollector& ci, int level) const override;
 
 private:
   void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)

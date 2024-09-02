@@ -202,29 +202,29 @@ FLCmdGeneratorNode::get_cmd_counters_table(bool print_out) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-FLCmdGeneratorNode::get_info(opmonlib::InfoCollector& ic, int /*level*/) const
-{
-  auto accepted_counters = getNode("actrs").readBlock(getNode("actrs").getSize());
-  auto rejected_counters = getNode("rctrs").readBlock(getNode("actrs").getSize());
-  getClient().dispatch();
+// void
+// FLCmdGeneratorNode::get_info(opmonlib::InfoCollector& ic, int /*level*/) const
+// {
+//   auto accepted_counters = getNode("actrs").readBlock(getNode("actrs").getSize());
+//   auto rejected_counters = getNode("rctrs").readBlock(getNode("actrs").getSize());
+//   getClient().dispatch();
 
-  uint number_of_channels = 5;
+//   uint number_of_channels = 5;
 
-  for (uint i = 0; i < number_of_channels; ++i) { // NOLINT(build/unsigned)
+//   for (uint i = 0; i < number_of_channels; ++i) { // NOLINT(build/unsigned)
 
-    timingfirmwareinfo::TimingFLCmdCounter cmd_counter;
-    opmonlib::InfoCollector cmd_counter_ic;
+//     timingfirmwareinfo::TimingFLCmdCounter cmd_counter;
+//     opmonlib::InfoCollector cmd_counter_ic;
 
-    cmd_counter.accepted = accepted_counters.at(i);
-    cmd_counter.rejected = rejected_counters.at(i);
+//     cmd_counter.accepted = accepted_counters.at(i);
+//     cmd_counter.rejected = rejected_counters.at(i);
 
-    std::string channel = "fl_cmd_channel_" + std::to_string(i);
+//     std::string channel = "fl_cmd_channel_" + std::to_string(i);
 
-    cmd_counter_ic.add(cmd_counter);
-    ic.add(channel, cmd_counter_ic);
-  }
-}
+//     cmd_counter_ic.add(cmd_counter);
+//     ic.add(channel, cmd_counter_ic);
+//   }
+// }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

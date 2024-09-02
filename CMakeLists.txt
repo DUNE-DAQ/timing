@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(timing VERSION 7.5.0)
+project(timing VERSION 7.6.0)
 
 find_package(daq-cmake REQUIRED)
 
@@ -12,9 +12,8 @@ find_package(nlohmann_json REQUIRED)
 find_package(opmonlib REQUIRED)
 find_package(uhal REQUIRED)
 
-daq_codegen( *info.jsonnet DEP_PKGS opmonlib TEMPLATES opmonlib/InfoStructs.hpp.j2 opmonlib/InfoNljs.hpp.j2 )
 
-daq_codegen( timingfirmware.jsonnet TEMPLATES Structs.hpp.j2 Nljs.hpp.j2 )
+daq_codegen( timingfirmware.jsonnet timingfirmwareinfo.jsonnet timinghardwareinfo.jsonnet timingendpointinfo.jsonnet TEMPLATES Structs.hpp.j2 Nljs.hpp.j2 )
 ##############################################################################
 daq_add_library(*.cpp LINK_LIBRARIES ers::ers logging::logging nlohmann_json::nlohmann_json uhal::uhal opmonlib::opmonlib)
 

@@ -339,15 +339,14 @@ SI534xSlave::registers() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-SI534xSlave::get_info(timinghardwareinfo::TimingPLLMonitorData& mon_data) const
-{
-
+ void
+ SI534xSlave::get_info(timinghardwareinfo::TimingPLLMonitorData& mon_data) const
+ {
   mon_data.config_id = this->read_config_id();
 
-  // lPLLVersion["Part number"] = pll->read_device_version();
-  // lPLLVersion["Device grade"] = pll->read_clock_register(0x4);
-  // lPLLVersion["Device revision"] = pll->read_clock_register(0x5);
+  //lPLLVersion["Part number"] = pll->read_device_version();
+  //lPLLVersion["Device grade"] = pll->read_clock_register(0x4);
+  //lPLLVersion["Device revision"] = pll->read_clock_register(0x5);
 
   uint8_t pll_reg_c = this->read_clock_register(0xc);   // NOLINT(build/unsigned)
   uint8_t pll_reg_d = this->read_clock_register(0xd);   // NOLINT(build/unsigned)
@@ -374,7 +373,7 @@ SI534xSlave::get_info(timinghardwareinfo::TimingPLLMonitorData& mon_data) const
 
   mon_data.xaxb_err = dec_rng(pll_reg_c, 3);
   mon_data.xaxb_err_flg = dec_rng(pll_reg_11, 3);
-}
+ }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

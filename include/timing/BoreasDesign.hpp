@@ -51,8 +51,8 @@ public:
 
   /**
    * @brief    Give info to collector.
-   */  
-  void get_info(opmonlib::InfoCollector& ci, int level) const override;
+   */
+  void get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const override;
 };
 
 } // namespace timing

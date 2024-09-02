@@ -33,7 +33,7 @@ namespace timing {
 /**
  * @brief      Class for timing fanout designs.
  */
-class GaiaDesign : public MasterDesign, public EndpointDesignInterface, public CDRMuxDesignInterface
+class GaiaDesign : public MasterDesign, public EndpointDesignInterface, public CDRMuxDesignInterface //TODO check use ept intf
 {
   UHAL_DERIVEDNODE(GaiaDesign)
 public:
@@ -45,16 +45,21 @@ public:
    */
   std::string get_status(bool print_out = false) const override;
 
-  /**
-   * @brief    Give info to collector.
-   */  
-  void get_info(opmonlib::InfoCollector& ci, int level) const override;
+  // /**
+  //  * @brief    Give info to collector.
+  //  */  
+  // void get_info(opmonlib::InfoCollector& ci, int level) const override;
 
   /**
    * @brief      Prepare the timing fanout for data taking.
    *
    */
   void configure() const override;
+
+  /**
+   * @brief    Give info to collector.
+   */
+  void get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const override;
 };
 
 } // namespace timing

@@ -45,10 +45,10 @@ public:
    */
   std::string get_status(bool print_out = false) const override;
 
-  /**
-   * @brief    Give info to collector.
-   */  
-  void get_info(opmonlib::InfoCollector& ci, int level) const override;
+  // /**
+  //  * @brief    Give info to collector.
+  //  */  
+  // void get_info(opmonlib::InfoCollector& ci, int level) const override;
 
   /**
    * @brief      Prepare the timing fanout for data taking.

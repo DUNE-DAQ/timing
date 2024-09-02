@@ -45,15 +45,10 @@ FanoutDesign::configure() const
 
 //-----------------------------------------------------------------------------
 void
-FanoutDesign::get_info(opmonlib::InfoCollector& ci, int level) const
+FanoutDesign::get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const
 {
-  opmonlib::InfoCollector hardware_collector;
-  this->get_io_node_plain()->get_info(hardware_collector, level);
-  ci.add("io", hardware_collector);
-
-  opmonlib::InfoCollector endpoint_collector;
-  get_endpoint_node_plain(0)->get_info(endpoint_collector, level);
-  ci.add("endpoint", endpoint_collector);
+  TopDesign::get_info(mon_data);
+  EndpointDesignInterface::get_info(0, mon_data.endpoint_info);
 }
 //-----------------------------------------------------------------------------
 

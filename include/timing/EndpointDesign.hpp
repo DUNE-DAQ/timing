@@ -50,10 +50,10 @@ public:
    */
   void configure() const override;
 
-  /**
-   * @brief    Give info to collector.
-   */  
-  void get_info(opmonlib::InfoCollector& ci, int level) const override;
+  // /**
+  //  * @brief    Give info to collector.
+  //  */  
+  // void get_info(opmonlib::InfoCollector& ci, int level) const override;
 
   /**
    * @brief      Read endpoint firmware version.
@@ -67,6 +67,12 @@ public:
    *
    */
   void validate_firmware_version() const override;
+
+  /**
+   * @brief    Give info to collector.
+   */
+  void get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const override;
+
 };
 
 } // namespace timing

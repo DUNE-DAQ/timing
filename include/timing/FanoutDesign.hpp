@@ -45,10 +45,10 @@ public:
    */
   std::string get_status(bool print_out = false) const override;
 
-  /**
-   * @brief    Give info to collector.
-   */  
-  void get_info(opmonlib::InfoCollector& ci, int level) const override;
+  // /**
+  //  * @brief    Give info to collector.
+  //  */  
+  // void get_info(opmonlib::InfoCollector& ci, int level) const override;
 
   /**
    * @brief      Prepare the timing fanout for data taking.
@@ -63,6 +63,11 @@ public:
   void validate_firmware_version() const override { /*firmware version in fanout design right now*/}
 
   uint32_t read_firmware_version() const override { /*firmware version in fanout design right now*/}
+
+  /**
+   * @brief    Give info to collector.
+   */
+  void get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const override;
 };
 
 } // namespace timing

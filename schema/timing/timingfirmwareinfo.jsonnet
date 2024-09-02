@@ -7,8 +7,8 @@ local thi = import "timinghardwareinfo.jsonnet";
 local ns = "dunedaq.timing.timingfirmwareinfo";
 local s = moo.oschema.schema(ns);
 
-local teih = moo.oschema.hier(tei);
-local thih = moo.oschema.hier(thi);
+local teih = moo.oschema.hier(tei).dunedaq.timing.timingendpointinfo;
+local thih = moo.oschema.hier(thi).dunedaq.timing.timinghardwareinfo;
 
 
 // A temporary schema construction context.
@@ -90,6 +90,19 @@ local timingfirmwareinfo = {
         s.field("enabled", self.bool_data,
                 doc="HSI triggering enabled"),
     ], doc="HSI monitor data"),
+
+    // TODO think about designs where only master/endpoint present
+    timing_hw_info: s.record("TimingDeviceInfo", [
+        s.field("device", self.text_data,
+                doc="Device name"),
+        s.field("pll_info", thih.TimingPLLMonitorData,
+                doc="IO info payload"),
+        s.field("master_info", self.master_fw_mon_data,
+                doc="Master info payload"),
+        s.field("endpoint_info", teih.TimingEndpointInfo,
+                doc="Endpoint info payload")
+
+    ], doc="Timing hw cmd structure")
 };
 
 // Output a topologically sorted array.

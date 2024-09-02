@@ -15,7 +15,6 @@
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
-#include "opmonlib/InfoCollector.hpp"
 #include "ers/Issue.hpp"
 
 // C++ Headers
@@ -54,10 +53,6 @@ public:
                        uint32_t aValue = 0x0, // NOLINT(build/unsigned)
                        bool dispatch = true) const;
 
-  /**
-   * @brief    Give info to collector.
-   */
-  virtual void get_info(opmonlib::InfoCollector&, int) const {}
 };
 
 } // namespace timing

@@ -14,7 +14,9 @@
 
 #include "timing/I2CMasterNode.hpp"
 #include "timing/SIChipSlave.hpp"
-#include "timing/timinghardwareinfo/InfoStructs.hpp"
+
+#include "timing/timinghardwareinfo/Structs.hpp"
+#include "timing/timinghardwareinfo/Nljs.hpp"
 
 #include "ers/Issue.hpp"
 

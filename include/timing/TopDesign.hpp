@@ -16,6 +16,9 @@
 #include "TimingIssues.hpp"
 #include "timing/TopDesignInterface.hpp"
 
+#include "timing/timingfirmwareinfo/Structs.hpp"
+#include "timing/timingfirmwareinfo/Nljs.hpp"
+
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
@@ -80,6 +83,14 @@ public:
     if (print_out)
       TLOG() << info;
     return info;
+  }
+
+  /**
+   * @brief    Give info to collector.
+   */
+  void get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const override
+  {
+    get_io_node_plain()->get_pll()->get_info(mon_data.pll_info);
   }
 };
 

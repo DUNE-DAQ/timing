@@ -15,8 +15,6 @@
 #include "TimingIssues.hpp"
 #include "timing/I2CMasterNode.hpp"
 #include "timing/I2CSlave.hpp"
-#include "timing/timinghardwareinfo/InfoStructs.hpp"
-#include "timing/timinghardwareinfo/InfoNljs.hpp"
 #include "timing/toolbox.hpp"
 
 #include "ers/Issue.hpp"
@@ -182,15 +180,11 @@ public:
    */
   std::string get_status(bool print_out = false) const;
 
-  /**
-   * @brief      Get and fill SFP hardware data
-   */
-  void get_info(timinghardwareinfo::TimingSFPMonitorData& mon_data) const;
+  // /**
+  //  * @brief      Get and fill SFP hardware data
+  //  */
+  // void get_info(timinghardwareinfo::TimingSFPMonitorData& mon_data) const;
 
-  /**
-   * @brief    Give info to collector.
-   */
-  void get_info(opmonlib::InfoCollector& ci, int level) const override;
 
 protected:
   const std::vector<uint32_t> m_calibration_parameter_start_addresses; // NOLINT(build/unsigned)
