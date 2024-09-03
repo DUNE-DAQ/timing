@@ -36,10 +36,10 @@ IRIGTimestampNode::get_status(bool print_out) const
   status << "Timestamp: 0x" << std::hex << read_timestamp() << std::endl;
 
   auto ctrl_subnodes = read_sub_nodes(getNode("csr.ctrl"));
-  status << format_reg_table(ctrl_subnodes, "TS gen ctrl");
+  status << format_reg_table(ctrl_subnodes, "IRIG ts ctrl");
 
   auto stat_subnodes = read_sub_nodes(getNode("csr.stat"));
-  status << format_reg_table(stat_subnodes, "TS gen state");
+  status << format_reg_table(stat_subnodes, "IRIG ts state");
 
   auto date_subnodes = read_sub_nodes(getNode("csr.irig_date"));
   status << format_reg_table(date_subnodes, "IRIG date");
