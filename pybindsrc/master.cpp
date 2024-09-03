@@ -8,6 +8,7 @@
 
 #include "timing/MasterNode.hpp"
 #include "timing/UpstreamCDRNode.hpp"
+#include "timing/IRIGTimestampNode.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -56,6 +57,12 @@ register_master(py::module& m)
     .def(py::init<const uhal::Node&>())
     .def("get_status", &timing::UpstreamCDRNode::get_status, py::arg("print_out") = false)
     .def("resync", &timing::UpstreamCDRNode::resync);
+
+  py::class_<timing::IRIGTimestampNode, uhal::Node>(m, "IRIGTimestampNode")
+    .def(py::init<const uhal::Node&>())
+    .def("get_status", &timing::IRIGTimestampNode::get_status, py::arg("print_out") = false)
+    .def("set_irig_epoch", &timing::IRIGTimestampNode::set_irig_epoch, py::arg("irig_epoch"))
+    ;
 
 }
 
