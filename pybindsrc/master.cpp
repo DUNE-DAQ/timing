@@ -44,7 +44,7 @@ register_master(py::module& m)
     .def("disable_periodic_fl_cmd", &timing::MasterNode::disable_periodic_fl_cmd)
     .def("get_status", &timing::MasterNode::get_status, py::arg("print_out") = false)
     .def("get_status_with_date", &timing::MasterNode::get_status_with_date, py::arg("clock_frequency_hz"), py::arg("print_out") = false)
-    .def("sync_timestamp", &timing::MasterNode::sync_timestamp)
+    .def("sync_timestamp", &timing::MasterNode::sync_timestamp, py::arg("source"))
     .def("disable_timestamp_broadcast", &timing::MasterNode::disable_timestamp_broadcast)
     .def("enable_timestamp_broadcast", &timing::MasterNode::enable_timestamp_broadcast)
     .def("configure_endpoint_command_decoder", &timing::MasterNode::configure_endpoint_command_decoder,

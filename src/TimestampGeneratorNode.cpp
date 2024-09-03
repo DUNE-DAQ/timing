@@ -93,7 +93,7 @@ TimestampGeneratorNode::read_sw_init_timestamp() const
 
 //-----------------------------------------------------------------------------
 void
-TimestampGeneratorNode::set_timestamp(uint8_t mode) const // NOLINT(build/unsigned)
+TimestampGeneratorNode::set_timestamp(TimestampSource source) const // NOLINT(build/unsigned)
 {
   // TODO put somewhere more accessible
   const uint clock_frequency_hz = 62500000;
@@ -101,20 +101,19 @@ TimestampGeneratorNode::set_timestamp(uint8_t mode) const // NOLINT(build/unsign
   const uint64_t old_timestamp = read_timestamp(); // NOLINT(build/unsigned)
   TLOG() << "Reading old timestamp: " << format_reg_value(old_timestamp) << ", " << format_timestamp(old_timestamp, clock_frequency_hz);
 
-  // TODO mode as enum?
-  getNode("csr.ctrl.tstamp_source_sel").write(mode);
+  getNode("csr.ctrl.tstamp_source_sel").write(source);
 
   uint64_t now_timestamp;
-  if (mode == 1)
+  if (source == kSoftware)
   {
     now_timestamp = get_milliseconds_since_epoch() * (clock_frequency_hz / 1000); // NOLINT(build/unsigned)
   }
-  else if (mode == 2)
+  else if (source == kMixed)
   {
     now_timestamp = get_seconds_since_epoch() * clock_frequency_hz ; // NOLINT(build/unsigned)
   }
 
-  if (mode != 0)
+  if (source != kUpstream)
   {
     TLOG() << "New software timestamp: " << format_reg_value(now_timestamp) << ", " << format_timestamp(now_timestamp, clock_frequency_hz);
     // Take the timestamp and split it up

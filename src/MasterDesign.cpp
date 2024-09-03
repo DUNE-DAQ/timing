@@ -59,8 +59,8 @@ MasterDesign::read_master_timestamp() const
 void
 MasterDesign::sync_timestamp() const
 {
-  auto dts_clock_frequency = this->get_io_node_plain()->read_firmware_frequency();
-  get_master_node_plain()->sync_timestamp(dts_clock_frequency);
+  // keep previous behaviour for now, TODO: pass through correct parameter
+  get_master_node_plain()->sync_timestamp(kSoftware);
 }
 //-----------------------------------------------------------------------------
 

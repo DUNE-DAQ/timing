@@ -297,9 +297,9 @@ MasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned
 
 //-----------------------------------------------------------------------------
 void
-MasterNode::sync_timestamp(uint8_t mode) const // NOLINT(build/unsigned)
+MasterNode::sync_timestamp(TimestampSource source) const // NOLINT(build/unsigned)
 {
-  set_timestamp(mode);
+  set_timestamp(source);
 
   enable_timestamp_broadcast();
   TLOG() << "Timestamp broadcast enabled";
@@ -316,9 +316,9 @@ MasterNode::read_timestamp() const
 
 //-----------------------------------------------------------------------------
 void
-MasterNode::set_timestamp(uint8_t mode) const // NOLINT(build/unsigned)
+MasterNode::set_timestamp(TimestampSource source) const // NOLINT(build/unsigned)
 {
-  getNode<TimestampGeneratorNode>("tstamp").set_timestamp(mode);
+  getNode<TimestampGeneratorNode>("tstamp").set_timestamp(source);
 }
 //-----------------------------------------------------------------------------
 

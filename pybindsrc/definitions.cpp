@@ -117,6 +117,12 @@ register_definitions(py::module& m)
         .value("kInput3", kInput3)
         .export_values();
 
+    py::enum_<TimestampSource>(m, "TimestampSource")
+        .value("kUpstream", kUpstream)
+        .value("kSoftware", kSoftware)
+        .value("kMixed", kMixed)
+        .export_values();
+
 	m.attr("kBoardNameMap") = timing::IONode::get_board_type_map();
 	m.attr("kCarrierNameMap") = timing::IONode::get_carrier_type_map();
 	m.attr("kDesignNameMap") = timing::IONode::get_design_type_map();

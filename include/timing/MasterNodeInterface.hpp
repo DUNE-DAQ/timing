@@ -52,14 +52,14 @@ public:
   virtual uint64_t read_timestamp() const = 0; // NOLINT(build/unsigned)
 
   /**
-   * @brief      Set the timestamp to current time.
+   * @brief      Set the timestamp
    */
-  virtual void set_timestamp(uint8_t mode) const = 0; // NOLINT(build/unsigned)
+  virtual void set_timestamp(TimestampSource source) const = 0; // NOLINT(build/unsigned)
 
   /**
-   * @brief     Set timestamp to current machine time
+   * @brief     Set timestamp, enable transmission
    */
-  virtual void sync_timestamp(uint8_t mode) const = 0; // NOLINT(build/unsigned)
+  virtual void sync_timestamp(TimestampSource source) const = 0; // NOLINT(build/unsigned)
 
   /**
    * @brief     Control the tx line of endpoint sfp

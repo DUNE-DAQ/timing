@@ -15,6 +15,7 @@
 // PDT Headers
 #include "TimingIssues.hpp"
 #include "timing/TimingNode.hpp"
+#include "timing/definitions.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -70,9 +71,9 @@ public:
   uint64_t read_sw_init_timestamp() const; // NOLINT(build/unsigned)
 
   /**
-   * @brief      Read the current timestamp words.
+   * @brief      Initialise timestamp.
    */
-  void set_timestamp(uint8_t mode) const; // NOLINT(build/unsigned)
+  void set_timestamp(TimestampSource source) const; // NOLINT(build/unsigned)
 };
 
 } // namespace timing

@@ -91,7 +91,7 @@ public:
   /**
    * @brief     Set timestamp to current machine time
    */
-  void sync_timestamp(uint8_t mode) const override; // NOLINT(build/unsigned)
+  void sync_timestamp(TimestampSource source) const override; // NOLINT(build/unsigned)
 
     /**
    * @brief      Read the current timestamp word.
@@ -103,7 +103,7 @@ public:
   /**
    * @brief      Set the timestamp to current time.
    */
-  void set_timestamp(uint8_t mode) const override; // NOLINT(build/unsigned)
+  void set_timestamp(TimestampSource source) const override; // NOLINT(build/unsigned)
 
   /**
    * @brief     Fill the PD-I master monitoring structure.
