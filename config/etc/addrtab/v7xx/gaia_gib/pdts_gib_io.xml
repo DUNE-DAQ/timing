@@ -24,9 +24,11 @@
 					<node id="i2c_exten_intr1" mask="0x20"/>
 					<node id="temp_intr" mask="0x40"/>
 					<node id="sfp_tx_disable" mask="0x1F80"/>
+					<node id="mmcm_10_ok" mask="0x2000"/>
+					<node id="mmcm_10_sticky" mask="0x4000"/>
 				</node>
 		</node>
-		<node id="config" address="0x2" description="board/firmware config" fwinfo="endpoint;width=0">
+		<node id="config" address="0x2" description="board/firmware config" fwinfo="endpoint;width=1">
 			<node id="no_cdr" mask="0xff000000"/>
 		    <node id="board_type" mask="0xff0000"/>
 		    <node id="carrier_type" mask="0xff00"/>
@@ -34,7 +36,7 @@
 		    <node id="clock_frequency" address="0x1" mask="0xffffffff"/>
 		</node>
 		<node id="i2c" address="0x08" module="file://opencores_i2c.xml" class="I2CMasterNode"
-			parameters="AX3_Switch=0x21;UID_PROM=0x50;PLL=0x68;SFPExpander0=0x74;SFPExpander1=0x75;I2CSwitch=0x70;TempMon=0x48;CDR=0x40;SFP_EEProm=0x50;SFP_Diag=0x51;PMon5V=0xCE;PMon3V3=0xD0;PMon2V5=0xD2;PMon1V8=0xD4"
+			parameters="UID_PROM=0x50;PLL=0x68;SFPExpander0=0x74;SFPExpander1=0x75;I2CSwitch=0x70;TempMon=0x48;CDR=0x40;SFP_EEProm=0x50;SFP_Diag=0x51;PMon5V=0xCE;PMon3V3=0xD0;PMon2V5=0xD2;PMon1V8=0xD4"
 		/>
 		<node id="freq" address="0x20" module="file://ipbus_freq_ctr.xml" class="FrequencyCounterNode"/>
 </node>
