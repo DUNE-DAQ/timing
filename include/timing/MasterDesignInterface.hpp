@@ -15,6 +15,7 @@
 // PDT Headers
 #include "timing/TopDesign.hpp"
 #include "timing/MasterNodeInterface.hpp"
+#include "timing/definitions.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -50,7 +51,7 @@ public:
    * @brief      Sync timestamp to current machine value.
    *
    */
-  virtual void sync_timestamp() const = 0;
+  virtual void sync_timestamp(TimestampSource source) const = 0;
   
   /**
    * @brief      Measure the endpoint round trip time.

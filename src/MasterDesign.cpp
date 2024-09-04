@@ -42,8 +42,7 @@ MasterDesign::configure() const
   // Hard resets
   this->reset_io(kFreeRun); // master design is normally stand-alone; add posibility override clock source via config in future
 
-  // Set timestamp to current time
-  this->sync_timestamp();
+  this->sync_timestamp(kSoftware); // keep previous behaviour for now, TODO: pass through correct parameter
 }
 //-----------------------------------------------------------------------------
 
@@ -57,10 +56,9 @@ MasterDesign::read_master_timestamp() const
 
 //-----------------------------------------------------------------------------
 void
-MasterDesign::sync_timestamp() const
+MasterDesign::sync_timestamp(TimestampSource source) const
 {
-  // keep previous behaviour for now, TODO: pass through correct parameter
-  get_master_node_plain()->sync_timestamp(kSoftware);
+  get_master_node_plain()->sync_timestamp(source);
 }
 //-----------------------------------------------------------------------------
 

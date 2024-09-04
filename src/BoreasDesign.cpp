@@ -53,8 +53,7 @@ BoreasDesign::configure() const
   // Hard resets
   reset_io(kFreeRun); // boreas design is normally stand-alone; add posibility override clock source via config in future
 
-  // Set timestamp to current time
-  sync_timestamp();
+  sync_timestamp(kSoftware); // keep previous behaviour for now, TODO: pass through correct parameter
 
   // configure hsi
   // get_his_node().

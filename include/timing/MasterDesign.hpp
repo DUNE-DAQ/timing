@@ -59,7 +59,7 @@ public:
    * @brief      Sync timestamp to current machine value.
    *
    */
-  void sync_timestamp() const override;
+  void sync_timestamp(TimestampSource source) const override;
   
   /**
    * @brief      Measure the endpoint round trip time.

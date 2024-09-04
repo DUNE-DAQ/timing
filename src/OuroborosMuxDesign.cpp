@@ -54,8 +54,7 @@ OuroborosMuxDesign::configure() const
   // Hard resets
   this->reset_io(kFreeRun); // ouroboros design is normally stand-alone; add posibility override clock source via config in future
 
-  // Set timestamp to current time
-  this->sync_timestamp();
+  this->sync_timestamp(kSoftware); // keep previous behaviour for now, TODO: pass through correct parameter
 }
 //-----------------------------------------------------------------------------
 

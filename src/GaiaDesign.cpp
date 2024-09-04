@@ -44,9 +44,13 @@ GaiaDesign::configure() const
   // Hard reset
   this->reset_io(clock_source); // gaia normally takes clock from upstream GPS; add posibility override clock source via config in future
 
-  if (clock_source == kFreeRun) {
-    // Set timestamp to current time
-    this->sync_timestamp();
+  if (clock_source == kFreeRun)
+  {
+    this->sync_timestamp(kSoftware); // keep previous behaviour for now, TODO: pass through correct parameter
+  }
+  else
+  {
+    this->sync_timestamp(kUpstream);
   }
 }
 //-----------------------------------------------------------------------------
