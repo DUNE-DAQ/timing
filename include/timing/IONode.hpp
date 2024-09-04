@@ -309,6 +309,7 @@ protected:
                                                                     { 0xfc0fe700d289, kPC069b },
                                                                     { 0xfc0fe700d298, kPC069b },
                                                                     { 0xfc0fe700c28b, kPC069b },
+                                                                    { 0x049162b1d4bf, kMIBRev2 }
   };
 
   static inline const std::map<ClockSource, std::string> clock_source_map = {
