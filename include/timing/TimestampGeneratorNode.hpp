@@ -25,6 +25,11 @@
 #include <string>
 
 namespace dunedaq {
+ERS_DECLARE_ISSUE(timing,                                                                     ///< Namespace
+                  TimestampNotReady,                                                          ///< Issue class name
+                  " Timestamp not ready in time; loaded: " << loaded << ", error: " << error, ///< Message
+                  ((uint32_t)loaded)((uint32_t)error)                                         ///< Message parameters // NOLINT
+)
 namespace timing {
 
 /**

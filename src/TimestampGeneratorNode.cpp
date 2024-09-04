@@ -150,7 +150,7 @@ TimestampGeneratorNode::set_timestamp(TimestampSource source) const // NOLINT(bu
     auto ms_since_start = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
 
     if (ms_since_start.count() > 1000)
-      throw ReceiverNotReady(ERS_HERE, ts_loaded.value(), ts_error.value());
+      throw TimestampNotReady(ERS_HERE, ts_loaded.value(), ts_error.value());
 
     std::this_thread::sleep_for(std::chrono::microseconds(10));
   }
