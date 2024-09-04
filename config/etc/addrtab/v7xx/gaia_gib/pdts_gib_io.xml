@@ -36,7 +36,7 @@
 		    <node id="clock_frequency" address="0x1" mask="0xffffffff"/>
 		</node>
 		<node id="i2c" address="0x08" module="file://opencores_i2c.xml" class="I2CMasterNode"
-			parameters="UID_PROM=0x50;PLL=0x68;SFPExpander0=0x74;SFPExpander1=0x75;I2CSwitch=0x70;TempMon=0x48;CDR=0x40;SFP_EEProm=0x50;SFP_Diag=0x51;PMon5V=0xCE;PMon3V3=0xD0;PMon2V5=0xD2;PMon1V8=0xD4"
+			parameters="AX3_Switch=0x21;UID_PROM=0x50;PLL=0x68;SFPExpander0=0x74;SFPExpander1=0x75;I2CSwitch=0x70;TempMon=0x48;CDR=0x40;SFP_EEProm=0x50;SFP_Diag=0x51;PMon5V=0xCE;PMon3V3=0xD0;PMon2V5=0xD2;PMon1V8=0xD4"
 		/>
 		<node id="freq" address="0x20" module="file://ipbus_freq_ctr.xml" class="FrequencyCounterNode"/>
 </node>
