@@ -101,7 +101,9 @@ TimestampGeneratorNode::set_timestamp(TimestampSource source) const // NOLINT(bu
   const uint64_t old_timestamp = read_timestamp(); // NOLINT(build/unsigned)
   TLOG() << "Reading old timestamp: " << format_reg_value(old_timestamp) << ", " << format_timestamp(old_timestamp, clock_frequency_hz);
 
+  getNode("csr.ctrl.rst").write(0x1);
   getNode("csr.ctrl.tstamp_source_sel").write(source);
+  getClient().dispatch();
 
   uint64_t now_timestamp;
   if (source == kSoftware)
@@ -124,8 +126,9 @@ TimestampGeneratorNode::set_timestamp(TimestampSource source) const // NOLINT(bu
     getNode("csr.tstamp_sw_init_h").write(now_ts_high);
   }
 
-  getNode("csr.ctrl.tstamp_load").write(0x1);
-  getNode("csr.ctrl.tstamp_load").write(0x0);
+  getNode("csr.ctrl.rst").write(0x0);
+  getNode("csr.ctrl.load").write(0x1);
+  getNode("csr.ctrl.load").write(0x0);
   getClient().dispatch();
 
   auto start = std::chrono::high_resolution_clock::now();
