@@ -1,8 +1,8 @@
 <node id="TOP" class="GaiaDesign">
     <node id="io" address="0x0" module="file://pdts_gib_io.xml"/>
-    <node id="epmon" address="0x100" module="file://pdts_ep_mon.xml"/> 
+    <node id="epmon" address="0x100" module="file://pdts_ep_mon.xml"/>
     <node id="master" address="0x400" module="file://pdts_master.xml"/>
-    <node id="irig_top" address="0x800" module="file://dts_time_source.xml"/>
+    <node id="irig_time_source" address="0x800" module="file://irig_ts_source.xml"/>
     <node id="us_mux" address="0xC00" module="file://pdts_upstream_mux.xml"/>
     <node id="cdr0" address="0x1000" module="file://pdts_upstream_cdr.xml"/> 
     <node id="cdr1" address="0x1100" module="file://pdts_upstream_cdr.xml"/> 

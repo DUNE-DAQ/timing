@@ -24,9 +24,11 @@
 					<node id="i2c_exten_intr1" mask="0x20"/>
 					<node id="temp_intr" mask="0x40"/>
 					<node id="sfp_tx_disable" mask="0x1F80"/>
+					<node id="mmcm_10_ok" mask="0x2000"/>
+					<node id="mmcm_10_sticky" mask="0x4000"/>
 				</node>
 		</node>
-		<node id="config" address="0x2" description="board/firmware config" fwinfo="endpoint;width=0">
+		<node id="config" address="0x2" description="board/firmware config" fwinfo="endpoint;width=1">
 			<node id="no_cdr" mask="0xff000000"/>
 		    <node id="board_type" mask="0xff0000"/>
 		    <node id="carrier_type" mask="0xff00"/>

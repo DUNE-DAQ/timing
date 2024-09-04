@@ -16,7 +16,7 @@ from os.path import join, expandvars
 from timing.core import SI534xSlave, I2CExpanderSlave
 
 
-from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardMIB
+from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardMIB, kBoardGIB
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap
 
@@ -95,14 +95,23 @@ def uuid(obj):
 
     lDevice = obj.mDevice
     lBoardType = obj.mBoardType
+    lIO = lDevice.getNode('io')
 
     # Detect the on-board eprom and read the board UID
-    if lBoardType in [kBoardPC059, kBoardTLU, kBoardMIB]:
+    if lBoardType in [kBoardPC059, kBoardTLU, kBoardMIB, kBoardGIB]:
         lUID = lDevice.getNode('io.i2c')
     else:
         lUID = lDevice.getNode('io.uid_i2c')
 
-    lPROMSlave = 'UID_PROM' if lBoardType in [kBoardTLU,kBoardMIB] else 'FMC_UID_PROM'
+    lPROMSlave = 'UID_PROM' if lBoardType in [kBoardTLU,kBoardMIB,kBoardGIB] else 'FMC_UID_PROM'
+
+    if lBoardType == kBoardGIB:
+        lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x0)
+        lDevice.dispatch()
+        lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x1)
+        lDevice.dispatch()
+        lIO.set_i2c_mux_channels(0x1)
+
     lValues = lUID.get_slave(lPROMSlave).read_i2cArray(0xfa, 6)
     lUniqueID = 0x0
     for lVal in lValues:

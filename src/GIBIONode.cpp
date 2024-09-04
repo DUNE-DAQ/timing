@@ -18,7 +18,7 @@ UHAL_REGISTER_DERIVED_NODE(GIBIONode)
 
 //-----------------------------------------------------------------------------
 GIBIONode::GIBIONode(const uhal::Node& node)
-  : IONode(node, "i2c", "i2c", { "PLL" }, { "PLL", "SFP CDR 0", "SFP CDR 1", "SFP CDR 2", "SFP CDR 3", "SFP CDR 4", "SFP CDR 5" }, { "i2c", "i2c", "i2c", "i2c", "i2c", "i2c" })
+  : IONode(node, "i2c", "i2c", { "PLL" }, { "PLL", "SFP CDR 0", "SFP CDR 1", "SFP CDR 2", "SFP CDR 3", "SFP CDR 4", "SFP CDR 5", "10 MHz" }, { "i2c", "i2c", "i2c", "i2c", "i2c", "i2c" })
 {
 }
 //-----------------------------------------------------------------------------
