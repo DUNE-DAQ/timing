@@ -122,6 +122,12 @@ enum TimestampSource
   kMixed = 2
 };
 
+enum IRIGEpoch
+{
+  kTAI = 0,
+  kUNIX = 1
+};
+
 struct ActiveEndpointConfig
 {
   std::string id;

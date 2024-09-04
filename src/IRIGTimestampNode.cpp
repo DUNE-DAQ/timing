@@ -78,7 +78,7 @@ IRIGTimestampNode::read_timestamp() const
 
 //-----------------------------------------------------------------------------
 void
-IRIGTimestampNode::set_irig_epoch(uint8_t irig_epoch) const // NOLINT(build/unsigned)
+IRIGTimestampNode::set_irig_epoch(IRIGEpoch irig_epoch) const // NOLINT(build/unsigned)
 {
   getNode("csr.ctrl.rst").write(0x1);
   getNode("csr.ctrl.irig_epoch").write(irig_epoch);

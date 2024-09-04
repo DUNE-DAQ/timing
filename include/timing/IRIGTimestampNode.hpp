@@ -15,6 +15,7 @@
 // PDT Headers
 #include "TimingIssues.hpp"
 #include "timing/TimingNode.hpp"
+#include "timing/definitions.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -58,7 +59,7 @@ public:
   /**
    * @brief      Set IRIG epoch: TAI/UNIX
    */
-  void set_irig_epoch(uint8_t irig_epoch) const; // NOLINT(build/unsigned)
+  void set_irig_epoch(IRIGEpoch irig_epoch) const; // NOLINT(build/unsigned)
 
   /**
    * @brief      Read the current pps ctr word.

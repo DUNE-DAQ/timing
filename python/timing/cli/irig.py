@@ -5,7 +5,7 @@ import collections
 
 from . import toolbox
 import timing.common.definitions as defs
-from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
+from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns, IRIGEpoch
 
 from click import echo, style, secho
 import time
@@ -69,12 +69,14 @@ def status(ctx, obj):
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-@irig.command('set-epoch', short_help="Set IRIG epoch: 0 - TAI, 1 - UNIX")
+@irig.command('set-epoch', short_help="Set IRIG epoch: TAI or UNIX")
 @click.pass_obj
-@click.argument('epoch', type=toolbox.IntRange(0x0,0x1))
+@click.argument('epoch',  type=click.Choice(IRIGEpoch.__members__.keys()))
 def synctime(obj, epoch):
-    
+
     lDevice = obj.mDevice
     lIRIG = obj.mIRIG
-    lIRIG.set_irig_epoch(epoch)
+
+    lEpoch=IRIGEpoch.__members__[epoch]
+    lIRIG.set_irig_epoch(lEpoch)
 # ------------------------------------------------------------------------------
