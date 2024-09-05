@@ -170,6 +170,13 @@ get_milliseconds_since_epoch();
  * ""
  * @return
  */
+int64_t
+get_seconds_since_epoch();
+
+/**
+ * ""
+ * @return
+ */
 std::string
 format_timestamp(uhal::ValVector<uint32_t> raw_timestamp, uint32_t clock_frequency_hz); // NOLINT(build/unsigned)
 

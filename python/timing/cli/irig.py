@@ -1,10 +1,11 @@
 import click
+import sys
 
 import collections
 
 from . import toolbox
 import timing.common.definitions as defs
-from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
+from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns, IRIGEpoch
 
 from click import echo, style, secho
 import time
@@ -15,12 +16,12 @@ import time
 #  / _// _ \/ _  / _ \/ _ \/ / _ \/ __/
 # /___/_//_/\_,_/ .__/\___/_/_//_/\__/ 
 #              /_/                     
-@click.group('crt', invoke_without_command=True)
+@click.group('irig', invoke_without_command=True)
 @click.pass_obj
 @click.argument('device', callback=toolbox.validate_device, shell_complete=toolbox.completeDevices)
-def crt(obj, device):
+def irig(obj, device):
     '''
-    Endpoint master commands.
+    IRIG commands.
 
     \b
     DEVICE: uhal device identifier
@@ -31,12 +32,13 @@ def crt(obj, device):
     if obj.mTimeout:
         lDevice.setTimeoutPeriod(obj.mTimeout)
 
-    echo('Created crt device')
+    
+    echo('Created IRIG device')
     lTopDesign = lDevice.getNode('')
     lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
     lDevice.dispatch()
 
-    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards and lBoardInfo['design_type'].value() in kLibrarySupportedDesigns:        
+    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards and lBoardInfo['design_type'].value() in kLibrarySupportedDesigns:
         lTopDesign.validate_firmware_version()
         try:
             echo(lDevice.getNode('io').get_hardware_info())
@@ -44,40 +46,37 @@ def crt(obj, device):
             secho("Failed to retrieve hardware information! I2C issue? Initial board reset needed?", fg='yellow')
             e = sys.exc_info()[0]
             secho("Error: {}".format(e), fg='red')
-    # Ensure that target endpoint exists
 
     obj.mDevice = lDevice
-    obj.mCRTEndpoint = lDevice.getNode('endpoint0')
+    obj.mTopDesign = lDevice.getNode('')
+    obj.mIRIG = lDevice.getNode('irig_time_source')
 # ------------------------------------------------------------------------------
 
 
 # ------------------------------------------------------------------------------
-@crt.command('status')
+@irig.command('status')
 @click.pass_obj
-def status(obj):
+@click.pass_context
+def status(ctx, obj):
     '''
-    Print the status of CRT endpoint wrapper block.
+    Print the status of IRIG block.
     '''
 
     lDevice = obj.mDevice
-    lCRTEpt = obj.mCRTEndpoint
-    echo(lCRTEpt.get_status())
-# ------------------------------------------------------------------------------
-
-
-# ------------------------------------------------------------------------------
-@crt.command('configure', short_help="Configure the CRT endpoint for running")
-@click.argument('part', type=click.IntRange(0,4))
-@click.argument('pulsecmd', type=click.Choice(defs.kCommandIDs.keys()))
-@click.pass_obj
-def configure(obj, part, pulsecmd):
-    '''
-    Activate timing endpoint wrapper block.
-    '''
-
-    lDevice = obj.mDevice
-    lCRTEpt = obj.mCRTEndpoint
-    lCRTEpt.enable(part,defs.kCommandIDs[pulsecmd])
-    secho("CRT endpoint configured; partition: {}; cmd: {}".format(part, pulsecmd), fg='green')
-# ------------------------------------------------------------------------------
+    lIRIG = obj.mIRIG
     
+    echo(lIRIG.get_status())
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@irig.command('set-epoch', short_help="Set IRIG epoch: TAI or UNIX")
+@click.pass_obj
+@click.argument('epoch',  type=click.Choice(IRIGEpoch.__members__.keys()))
+def synctime(obj, epoch):
+
+    lDevice = obj.mDevice
+    lIRIG = obj.mIRIG
+
+    lEpoch=IRIGEpoch.__members__[epoch]
+    lIRIG.set_irig_epoch(lEpoch)
+# ------------------------------------------------------------------------------

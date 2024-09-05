@@ -180,7 +180,7 @@ tstamp2int(uhal::ValVector<uint32_t> raw_timestamp) // NOLINT(build/unsigned)
 
 //-----------------------------------------------------------------------------
 int64_t
-get_milliseconds_since_epoch()
+get_seconds_since_epoch()
 {
   // get the current time
   const auto now = std::chrono::system_clock::now();
@@ -189,9 +189,27 @@ get_milliseconds_since_epoch()
   const auto epoch = now.time_since_epoch();
 
   // cast the duration into seconds
-  const auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(epoch);
+  const auto seconds = std::chrono::duration_cast<std::chrono::seconds>(epoch);
 
   // return the number of seconds
+  return seconds.count();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+int64_t
+get_milliseconds_since_epoch()
+{
+  // get the current time
+  const auto now = std::chrono::system_clock::now();
+
+  // transform the time into a duration since the epoch
+  const auto epoch = now.time_since_epoch();
+
+  // cast the duration into milliseconds
+  const auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(epoch);
+
+  // return the number of milliseconds
   return milliseconds.count();
 }
 //-----------------------------------------------------------------------------

@@ -8,9 +8,7 @@
 
 #include "timing/CRTNode.hpp"
 #include "timing/EndpointNode.hpp"
-#include "timing/PDIEndpointNode.hpp"
 #include "timing/HSINode.hpp"
-#include "timing/PDIHSIEndpointNode.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -24,21 +22,6 @@ namespace python {
 void
 register_endpoint(py::module& m)
 {
-  py::class_<timing::PDIEndpointNode, uhal::Node>(m, "PDIEndpointNode")
-    .def(py::init<const uhal::Node&>())
-    .def("disable", &timing::PDIEndpointNode::disable)
-    .def("enable", &timing::PDIEndpointNode::enable, py::arg("address") = 0, py::arg("partition") = 0)
-    .def("reset", &timing::PDIEndpointNode::reset, py::arg("address") = 0, py::arg("partition") = 0)
-    .def("read_buffer_count", &timing::PDIEndpointNode::read_buffer_count)
-    .def("read_data_buffer", &timing::PDIEndpointNode::read_data_buffer, py::arg("read_all") = false)
-    .def("get_data_buffer_table",
-         &timing::PDIEndpointNode::get_data_buffer_table,
-         py::arg("read_all") = false,
-         py::arg("print_out") = false)
-    .def("read_version", &timing::PDIEndpointNode::read_version)
-    .def("read_timestamp", &timing::PDIEndpointNode::read_timestamp)
-    .def("read_clock_frequency", &timing::PDIEndpointNode::read_clock_frequency);
-
   py::class_<timing::CRTNode, uhal::Node>(m, "CRTNode")
     .def(py::init<const uhal::Node&>())
     .def("disable", &timing::CRTNode::disable)
@@ -74,13 +57,6 @@ register_endpoint(py::module& m)
     .def("enable", &timing::EndpointNode::enable, py::arg("address") = 0, py::arg("partition") = 0)
     .def("reset", &timing::EndpointNode::reset, py::arg("address") = 0, py::arg("partition") = 0)
     .def("get_status", &timing::EndpointNode::get_status, py::arg("print_out") = false);
-
-    py::class_<timing::PDIHSIEndpointNode, uhal::Node>(m, "PDIHSIEndpointNode")
-    .def(py::init<const uhal::Node&>())
-    .def("disable", &timing::PDIHSIEndpointNode::disable)
-    .def("enable", &timing::PDIHSIEndpointNode::enable, py::arg("address") = 0, py::arg("partition") = 0)
-    .def("reset", &timing::PDIHSIEndpointNode::reset, py::arg("address") = 0, py::arg("partition") = 0)
-    .def("get_status", &timing::PDIHSIEndpointNode::get_status, py::arg("print_out") = false);
 }
 
 } // namespace python

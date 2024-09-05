@@ -115,6 +115,19 @@ enum ClockSource
   kFreeRun = 255
 };
 
+enum TimestampSource
+{
+  kUpstream = 0,
+  kSoftware = 1,
+  kMixed = 2
+};
+
+enum IRIGEpoch
+{
+  kTAI = 0,
+  kUNIX = 1
+};
+
 struct ActiveEndpointConfig
 {
   std::string id;

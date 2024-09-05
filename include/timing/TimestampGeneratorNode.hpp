@@ -15,6 +15,7 @@
 // PDT Headers
 #include "TimingIssues.hpp"
 #include "timing/TimingNode.hpp"
+#include "timing/definitions.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -24,6 +25,11 @@
 #include <string>
 
 namespace dunedaq {
+ERS_DECLARE_ISSUE(timing,                                                                     ///< Namespace
+                  TimestampNotReady,                                                          ///< Issue class name
+                  " Timestamp not ready in time; loaded: " << loaded << ", error: " << error, ///< Message
+                  ((uint32_t)loaded)((uint32_t)error)                                         ///< Message parameters // NOLINT
+)
 namespace timing {
 
 /**
@@ -56,9 +62,23 @@ public:
   uint64_t read_timestamp() const; // NOLINT(build/unsigned)
 
   /**
-   * @brief      Read the current timestamp words.
+   * @brief      Read the starting timestamp words.
+   *
+   * @return     { description_of_the_return_value }
    */
-  void set_timestamp(uint64_t timestamp) const; // NOLINT(build/unsigned)
+  uint64_t read_start_timestamp() const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Read the software init timestamp words.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  uint64_t read_sw_init_timestamp() const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Initialise timestamp.
+   */
+  void set_timestamp(TimestampSource source) const; // NOLINT(build/unsigned)
 };
 
 } // namespace timing

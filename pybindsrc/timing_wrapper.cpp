@@ -16,7 +16,6 @@ namespace timing {
 namespace python {
 	
 	extern void register_i2c(py::module &);
-	extern void register_partition(py::module &);
 	extern void register_endpoint(py::module &);
 	extern void register_io(py::module &);
 	extern void register_master(py::module &);
@@ -32,7 +31,6 @@ PYBIND11_MODULE(_daq_timing_py, top_module) {
     py::module_ core_module = top_module.def_submodule("core");
     
     timing::python::register_i2c(core_module);
-    timing::python::register_partition(core_module);
     timing::python::register_endpoint(core_module);
     timing::python::register_io(core_module);
     timing::python::register_master(core_module);

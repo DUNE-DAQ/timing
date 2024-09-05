@@ -12,7 +12,6 @@
 #include "timing/FanoutDesign.hpp"
 #include "timing/OuroborosDesign.hpp"
 #include "timing/OuroborosMuxDesign.hpp"
-#include "timing/OverlordDesign.hpp"
 #include "timing/EndpointDesign.hpp"
 #include "timing/KerberosDesign.hpp"
 #include "timing/GaiaDesign.hpp"
@@ -29,41 +28,6 @@ namespace python {
 void
 register_top_designs(py::module& m)
 {
-
-  // Overlord
-  py::class_<timing::OverlordDesign, uhal::Node>(m, "OverlordDesign")
-    .def("read_firmware_version", &timing::OverlordDesign::read_firmware_version)
-    .def("validate_firmware_version", &timing::OverlordDesign::validate_firmware_version)
-    .def("sync_timestamp", &timing::OverlordDesign::sync_timestamp)
-    .def("get_status", &timing::OverlordDesign::get_status)
-    .def<void (timing::OverlordDesign::*)(uint32_t, double, bool) const>("enable_periodic_fl_cmd",
-         &timing::OverlordDesign::enable_periodic_fl_cmd,
-         py::arg("channel"),
-         py::arg("rate"),
-         py::arg("poisson"))
-    .def<void (timing::OverlordDesign::*)(uint32_t, uint32_t, double, bool) const>("enable_periodic_fl_cmd",
-         &timing::OverlordDesign::enable_periodic_fl_cmd,
-         py::arg("command"),
-         py::arg("channel"),
-         py::arg("rate"),
-         py::arg("poisson"))
-    .def("apply_endpoint_delay", 
-          &timing::OverlordDesign::apply_endpoint_delay,
-          py::arg("address"),
-          py::arg("coarse_delay"),
-          py::arg("fine_delay"),
-          py::arg("phase_delay"),
-          py::arg("measure_rtt") = false,
-          py::arg("control_sfp") = true,
-          py::arg("sfp_mux") = -1)
-    .def("measure_endpoint_rtt", 
-          &timing::OverlordDesign::measure_endpoint_rtt,
-          py::arg("address"),
-          py::arg("control_sfp") = true,
-          py::arg("sfp_mux") = -1)
-    .def("get_external_triggers_endpoint_node",
-         &timing::OverlordDesign::get_external_triggers_endpoint_node);
-
   // Boreas
   py::class_<timing::BoreasDesign, uhal::Node>(m, "BoreasDesign")
     .def("read_firmware_version", &timing::BoreasDesign::read_firmware_version)

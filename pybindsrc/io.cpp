@@ -175,6 +175,7 @@ register_io(py::module& m)
     .def("get_hardware_info", &timing::GIBIONode::get_hardware_info, py::arg("print_out") = false)
     .def("get_sfp_status", &timing::GIBIONode::get_sfp_status, py::arg("sfp_id"), py::arg("print_out") = false)
     .def("switch_sfp_soft_tx_control_bit", &timing::GIBIONode::switch_sfp_soft_tx_control_bit)
+    .def("set_i2c_mux_channels", &timing::GIBIONode::set_i2c_mux_channels)
     ;
 
 } // NOLINT

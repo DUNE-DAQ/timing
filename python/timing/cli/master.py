@@ -24,7 +24,7 @@ from timing.core import SI534xSlave, I2CExpanderSlave
 from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord
-from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap
+from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap, TimestampSource
 from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
 
 from timing.common.toolbox import format_firmware_version
@@ -112,12 +112,15 @@ def status(obj):
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-@master.command('synctime', short_help="Sync timestamps with computer local time.")
+@master.command('synctime', help="Sync timestamp, and enable broadcast. kMixed: TS value from SW, strobe from external")
 @click.pass_obj
-def synctime(obj):
+@click.argument('source', type=click.Choice(TimestampSource.__members__.keys()))
+def synctime(obj, source):
 
     lDesign = obj.mTopDesign
-    lDesign.sync_timestamp()
+    lMaster = obj.mMaster
+    lSource=TimestampSource.__members__[source]
+    lMaster.sync_timestamp(lSource)
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------

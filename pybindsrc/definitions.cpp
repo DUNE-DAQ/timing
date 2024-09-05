@@ -8,11 +8,8 @@
 
 #include "timing/definitions.hpp"
 #include "timing/EndpointNode.hpp"
-#include "timing/PDIEndpointNode.hpp"
 #include "timing/MasterNode.hpp"
 #include "timing/IONode.hpp"
-#include "timing/PDIFLCmdGeneratorNode.hpp"
-#include "timing/PartitionNode.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -120,19 +117,26 @@ register_definitions(py::module& m)
         .value("kInput3", kInput3)
         .export_values();
 
+    py::enum_<TimestampSource>(m, "TimestampSource")
+        .value("kUpstream", kUpstream)
+        .value("kSoftware", kSoftware)
+        .value("kMixed", kMixed)
+        .export_values();
+
+    py::enum_<IRIGEpoch>(m, "IRIGEpoch")
+        .value("kTAI", kTAI)
+        .value("kUNIX", kUNIX)
+        .export_values();
+
 	m.attr("kBoardNameMap") = timing::IONode::get_board_type_map();
 	m.attr("kCarrierNameMap") = timing::IONode::get_carrier_type_map();
 	m.attr("kDesignNameMap") = timing::IONode::get_design_type_map();
 	m.attr("kBoardRevisionMap") = timing::IONode::get_board_revision_map();
 	m.attr("kUIDRevisionMap") = timing::IONode::get_board_uid_revision_map();
 	m.attr("kClockConfigMap") = timing::IONode::get_clock_config_map();
-	m.attr("kCommandNames") = timing::PDIFLCmdGeneratorNode::get_command_map();
-	m.attr("kCommandIDs") = swap_commands_map(timing::PDIFLCmdGeneratorNode::get_command_map());
 	m.attr("kEpStates") = EndpointNode::get_endpoint_state_map();
-    m.attr("kPDIEpStates") = PDIEndpointNode::get_endpoint_state_map();
 	m.attr("kLibrarySupportedBoards") = timing::IONode::get_library_supported_boards();
     m.attr("kLibrarySupportedDesigns") = timing::IONode::get_library_supported_designs();
-	m.attr("kEventSize") = timing::PartitionNode::kWordsPerEvent;
     m.attr("kMasterFWMajorRequired") = MasterNode::required_major_firmware_version;
 }
 
