@@ -332,8 +332,9 @@ MasterNode::get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const
   auto state = read_sub_nodes(getNode("global.csr.stat"), false);
   getClient().dispatch();
 
-  mon_data.ts_en = control.at("ts_en").value();
-  mon_data.ts_err = state.at("ts_err").value();
+  mon_data.ts_bcast_enable = control.at("ts_en").value();
+  mon_data.ts_valid = state.at("ts_valid").value();
+  mon_data.ts_tx_err = state.at("ts_tx_err").value();
   mon_data.tx_err = state.at("tx_err").value();
   mon_data.ctrs_rdy = state.at("ctrs_rdy").value();
 
