@@ -17,6 +17,9 @@
 #include "timing/HSINode.hpp"
 #include "timing/EndpointDesignInterface.hpp"
 
+#include "timing/timingfirmwareinfo/Nljs.hpp"
+#include "timing/timingfirmwareinfo/Structs.hpp"
+
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
 
@@ -72,6 +75,24 @@ public:
   {
     uint32_t firmware_frequency = get_io_node_plain()->read_firmware_frequency(); // NOLINT(build/unsigned)
     get_hsi_node().configure_hsi(src, re_mask, fe_mask, inv_mask, rate, firmware_frequency, dispatch);
+  }
+
+  /**
+   * @brief    Give info to collector.
+   */
+  void get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const override
+  {
+    EndpointDesignInterface::get_info(0, mon_data.endpoint_info);
+    HSIDesignInterface::get_info(mon_data.hsi_info);
+  }
+
+  /**
+   * @brief    Give info to collector.
+   */
+  virtual void get_info(timingfirmwareinfo::HSIFirmwareMonitorData& mon_data) const
+  {
+
+    get_hsi_node().get_info(mon_data);
   }
 };
 
