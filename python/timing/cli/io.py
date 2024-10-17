@@ -17,7 +17,7 @@ from click import echo, style, secho
 from os.path import join, expandvars, basename
 from timing.core import SI534xSlave, I2CExpanderSlave, DACSlave
 
-from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB, kBoardMIB, kBoardPC069, kBoardGIB
+from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB, kBoardMIB, kBoardPC069, kBoardGIB, kFIBRev2
 from timing.common.definitions import kFMCRev1, kFMCRev2, kFMCRev3, kFMCRev4, kPC059Rev1, kTLURev1, kSIMRev1, kFIBRev1, kMIBRev1, kGIBRev1
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed, kCarrierNexusVideo, kCarrierTrenzTE0712
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignChronos, kDesignBoreas, kDesignTest, kDesignKerberos, kDesignGaia

@@ -222,7 +222,7 @@ protected:
                                                                 { kPC059Rev1, "kPC059Rev1" }, { kTLURev1, "kTLURev1" }, { kSIMRev1, "kSIMRev1" },
                                                                 { kFIBRev1, "kFIBRev1" }, { kFMCRev4, "kFMCRev4" }, { kMIBRev1, "kMIBRev1" },
                                                                 { kPC069a, "pc069a" }, { kPC069b, "pc069b" }, { kMIBRev2, "kMIBRev2" }, { kGIBRev1, "kGIBRev1" },
-                                                                { kBoardRevisionUnknown, "unknown" }
+                                                                { kFIBRev2, "kFIBRev2" }, { kBoardRevisionUnknown, "unknown" }
   };
 
   static inline const std::map<DesignType, std::string> design_type_map = {
