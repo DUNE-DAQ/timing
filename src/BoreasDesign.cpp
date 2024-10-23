@@ -65,11 +65,7 @@ void
 BoreasDesign::get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const
 {
   MasterDesign::get_info(mon_data);
-  EndpointDesignInterface::get_info(0, mon_data.endpoint_info);
-
-//   opmonlib::InfoCollector hsi_collector;
-//   get_hsi_node().get_info(hsi_collector, level);
-//   ci.add("hsi", hsi_collector);
+  HSIDesignInterface::get_info(mon_data);
 }
 //-----------------------------------------------------------------------------
 } // namespace dunedaq::timing

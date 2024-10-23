@@ -14,8 +14,9 @@
 				<node id="tx_err" mask="0x1"/>
 				<node id="rx_rdy" mask="0x2"/>
 				<node id="ctrs_rdy" mask="0x4"/>	
-				<node id="ts_err" mask="0x8"/>
-				<node id="cdr_locked" mask="0x10"/>
+				<node id="ts_tx_err" mask="0x8"/>
+				<node id="ts_valid" mask="0x10"/>
+				<node id="cdr_locked" mask="0x20"/>
 			</node>
 		</node>
 </node>
