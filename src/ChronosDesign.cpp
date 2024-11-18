@@ -53,20 +53,11 @@ ChronosDesign::configure() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-// void
-// ChronosDesign::get_info(opmonlib::InfoCollector& ci, int level) const
-// {  
-//   opmonlib::InfoCollector hardware_collector;
-//   get_io_node_plain()->get_info(hardware_collector, level);
-//   ci.add("io", hardware_collector);
-
-//   opmonlib::InfoCollector endpoint_collector;
-//   get_endpoint_node_plain(0)->get_info(endpoint_collector, level);
-//   ci.add("endpoint", endpoint_collector);
-
-//   opmonlib::InfoCollector hsi_collector;
-//   get_hsi_node().get_info(hsi_collector, level);
-//   ci.add("hsi", hsi_collector);
-// }
+void
+ChronosDesign::get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const
+{
+  TopDesign::get_info(mon_data);
+  HSIDesignInterface::get_info(mon_data);
+}
 //-----------------------------------------------------------------------------
 } // namespace dunedaq::timing

@@ -31,7 +31,7 @@ namespace timing {
 /**
  * @brief      Class for timing master with integrated HSI designs.
  */
-class ChronosDesign : public TopDesign, public HSIDesignInterface // TODO Should inherit from EndpointDesign?
+class ChronosDesign : public TopDesign, public HSIDesignInterface
 {
   UHAL_DERIVEDNODE(ChronosDesign)
 public:
@@ -65,10 +65,10 @@ public:
    */
   void validate_firmware_version() const override {} // current chronos firmware does not store firmware version
   
-  // /**
-  //  * @brief    Give info to collector.
-  //  */  
-  // void get_info(opmonlib::InfoCollector& ci, int level) const override;
+  /**
+   * @brief    Give info to collector.
+   */
+  void get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const override;
 };
 
 } // namespace timing

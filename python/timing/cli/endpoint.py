@@ -97,7 +97,7 @@ def enable(ctx, obj, action, address):
     elif action == 'reset':
         lEndPointNode.reset(address)
 
-    time.sleep(0.1)
+    time.sleep(1)
     ctx.invoke(status)
 # ------------------------------------------------------------------------------
 

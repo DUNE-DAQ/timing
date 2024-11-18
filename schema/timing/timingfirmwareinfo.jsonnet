@@ -102,7 +102,9 @@ local timingfirmwareinfo = {
         s.field("master_info", self.master_fw_mon_data,
                 doc="Master info payload"),
         s.field("endpoint_info", teih.TimingEndpointInfo,
-                doc="Endpoint info payload")
+                doc="Endpoint info payload"),
+        s.field("hsi_info", self.hsi_fw_mon_data,
+                doc="HSI info payload")
 
     ], doc="Timing hw cmd structure")
 };
