@@ -173,6 +173,8 @@ public:
    */
   virtual void reset(const ClockSource& clock_source) const;
 
+  virtual void get_info(timinghardwareinfo::TimingPLLMonitorData& mon_data) const {get_pll()->get_info(mon_data);}
+
   static const std::map<BoardType, std::string>& get_board_type_map() { return board_type_map; }
 
   static const std::map<CarrierType, std::string>& get_carrier_type_map() { return carrier_type_map; }

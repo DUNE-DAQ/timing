@@ -90,7 +90,7 @@ public:
    */
   void get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const override
   {
-    get_io_node_plain()->get_pll()->get_info(mon_data.pll_info);
+    get_io_node_plain()->get_info(mon_data.pll_info);
   }
 };
 

@@ -13,8 +13,11 @@
 #define TIMING_INCLUDE_TIMING_FIBV2IONODE_HPP_
 
 // Timing Headers
-#include "timing/SFPMuxIONode.hpp"
+#include "timing/IONode.hpp"
+#include "timing/CDCLVD110Node.hpp"
 #include "timing/TimingIssues.hpp"
+
+#include "logging/Logging.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -71,7 +74,17 @@ public:
     /**
       * @brief      Print status of on-board PLL.
       */
-    std::string get_pll_status(bool print_out = false) const override {return "No PLL on FIBv2";};
+    std::string get_pll_status(bool print_out = false) const override {return "No status yet for CDCLVD110 on FIBv2";};
+
+    void get_info(timinghardwareinfo::TimingPLLMonitorData& mon_data) const override;
+
+    ///**
+    // * @brief      Get the PLL chip.
+    // *
+    // * @return     { description_of_the_return_value }
+    // */
+    //std::unique_ptr<const CDCLVD110Node> get_pll() const;
+
     // /**
     // * @brief      Fill hardware monitoring structure.
     // */
@@ -90,6 +103,19 @@ private:
      * @brief      No config file for FIB v2
      */
     void reset(const std::string& clock_config_file) const override {}
+
+    /**
+      * @brief      Get the PLL chip.
+      *
+      * @return     { description_of_the_return_value }
+      */
+    std::unique_ptr<const SI534xSlave> get_pll() const override {return nullptr;}
+
+    /**
+     * @brief      Configure clock chip.
+     */
+    void configure_pll(const std::string& clock_config_file = "") const override  {TLOG() << "No text config for CDCLVD110";}
+
 };
 
 } // namespace timing

@@ -287,52 +287,7 @@ IONode::get_clock_frequencies_table(bool print_out) const
 std::string
 IONode::get_pll_status(bool print_out) const
 {
-
-  std::stringstream status;
-
-  auto pll = get_pll();
-  status << "PLL configuration id   : " << pll->read_config_id() << std::endl;
-
-  std::map<std::string, uint32_t> pll_version; // NOLINT(build/unsigned)
-  pll_version["Part number"] = pll->read_device_version();
-  pll_version["Device grade"] = pll->read_clock_register(0x4);
-  pll_version["Device revision"] = pll->read_clock_register(0x5);
-
-  status << format_reg_table(pll_version, "PLL information") << std::endl;
-
-  std::map<std::string, uint32_t> pll_registers; // NOLINT(build/unsigned)
-
-  uint8_t pll_reg_c = pll->read_clock_register(0xc);   // NOLINT(build/unsigned)
-  uint8_t pll_reg_d = pll->read_clock_register(0xd);   // NOLINT(build/unsigned)
-  uint8_t pll_reg_e = pll->read_clock_register(0xe);   // NOLINT(build/unsigned)
-  uint8_t pll_reg_f = pll->read_clock_register(0xf);   // NOLINT(build/unsigned)
-  uint8_t pll_reg_11 = pll->read_clock_register(0x11); // NOLINT(build/unsigned)
-  uint8_t pll_reg_12 = pll->read_clock_register(0x12); // NOLINT(build/unsigned)
-
-  pll_registers["CAL_PLL"] = dec_rng(pll_reg_f, 5);
-  pll_registers["HOLD"] = dec_rng(pll_reg_e, 5);
-  pll_registers["LOL"] = dec_rng(pll_reg_e, 1);
-  pll_registers["LOS"] = dec_rng(pll_reg_d, 0, 4);
-  pll_registers["LOSXAXB"] = dec_rng(pll_reg_c, 1);
-  pll_registers["LOSXAXB_FLG"] = dec_rng(pll_reg_11, 1);
-
-  pll_registers["OOF"] = dec_rng(pll_reg_d, 4, 4);
-  pll_registers["OOF (sticky)"] = dec_rng(pll_reg_12, 4, 4);
-
-  pll_registers["SMBUS_TIMEOUT"] = dec_rng(pll_reg_c, 5);
-  pll_registers["SMBUS_TIMEOUT_FLG"] = dec_rng(pll_reg_11, 5);
-
-  pll_registers["SYSINCAL"] = dec_rng(pll_reg_c, 0);
-  pll_registers["SYSINCAL_FLG"] = dec_rng(pll_reg_11, 0);
-
-  pll_registers["XAXB_ERR"] = dec_rng(pll_reg_c, 3);
-  pll_registers["XAXB_ERR_FLG"] = dec_rng(pll_reg_11, 3);
-
-  status << format_reg_table(pll_registers, "PLL state");
-
-  if (print_out)
-    TLOG() << status.str();
-  return status.str();
+  return get_pll()->get_status(print_out);
 }
 //-----------------------------------------------------------------------------
 

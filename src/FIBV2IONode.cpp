@@ -144,6 +144,21 @@ FIBV2IONode::switch_sfp_tx(uint32_t sfp_id, bool turn_on) const { // NOLINT(buil
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+void
+FIBV2IONode::get_info(timinghardwareinfo::TimingPLLMonitorData& mon_data) const
+{
+	mon_data.lol = false; // no monitoring of this in CDCLVD110
+	mon_data.los = false;
+}
+
+//-----------------------------------------------------------------------------
+//std::unique_ptr<const CDCLVD110Node>
+//FIBV2IONode::get_pll() const
+//{
+//  return &getNode<CDCLVD110Node>("clock_gen"); //TODO: future node
+//}
+//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void
