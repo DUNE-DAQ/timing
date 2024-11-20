@@ -68,6 +68,10 @@ public:
      */
     void switch_sfp_tx(uint32_t sfp_id, bool turn_on) const; // NOLINT(build/unsigned)
 
+    /**
+      * @brief      Print status of on-board PLL.
+      */
+    std::string get_pll_status(bool print_out = false) const override {return "No PLL on FIBv2";};
     // /**
     // * @brief      Fill hardware monitoring structure.
     // */
