@@ -18,7 +18,7 @@ UHAL_REGISTER_DERIVED_NODE(MIBIONode)
 
 //-----------------------------------------------------------------------------
 MIBIONode::MIBIONode(const uhal::Node& node)
-  : SFPMuxIONode(node, "i2c", "i2c", { "PLL" }, { "PLL", "CDR 0", "CDR 1" }, { "i2c" })
+  : IONode(node, "i2c", "i2c", { "PLL" }, { "PLL", "CDR 0", "CDR 1" }, { "i2c" })
 {
 }
 //-----------------------------------------------------------------------------
@@ -98,27 +98,27 @@ MIBIONode::reset(const std::string& clock_config_file) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-MIBIONode::switch_downstream_mux_channel(uint32_t mux_channel) const // NOLINT(build/unsigned)
-{
-  validate_amc_slot(mux_channel);
-  uint16_t amc_in_bit = 0x1 << (mux_channel-1);
-  getNode("io_select.csr.ctrl.amc_in").write(amc_in_bit);
-  
-  TLOG_DEBUG(3) << " MIB downstream AMC (in) " << mux_channel << " enabled";
-  getClient().dispatch();
-}
+//void
+//MIBIONode::switch_downstream_mux_channel(uint32_t mux_channel) const // NOLINT(build/unsigned)
+//{
+//  validate_amc_slot(mux_channel);
+// uint16_t amc_in_bit = 0x1 << (mux_channel-1);
+//  getNode("io_select.csr.ctrl.amc_in").write(amc_in_bit);
+//
+//  TLOG_DEBUG(3) << " MIB downstream AMC (in) " << mux_channel << " enabled";
+//  getClient().dispatch();
+//}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-uint32_t // NOLINT(build/unsigned)
-MIBIONode::read_active_downstream_mux_channel() const
-{
-  auto active_mux_channel_bits = getNode("io_select.csr.ctrl.amc_in").read();
-  getClient().dispatch();
-  double mux = log2(active_mux_channel_bits.value());
-  return mux+1;
-}
+//uint32_t // NOLINT(build/unsigned)
+//MIBIONode::read_active_downstream_mux_channel() const
+//{
+//  auto active_mux_channel_bits = getNode("io_select.csr.ctrl.amc_in").read();
+//  getClient().dispatch();
+//  double mux = log2(active_mux_channel_bits.value());
+//  return mux+1;
+//}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

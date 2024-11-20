@@ -10,6 +10,7 @@ UHAL_REGISTER_DERIVED_NODE(MasterMuxDesign)
 //-----------------------------------------------------------------------------
 MasterMuxDesign::MasterMuxDesign(const uhal::Node& node)
   : TopDesignInterface(node)
+  , MuxDesignInterface(node)
   , SFPMuxDesignInterface(node)
   , MasterDesignInterface(node)
   , MasterDesign(node)
@@ -44,7 +45,7 @@ MasterMuxDesign::measure_endpoint_rtt(uint32_t address, bool control_sfp, int sf
     if (control_sfp) 
     {
       // set fanout rtt mux channel, and do not wait for fanout rtt ept to be in a good state
-      switch_downstream_mux_channel(sfp_mux, false);
+      switch_mux(sfp_mux);
     }
     // gets master rtt ept in a good state, and sends echo command
     uint32_t rtt = get_master_node_plain()->measure_endpoint_rtt(address, control_sfp);
@@ -70,7 +71,7 @@ MasterMuxDesign::apply_endpoint_delay(uint32_t address,
     if (control_sfp && measure_rtt)
     {
       // set fanout rtt mux channel, and do not wait for fanout rtt ept to be in a good state
-      switch_downstream_mux_channel(sfp_mux, false);  
+      switch_mux(sfp_mux);
     }
     // gets master rtt ept in a good state, and sends echo command
     get_master_node_plain()->apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp);
@@ -83,17 +84,6 @@ MasterMuxDesign::apply_endpoint_delay(uint32_t address,
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-MasterMuxDesign::switch_downstream_mux_channel(uint32_t sfp_id, bool wait_for_rtt_ept_lock) const
-{
-  TopDesignInterface::get_io_node<timing::SFPMuxIONode>()->switch_downstream_mux_channel(sfp_id);
-  if (wait_for_rtt_ept_lock) {
-    this->get_master_node_plain()->enable_upstream_endpoint();
-  }
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
 std::vector<uint32_t>
 MasterMuxDesign::scan_sfp_mux() const 
 {
@@ -101,11 +91,14 @@ MasterMuxDesign::scan_sfp_mux() const
 
   // TODO will this be right for every fanout board, need to check the IO board
   uint32_t number_of_mux_channels = 8;
-  for (uint32_t i = 0; i < number_of_mux_channels; ++i) {
+  for (uint32_t i = 0; i < number_of_mux_channels; ++i)
+  {
     TLOG_DEBUG(0) << "Scanning slot " << i;
 
-    try {
-      switch_downstream_mux_channel(i, true);
+    try
+    {
+      switch_mux(i);
+      this->get_master_node_plain()->enable_upstream_endpoint();
     } catch (...) {
       TLOG_DEBUG(0) << "Slot " << i << " not locked";
     }

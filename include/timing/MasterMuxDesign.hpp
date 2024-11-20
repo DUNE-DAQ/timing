@@ -32,7 +32,7 @@ namespace timing {
  * @brief      Class for PDI timing master design on mux board
  */
 class MasterMuxDesign
-  : virtual public SFPMuxDesignInterface, public MasterDesign
+  : public SFPMuxDesignInterface, public MasterDesign
 {
   UHAL_DERIVEDNODE(MasterMuxDesign)
 public:
@@ -63,11 +63,6 @@ public:
                                     bool measure_rtt = false,
                                     bool control_sfp = true,
                                     int sfp_mux = -1) const override; 
-
-  /**
-   * @brief     Switch the SFP mux channel
-   */
-  void switch_downstream_mux_channel(uint32_t sfp_id, bool wait_for_rtt_ept_lock) const override; // NOLINT(build/unsigned)
 
   /**
    * @brief     Scan SFP for alive timing transmitters

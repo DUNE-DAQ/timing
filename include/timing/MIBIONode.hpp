@@ -30,7 +30,7 @@ namespace timing {
 /**
  * @brief      Class for the timing FMC board.
  */
-class MIBIONode : public SFPMuxIONode
+class MIBIONode : public IONode
 {
   UHAL_DERIVEDNODE(MIBIONode)
 
@@ -73,12 +73,13 @@ public:
   /**
    * @brief     Switch the SFP mux channel
    */
-  void switch_downstream_mux_channel(uint32_t mux_channel) const override; // NOLINT(build/unsigned)
+  //void switch_downstream_mux_channel(uint32_t mux_channel) const override; // NOLINT(build/unsigned)
+  // NB MIB v1 doesnt have a physical mux, switching was done in io block in old firmware
 
   /**
    * @brief     Read the active SFP mux channel
    */
-  uint32_t read_active_downstream_mux_channel() const override; // NOLINT(build/unsigned)
+  //uint32_t read_active_downstream_mux_channel() const override; // NOLINT(build/unsigned)
   
   /**
    * @brief     Switch the SFP mux channel

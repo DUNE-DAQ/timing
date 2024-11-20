@@ -14,7 +14,7 @@
 
 // PDT Headers
 #include "TimingIssues.hpp"
-#include "timing/TopDesignInterface.hpp"
+#include "timing/MuxDesignInterface.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -30,12 +30,13 @@ namespace timing {
 /**
  * @brief      Base class for timing endpoint design nodes.
  */
-class CDRMuxDesignInterface : virtual public TopDesignInterface
+class CDRMuxDesignInterface : virtual public MuxDesignInterface
 {
 
 public:
   explicit CDRMuxDesignInterface(const uhal::Node& node) 
-    : TopDesignInterface(node) {}
+    : MuxDesignInterface(node)
+    , TopDesignInterface(node) {}
   virtual ~CDRMuxDesignInterface() {}
 
   /**
@@ -43,7 +44,7 @@ public:
    *
    * @return     { description_of_the_return_value }
    */
-  virtual uint8_t read_active_cdr_mux() const // NOLINT(build/unsigned)
+  virtual uint8_t read_active_mux() const // NOLINT(build/unsigned)
   {
     auto active_sfp_mux_channel = getNode("us_mux.csr.ctrl.src").read();
     getClient().dispatch();
@@ -55,7 +56,7 @@ public:
    *
    * @return     { description_of_the_return_value }
    */
-  virtual void switch_cdr_mux(uint8_t mux_channel) const // NOLINT(build/unsigned)
+  virtual void switch_mux(uint8_t mux_channel) const // NOLINT(build/unsigned)
   {
     // TODO add mux channel validity check
     getNode("us_mux.csr.ctrl.src").write(mux_channel);

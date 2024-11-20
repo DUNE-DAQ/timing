@@ -181,7 +181,7 @@ def clkstatus(ctx, obj, verbose):
     ctx.invoke(status)
 
     if lBoardType in [kBoardPC059, kBoardFIB]:
-        mux_fib = lIO.read_active_downstream_mux_channel()
+        mux_fib = lIO.read_active_sfp_mux_channel()
         secho("Active sfp mux {} ".format(mux_fib))
 
     echo()
@@ -299,22 +299,22 @@ def switchsfptx(ctx, obj, sfp_id, on):
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-@io.command('switch-downstream-mux', short_help="Switch downstream mux")
+@io.command('switch-sfp-mux', short_help="Switch sfp mux")
 @click.argument('mux', type=int)
 @click.pass_obj
-def switchdownstreammux(obj, mux):
+def switchsfpmux(obj, mux):
     
     lDevice = obj.mDevice
     lBoardType = obj.mBoardType
     lIO = lDevice.getNode('io')
 
-    if lBoardType in [kBoardPC059, kBoardFIB, kBoardMIB]:
+    if lBoardType in [kBoardPC059]:
         
-        echo("Setting downstream mux channel: {}".format(mux))
-        lIO.switch_downstream_mux_channel(mux)
+        echo("Setting sfp mux channel: {}".format(mux))
+        lIO.switch_sfp_mux_channel(mux)
 
     else:
-        raise RuntimeError('Board {} does not have a downstream mux!'.format(kBoardNameMap[lBoardType]))
+        raise RuntimeError('Board {} does not have a sfp mux!'.format(kBoardNameMap[lBoardType]))
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
