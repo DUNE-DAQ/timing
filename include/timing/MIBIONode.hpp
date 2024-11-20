@@ -84,12 +84,12 @@ public:
   /**
    * @brief     Switch the SFP mux channel
    */
-  void switch_upstream_mux_channel(uint32_t mux_channel) const; // NOLINT(build/unsigned)
+  //void switch_upstream_mux_channel(uint32_t mux_channel) const; // NOLINT(build/unsigned)
 
   /**
    * @brief     Read the active SFP mux channel
    */
-  uint32_t read_active_upstream_mux_channel() const; // NOLINT(build/unsigned)
+  //uint32_t read_active_upstream_mux_channel() const; // NOLINT(build/unsigned)
 
   /**
    * @brief      Print status of on-board SFP.

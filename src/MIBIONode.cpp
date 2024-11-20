@@ -122,24 +122,24 @@ MIBIONode::reset(const std::string& clock_config_file) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-MIBIONode::switch_upstream_mux_channel(uint32_t mux_channel) const // NOLINT(build/unsigned)
-{
-  getNode("io_select.csr.ctrl.usfp_src").write(mux_channel);
-  TLOG_DEBUG(3) << " MIB upstream SFP (in) " << mux_channel << " enabled";
-  // TODO what about clock config?
-  getClient().dispatch();
-}
+//void
+//MIBIONode::switch_upstream_mux_channel(uint32_t mux_channel) const // NOLINT(build/unsigned)
+//{
+//  getNode("io_select.csr.ctrl.usfp_src").write(mux_channel);
+//  TLOG_DEBUG(3) << " MIB upstream SFP (in) " << mux_channel << " enabled";
+//  // TODO what about clock config?
+//  getClient().dispatch();
+//}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-uint32_t // NOLINT(build/unsigned)
-MIBIONode::read_active_upstream_mux_channel() const
-{
-  auto active_sfp_mux_channel = getNode("io_select.csr.ctrl.usfp_src").read();
-  getClient().dispatch();
-  return active_sfp_mux_channel.value();
-}
+//uint32_t // NOLINT(build/unsigned)
+//MIBIONode::read_active_upstream_mux_channel() const
+//{
+//  auto active_sfp_mux_channel = getNode("io_select.csr.ctrl.usfp_src").read();
+//  getClient().dispatch();
+//  return active_sfp_mux_channel.value();
+//}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

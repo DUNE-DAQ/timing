@@ -318,47 +318,6 @@ def switchsfpmux(obj, mux):
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-@io.command('switch-upstream-mux', short_help="Switch upstream mux")
-@click.argument('mux', type=int)
-@click.pass_obj
-def switchupstreammux(obj, mux):
-    
-    lTopDesign = obj.mDevice.getNode('')
-    lBoardType = obj.mBoardType
-    lIO = lTopDesign.getNode('io')
-
-    ## TODO address interface divergence
-    if lBoardType == kBoardMIB:
-        echo("Setting upstream mux channel: {}".format(mux))
-        lIO.switch_upstream_mux_channel(mux)
-    elif lBoardType == kBoardGIB:
-        echo("Setting upstream mux channel: {}".format(mux))
-        lTopDesign.switch_upstream_mux_channel(mux)
-    else:
-        raise RuntimeError('Board {} does not have/support an upstream mux!'.format(kBoardNameMap[lBoardType]))
-# ------------------------------------------------------------------------------
-
-# ------------------------------------------------------------------------------
-@io.command('read-upstream-mux', short_help="Read active upstream mux")
-@click.pass_obj
-def switchupstreammux(obj):
-    
-    lTopDesign = obj.mDevice.getNode('')
-    lBoardType = obj.mBoardType
-    lIO = lTopDesign.getNode('io')
-
-    ## TODO address interface divergence
-    if lBoardType == kBoardMIB:
-        active_mux = lIO.read_active_upstream_mux_channel()
-        echo("Active upstream mux channel: {}".format(active_mux))
-    elif lBoardType == kBoardGIB:
-        active_mux = lTopDesign.read_active_upstream_mux_channel()
-        echo("Active upstream mux channel: {}".format(active_mux))
-    else:
-        raise RuntimeError('Board {} does not have/support an upstream mux!'.format(kBoardNameMap[lBoardType]))
-# ------------------------------------------------------------------------------
-
-# ------------------------------------------------------------------------------
 @io.command('print-hardware-info')
 @click.pass_obj
 @click.pass_context
