@@ -180,9 +180,9 @@ def clkstatus(ctx, obj, verbose):
     
     ctx.invoke(status)
 
-    #if lBoardType in [kBoardPC059, kBoardFIB]:
-    #    mux_fib = lIO.read_active_downstream_mux_channel()
-    #    secho("Active sfp mux {} ".format(mux_fib))
+    if lBoardType == kBoardPC059: #TODO or lBoardRevision == kFIBRev1
+        mux_fib = lIO.read_active_downstream_mux_channel()
+        secho("Active sfp mux {} ".format(mux_fib))
 
     echo()
     ctx.invoke(freq)
@@ -282,17 +282,10 @@ def switchsfptx(ctx, obj, sfp_id, on):
 
     if lBoardType in kLibrarySupportedBoards:
         ctx.invoke(print_hardware_info)
-        if sfp_id is not None:
-            lIO.switch_sfp_soft_tx_control_bit(sfp_id, on)
-            echo(lIO.get_sfp_status(sfp_id))
-        else:
-            if lBoardType == kBoardFMC or lBoardType == kBoardTLU:
-                lIO.switch_sfp_soft_tx_control_bit(0, on)
-                echo(lIO.get_sfp_status(0))
-            elif ( lBoardType == kBoardPC059 ):
-                for i in range(9):
-                    lIO.switch_sfp_soft_tx_control_bit(i, on)
-                    echo(lIO.get_sfp_status(i))
+        lSFP=sfp_id
+        if sfp_id is None:
+            lSFP=0
+        lIO.switch_sfp_tx(lSFP, on)
     else:
         secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
         # do sfp switch here

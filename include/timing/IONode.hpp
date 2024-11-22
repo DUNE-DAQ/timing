@@ -159,6 +159,11 @@ public:
   virtual void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const; // NOLINT(build/unsigned)
 
   /**
+   * @brief      control tx laser of on-board SFP
+   */
+  virtual void switch_sfp_tx(uint32_t sfp_id, bool turn_on) const = 0; // NOLINT(build/unsigned)
+
+  /**
    * @brief      Reset timing node.
    */
   virtual void soft_reset() const;

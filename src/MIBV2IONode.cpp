@@ -123,6 +123,31 @@ MIBV2IONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+void
+MIBV2IONode::switch_sfp_tx(uint32_t sfp_id, bool turn_on) const // NOLINT(build/unsigned)
+{
+  // TODO firmware support needed
+  //validate_sfp_id(sfp_id);
+
+	//uint8_t current_sfp_tx_control_flags = getNode("csr.ctrl.sfp_tx_disable").read(); // NOLINT(build/unsigned)
+  //getClient().dispatch();
+
+	//uint8_t new_sfp_tx_control_flags; // NOLINT(build/unsigned)
+	//if (turn_on)
+	//{
+	//	new_sfp_tx_control_flags = current_sfp_tx_control_flags & ~(1UL << sfp_id);
+	//}
+  //else
+  //{
+  //  new_sfp_tx_control_flags = current_sfp_tx_control_flags | (1UL << sfp_id);
+  //}
+
+  //getNode("csr.ctrl.sfp_tx_disable").write(new_sfp_tx_control_flags);
+  //getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 //void
 //MIBV2IONode::get_info(timinghardwareinfo::TimingMIBV2MonitorData& mon_data) const
 //{

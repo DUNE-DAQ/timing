@@ -124,12 +124,15 @@ FIBV2IONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const
 //-----------------------------------------------------------------------------
 void
 FIBV2IONode::switch_sfp_tx(uint32_t sfp_id, bool turn_on) const { // NOLINT(build/unsigned)
-	validate_sfp_id(sfp_id);
-	
-	uint8_t current_sfp_tx_control_flags = getNode("csr.ctrl.sfp_tx_disable").read(); // NOLINT(build/unsigned)
-    getClient().dispatch();
 
+	validate_sfp_id(sfp_id);
+
+	auto sfp_tx_control_flags = getNode("csr.ctrl.sfp_tx_disable").read(); // NOLINT(build/unsigned)
+	getClient().dispatch();
+
+	uint8_t current_sfp_tx_control_flags=sfp_tx_control_flags.value();
 	uint8_t new_sfp_tx_control_flags; // NOLINT(build/unsigned)
+
 	if (turn_on) 
 	{
 		new_sfp_tx_control_flags = current_sfp_tx_control_flags & ~(1UL << sfp_id);
