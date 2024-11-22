@@ -15,6 +15,7 @@
 // PDT Headers
 #include "TimingIssues.hpp"
 #include "timing/MuxDesignInterface.hpp"
+#include "timing/UpstreamCDRNode.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -44,7 +45,7 @@ public:
    *
    * @return     { description_of_the_return_value }
    */
-  virtual uint8_t read_active_mux() const // NOLINT(build/unsigned)
+  uint8_t read_active_mux() const override // NOLINT(build/unsigned)
   {
     auto active_sfp_mux_channel = getNode("us_mux.csr.ctrl.src").read();
     getClient().dispatch();
@@ -56,11 +57,28 @@ public:
    *
    * @return     { description_of_the_return_value }
    */
-  virtual void switch_mux(uint8_t mux_channel) const // NOLINT(build/unsigned)
+  void switch_mux(uint8_t mux_channel, bool resync_cdr=false) const override // NOLINT(build/unsigned)
   {
     // TODO add mux channel validity check
     getNode("us_mux.csr.ctrl.src").write(mux_channel);
     getClient().dispatch();
+
+    if (resync_cdr)
+    {
+      resync_active_cdr();
+    }
+  }
+
+  /**
+   * @brief      Resync active cdr
+   *
+   * @return     { description_of_the_return_value }
+   */
+  void resync_active_cdr() const override // NOLINT(build/unsigned)
+  {
+    auto active_mux = read_active_mux();
+    std::string cdr_path("cdr"+std::to_string(active_mux));
+    getNode<UpstreamCDRNode>(cdr_path).resync();
   }
 
 };

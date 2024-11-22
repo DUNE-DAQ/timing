@@ -50,7 +50,14 @@ public:
    *
    * @return     { description_of_the_return_value }
    */
-  virtual void switch_mux(uint8_t mux_channel) const = 0; // NOLINT(build/unsigned)
+  virtual void switch_mux(uint8_t mux_channel, bool resync_cdr=false) const = 0; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Resync active cdr
+   *
+   * @return     { description_of_the_return_value }
+   */
+  virtual void resync_active_cdr() const = 0; // NOLINT(build/unsigned)
 
 };
 

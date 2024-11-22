@@ -116,4 +116,12 @@ MasterMuxDesign::scan_sfp_mux() const
   return locked_channels;
 }
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+MasterMuxDesign::resync_active_cdr() const
+{
+  this->get_master_node_plain()->enable_upstream_endpoint();
+}
+//-----------------------------------------------------------------------------
 }

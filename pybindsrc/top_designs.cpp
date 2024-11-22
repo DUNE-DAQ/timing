@@ -73,7 +73,7 @@ register_top_designs(py::module& m)
   py::class_<timing::FanoutDesign, uhal::Node>(m, "FanoutDesign")
     .def("read_firmware_version", &timing::FanoutDesign::read_firmware_version)
     .def("validate_firmware_version", &timing::FanoutDesign::validate_firmware_version)
-    .def("switch_mux", &timing::GaiaDesign::switch_mux, py::arg("mux"))
+    .def("switch_mux", &timing::GaiaDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
     .def("read_active_mux", &timing::GaiaDesign::read_active_mux)
     ;
 
@@ -93,7 +93,7 @@ register_top_designs(py::module& m)
          py::arg("channel"),
          py::arg("rate"),
          py::arg("poisson"))
-    .def("switch_mux", &timing::OuroborosMuxDesign::switch_mux)
+    .def("switch_mux", &timing::OuroborosMuxDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
     .def("apply_endpoint_delay", 
           &timing::OuroborosMuxDesign::apply_endpoint_delay,
           py::arg("address"),
@@ -126,7 +126,7 @@ register_top_designs(py::module& m)
          py::arg("channel"),
          py::arg("rate"),
          py::arg("poisson"))
-    .def("switch_mux", &timing::MasterMuxDesign::switch_mux)
+    .def("switch_mux", &timing::MasterMuxDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
     .def("apply_endpoint_delay", 
           &timing::MasterMuxDesign::apply_endpoint_delay,
           py::arg("address"),
@@ -265,7 +265,7 @@ register_top_designs(py::module& m)
           py::arg("address"),
           py::arg("control_sfp") = true,
           py::arg("sfp_mux") = -1)
-    .def("switch_mux", &timing::KerberosDesign::switch_mux, py::arg("mux"))
+    .def("switch_mux", &timing::KerberosDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
     .def("read_active_mux", &timing::KerberosDesign::read_active_mux)
     ;
 
@@ -299,7 +299,7 @@ register_top_designs(py::module& m)
           py::arg("address"),
           py::arg("control_sfp") = true,
           py::arg("sfp_mux") = -1)
-    .def("switch_mux", &timing::GaiaDesign::switch_mux, py::arg("mux"))
+    .def("switch_mux", &timing::GaiaDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
     .def("read_active_mux", &timing::GaiaDesign::read_active_mux)
     ;
 } // NOLINT

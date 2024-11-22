@@ -44,9 +44,14 @@ public:
   /**
    * @brief     Switch the SFP mux channel
    */
-  void switch_mux(uint8_t mux_channel) const override // NOLINT(build/unsigned)
+  void switch_mux(uint8_t mux_channel, bool resync_cdr=false) const override // NOLINT(build/unsigned)
   {
     TopDesignInterface::get_io_node<timing::SFPMuxIONode>()->switch_sfp_mux_channel(mux_channel);
+
+    if (resync_cdr)
+    {
+      resync_active_cdr();
+    }
   }
 
   /**

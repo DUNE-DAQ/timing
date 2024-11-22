@@ -68,7 +68,14 @@ public:
    * @brief     Scan SFP for alive timing transmitters
    */
   std::vector<uint32_t> scan_sfp_mux() const override; // NOLINT(build/unsigned)
-    
+
+  /**
+   * @brief      Resync active cdr
+   *
+   * @return     { description_of_the_return_value }
+   */
+  void resync_active_cdr() const override; // NOLINT(build/unsigned)
+
   // In leiu of UHAL_DERIVEDNODE
 protected:
  // virtual uhal::Node* clone() const;
