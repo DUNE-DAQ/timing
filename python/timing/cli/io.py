@@ -299,63 +299,22 @@ def switchsfptx(ctx, obj, sfp_id, on):
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-@io.command('switch-downstream-mux', short_help="Switch downstream mux")
+@io.command('switch-sfp-mux', short_help="Switch sfp mux")
 @click.argument('mux', type=int)
 @click.pass_obj
-def switchdownstreammux(obj, mux):
+def switchsfpmux(obj, mux):
     
     lDevice = obj.mDevice
     lBoardType = obj.mBoardType
     lIO = lDevice.getNode('io')
 
-    if lBoardType in [kBoardPC059, kBoardFIB, kBoardMIB]:
+    if lBoardType in [kBoardPC059]:
         
-        echo("Setting downstream mux channel: {}".format(mux))
-        lIO.switch_downstream_mux_channel(mux)
+        echo("Setting sfp mux channel: {}".format(mux))
+        lIO.switch_sfp_mux_channel(mux)
 
     else:
-        raise RuntimeError('Board {} does not have a downstream mux!'.format(kBoardNameMap[lBoardType]))
-# ------------------------------------------------------------------------------
-
-# ------------------------------------------------------------------------------
-@io.command('switch-upstream-mux', short_help="Switch upstream mux")
-@click.argument('mux', type=int)
-@click.pass_obj
-def switchupstreammux(obj, mux):
-    
-    lTopDesign = obj.mDevice.getNode('')
-    lBoardType = obj.mBoardType
-    lIO = lTopDesign.getNode('io')
-
-    ## TODO address interface divergence
-    if lBoardType == kBoardMIB:
-        echo("Setting upstream mux channel: {}".format(mux))
-        lIO.switch_upstream_mux_channel(mux)
-    elif lBoardType == kBoardGIB:
-        echo("Setting upstream mux channel: {}".format(mux))
-        lTopDesign.switch_upstream_mux_channel(mux)
-    else:
-        raise RuntimeError('Board {} does not have/support an upstream mux!'.format(kBoardNameMap[lBoardType]))
-# ------------------------------------------------------------------------------
-
-# ------------------------------------------------------------------------------
-@io.command('read-upstream-mux', short_help="Read active upstream mux")
-@click.pass_obj
-def switchupstreammux(obj):
-    
-    lTopDesign = obj.mDevice.getNode('')
-    lBoardType = obj.mBoardType
-    lIO = lTopDesign.getNode('io')
-
-    ## TODO address interface divergence
-    if lBoardType == kBoardMIB:
-        active_mux = lIO.read_active_upstream_mux_channel()
-        echo("Active upstream mux channel: {}".format(active_mux))
-    elif lBoardType == kBoardGIB:
-        active_mux = lTopDesign.read_active_upstream_mux_channel()
-        echo("Active upstream mux channel: {}".format(active_mux))
-    else:
-        raise RuntimeError('Board {} does not have/support an upstream mux!'.format(kBoardNameMap[lBoardType]))
+        raise RuntimeError('Board {} does not have a sfp mux!'.format(kBoardNameMap[lBoardType]))
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------

@@ -101,8 +101,8 @@ def status(obj):
 def cdrswitch(obj, mux):
 
     lTopDesign = obj.mTopDesign
-    lTopDesign.switch_cdr_mux(mux)
-    active_mux=lTopDesign.read_active_cdr_mux()
+    lTopDesign.switch_mux(mux)
+    active_mux=lTopDesign.read_active_mux()
 
     echo(f"cdr mux set to {active_mux}")
 # ------------------------------------------------------------------------------

@@ -326,20 +326,26 @@ ERS_DECLARE_ISSUE(timing,                                                       
 
 ERS_DECLARE_ISSUE(timing,                                                                              ///< Namespace
                   MonitoredEndpointDead,                                                               ///< Issue class name
-                  "Monitored endpoint at address 0x" << std::hex << ept_address << " did not respond", ///< Message
+                  " Monitored endpoint at address 0x" << std::hex << ept_address << " did not respond", ///< Message
                   ((uint16_t)ept_address)                                                              ///< Message parameters
 )
 
 ERS_DECLARE_ISSUE(timing,                                                                                                         ///< Namespace
                   MonitoredEndpointUnexpectedState,                                                                               ///< Issue class name
-                  "Monitored endpoint at address 0x" << std::hex << ept_address << " is in an unexpected state: 0x" << ept_state, ///< Message
+                  " Monitored endpoint at address 0x" << std::hex << ept_address << " is in an unexpected state: 0x" << ept_state, ///< Message
                   ((uint16_t)ept_address)((uint32_t)ept_state)                                                                    ///< Message parameters
 )
 
 ERS_DECLARE_ISSUE(timing,                                               //< Namespace
                   EndpointBroadcastMessageCountersNotReady,             ///< Issue class name
-                  "Endpoint broadcast message counters are not ready!", ///< Message
+                  " Endpoint broadcast message counters are not ready!", ///< Message
                   ERS_EMPTY                                             ///< Message parameters
+)
+
+ERS_DECLARE_ISSUE(timing,                                                                                                             ///< Namespace
+                  MonitoredEndpointDelaySet,                                                                                          ///< Issue class name
+                  " Applied delay " << delay << " to endpoint at address " << address << ", in state: " << state, ///< Message
+                  ((uint32_t)delay)((uint16_t)address)((uint16_t)state)                                                               ///< Message parameters
 )
 } // namespace dunedaq
 

@@ -13,7 +13,7 @@
 #define TIMING_INCLUDE_TIMING_SFPMUXDESIGNINTERFACE_HPP_
 
 // PDT Headers
-#include "timing/TopDesignInterface.hpp"
+#include "timing/MuxDesignInterface.hpp"
 #include "timing/SFPMuxIONode.hpp"
 #include "TimingIssues.hpp"
 
@@ -32,25 +32,34 @@ namespace timing {
 /**
  * @brief      Class for timing fanout designs.
  */
-class SFPMuxDesignInterface : virtual public TopDesignInterface
+class SFPMuxDesignInterface : virtual public MuxDesignInterface
 {
 
 public:
   explicit SFPMuxDesignInterface(const uhal::Node& node)
-  : TopDesignInterface(node) {}
+  : MuxDesignInterface(node)
+  , TopDesignInterface(node) {}
   virtual ~SFPMuxDesignInterface() {}
 
   /**
    * @brief     Switch the SFP mux channel
    */
-  virtual void switch_downstream_mux_channel(uint32_t sfp_id, bool /*wait_for_rtt_ept_lock*/) const = 0;// NOLINT(build/unsigned)
+  void switch_mux(uint8_t mux_channel, bool resync_cdr=false) const override // NOLINT(build/unsigned)
+  {
+    TopDesignInterface::get_io_node<timing::SFPMuxIONode>()->switch_sfp_mux_channel(mux_channel);
+
+    if (resync_cdr)
+    {
+      resync_active_cdr();
+    }
+  }
 
   /**
    * @brief     Read the active SFP mux channel
    */
-  virtual uint32_t read_active_downstream_mux_channel() const // NOLINT(build/unsigned)
+  uint8_t read_active_mux() const override // NOLINT(build/unsigned)
   {
-    return TopDesignInterface::get_io_node<timing::SFPMuxIONode>()->read_active_downstream_mux_channel();
+    return TopDesignInterface::get_io_node<timing::SFPMuxIONode>()->read_active_sfp_mux_channel();
   }
 
   /**
