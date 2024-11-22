@@ -140,3 +140,16 @@ def cdrresync(ctx, obj, id):
 
     ctx.forward(cdrstatus)
 # ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@design.command('switch-timing-source', short_help="switch timing source")
+@click.argument('source', type=int)
+@click.pass_obj
+def cdrswitch(obj, source):
+
+    lTopDesign = obj.mTopDesign
+    lTopDesign.switch_timing_source_mux(source)
+    active_source=lTopDesign.read_active_timing_source_mux()
+
+    echo(f"timing source mux set to {active_source}")
+# ------------------------------------------------------------------------------

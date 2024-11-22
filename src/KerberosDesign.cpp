@@ -15,6 +15,7 @@ KerberosDesign::KerberosDesign(const uhal::Node& node)
   , EndpointDesignInterface(node)
   , MuxDesignInterface(node)
   , CDRMuxDesignInterface(node)
+  , TimingSourceMuxDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
@@ -53,6 +54,18 @@ KerberosDesign::configure() const
   {
     this->sync_timestamp(kUpstream);
   }
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+KerberosDesign::switch_timing_source(uint8_t source) const
+{
+  auto clock_source = static_cast<ClockSource>(source);
+  // Hard reset
+  this->reset_io(clock_source); //TODO add option not to reprogram pll config
+
+  switch_timing_source_mux(source);
 }
 //-----------------------------------------------------------------------------
 
