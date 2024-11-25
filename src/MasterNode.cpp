@@ -543,7 +543,7 @@ MasterNode::scan_endpoint(uint16_t endpoint_address, bool control_sfp) const
   {
       switch_endpoint_sfp(endpoint_address, false);
 
-      ers::error(MonitoredEndpointDead(ERS_HERE, endpoint_address));
+      //ers::error(MonitoredEndpointDead(ERS_HERE, endpoint_address));
 
       return endpoint_result;
   }
@@ -559,7 +559,7 @@ MasterNode::scan_endpoint(uint16_t endpoint_address, bool control_sfp) const
   if (ept_state == 0x6)
   {
     TLOG_DEBUG(5) << "Endpoint at address " << endpoint_address << ", applying delays of: " << 0x0;
-      
+    ers::info(MonitoredEndpointDelaySet(ERS_HERE, 0x0, endpoint_address, ept_state));
     apply_endpoint_delay(endpoint_address, 0x0, 0x0, 0x0, false, false);
       
     endpoint_result.applied_delay = 0x0;
