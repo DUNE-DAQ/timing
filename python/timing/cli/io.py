@@ -239,7 +239,7 @@ def sfpstatus(ctx, obj, sfp_id):
         else:
             if lBoardType in [kBoardFMC, kBoardTLU, kBoardPC069]:
                 echo(lIO.get_sfp_status(0))
-            elif lBoardType in [ kBoardPC059, kBoardFIB, kBoardMIB ]:
+            elif lBoardType in [ kBoardPC059, kBoardFIB, kBoardMIB, kBoardGIB ]:
                 # PC059 sfp id 0 is upstream sfp
                 if lBoardType == kBoardPC059:
                     lSFPIDRange = 9
@@ -256,6 +256,8 @@ def sfpstatus(ctx, obj, sfp_id):
                     except:
                         secho(f"SFP {i} status gather failed\n", fg='red')
                         pass
+            else:
+                secho(f"I don't know how many SFPs there are for board: {timing.common.definitions.BoardType(lBoardType)}\n", fg='red')
 
     else:
         secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')

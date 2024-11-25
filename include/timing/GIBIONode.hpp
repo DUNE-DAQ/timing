@@ -67,7 +67,7 @@ public:
   /**
    * @brief     Reset timing node with clock file lookup
    */
-  void reset(const ClockSource& clock_source) const override;
+  using IONode::reset;
 
   /**
    * @brief      Print status of on-board SFP.

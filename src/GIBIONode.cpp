@@ -72,26 +72,6 @@ GIBIONode::get_hardware_info(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-GIBIONode::reset(const ClockSource& clock_source) const
-{
-  getNode("csr.ctrl.i2c_sw_rst").write(0x0);
-  getNode("csr.ctrl.i2c_exten_rst").write(0x0);
-  getNode("csr.ctrl.clk_gen_rst").write(0x0);
-  getClient().dispatch();
-  millisleep(1);
-  getNode("csr.ctrl.i2c_sw_rst").write(0x1);
-  getNode("csr.ctrl.i2c_exten_rst").write(0x1);
-  getNode("csr.ctrl.clk_gen_rst").write(0x1);
-  getClient().dispatch();
-
-  // Find the right pll config file
-  std::string clock_config = get_full_clock_config_file_path(clock_source);
-  reset(clock_config);
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
 GIBIONode::reset(const std::string& clock_config_file) const
 {
   
