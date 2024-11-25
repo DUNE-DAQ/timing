@@ -75,6 +75,11 @@ public:
    */
   void switch_sfp_soft_tx_control_bit(uint32_t, bool) const override; // NOLINT(build/unsigned)
 
+  /**
+   * @brief      Control tx laser of on-board SFP softly (I2C command)
+   */
+  void switch_sfp_tx(uint32_t, bool) const override; // NOLINT(build/unsigned)
+
   // /**
   //  * @brief      Fill hardware monitoring structure.
   //  */
@@ -87,6 +92,8 @@ public:
 
 protected:
   const std::vector<std::string> m_dac_devices;
+private:
+  void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)
 };
 
 } // namespace timing

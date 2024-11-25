@@ -194,6 +194,28 @@ GIBIONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+void
+GIBIONode::switch_sfp_tx(uint32_t sfp_id, bool turn_on) const { // NOLINT(build/unsigned)
+	validate_sfp_id(sfp_id);
+
+  auto sfp_expander_1 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "SFPExpander1");
+	uint8_t current_sfp_tx_control_flags = sfp_expander_1->read_outputs_config(1); // NOLINT(build/unsigned)
+
+	uint8_t new_sfp_tx_control_flags; // NOLINT(build/unsigned)
+	if (turn_on)
+	{
+		new_sfp_tx_control_flags = current_sfp_tx_control_flags & ~(1UL << sfp_id);
+	}
+  else
+  {
+    new_sfp_tx_control_flags = current_sfp_tx_control_flags | (1UL << sfp_id);
+  }
+
+  sfp_expander_1->set_outputs(1, new_sfp_tx_control_flags);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 //void
 //GIBIONode::get_info(timinghardwareinfo::TimingGIBMonitorData& mon_data) const
 //{

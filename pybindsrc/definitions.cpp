@@ -62,6 +62,7 @@ register_definitions(py::module& m)
         .value("kPC069a", kPC069a)
         .value("kMIBRev2", kMIBRev2)
         .value("kGIBRev1", kGIBRev1)
+        .value("kFIBRev2", kFIBRev2)
         .export_values();
 
     py::enum_<CarrierType>(m, "CarrierType")

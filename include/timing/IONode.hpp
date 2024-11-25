@@ -159,6 +159,11 @@ public:
   virtual void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const; // NOLINT(build/unsigned)
 
   /**
+   * @brief      control tx laser of on-board SFP
+   */
+  virtual void switch_sfp_tx(uint32_t sfp_id, bool turn_on) const = 0; // NOLINT(build/unsigned)
+
+  /**
    * @brief      Reset timing node.
    */
   virtual void soft_reset() const;
@@ -172,6 +177,8 @@ public:
    * @brief     Reset timing node with clock file lookup
    */
   virtual void reset(const ClockSource& clock_source) const;
+
+  virtual void get_info(timinghardwareinfo::TimingPLLMonitorData& mon_data) const {get_pll()->get_info(mon_data);}
 
   static const std::map<BoardType, std::string>& get_board_type_map() { return board_type_map; }
 
@@ -222,7 +229,7 @@ protected:
                                                                 { kPC059Rev1, "kPC059Rev1" }, { kTLURev1, "kTLURev1" }, { kSIMRev1, "kSIMRev1" },
                                                                 { kFIBRev1, "kFIBRev1" }, { kFMCRev4, "kFMCRev4" }, { kMIBRev1, "kMIBRev1" },
                                                                 { kPC069a, "pc069a" }, { kPC069b, "pc069b" }, { kMIBRev2, "kMIBRev2" }, { kGIBRev1, "kGIBRev1" },
-                                                                { kBoardRevisionUnknown, "unknown" }
+                                                                { kFIBRev2, "kFIBRev2" }, { kBoardRevisionUnknown, "unknown" }
   };
 
   static inline const std::map<DesignType, std::string> design_type_map = {

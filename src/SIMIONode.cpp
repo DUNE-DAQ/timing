@@ -173,5 +173,13 @@ SIMIONode::switch_sfp_soft_tx_control_bit(uint32_t /*sfp_id*/, bool /*turn_on*/)
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+void
+SIMIONode::switch_sfp_tx(uint32_t /*sfp_id*/, bool /*turn_on*/) const // NOLINT(build/unsigned)
+{
+  TLOG_DEBUG(0) << "Simulation does not support SFP control";
+}
+//-----------------------------------------------------------------------------
+
 } // namespace timing
 } // namespace dunedaq
