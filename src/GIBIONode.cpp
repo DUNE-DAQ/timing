@@ -164,6 +164,24 @@ GIBIONode::get_sfp_status(uint32_t sfp_id, bool print_out) const { // NOLINT(bui
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+bool
+GIBIONode::clocks_ok() const
+{
+  std::stringstream status;
+
+  auto states = read_sub_nodes(getNode("csr.stat"));
+  bool pll_lol = states.find("clk_gen_lol")->second.value();
+  bool pll_interrupt = states.find("clk_gen_intr")->second.value();
+  bool mmcm_ok = states.find("mmcm_ok")->second.value();
+  bool mmcm_10_ok = states.find("mmcm_ok")->second.value();
+
+  TLOG_DEBUG(5) << "pll lol: " << pll_lol << ", mmcm ok: " << mmcm_ok << ", mmcm 10MHz ok: " << mmcm_10_ok;
+
+  return !pll_lol && mmcm_ok && mmcm_10_ok;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 void
 GIBIONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const { // NOLINT(build/unsigned)
   validate_sfp_id(sfp_id);

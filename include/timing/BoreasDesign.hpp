@@ -47,7 +47,7 @@ public:
    * @brief      Prepare the timing master for data taking.
    *
    */
-  void configure() const override;
+  void configure(uint8_t source) const override;
 
   /**
    * @brief    Give info to collector.

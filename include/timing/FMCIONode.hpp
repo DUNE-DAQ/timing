@@ -69,6 +69,11 @@ public:
     */
   std::string get_clock_frequencies_table(bool print_out = false) const override;
 
+  /**
+   * @brief     Clocks ready?
+   */
+  bool clocks_ok() const override;
+
   // /**
   //  * @brief      Fill hardware monitoring structure.
   //  */

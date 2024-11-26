@@ -147,6 +147,22 @@ TLUIONode::get_sfp_status(uint32_t /*sfp_id*/, bool /*print_out*/) const // NOLI
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+bool
+TLUIONode::clocks_ok() const
+{
+  std::stringstream status;
+
+  auto states = read_sub_nodes(getNode("csr.stat"));
+  //bool pll_ok = states.find("pll_ok")->second.value();
+  bool mmcm_ok = states.find("mmcm_ok")->second.value();
+
+  TLOG_DEBUG(5) << ", mmcm ok: " << mmcm_ok;
+
+  return mmcm_ok; // TODO for check pll lock when appropiate
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 void
 TLUIONode::switch_sfp_soft_tx_control_bit(uint32_t /*sfp_id*/, bool /*turn_on*/) const // NOLINT(build/unsigned)
 {

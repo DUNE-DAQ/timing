@@ -45,13 +45,10 @@ OuroborosDesign::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-OuroborosDesign::configure() const
+OuroborosDesign::configure(uint8_t source) const
 {
-
-  // Hard resets
-  this->reset_io(kFreeRun); // ouroboros design is normally stand-alone; add posibility override clock source via config in future
-
-  this->sync_timestamp(kSoftware); // keep previous behaviour for now, TODO: pass through correct parameter
+  MasterDesign::configure(source);
+  //EndpointDesignInterface::configure(source);
 }
 //-----------------------------------------------------------------------------
 

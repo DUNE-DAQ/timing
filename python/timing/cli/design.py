@@ -153,3 +153,13 @@ def cdrswitch(obj, source):
 
     echo(f"timing source mux set to {active_source}")
 # ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@design.command('configure', short_help="configure a whole design")
+@click.argument('source', type=int)
+@click.pass_obj
+def configure(obj, source):
+
+    lTopDesign = obj.mTopDesign
+    lTopDesign.configure(source)
+# ------------------------------------------------------------------------------

@@ -47,7 +47,7 @@ public:
    * @brief      Prepare the timing endpoint for data taking.
    *
    */
-  void configure() const override;
+  void configure(uint8_t source) const override;
   
   /**
    * @brief      Read endpoint firmware version.

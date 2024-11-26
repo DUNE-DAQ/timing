@@ -98,6 +98,15 @@ MIBIONode::reset(const std::string& clock_config_file) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+bool
+MIBIONode::clocks_ok() const
+{
+  TLOG() << "clock check needs to be implemented";
+  return false;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 //void
 //MIBIONode::switch_downstream_mux_channel(uint32_t mux_channel) const // NOLINT(build/unsigned)
 //{

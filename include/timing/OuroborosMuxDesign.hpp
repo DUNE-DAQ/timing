@@ -43,12 +43,6 @@ public:
    */
   std::string get_status(bool print_out = false) const override;
 
-  /**
-   * @brief      Prepare the timing master for data taking.
-   *
-   */
-  void configure() const override;
-  
   // /**
   //  * @brief    Give info to collector.
   //  */  

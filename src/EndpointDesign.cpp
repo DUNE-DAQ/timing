@@ -48,10 +48,21 @@ EndpointDesign::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-EndpointDesign::configure() const
+EndpointDesign::configure(uint8_t source) const
 {
-  // Hard resets
-  this->reset_io(kInput1); // endpoint FMC SFP is normally on input 1; add posibility override clock source via config in future
+  auto clock_source = static_cast<ClockSource>(source);
+  this->reset_io(clock_source); // kerberos normally takes clock from upstream SFP
+
+  for (uint i=0; i <  get_number_of_endpoint_nodes(); ++i)
+  {
+    get_endpoint_node_plain(i)->reset(0x20+i);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    get_endpoint_node_plain(i)->get_status(true);
+    if (!get_endpoint_node_plain(i)->endpoint_ready())
+    {
+      ers::error(EndpointNotReady(ERS_HERE, "MIB endpoint "+std::to_string(i)+" not ready!", get_endpoint_node_plain(i)->read_endpoint_state()));
+    }
+  }
 }
 //-----------------------------------------------------------------------------
 

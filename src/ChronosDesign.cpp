@@ -45,10 +45,11 @@ ChronosDesign::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-ChronosDesign::configure() const
+ChronosDesign::configure(uint8_t source) const
 {
-  // Hard resets
-  this->reset_io(kInput1); // chronos FMC SFP is normally on input 1; add posibility override clock source via config in future
+  //EndpointDesignInterface::configure(source);
+
+  // TODO HSI configure
 }
 //-----------------------------------------------------------------------------
 

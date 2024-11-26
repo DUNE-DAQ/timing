@@ -37,10 +37,11 @@ FanoutDesign::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-FanoutDesign::configure() const
+FanoutDesign::configure(uint8_t source) const
 {
   // Hard reset
-  this->reset_io(kInput1); // fanout design is nominally FIB with input from backplane; add posibility override clock source via config in future
+  auto clock_source = static_cast<ClockSource>(source);
+  this->reset_io(clock_source); // fanout design is nominally FIB with input from backplane
 }
 //-----------------------------------------------------------------------------
 

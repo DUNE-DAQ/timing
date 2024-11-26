@@ -51,15 +51,17 @@ public:
   // void get_info(opmonlib::InfoCollector& ci, int level) const override;
 
   /**
-   * @brief      Prepare the timing fanout for data taking.
+   * @brief      Prepare the timing unit for data taking.
    *
    */
-  void configure() const override;
+  void configure(uint8_t source, uint8_t epoch) const;
 
   /**
    * @brief    Give info to collector.
    */
   void get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const override;
+private:
+  void configure(uint8_t source) const override; //make private until configure() interface is finalised
 };
 
 } // namespace timing

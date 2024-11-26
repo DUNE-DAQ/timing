@@ -8,7 +8,6 @@
 
 #include "timing/BoreasDesign.hpp"
 #include "timing/ChronosDesign.hpp"
-#include "timing/CRTDesign.hpp"
 #include "timing/FanoutDesign.hpp"
 #include "timing/OuroborosDesign.hpp"
 #include "timing/OuroborosMuxDesign.hpp"
@@ -227,13 +226,6 @@ register_top_designs(py::module& m)
          py::arg("inv_mask"),
          py::arg("rate"),
          py::arg("dispatch") = true);
-    
-  // CRT 
-  py::class_<timing::CRTDesign, uhal::Node>(m, "CRTDesign")
-    .def("read_firmware_version", &timing::CRTDesign::read_firmware_version)
-    .def("validate_firmware_version", &timing::CRTDesign::validate_firmware_version)
-    .def("get_status", &timing::CRTDesign::get_status)
-    .def("get_crt_node", &timing::CRTDesign::get_crt_node);
 
   // Kerberos
   py::class_<timing::KerberosDesign, uhal::Node>(m, "KerberosDesign")
@@ -267,6 +259,7 @@ register_top_designs(py::module& m)
           py::arg("sfp_mux") = -1)
     .def("switch_mux", &timing::KerberosDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
     .def("read_active_mux", &timing::KerberosDesign::read_active_mux)
+    .def("configure", &timing::KerberosDesign::configure, py::arg("source"))
     ;
 
   // Gaia

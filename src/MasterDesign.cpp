@@ -36,11 +36,12 @@ MasterDesign::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-MasterDesign::configure() const
+MasterDesign::configure(uint8_t source) const
 {
 
   // Hard resets
-  this->reset_io(kFreeRun); // master design is normally stand-alone; add posibility override clock source via config in future
+  auto clock_source = static_cast<ClockSource>(source);
+  this->reset_io(clock_source);
 
   this->sync_timestamp(kSoftware); // keep previous behaviour for now, TODO: pass through correct parameter
 }

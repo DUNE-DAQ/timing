@@ -173,6 +173,11 @@ public:
    */
   virtual void reset(const ClockSource& clock_source) const;
 
+  /**
+   * @brief     Clocks ready?
+   */
+  virtual bool clocks_ok() const = 0;
+
   static const std::map<BoardType, std::string>& get_board_type_map() { return board_type_map; }
 
   static const std::map<CarrierType, std::string>& get_carrier_type_map() { return carrier_type_map; }

@@ -54,7 +54,7 @@ public:
    * @brief      Prepare the timing fanout for data taking.
    *
    */
-  void configure() const override;
+  void configure(uint8_t source) const override;
 
   /**
    * @brief      Validate endpoint firmware version.

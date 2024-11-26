@@ -39,11 +39,11 @@ GaiaDesign::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-GaiaDesign::configure() const
+GaiaDesign::configure(uint8_t source) const
 {
-  ClockSource clock_source = kInput0;
+  auto clock_source = static_cast<ClockSource>(source);
   // Hard reset
-  this->reset_io(clock_source); // gaia normally takes clock from upstream GPS; add posibility override clock source via config in future
+  TopDesign::configure(clock_source);
 
   if (clock_source == kFreeRun)
   {
@@ -51,6 +51,27 @@ GaiaDesign::configure() const
   }
   else
   {
+    // TODO: set irig epoch
+    this->sync_timestamp(kUpstream);
+  }
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+GaiaDesign::configure(uint8_t source, uint8_t epoch) const
+{
+  auto clock_source = static_cast<ClockSource>(source);
+  // Hard reset
+  TopDesign::configure(clock_source);
+
+  if (clock_source == kFreeRun)
+  {
+    this->sync_timestamp(kSoftware); // keep previous behaviour for now, TODO: pass through correct parameter
+  }
+  else
+  {
+    getNode<IRIGTimestampNode>("irig_time_source")
     this->sync_timestamp(kUpstream);
   }
 }

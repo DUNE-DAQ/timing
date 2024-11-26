@@ -80,6 +80,11 @@ public:
   void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
 
   /**
+   * @brief     Clocks ready?
+   */
+  bool clocks_ok() const override;
+
+  /**
    * @brief      Fill hardware monitoring structure.
    */
   //void get_info(timinghardwareinfo::TimingGIBMonitorData& mon_data) const;

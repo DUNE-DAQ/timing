@@ -47,14 +47,9 @@ BoreasDesign::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-BoreasDesign::configure() const
+BoreasDesign::configure(uint8_t source) const
 {
-
-  // Hard resets
-  reset_io(kFreeRun); // boreas design is normally stand-alone; add posibility override clock source via config in future
-
-  sync_timestamp(kSoftware); // keep previous behaviour for now, TODO: pass through correct parameter
-
+  MasterDesign::configure(source);
   // configure hsi
   // get_his_node().
 }
