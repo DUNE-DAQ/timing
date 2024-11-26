@@ -294,6 +294,7 @@ register_top_designs(py::module& m)
           py::arg("sfp_mux") = -1)
     .def("switch_mux", &timing::GaiaDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
     .def("read_active_mux", &timing::GaiaDesign::read_active_mux)
+    .def<void (timing::GaiaDesign::*)(uint8_t, IRIGEpoch) const>("configure", &timing::GaiaDesign::configure, py::arg("source"), py::arg("epoch"))
     ;
 } // NOLINT
 

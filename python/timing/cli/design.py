@@ -23,8 +23,8 @@ from timing.core import SI534xSlave, I2CExpanderSlave
 
 from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
-from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord
-from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap
+from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord, kDesignGaia
+from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap, IRIGEpoch
 from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
 
 from timing.common.toolbox import format_firmware_version
@@ -55,34 +55,34 @@ def design(obj, device):
     lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
     lDevice.dispatch()
 
-#    echo("Design '{}' on board '{}' on carrier '{}' with frequency {} MHz".format(
-#        style(kDesignNameMap[lBoardInfo['design_type'].value()], fg='blue'),
-#        style(kBoardNameMap[lBoardInfo['board_type'].value()], fg='blue'),
-#        style(kCarrierNameMap[lBoardInfo['carrier_type'].value()], fg='blue'),
-#        style(str(lBoardInfo['clock_frequency'].value()/1e6), fg='blue')
-#    ))
+    echo("Design '{}' on board '{}' on carrier '{}' with frequency {} MHz".format(
+        style(kDesignNameMap[lBoardInfo['design_type'].value()], fg='blue'),
+        style(kBoardNameMap[lBoardInfo['board_type'].value()], fg='blue'),
+        style(kCarrierNameMap[lBoardInfo['carrier_type'].value()], fg='blue'),
+        style(str(lBoardInfo['clock_frequency'].value()/1e6), fg='blue')
+    ))
 
- #   if lBoardInfo['board_type'].value() in kLibrarySupportedBoards and lBoardInfo['design_type'].value() in kLibrarySupportedDesigns:
- #       lVersion = lTopDesign.read_firmware_version()
- #       lTopDesign.validate_firmware_version()
+    if lBoardInfo['board_type'].value() in kLibrarySupportedBoards and lBoardInfo['design_type'].value() in kLibrarySupportedDesigns:
+        lVersion = lTopDesign.read_firmware_version()
+        lTopDesign.validate_firmware_version()
 
-#        try:
-#            echo(lDevice.getNode('io').get_hardware_info())
-#        except:
-#            secho("Failed to retrieve hardware information! I2C issue? Initial board reset needed?", fg='yellow')
-#            e = sys.exc_info()[0]
-#            secho("Error: {}".format(e), fg='red')
-#
-#    echo("FW rev: {}".format(
-#        style(format_firmware_version(lVersion), fg='cyan'),
-#    ))
+        try:
+            echo(lDevice.getNode('io').get_hardware_info())
+        except:
+            secho("Failed to retrieve hardware information! I2C issue? Initial board reset needed?", fg='yellow')
+            e = sys.exc_info()[0]
+            secho("Error: {}".format(e), fg='red')
+
+    echo("FW rev: {}".format(
+        style(format_firmware_version(lVersion), fg='cyan'),
+    ))
 
     obj.mDevice = lDevice
     obj.mTopDesign = lTopDesign
 
- #   obj.mBoardType = lBoardInfo['board_type'].value()
- #   obj.mCarrierType = lBoardInfo['carrier_type'].value()
- #   obj.mDesignType = lBoardInfo['design_type'].value()    
+    obj.mBoardType = lBoardInfo['board_type'].value()
+    obj.mCarrierType = lBoardInfo['carrier_type'].value()
+    obj.mDesignType = lBoardInfo['design_type'].value()    
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
@@ -157,9 +157,19 @@ def cdrswitch(obj, source):
 # ------------------------------------------------------------------------------
 @design.command('configure', short_help="configure a whole design")
 @click.argument('source', type=int)
+@click.option('--epoch', type=click.Choice(IRIGEpoch.__members__.keys()))
 @click.pass_obj
-def configure(obj, source):
+def configure(obj, source, epoch):
 
     lTopDesign = obj.mTopDesign
-    lTopDesign.configure(source)
+    lDesignType = obj.mDesignType
+
+    if lDesignType == kDesignGaia:
+        if epoch is not None:
+            lEpoch=IRIGEpoch.__members__[epoch]
+            lTopDesign.configure(source, lEpoch)
+        else:
+            secho("Supply irig option for design Gaia!", fg='red')
+    else:
+        lTopDesign.configure(source)
 # ------------------------------------------------------------------------------

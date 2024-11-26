@@ -1,5 +1,7 @@
 #include "timing/GaiaDesign.hpp"
 
+#include "timing/IRIGTimestampNode.hpp"
+
 #include <sstream>
 #include <string>
 
@@ -59,7 +61,7 @@ GaiaDesign::configure(uint8_t source) const
 
 //-----------------------------------------------------------------------------
 void
-GaiaDesign::configure(uint8_t source, uint8_t epoch) const
+GaiaDesign::configure(uint8_t source, IRIGEpoch epoch) const
 {
   auto clock_source = static_cast<ClockSource>(source);
   // Hard reset
@@ -71,7 +73,11 @@ GaiaDesign::configure(uint8_t source, uint8_t epoch) const
   }
   else
   {
-    getNode<IRIGTimestampNode>("irig_time_source")
+    getNode<IRIGTimestampNode>("irig_time_source").set_irig_epoch(epoch);
+
+    // TODO temporary, wait for irig lock and date
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
     this->sync_timestamp(kUpstream);
   }
 }

@@ -54,7 +54,7 @@ public:
    * @brief      Prepare the timing unit for data taking.
    *
    */
-  void configure(uint8_t source, uint8_t epoch) const;
+  void configure(uint8_t source, IRIGEpoch epoch) const;
 
   /**
    * @brief    Give info to collector.
