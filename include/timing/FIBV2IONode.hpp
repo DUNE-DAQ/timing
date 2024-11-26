@@ -1,5 +1,5 @@
 /**
- * @file FIBIONode.hpp
+ * @file FIBV2IONode.hpp
  *
  * FMCIONode is a class providing an interface
  * to the FIB IO firmware block.
@@ -9,12 +9,15 @@
  * received with this code.
  */
 
-#ifndef TIMING_INCLUDE_TIMING_FIBIONODE_HPP_
-#define TIMING_INCLUDE_TIMING_FIBIONODE_HPP_
+#ifndef TIMING_INCLUDE_TIMING_FIBV2IONODE_HPP_
+#define TIMING_INCLUDE_TIMING_FIBV2IONODE_HPP_
 
 // Timing Headers
-#include "timing/SFPMuxIONode.hpp"
+#include "timing/IONode.hpp"
+#include "timing/CDCLVD110Node.hpp"
 #include "timing/TimingIssues.hpp"
+
+#include "logging/Logging.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -29,12 +32,12 @@ namespace timing {
 /**
  * @brief      Class for the FIB board.
  */
-class FIBIONode : public SFPMuxIONode {
-    UHAL_DERIVEDNODE(FIBIONode)
+class FIBV2IONode : public IONode {
+    UHAL_DERIVEDNODE(FIBV2IONode)
 
 public:
-    explicit FIBIONode(const uhal::Node& aNode);
-    virtual ~FIBIONode();
+    explicit FIBV2IONode(const uhal::Node& aNode);
+    virtual ~FIBV2IONode();
     
     /**
      * @brief      Get the UID address parameter name.
@@ -49,24 +52,9 @@ public:
     std::string get_status(bool print_out=false) const override;
 
     /**
-     * @brief      Reset FIB node.
-     */
-    void reset(const std::string& clock_config_file) const override;
-
-    /**
      * @brief      Reset IO, with clock file look up.
      */
-    using IONode::reset;
-
-    /**
-     * @brief     Switch the SFP mux channel
-     */
-    void switch_sfp_mux_channel(uint32_t mux_channel) const override; // NOLINT(build/unsigned)
-
-    /**
-     * @brief     Read the active SFP mux channel
-     */
-    uint32_t read_active_sfp_mux_channel() const override; // NOLINT(build/unsigned)
+    void reset(const ClockSource& clock_source) const override;
 
     /**
      * @brief      Print status of on-board SFP.
@@ -79,44 +67,23 @@ public:
     void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
 
     /**
-     * @brief      reset on-board PLL using I2C IO expanders
-     */
-    void reset_pll() const;
-
-    /**
-     * @brief      reset on-board SFP flags using I2C IO expanders
-     */
-    uint8_t read_sfp_los_flag(uint32_t sfp_id) const; // NOLINT(build/unsigned)
-
-    /**
-     * @brief      reset on-board SFP flags using I2C IO expanders
-     */
-    uint8_t read_sfp_fault_flag(uint32_t sfp_id) const; // NOLINT(build/unsigned)
-
-    /**
-     * @brief      reset on-board SFP flags using I2C IO expanders
-     */
-    uint8_t read_sfp_los_flags() const; // NOLINT(build/unsigned)
-
-    /**
-     * @brief      reset on-board SFP flags using I2C IO expanders
-     */
-    uint8_t read_sfp_fault_flags() const; // NOLINT(build/unsigned)
-
-    /**
-     * @brief      reset on-board SFP flags using I2C IO expanders
-     */
-    //void readSFPStatusFlags(uint32_t aSFPId) const;
-
-    /**
      * @brief      Switch on or off the SFP tx laser via the I2C IO expander controlling the sfp tx disable pin. aOn=1: laster transmitting, tx disable pin = 0; aOn=0: laster NOT transmitting, tx disable pin = 1. 
      */
     void switch_sfp_tx(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
 
     /**
-     * @brief     Clocks ready?
-     */
-    bool clocks_ok() const override;
+      * @brief      Print status of on-board PLL.
+      */
+    std::string get_pll_status(bool print_out = false) const override {return "No status yet for CDCLVD110 on FIBv2";};
+
+    void get_info(timinghardwareinfo::TimingPLLMonitorData& mon_data) const override;
+
+    ///**
+    // * @brief      Get the PLL chip.
+    // *
+    // * @return     { description_of_the_return_value }
+    // */
+    //std::unique_ptr<const CDCLVD110Node> get_pll() const;
 
     // /**
     // * @brief      Fill hardware monitoring structure.
@@ -132,9 +99,26 @@ private:
 
     void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)
 
+    /**
+     * @brief      No config file for FIB v2
+     */
+    void reset(const std::string& clock_config_file) const override {}
+
+    /**
+      * @brief      Get the PLL chip.
+      *
+      * @return     { description_of_the_return_value }
+      */
+    std::unique_ptr<const SI534xSlave> get_pll() const override {return nullptr;}
+
+    /**
+     * @brief      Configure clock chip.
+     */
+    void configure_pll(const std::string& clock_config_file = "") const override  {TLOG() << "No text config for CDCLVD110";}
+
 };
 
 } // namespace timing
 } // namespace dunedaq
 
-#endif // TIMING_INCLUDE_TIMING_FIBIONODE_HPP_
+#endif // TIMING_INCLUDE_TIMING_FIBV2IONODE_HPP_

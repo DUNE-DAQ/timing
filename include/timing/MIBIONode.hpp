@@ -106,6 +106,14 @@ public:
    */
   bool clocks_ok() const override;
 
+  /**
+   * @brief      control tx laser of on-board SFP
+   */
+  void switch_sfp_tx(uint32_t sfp_id, bool turn_on) const override // NOLINT(build/unsigned)
+  {
+    TLOG() << "Not implemented in MIB v1 firmware";
+  }
+
   // /**
   //  * @brief      Fill hardware monitoring structure.
   //  */

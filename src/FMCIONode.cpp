@@ -213,5 +213,28 @@ FMCIONode::clocks_ok() const
 //   }
 // }
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+FMCIONode::switch_sfp_tx(uint32_t sfp_id, bool turn_on) const // NOLINT(build/unsigned)
+{
+  validate_sfp_id(sfp_id);
+
+  getNode("csr.ctrl.sfp_tx_dis").write(turn_on);
+  getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+FMCIONode::validate_sfp_id(uint32_t sfp_id) const
+{ // NOLINT(build/unsigned)
+  // on this board we have 3 upstream SFPs
+  if (sfp_id != 0)
+  {
+    throw InvalidSFPId(ERS_HERE, format_reg_value(sfp_id));
+  }
+}
+//-----------------------------------------------------------------------------
 } // namespace timing
 } // namespace dunedaq

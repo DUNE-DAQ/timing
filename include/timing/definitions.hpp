@@ -84,6 +84,7 @@ enum BoardRevision
   kMIBRev2,
   kGIBRev1,
   kPC069b,
+  kFIBRev2,
   kBoardRevisionUnknown = 256
 };
 

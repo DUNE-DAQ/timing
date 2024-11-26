@@ -74,6 +74,11 @@ public:
    */
   bool clocks_ok() const override;
 
+  /**
+   * @brief      control tx laser of on-board SFP
+   */
+  void switch_sfp_tx(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
+
   // /**
   //  * @brief      Fill hardware monitoring structure.
   //  */
@@ -83,6 +88,8 @@ public:
   //  * @brief    Give info to collector.
   //  */
   // void get_info(opmonlib::InfoCollector& ci, int level) const override;
+private:
+  void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)
 };
 
 } // namespace timing
