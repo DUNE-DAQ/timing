@@ -66,14 +66,17 @@ register_top_designs(py::module& m)
          py::arg("fe_mask"),
          py::arg("inv_mask"),
          py::arg("rate"),
-         py::arg("dispatch") = true);
+         py::arg("dispatch") = true)
+     .def("configure", &timing::BoreasDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
+     ;
 
   // Fanout
   py::class_<timing::FanoutDesign, uhal::Node>(m, "FanoutDesign")
     .def("read_firmware_version", &timing::FanoutDesign::read_firmware_version)
     .def("validate_firmware_version", &timing::FanoutDesign::validate_firmware_version)
-    .def("switch_mux", &timing::GaiaDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
-    .def("read_active_mux", &timing::GaiaDesign::read_active_mux)
+    .def("switch_mux", &timing::FanoutDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
+    .def("read_active_mux", &timing::FanoutDesign::read_active_mux)
+    .def("configure", &timing::FanoutDesign::configure, py::arg("clock_source"))
     ;
 
   // Ouroboros mux
@@ -107,7 +110,9 @@ register_top_designs(py::module& m)
           py::arg("address"),
           py::arg("control_sfp") = true,
           py::arg("sfp_mux") = -1)
-    .def("scan_sfp_mux", &timing::OuroborosMuxDesign::scan_sfp_mux);
+    .def("scan_sfp_mux", &timing::OuroborosMuxDesign::scan_sfp_mux)
+    .def("configure", &timing::OuroborosMuxDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
+    ;
 
   // Master mux
   py::class_<timing::MasterMuxDesign, uhal::Node>(m, "MasterMuxDesign")
@@ -140,7 +145,9 @@ register_top_designs(py::module& m)
           py::arg("address"),
           py::arg("control_sfp") = true,
           py::arg("sfp_mux") = -1)
-    .def("scan_sfp_mux", &timing::MasterMuxDesign::scan_sfp_mux);
+    .def("scan_sfp_mux", &timing::MasterMuxDesign::scan_sfp_mux)
+    .def("configure", &timing::MasterMuxDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
+    ;
 
   // Master
   py::class_<timing::MasterDesign, uhal::Node>(m, "MasterDesign")
@@ -172,7 +179,9 @@ register_top_designs(py::module& m)
           &timing::MasterDesign::measure_endpoint_rtt,
           py::arg("address"),
           py::arg("control_sfp") = true,
-          py::arg("sfp_mux") = -1);
+          py::arg("sfp_mux") = -1)
+     .def("configure", &timing::MasterDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
+     ;
 
   // Ouroboros
   py::class_<timing::OuroborosDesign, uhal::Node>(m, "OuroborosDesign")
@@ -204,13 +213,17 @@ register_top_designs(py::module& m)
           &timing::OuroborosDesign::measure_endpoint_rtt,
           py::arg("address"),
           py::arg("control_sfp") = true,
-          py::arg("sfp_mux") = -1);
+          py::arg("sfp_mux") = -1)
+     .def("configure", &timing::OuroborosDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
+     ;
 
   // Endpoint
   py::class_<timing::EndpointDesign, uhal::Node>(m, "EndpointDesign")
     .def("read_firmware_version", &timing::EndpointDesign::read_firmware_version)
     .def("validate_firmware_version", &timing::EndpointDesign::validate_firmware_version)
-    .def("get_status", &timing::EndpointDesign::get_status);
+    .def("get_status", &timing::EndpointDesign::get_status)
+    .def("configure", &timing::EndpointDesign::configure, py::arg("clock_source"))
+    ;
 
   // Chronos
   py::class_<timing::ChronosDesign, uhal::Node>(m, "ChronosDesign")
@@ -225,7 +238,9 @@ register_top_designs(py::module& m)
          py::arg("fe_mask"),
          py::arg("inv_mask"),
          py::arg("rate"),
-         py::arg("dispatch") = true);
+         py::arg("dispatch") = true)
+     .def("configure", &timing::ChronosDesign::configure, py::arg("clock_source"))
+     ;
 
   // Kerberos
   py::class_<timing::KerberosDesign, uhal::Node>(m, "KerberosDesign")
@@ -259,7 +274,7 @@ register_top_designs(py::module& m)
           py::arg("sfp_mux") = -1)
     .def("switch_mux", &timing::KerberosDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
     .def("read_active_mux", &timing::KerberosDesign::read_active_mux)
-    .def("configure", &timing::KerberosDesign::configure, py::arg("source"))
+    .def("configure", &timing::KerberosDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
     ;
 
   // Gaia
@@ -294,7 +309,7 @@ register_top_designs(py::module& m)
           py::arg("sfp_mux") = -1)
     .def("switch_mux", &timing::GaiaDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
     .def("read_active_mux", &timing::GaiaDesign::read_active_mux)
-    .def<void (timing::GaiaDesign::*)(uint8_t, IRIGEpoch) const>("configure", &timing::GaiaDesign::configure, py::arg("source"), py::arg("epoch"))
+    .def<void (timing::GaiaDesign::*)(ClockSource, TimestampSource, IRIGEpoch) const>("configure", &timing::GaiaDesign::configure, py::arg("clock_source"), py::arg("ts_source"), py::arg("epoch"))
     ;
 } // NOLINT
 

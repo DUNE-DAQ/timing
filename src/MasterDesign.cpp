@@ -36,14 +36,12 @@ MasterDesign::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-MasterDesign::configure(uint8_t source) const
+MasterDesign::configure(ClockSource clock_source, TimestampSource ts_source) const
 {
-
   // Hard resets
-  auto clock_source = static_cast<ClockSource>(source);
-  this->reset_io(clock_source);
+  TopDesign::configure(clock_source);
 
-  this->sync_timestamp(kSoftware); // keep previous behaviour for now, TODO: pass through correct parameter
+  this->sync_timestamp(ts_source); // keep previous behaviour for now, TODO: pass through correct parameter
 }
 //-----------------------------------------------------------------------------
 

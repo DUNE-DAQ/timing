@@ -45,10 +45,10 @@ ChronosDesign::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-ChronosDesign::configure(uint8_t source) const
+ChronosDesign::configure(ClockSource clock_source) const
 {
-  //EndpointDesignInterface::configure(source);
-
+  TopDesign::configure(clock_source);
+  // TODO ept configure
   // TODO HSI configure
 }
 //-----------------------------------------------------------------------------

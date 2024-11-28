@@ -55,13 +55,13 @@ public:
    * @brief      Prepare the timing fanout for data taking.
    *
    */
-  void configure(uint8_t source) const override;
+  void configure(ClockSource clock_source, TimestampSource ts_source) const override;
 
   /**
    * @brief      Switch timing source
    *
    */
-  void switch_timing_source(uint8_t source) const override;// NOLINT(build/unsigned)
+  void switch_timing_source(ClockSource clock_source) const override;// NOLINT(build/unsigned)
 };
 } // namespace timing
 } // namespace dunedaq

@@ -44,12 +44,6 @@ public:
    */
   std::string get_status(bool print_out = false) const override;
 
-  /**
-   * @brief      Prepare the timing endpoint for data taking.
-   *
-   */
-  void configure(uint8_t source) const override;
-
   // /**
   //  * @brief    Give info to collector.
   //  */  
@@ -67,6 +61,12 @@ public:
    *
    */
   void validate_firmware_version() const override;
+
+  /**
+   * @brief      Prepare the timing endpoint for data taking.
+   *
+   */
+  void configure(ClockSource clock_source) const override;
 
   /**
    * @brief    Give info to collector.

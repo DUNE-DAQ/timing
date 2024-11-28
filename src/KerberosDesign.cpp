@@ -40,17 +40,16 @@ KerberosDesign::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-KerberosDesign::configure(uint8_t source) const
+KerberosDesign::configure(ClockSource clock_source, TimestampSource ts_source) const
 {
-  auto clock_source = static_cast<ClockSource>(source);
   if (clock_source == kFreeRun)
   {
     TopDesign::configure(clock_source); // kerberos normally takes clock from upstream SFP
-    this->sync_timestamp(kSoftware);
+    this->sync_timestamp(ts_source);
   }
   else
   {
-    switch_timing_source(source);
+    switch_timing_source(clock_source);
 
     for (uint i=0; i <  get_number_of_endpoint_nodes(); ++i)
     {
@@ -62,7 +61,7 @@ KerberosDesign::configure(uint8_t source) const
 
         if (!get_endpoint_node_plain(i)->endpoint_ready())
         {
-          if (i==source)
+          if (i==clock_source)
           {
             ers::error(EndpointNotReady(ERS_HERE, "MIB endpoint "+std::to_string(i)+" not ready!", get_endpoint_node_plain(i)->read_endpoint_state()));
           }
@@ -74,7 +73,7 @@ KerberosDesign::configure(uint8_t source) const
       }
       catch (const std::exception& e)
       {
-        if (i==source)
+        if (i==clock_source)
         {
           ers::error(EndpointNotReady(ERS_HERE, "MIB endpoint "+std::to_string(i)+" has no clock!", get_endpoint_node_plain(i)->read_endpoint_state(),e));
         }
@@ -85,20 +84,19 @@ KerberosDesign::configure(uint8_t source) const
       }
     }
 
-    this->sync_timestamp(kUpstream);
+    this->sync_timestamp(ts_source);
   }
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void
-KerberosDesign::switch_timing_source(uint8_t source) const
+KerberosDesign::switch_timing_source(ClockSource clock_source) const
 {
-  auto clock_source = static_cast<ClockSource>(source);
   // Hard reset
   TopDesign::configure(clock_source); //TODO add option not to reprogram pll config
 
-  switch_timing_source_mux(source);
+  switch_timing_source_mux(clock_source);
 }
 //-----------------------------------------------------------------------------
 

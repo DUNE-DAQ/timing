@@ -54,14 +54,12 @@ public:
    * @brief      Prepare the timing unit for data taking.
    *
    */
-  void configure(uint8_t source, IRIGEpoch epoch) const;
+  void configure(ClockSource clock_source, TimestampSource ts_source, IRIGEpoch epoch) const;
 
   /**
    * @brief    Give info to collector.
    */
   void get_info(timingfirmwareinfo::TimingDeviceInfo& mon_data) const override;
-private:
-  void configure(uint8_t source) const override; //make private until configure() interface is finalised
 };
 
 } // namespace timing

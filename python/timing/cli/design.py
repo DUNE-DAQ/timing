@@ -23,8 +23,8 @@ from timing.core import SI534xSlave, I2CExpanderSlave
 
 from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
-from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord, kDesignGaia
-from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap, IRIGEpoch
+from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord, kDesignGaia, kDesignBoreas, kDesignKerberos, kDesignChronos, kDesignFanout
+from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap, IRIGEpoch, TimestampSource, ClockSource, kFreeRun, kInput0, kInput1, kInput2, kInput3, kUpstream, kSoftware
 from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
 
 from timing.common.toolbox import format_firmware_version
@@ -156,20 +156,54 @@ def cdrswitch(obj, source):
 
 # ------------------------------------------------------------------------------
 @design.command('configure', short_help="configure a whole design")
-@click.argument('source', type=int)
+@click.option('--clock-source', type=click.Choice(ClockSource.__members__.keys()))
+@click.option('--ts-source', type=click.Choice(TimestampSource.__members__.keys()))
 @click.option('--epoch', type=click.Choice(IRIGEpoch.__members__.keys()))
 @click.pass_obj
-def configure(obj, source, epoch):
+def configure(obj, clock_source, ts_source, epoch):
 
     lTopDesign = obj.mTopDesign
     lDesignType = obj.mDesignType
+    lDesignName=kDesignNameMap[lDesignType]
 
-    if lDesignType == kDesignGaia:
-        if epoch is not None:
-            lEpoch=IRIGEpoch.__members__[epoch]
-            lTopDesign.configure(source, lEpoch)
+    # user convenience
+    if clock_source is None:
+        if lDesignType in [kDesignMaster, kDesignBoreas, kDesignOuroboros, kDesignOuroborosSim]:
+            lClockSource=kFreeRun
+            lTimestampSource=kSoftware
+        elif lDesignType in [kDesignEndpoint, kDesignChronos, kDesignFanout]:
+            lClockSource=kInput1
+        elif lDesignType in [kDesignGaia, kDesignKerberos]:
+            lClockSource=kInput0
+            lTimestampSource=kUpstream
         else:
-            secho("Supply irig option for design Gaia!", fg='red')
+            secho("Unable to match a default clock source for design {}.\nConfigure failed!".format(lDesignName), fg='red')
+            return
     else:
-        lTopDesign.configure(source)
+        lClockSource=ClockSource.__members__[clock_source]
+
+    if ts_source is None:
+        if lDesignType in [kDesignMaster, kDesignBoreas, kDesignOuroboros, kDesignOuroborosSim]:
+            lTimestampSource=kSoftware
+        elif lDesignType in [kDesignGaia, kDesignKerberos]:
+            lTimestampSource=kUpstream
+        elif lDesignType not in [kDesignEndpoint, kDesignChronos, kDesignFanout]:
+            secho("Unable to match a default timestamp source for design {}.\nConfigure failed!".format(lDesignName), fg='red')
+            return
+    else:
+        lTimestampSource=TimestampSource.__members__[ts_source]
+
+    if lDesignType in [kDesignMaster, kDesignBoreas, kDesignGaia, kDesignKerberos]:
+        if lDesignType == kDesignGaia:
+            if epoch is not None:
+                lEpoch=IRIGEpoch.__members__[epoch]
+                lTopDesign.configure(lClockSource, lTimestampSource, lEpoch)
+            else:
+                secho("Supply irig option for design Gaia!", fg='red')
+        else:
+            lTopDesign.configure(lClockSource, lTimestampSource)
+    elif lDesignType in [kDesignEndpoint, kDesignChronos, kDesignFanout]:
+        lTopDesign.configure(lClockSource)
+    else:
+        secho("Configure not supported for design {}.\nConfigure failed!".format(lDesignName), fg='red')
 # ------------------------------------------------------------------------------

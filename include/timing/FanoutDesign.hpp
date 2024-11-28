@@ -54,15 +54,15 @@ public:
    * @brief      Prepare the timing fanout for data taking.
    *
    */
-  void configure(uint8_t source) const override;
+  void configure(ClockSource clock_source) const override;
 
   /**
    * @brief      Validate endpoint firmware version.
    *
    */
-  void validate_firmware_version() const override { /*firmware version in fanout design right now*/}
+  void validate_firmware_version() const override;
 
-  uint32_t read_firmware_version() const override { /*firmware version in fanout design right now*/}
+  uint32_t read_firmware_version() const override;
 
   /**
    * @brief    Give info to collector.

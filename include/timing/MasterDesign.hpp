@@ -46,7 +46,7 @@ public:
    * @brief      Prepare the timing master for data taking.
    *
    */
-  void configure(uint8_t source) const override;
+  void configure(ClockSource clock_source, TimestampSource ts_source) const override;
   
   /**
    * @brief      Read the current timestamp.

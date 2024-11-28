@@ -41,45 +41,16 @@ GaiaDesign::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-GaiaDesign::configure(uint8_t source) const
+GaiaDesign::configure(ClockSource clock_source, TimestampSource ts_source, IRIGEpoch epoch) const
 {
-  auto clock_source = static_cast<ClockSource>(source);
-  // Hard reset
   TopDesign::configure(clock_source);
 
-  if (clock_source == kFreeRun)
-  {
-    this->sync_timestamp(kSoftware); // keep previous behaviour for now, TODO: pass through correct parameter
-  }
-  else
-  {
-    // TODO: set irig epoch
-    this->sync_timestamp(kUpstream);
-  }
-}
-//-----------------------------------------------------------------------------
+  getNode<IRIGTimestampNode>("irig_time_source").set_irig_epoch(epoch);
 
-//-----------------------------------------------------------------------------
-void
-GaiaDesign::configure(uint8_t source, IRIGEpoch epoch) const
-{
-  auto clock_source = static_cast<ClockSource>(source);
-  // Hard reset
-  TopDesign::configure(clock_source);
+  // TODO temporary, wait for irig lock and date
+  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-  if (clock_source == kFreeRun)
-  {
-    this->sync_timestamp(kSoftware); // keep previous behaviour for now, TODO: pass through correct parameter
-  }
-  else
-  {
-    getNode<IRIGTimestampNode>("irig_time_source").set_irig_epoch(epoch);
-
-    // TODO temporary, wait for irig lock and date
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-    this->sync_timestamp(kUpstream);
-  }
+  this->sync_timestamp(ts_source);
 }
 //-----------------------------------------------------------------------------
 

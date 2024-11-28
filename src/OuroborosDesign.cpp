@@ -45,9 +45,9 @@ OuroborosDesign::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-OuroborosDesign::configure(uint8_t source) const
+OuroborosDesign::configure(ClockSource clock_source, TimestampSource ts_source) const
 {
-  MasterDesign::configure(source);
+  MasterDesign::configure(clock_source, ts_source);
   //EndpointDesignInterface::configure(source);
 }
 //-----------------------------------------------------------------------------

@@ -47,9 +47,10 @@ BoreasDesign::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-BoreasDesign::configure(uint8_t source) const
+BoreasDesign::configure(ClockSource clock_source, TimestampSource ts_source) const
 {
-  MasterDesign::configure(source);
+  MasterDesign::configure(clock_source, ts_source);
+  // configure endpoint
   // configure hsi
   // get_his_node().
 }

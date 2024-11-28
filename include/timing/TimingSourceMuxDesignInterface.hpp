@@ -66,7 +66,7 @@ public:
    * @brief      Switch timing source
    *
    */
-  virtual void switch_timing_source(uint8_t source) const = 0;// NOLINT(build/unsigned)
+  virtual void switch_timing_source(ClockSource clock_source) const = 0;// NOLINT(build/unsigned)
 
 };
 

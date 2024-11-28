@@ -48,19 +48,18 @@ EndpointDesign::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-EndpointDesign::configure(uint8_t source) const
+EndpointDesign::configure(ClockSource clock_source) const
 {
-  auto clock_source = static_cast<ClockSource>(source);
-  this->reset_io(clock_source); // kerberos normally takes clock from upstream SFP
+  TopDesign::configure(clock_source);
 
   for (uint i=0; i <  get_number_of_endpoint_nodes(); ++i)
   {
-    get_endpoint_node_plain(i)->reset(0x20+i);
+    get_endpoint_node_plain(i)->reset(0x30+i);
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     get_endpoint_node_plain(i)->get_status(true);
     if (!get_endpoint_node_plain(i)->endpoint_ready())
     {
-      ers::error(EndpointNotReady(ERS_HERE, "MIB endpoint "+std::to_string(i)+" not ready!", get_endpoint_node_plain(i)->read_endpoint_state()));
+      ers::error(EndpointNotReady(ERS_HERE, "Endpoint "+std::to_string(i)+" not ready!", get_endpoint_node_plain(i)->read_endpoint_state()));
     }
   }
 }

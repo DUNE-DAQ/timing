@@ -15,7 +15,7 @@
 // Timing Headers
 #include "timing/HSINode.hpp"
 #include "timing/HSIDesignInterface.hpp"
-#include "timing/EndpointDesign.hpp"
+#include "timing/TopDesign.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -47,7 +47,7 @@ public:
    * @brief      Prepare the timing endpoint for data taking.
    *
    */
-  void configure(uint8_t source) const override;
+  void configure(ClockSource clock_source) const override;
   
   /**
    * @brief      Read endpoint firmware version.

@@ -78,10 +78,9 @@ public:
    * @brief      Prepare the timing device for data taking.
    *
    */
-  void configure(uint8_t source) const override
+  void configure(ClockSource clock_source) const override
   {
     // Hard resets
-    auto clock_source = static_cast<ClockSource>(source);
     this->reset_io(clock_source);
 
     auto start = std::chrono::high_resolution_clock::now();
@@ -104,7 +103,6 @@ public:
       std::this_thread::sleep_for(std::chrono::microseconds(10));
     }
   }
-
 
   /**
    * @brief      Print hardware information
