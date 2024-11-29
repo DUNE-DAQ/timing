@@ -220,7 +220,7 @@ FMCIONode::switch_sfp_tx(uint32_t sfp_id, bool turn_on) const // NOLINT(build/un
 {
   validate_sfp_id(sfp_id);
 
-  getNode("csr.ctrl.sfp_tx_dis").write(turn_on);
+  getNode("csr.ctrl.sfp_tx_dis").write(!turn_on);
   getClient().dispatch();
 }
 //-----------------------------------------------------------------------------
