@@ -93,6 +93,12 @@ public:
   }
 
   /**
+   * @brief      Prepare the timing device for data taking.
+   *
+   */
+  virtual void configure(ClockSource clock_source, TimestampSource ts_source) const = 0;
+
+  /**
    * @brief    Give info to collector.
    */
   virtual void get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const = 0;

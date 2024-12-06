@@ -15,9 +15,10 @@
 					<node id="sfp0_los" mask="0x8"/>
 					<node id="sfp1_los" mask="0x10"/>        	
 					<node id="sfp2_los" mask="0x20"/>
-					<node id="pll_lol" mask="0x40"/>
-					<node id="mmcm_ok" mask="0x80"/>
-					<node id="mmcm_sticky" mask="0x100"/>
+					<node id="pll_ok" mask="0x40"/>
+					<node id="pll_sticky" mask="0x80"/>
+					<node id="mmcm_ok" mask="0x100"/>
+					<node id="mmcm_sticky" mask="0x200"/>
 				</node>
 		</node>
 		<node id="config" address="0x2" description="board/firmware config" fwinfo="endpoint;width=1">

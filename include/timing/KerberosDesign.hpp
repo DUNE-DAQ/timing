@@ -16,6 +16,7 @@
 #include "timing/MasterDesign.hpp"
 #include "timing/EndpointDesignInterface.hpp"
 #include "timing/CDRMuxDesignInterface.hpp"
+#include "timing/TimingSourceMuxDesignInterface.hpp"
 
 #include "TimingIssues.hpp"
 
@@ -33,7 +34,7 @@ namespace timing {
 /**
  * @brief      Class for timing fanout designs.
  */
-class KerberosDesign : public MasterDesign, public EndpointDesignInterface, public CDRMuxDesignInterface
+class KerberosDesign : public MasterDesign, public EndpointDesignInterface, public CDRMuxDesignInterface, public TimingSourceMuxDesignInterface
 {
   UHAL_DERIVEDNODE(KerberosDesign)
 public:
@@ -54,7 +55,13 @@ public:
    * @brief      Prepare the timing fanout for data taking.
    *
    */
-  void configure() const override;
+  void configure(ClockSource clock_source, TimestampSource ts_source) const override;
+
+  /**
+   * @brief      Switch timing source
+   *
+   */
+  void switch_timing_source(ClockSource clock_source) const override;// NOLINT(build/unsigned)
 };
 } // namespace timing
 } // namespace dunedaq

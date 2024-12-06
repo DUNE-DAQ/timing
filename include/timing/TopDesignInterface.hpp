@@ -74,7 +74,7 @@ public:
    * @brief      Prepare the timing device for data taking.
    *
    */
-  virtual void configure() const = 0;
+  virtual void configure(ClockSource clock_source) const = 0;
 
   /**
    * @brief      Print hardware information

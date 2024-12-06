@@ -72,6 +72,11 @@ public:
     void switch_sfp_tx(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
 
     /**
+     * @brief     Clocks ready?
+     */
+    bool clocks_ok() const override {return true;} //TODO measure clock freq.
+
+    /**
       * @brief      Print status of on-board PLL.
       */
     std::string get_pll_status(bool print_out = false) const override {return "No status yet for CDCLVD110 on FIBv2";};

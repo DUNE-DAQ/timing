@@ -113,6 +113,11 @@ public:
      */
     void switch_sfp_tx(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
 
+    /**
+     * @brief     Clocks ready?
+     */
+    bool clocks_ok() const override;
+
     // /**
     // * @brief      Fill hardware monitoring structure.
     // */

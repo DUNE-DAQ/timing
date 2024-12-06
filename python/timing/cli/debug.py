@@ -16,7 +16,7 @@ from os.path import join, expandvars
 from timing.core import SI534xSlave, I2CExpanderSlave
 
 
-from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardMIB, kBoardGIB
+from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardMIB, kBoardGIB, kBoardPC069
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap
 
@@ -157,14 +157,22 @@ def sfp_status(obj):
     lBoardType = obj.mBoardType
 
     lNodes = []
-
-    if lBoardType == kBoardFMC:
+    lSwitches={}
+    lSwitchChannels={}
+    if lBoardType in [kBoardFMC, kBoardPC069]:
         lNodes = ['io.sfp_i2c','io.uid_i2c','io.pll_i2c']
     elif lBoardType == kBoardPC059:
         lNodes = ['io.i2c', 'io.usfp_i2c']
-    elif lBoardType in [kBoardTLU, kBoardMIB]:
+        switch_address=lDevice.getNode('io.i2c').get_slave_address('SFP_Switch')
+        lSwitches={"io.i2c": switch_address}
+        lSwitchChannels={"io.i2c": 8}
+    elif lBoardType in [kBoardTLU, kBoardMIB, kBoardGIB]:
         lNodes = ['io.i2c']
-    
+        if lBoardType == kBoardGIB:
+            lSwitches={"io.i2c": 0x70}
+            lSwitchChannels={"io.i2c": 7}
+    else:
+        secho(f"Error I don't know about board {lBoardType} : {kBoardNameMap[lBoardType]}", fg='red')
     # if lBoardType == kBoardPC059:
     #     lSFPSwitch = lDevice.getNode('io.i2c').get_slave('SFP_Switch')
     #     print(lSFPSwitch.read_i2cPrimitive(1))
@@ -176,6 +184,19 @@ def sfp_status(obj):
         echo('Scanning '+style(n,fg='cyan'))
         lAddresses = lI2CBusNode.scan()
         print("  '{}': {} devices found.\n  Addresses: {}".format(n, len(lAddresses), ', '.join((hex(a) for a in lAddresses))))
+        if n in lSwitches:
+            print(f" Found {len(lSwitches)} switches.\n  Addresses: {lSwitches.values()}")
+            for switch,address in lSwitches.items():
+                print (f"switch {switch} address: {address}")
+                switch_channels=lSwitchChannels[switch]
+                print(f"working with {switch}, @ adr {address}, it has {switch_channels} channels")
+                for channel in range(0,switch_channels):
+                    secho(f"Scanning with channel {channel} enabled", fg='cyan')
+                    lI2CBusNode.write_i2cPrimitive(address, [1<<channel])
+                    lAddresses = lI2CBusNode.scan()
+                    print("  '{}': {} devices found.\n  Addresses: {}".format(n, len(lAddresses), ', '.join((hex(a) for a in lAddresses))))
+
+
 
 # ------------------------------------------------------------------------------
 

@@ -15,6 +15,7 @@ KerberosDesign::KerberosDesign(const uhal::Node& node)
   , EndpointDesignInterface(node)
   , MuxDesignInterface(node)
   , CDRMuxDesignInterface(node)
+  , TimingSourceMuxDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
@@ -39,20 +40,63 @@ KerberosDesign::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-KerberosDesign::configure() const
+KerberosDesign::configure(ClockSource clock_source, TimestampSource ts_source) const
 {
-  ClockSource clock_source = kInput0;
-  // Hard reset
-  this->reset_io(clock_source); // kerberos normally takes clock from upstream SFP, firmware selectable; add posibility override clock source via config in future
-
   if (clock_source == kFreeRun)
   {
-    this->sync_timestamp(kSoftware); // keep previous behaviour for now, TODO: pass through correct parameter
+    TopDesign::configure(clock_source); // kerberos normally takes clock from upstream SFP
+    this->sync_timestamp(ts_source);
   }
   else
   {
-    this->sync_timestamp(kUpstream);
+    switch_timing_source(clock_source);
+
+    for (uint i=0; i <  get_number_of_endpoint_nodes(); ++i)
+    {
+      try
+      {
+        get_endpoint_node_plain(i)->reset(0x10+i);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+        get_endpoint_node_plain(i)->get_status(true);
+
+        if (!get_endpoint_node_plain(i)->endpoint_ready())
+        {
+          if (i==clock_source)
+          {
+            ers::error(EndpointNotReady(ERS_HERE, "MIB endpoint "+std::to_string(i)+" not ready!", get_endpoint_node_plain(i)->read_endpoint_state()));
+          }
+          else
+          {
+            ers::warning(EndpointNotReady(ERS_HERE, "MIB endpoint "+std::to_string(i)+" not ready!", get_endpoint_node_plain(i)->read_endpoint_state()));
+          }
+        }
+      }
+      catch (const std::exception& e)
+      {
+        if (i==clock_source)
+        {
+          ers::error(EndpointNotReady(ERS_HERE, "MIB endpoint "+std::to_string(i)+" has no clock!", get_endpoint_node_plain(i)->read_endpoint_state(),e));
+        }
+        else
+        {
+          ers::warning(EndpointNotReady(ERS_HERE, "MIB endpoint "+std::to_string(i)+" has no clock!", get_endpoint_node_plain(i)->read_endpoint_state(), e));
+        }
+      }
+    }
+
+    this->sync_timestamp(ts_source);
   }
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+KerberosDesign::switch_timing_source(ClockSource clock_source) const
+{
+  // Hard reset
+  TopDesign::configure(clock_source); //TODO add option not to reprogram pll config
+
+  switch_timing_source_mux(clock_source);
 }
 //-----------------------------------------------------------------------------
 

@@ -86,6 +86,11 @@ public:
   void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
 
   /**
+   * @brief     Clocks ready?
+   */
+  bool clocks_ok() const override;
+
+  /**
    * @brief      control tx laser of on-board SFP softly (I2C command)
    */
   void switch_sfp_tx(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)

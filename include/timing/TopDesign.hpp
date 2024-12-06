@@ -75,6 +75,36 @@ public:
   }
 
   /**
+   * @brief      Prepare the timing device for data taking.
+   *
+   */
+  void configure(ClockSource clock_source) const override
+  {
+    // Hard resets
+    this->reset_io(clock_source);
+
+    auto start = std::chrono::high_resolution_clock::now();
+
+    // Wait for clocks to be happy
+    while (true)
+    {
+      if (get_io_node_plain()->clocks_ok())
+      {
+        TLOG() << "Clocks ready!";
+        break;
+      }
+
+      auto now = std::chrono::high_resolution_clock::now();
+      auto ms_since_start = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
+
+      if (ms_since_start.count() > 500)
+        throw ClocksNotReady(ERS_HERE, "IO");
+
+      std::this_thread::sleep_for(std::chrono::microseconds(10));
+    }
+  }
+
+  /**
    * @brief      Print hardware information
    */
   std::string get_hardware_info(bool print_out = false) const override

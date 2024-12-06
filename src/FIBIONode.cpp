@@ -259,6 +259,21 @@ FIBIONode::switch_sfp_tx(uint32_t sfp_id, bool turn_on) const { // NOLINT(build/
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+bool
+FIBIONode::clocks_ok() const
+{
+  std::stringstream status;
+
+  auto states = read_sub_nodes(getNode("csr.stat"));
+  bool pll_ok = states.find("pll_ok")->second.value();
+  bool mmcm_ok = states.find("mmcm_ok")->second.value();
+
+  TLOG_DEBUG(5) << "pll ok: " << pll_ok << ", mmcm ok: " << mmcm_ok;
+
+  return pll_ok && mmcm_ok;
+}
+//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void

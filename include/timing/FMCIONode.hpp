@@ -70,6 +70,11 @@ public:
   std::string get_clock_frequencies_table(bool print_out = false) const override;
 
   /**
+   * @brief     Clocks ready?
+   */
+  bool clocks_ok() const override;
+
+  /**
    * @brief      control tx laser of on-board SFP
    */
   void switch_sfp_tx(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
