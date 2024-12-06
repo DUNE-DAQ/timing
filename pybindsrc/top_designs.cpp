@@ -96,6 +96,7 @@ register_top_designs(py::module& m)
          py::arg("rate"),
          py::arg("poisson"))
     .def("switch_mux", &timing::OuroborosMuxDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
+    .def("read_active_mux", &timing::OuroborosMuxDesign::read_active_mux)
     .def("apply_endpoint_delay", 
           &timing::OuroborosMuxDesign::apply_endpoint_delay,
           py::arg("address"),
@@ -131,6 +132,7 @@ register_top_designs(py::module& m)
          py::arg("rate"),
          py::arg("poisson"))
     .def("switch_mux", &timing::MasterMuxDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
+    .def("read_active_mux", &timing::MasterMuxDesign::read_active_mux)
     .def("apply_endpoint_delay", 
           &timing::MasterMuxDesign::apply_endpoint_delay,
           py::arg("address"),

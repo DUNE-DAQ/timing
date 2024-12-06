@@ -180,10 +180,6 @@ def clkstatus(ctx, obj, verbose):
     
     ctx.invoke(status)
 
-    if lBoardType == kBoardPC059: #TODO or lBoardRevision == kFIBRev1
-        mux_fib = lIO.read_active_downstream_mux_channel()
-        secho("Active sfp mux {} ".format(mux_fib))
-
     echo()
     ctx.invoke(freq)
     echo()
