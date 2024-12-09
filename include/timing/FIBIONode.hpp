@@ -111,7 +111,12 @@ public:
     /**
      * @brief      Switch on or off the SFP tx laser via the I2C IO expander controlling the sfp tx disable pin. aOn=1: laster transmitting, tx disable pin = 0; aOn=0: laster NOT transmitting, tx disable pin = 1. 
      */
-    void switch_sfp_tx(uint32_t sfp_id, bool turn_on) const; // NOLINT(build/unsigned)
+    void switch_sfp_tx(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
+
+    /**
+     * @brief     Clocks ready?
+     */
+    bool clocks_ok() const override;
 
     // /**
     // * @brief      Fill hardware monitoring structure.

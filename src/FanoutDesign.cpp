@@ -37,10 +37,35 @@ FanoutDesign::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-FanoutDesign::configure() const
+FanoutDesign::validate_firmware_version() const
+{
+  TLOG() << "Firmware version not available in fanout";
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+uint32_t
+FanoutDesign::read_firmware_version() const
+{
+  TLOG() << "Firmware version not available in fanout";
+  return 0;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+FanoutDesign::configure(ClockSource clock_source) const
 {
   // Hard reset
-  this->reset_io(kInput1); // fanout design is nominally FIB with input from backplane; add posibility override clock source via config in future
+  TopDesign::configure(clock_source); // fanout design is nominally FIB with input from backplane
+
+  get_endpoint_node_plain(0)->reset(0x20); //TODO set correct address
+  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+  get_endpoint_node_plain(0)->get_status(true);
+  if (!get_endpoint_node_plain(0)->endpoint_ready())
+  {
+    throw EndpointNotReady(ERS_HERE, "Fanout endpoint not ready!", get_endpoint_node_plain(0)->read_endpoint_state());
+  }
 }
 //-----------------------------------------------------------------------------
 

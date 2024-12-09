@@ -156,6 +156,22 @@ FMCIONode::get_clock_frequencies_table(bool print_out) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+bool
+FMCIONode::clocks_ok() const
+{
+  std::stringstream status;
+
+  auto states = read_sub_nodes(getNode("csr.stat"));
+  //bool pll_ok = states.find("pll_ok")->second.value();
+  bool mmcm_ok = states.find("mmcm_ok")->second.value();
+  
+  TLOG_DEBUG(5) << ", mmcm ok: " << mmcm_ok;
+
+  return mmcm_ok; // TODO for EPT, check pll lock
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 // void
 // FMCIONode::get_info(timinghardwareinfo::TimingFMCMonitorData& mon_data) const
 // {
@@ -196,6 +212,29 @@ FMCIONode::get_clock_frequencies_table(bool print_out) const
 //     ci.add(mon_data);
 //   }
 // }
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+FMCIONode::switch_sfp_tx(uint32_t sfp_id, bool turn_on) const // NOLINT(build/unsigned)
+{
+  validate_sfp_id(sfp_id);
+
+  getNode("csr.ctrl.sfp_tx_dis").write(!turn_on);
+  getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+FMCIONode::validate_sfp_id(uint32_t sfp_id) const
+{ // NOLINT(build/unsigned)
+  // on this board we have 3 upstream SFPs
+  if (sfp_id != 0)
+  {
+    throw InvalidSFPId(ERS_HERE, format_reg_value(sfp_id));
+  }
+}
 //-----------------------------------------------------------------------------
 } // namespace timing
 } // namespace dunedaq

@@ -47,18 +47,6 @@ OuroborosMuxDesign::get_status(bool print_out) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-OuroborosMuxDesign::configure() const
-{
-
-  // Hard resets
-  this->reset_io(kFreeRun); // ouroboros design is normally stand-alone; add posibility override clock source via config in future
-
-  this->sync_timestamp(kSoftware); // keep previous behaviour for now, TODO: pass through correct parameter
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
 // void
 // OuroborosMuxDesign::get_info(opmonlib::InfoCollector& ci, int level) const
 // { 

@@ -377,6 +377,56 @@ SI534xSlave::registers() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+std::string
+SI534xSlave::get_status(bool print_out) const
+{
+  std::stringstream status;
+  status << "PLL configuration id   : " << this->read_config_id() << std::endl;
+
+  std::map<std::string, uint32_t> pll_version; // NOLINT(build/unsigned)
+  pll_version["Part number"] = this->read_device_version();
+  pll_version["Device grade"] = this->read_clock_register(0x4);
+  pll_version["Device revision"] = this->read_clock_register(0x5);
+
+  status << format_reg_table(pll_version, "PLL information") << std::endl;
+
+  std::map<std::string, uint32_t> pll_registers; // NOLINT(build/unsigned)
+
+  uint8_t pll_reg_c = this->read_clock_register(0xc);   // NOLINT(build/unsigned)
+  uint8_t pll_reg_d = this->read_clock_register(0xd);   // NOLINT(build/unsigned)
+  uint8_t pll_reg_e = this->read_clock_register(0xe);   // NOLINT(build/unsigned)
+  uint8_t pll_reg_f = this->read_clock_register(0xf);   // NOLINT(build/unsigned)
+  uint8_t pll_reg_11 = this->read_clock_register(0x11); // NOLINT(build/unsigned)
+  uint8_t pll_reg_12 = this->read_clock_register(0x12); // NOLINT(build/unsigned)
+
+  pll_registers["CAL_PLL"] = dec_rng(pll_reg_f, 5);
+  pll_registers["HOLD"] = dec_rng(pll_reg_e, 5);
+  pll_registers["LOL"] = dec_rng(pll_reg_e, 1);
+  pll_registers["LOS"] = dec_rng(pll_reg_d, 0, 4);
+  pll_registers["LOSXAXB"] = dec_rng(pll_reg_c, 1);
+  pll_registers["LOSXAXB_FLG"] = dec_rng(pll_reg_11, 1);
+
+  pll_registers["OOF"] = dec_rng(pll_reg_d, 4, 4);
+  pll_registers["OOF (sticky)"] = dec_rng(pll_reg_12, 4, 4);
+
+  pll_registers["SMBUS_TIMEOUT"] = dec_rng(pll_reg_c, 5);
+  pll_registers["SMBUS_TIMEOUT_FLG"] = dec_rng(pll_reg_11, 5);
+
+  pll_registers["SYSINCAL"] = dec_rng(pll_reg_c, 0);
+  pll_registers["SYSINCAL_FLG"] = dec_rng(pll_reg_11, 0);
+
+  pll_registers["XAXB_ERR"] = dec_rng(pll_reg_c, 3);
+  pll_registers["XAXB_ERR_FLG"] = dec_rng(pll_reg_11, 3);
+
+  status << format_reg_table(pll_registers, "PLL state");
+
+  if (print_out)
+    TLOG() << status.str();
+  return status.str();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 SI534xNode::SI534xNode(const uhal::Node& node)
   : I2CMasterNode(node)
   , SI534xSlave(this, this->get_slave_address("i2caddr"))

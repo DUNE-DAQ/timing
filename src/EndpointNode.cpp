@@ -116,7 +116,7 @@ EndpointNode::get_status(bool print_out) const
   ept_summary.push_back(std::make_pair("Timestamp (hex)", format_reg_value(tstamp2int(ept_timestamp))));
   ept_summary.push_back(std::make_pair("Timestamp", format_timestamp(ept_timestamp,62500000)));
 
-  status << format_reg_table(ept_summary, "Endpoint summary", { "", "" }) << std::endl;
+  status << std::endl << format_reg_table(ept_summary, "Endpoint summary", { "", "" }) << std::endl;
 //  status << "Endpoint frequency: " << ept_clock_frequency << " MHz" << std::endl;
   status << format_reg_table(ept_state, "Endpoint state") << std::endl;
   

@@ -72,26 +72,6 @@ GIBIONode::get_hardware_info(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-GIBIONode::reset(const ClockSource& clock_source) const
-{
-  getNode("csr.ctrl.i2c_sw_rst").write(0x0);
-  getNode("csr.ctrl.i2c_exten_rst").write(0x0);
-  getNode("csr.ctrl.clk_gen_rst").write(0x0);
-  getClient().dispatch();
-  millisleep(1);
-  getNode("csr.ctrl.i2c_sw_rst").write(0x1);
-  getNode("csr.ctrl.i2c_exten_rst").write(0x1);
-  getNode("csr.ctrl.clk_gen_rst").write(0x1);
-  getClient().dispatch();
-
-  // Find the right pll config file
-  std::string clock_config = get_full_clock_config_file_path(clock_source);
-  reset(clock_config);
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
 GIBIONode::reset(const std::string& clock_config_file) const
 {
   
@@ -184,12 +164,52 @@ GIBIONode::get_sfp_status(uint32_t sfp_id, bool print_out) const { // NOLINT(bui
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+bool
+GIBIONode::clocks_ok() const
+{
+  std::stringstream status;
+
+  auto states = read_sub_nodes(getNode("csr.stat"));
+  bool pll_lol = states.find("clk_gen_lol")->second.value();
+  bool pll_interrupt = states.find("clk_gen_intr")->second.value();
+  bool mmcm_ok = states.find("mmcm_ok")->second.value();
+  bool mmcm_10_ok = states.find("mmcm_ok")->second.value();
+
+  TLOG_DEBUG(5) << "pll lol: " << pll_lol << ", mmcm ok: " << mmcm_ok << ", mmcm 10MHz ok: " << mmcm_10_ok;
+
+  return !pll_lol && mmcm_ok && mmcm_10_ok;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 void
 GIBIONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const { // NOLINT(build/unsigned)
   validate_sfp_id(sfp_id);
 
   auto sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(sfp_id), "SFP_EEProm");
   sfp->switch_soft_tx_control_bit(turn_on);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+GIBIONode::switch_sfp_tx(uint32_t sfp_id, bool turn_on) const { // NOLINT(build/unsigned)
+	validate_sfp_id(sfp_id);
+
+  auto sfp_expander_1 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "SFPExpander1");
+	uint8_t current_sfp_tx_control_flags = sfp_expander_1->read_outputs_config(1); // NOLINT(build/unsigned)
+
+	uint8_t new_sfp_tx_control_flags; // NOLINT(build/unsigned)
+	if (turn_on)
+	{
+		new_sfp_tx_control_flags = current_sfp_tx_control_flags & ~(1UL << sfp_id);
+	}
+  else
+  {
+    new_sfp_tx_control_flags = current_sfp_tx_control_flags | (1UL << sfp_id);
+  }
+
+  sfp_expander_1->set_outputs(1, new_sfp_tx_control_flags);
 }
 //-----------------------------------------------------------------------------
 

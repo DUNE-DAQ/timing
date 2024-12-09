@@ -14,6 +14,7 @@
 
 #include "timing/I2CMasterNode.hpp"
 #include "timing/SIChipSlave.hpp"
+#include "timing/ClockGeneratorInterface.hpp"
 
 #include "timing/timinghardwareinfo/Structs.hpp"
 #include "timing/timinghardwareinfo/Nljs.hpp"
@@ -55,7 +56,7 @@ namespace timing {
  * @author     Alessandro Thea
  * @date       August 2017
  */
-class SI534xSlave : public SIChipSlave
+class SI534xSlave : public SIChipSlave //TODO clockgeninterface
 {
 public:
   SI534xSlave(const I2CMasterNode* i2c_master, uint8_t i2c_device_address); // NOLINT(build/unsigned)
@@ -68,6 +69,11 @@ public:
   std::string read_config_id() const;
 
   void get_info(timinghardwareinfo::TimingPLLMonitorData& mon_data) const;
+
+  /**
+    * @brief     Get status string, optionally print.
+    */
+  std::string get_status(bool print_out=false) const;
 
 private:
   typedef boost::tuple<uint16_t, uint8_t> RegisterSetting_t; // NOLINT(build/unsigned)

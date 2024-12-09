@@ -1,41 +1,41 @@
 /**
- * @file CRTDesign.cpp
+ * @file CDCLVD110Node.cpp
  *
  * This is part of the DUNE DAQ Software Suite, copyright 2020.
  * Licensing/copyright details are in the COPYING file that you should have
  * received with this code.
  */
 
-#include "timing/CRTDesign.hpp"
+#include "timing/CDCLVD110Node.hpp"
 
-#include <sstream>
+#include "logging/Logging.hpp"
+
 #include <string>
+#include <chrono>
 
-namespace dunedaq::timing {
+namespace dunedaq {
+namespace timing {
 
-UHAL_REGISTER_DERIVED_NODE(CRTDesign)
+UHAL_REGISTER_DERIVED_NODE(CDCLVD110Node)
 
 //-----------------------------------------------------------------------------
-CRTDesign::CRTDesign(const uhal::Node& node)
-  : TopDesignInterface(node)
-  , EndpointDesignInterface(node)
-  , TopDesign(node)
-  , CRTDesignInterface(node)
+CDCLVD110Node::CDCLVD110Node(const uhal::Node& node)
+  : ClockGeneratorInterface(node)
 {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-CRTDesign::~CRTDesign()
-{}
+CDCLVD110Node::~CDCLVD110Node() {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 std::string
-CRTDesign::get_status(bool print_out) const
+CDCLVD110Node::get_status(bool print_out) const
 {
   std::stringstream status;
-  status << get_io_node_plain()->get_pll_status();
-  status << get_crt_node().get_status();
+  //auto subnodes = read_sub_nodes(getNode("csr.stat"));
+  //status << format_reg_table(subnodes, "CDCLVD110Node state");
+  status << "CDCLVD110Node state"; //TODO: implement
   if (print_out)
     TLOG() << status.str();
   return status.str();
@@ -43,12 +43,13 @@ CRTDesign::get_status(bool print_out) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-CRTDesign::configure() const
+void // NOLINT(build/unsigned)
+CDCLVD110Node::get_info(timinghardwareinfo::TimingPLLMonitorData& mon_data) const
 {
-  // Hard resets
-  reset_io(kInput1); // endpoint FMC SFP is normally on input 1; add posibility override clock source via config in future
+  mon_data.lol = false; // no monitoring of this in CDCLVD110
+  mon_data.los = false;
 }
 //-----------------------------------------------------------------------------
 
-} // namespace dunedaq::timing
+} // namespace timing
+} // namespace dunedaq

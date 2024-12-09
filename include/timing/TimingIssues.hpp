@@ -258,6 +258,12 @@ ERS_DECLARE_ISSUE(timing,                                                       
                   ((uint32_t)cdr_locked)((uint32_t)rx_ready)                                    ///< Message parameters // NOLINT
 )
 
+ERS_DECLARE_ISSUE(timing,                                  ///< Namespace
+                  ClocksNotReady,                          //< Issue class name
+                  clocks_description << " clocks not ready.", ///< Message
+                  ((std::string)clocks_description)        ///< Message parameters
+)
+
 ERS_DECLARE_ISSUE(timing, HSIBufferIssue, "HSI buffer in state: " << buffer_state, ((std::string)buffer_state))
 
 ERS_DECLARE_ISSUE(timing,                                                                       ///< Namespace

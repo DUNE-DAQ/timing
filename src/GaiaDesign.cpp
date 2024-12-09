@@ -1,5 +1,7 @@
 #include "timing/GaiaDesign.hpp"
 
+#include "timing/IRIGTimestampNode.hpp"
+
 #include <sstream>
 #include <string>
 
@@ -39,20 +41,16 @@ GaiaDesign::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-GaiaDesign::configure() const
+GaiaDesign::configure(ClockSource clock_source, TimestampSource ts_source, IRIGEpoch epoch) const
 {
-  ClockSource clock_source = kInput0;
-  // Hard reset
-  this->reset_io(clock_source); // gaia normally takes clock from upstream GPS; add posibility override clock source via config in future
+  TopDesign::configure(clock_source);
 
-  if (clock_source == kFreeRun)
-  {
-    this->sync_timestamp(kSoftware); // keep previous behaviour for now, TODO: pass through correct parameter
-  }
-  else
-  {
-    this->sync_timestamp(kUpstream);
-  }
+  getNode<IRIGTimestampNode>("irig_time_source").set_irig_epoch(epoch);
+
+  // TODO temporary, wait for irig lock and date
+  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+  this->sync_timestamp(ts_source);
 }
 //-----------------------------------------------------------------------------
 

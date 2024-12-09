@@ -6,7 +6,6 @@
  * received with this code.
  */
 
-#include "timing/CRTNode.hpp"
 #include "timing/EndpointNode.hpp"
 #include "timing/HSINode.hpp"
 
@@ -22,12 +21,6 @@ namespace python {
 void
 register_endpoint(py::module& m)
 {
-  py::class_<timing::CRTNode, uhal::Node>(m, "CRTNode")
-    .def(py::init<const uhal::Node&>())
-    .def("disable", &timing::CRTNode::disable)
-    .def("enable", py::overload_cast<uint32_t, FixedLengthCommandType>(&timing::CRTNode::enable, py::const_)) // NOLINT(build/unsigned)
-    .def("get_status", &timing::CRTNode::get_status, py::arg("print_out") = false)
-    .def("read_last_pulse_timestamp", &timing::CRTNode::read_last_pulse_timestamp);
 
   py::class_<timing::HSINode, uhal::Node>(m, "HSINode")
     .def(py::init<const uhal::Node&>())
