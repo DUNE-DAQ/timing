@@ -12,6 +12,7 @@
 #define TIMING_INCLUDE_TIMING_TIMINGISSUES_HPP_
 
 #include "ers/Issue.hpp"
+#include "logging/Logging.hpp" // NOTE: if ISSUES ARE DECLARED BEFORE include logging/Logging.hpp, TLOG_DEBUG<<issue wont work.
 
 #include <string>
 

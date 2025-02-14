@@ -16,6 +16,7 @@
 #include "TimingIssues.hpp"
 #include "timing/TimingNode.hpp"
 #include "timing/definitions.hpp"
+#include "logging/Logging.hpp" // NOTE: if ISSUES ARE DECLARED BEFORE include logging/Logging.hpp, TLOG_DEBUG<<issue wont work.
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
