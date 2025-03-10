@@ -233,7 +233,7 @@ protected:
                                                                 { kFMCRev1, "kFMCRev1" },     { kFMCRev2, "kFMCRev2" }, { kFMCRev3, "kFMCRev3" },
                                                                 { kPC059Rev1, "kPC059Rev1" }, { kTLURev1, "kTLURev1" }, { kSIMRev1, "kSIMRev1" },
                                                                 { kFIBRev1, "kFIBRev1" }, { kFMCRev4, "kFMCRev4" }, { kMIBRev1, "kMIBRev1" },
-                                                                { kPC069a, "pc069a" }, { kPC069b, "pc069b" }, { kMIBRev2, "kMIBRev2" }, { kGIBRev1, "kGIBRev1" },
+                                                                { kPC069a, "pc069a" }, { kPC069b, "pc069b" }, { kPC069c, "pc069c" }, { kMIBRev2, "kMIBRev2" }, { kGIBRev1, "kGIBRev1" },
                                                                 { kFIBRev2, "kFIBRev2" }, { kBoardRevisionUnknown, "unknown" }
   };
 
@@ -321,8 +321,26 @@ protected:
                                                                     { 0xfc0fe700d289, kPC069b },
                                                                     { 0xfc0fe700d298, kPC069b },
                                                                     { 0xfc0fe700c28b, kPC069b },
-                                                                    { 0x049162b1d4bf, kMIBRev2 }
-  };
+                                                                    { 0xfc0fe7ea5d1e, kPC069b },
+                                                                    { 0x049162b1d4bf, kMIBRev2 },
+                                                                    { 0xfc0fe7ea5d1e, kPC069c },
+                                                                    { 0xfc0fe7ea9113, kPC069c }, 
+                                                                    { 0xfc0fe7ea5d28, kPC069c }, 
+                                                                    { 0xfc0fe7eaa20c, kPC069c }, 
+                                                                    { 0xfc0fe7ea51e4, kPC069c }, 
+                                                                    { 0xfc0fe7ea6251, kPC069c }, 
+                                                                    { 0xfc0fe7ea51da, kPC069c }, 
+                                                                    { 0xfc0fe7ea5d2d, kPC069c }, 
+                                                                    { 0xfc0fe7ea9112, kPC069c }, 
+                                                                    { 0xfc0fe7ea51df, kPC069c },
+                                                                    { 0xfc0fe7eaa202, kPC069c }, 
+                                                                    { 0xfc0fe7ea5d23, kPC069c }, 
+                                                                    { 0xfc0fe7eaa203, kPC069c }, 
+                                                                    { 0xfc0fe7eaa20d, kPC069c }, 
+                                                                    { 0xfc0fe7ea6256, kPC069c },
+                                                                    { 0xd8478fa99d2d, kPC069b },
+                                                                    { 0xd8478fa99b57, kPC069b },
+  };  
 
   static inline const std::map<ClockSource, std::string> clock_source_map = {
                                                             { kFreeRun, "free_run" },
@@ -369,6 +387,7 @@ protected:
 
         { "pc069_5345_chronos_input_1", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
         { "pc069_5345_charon_input_1", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
+        { "pc069_5345_endpoint_input_1", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
 
         { "gib_5395_gaia_free_run", "nocdr/GIB_Debug_01.txt" },
 
