@@ -110,7 +110,8 @@ def uuid(obj):
         lDevice.dispatch()
         lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x1)
         lDevice.dispatch()
-        lIO.set_i2c_mux_channels(0x1)
+        print("switch reset")
+    #    lIO.set_i2c_mux_channels(0x1)
 
     lValues = lUID.get_slave(lPROMSlave).read_i2cArray(0xfa, 6)
     lUniqueID = 0x0
@@ -152,10 +153,11 @@ def sfpexpander(obj):
 # ------------------------------------------------------------------------------
 @debug.command('scan-i2c', short_help="Debug.")
 @click.pass_obj
-def sfp_status(obj):
+def scan_i2c(obj):
     lDevice = obj.mDevice
     lBoardType = obj.mBoardType
-
+    lIO = lDevice.getNode('io')
+    
     lNodes = []
     lSwitches={}
     lSwitchChannels={}
@@ -182,17 +184,35 @@ def sfp_status(obj):
     for n in lNodes:
         lI2CBusNode = lDevice.getNode(n)
         echo('Scanning '+style(n,fg='cyan'))
+        print("reset switch")
+        lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x0)
+        lDevice.dispatch()
+        lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x1)
+        lDevice.dispatch()
         lAddresses = lI2CBusNode.scan()
         print("  '{}': {} devices found.\n  Addresses: {}".format(n, len(lAddresses), ', '.join((hex(a) for a in lAddresses))))
+        #if len(lSwitches):
+        #print(f" Found {len(lSwitches)} switches.\n  Addresses: {lSwitches.values()}")
+
         if n in lSwitches:
-            print(f" Found {len(lSwitches)} switches.\n  Addresses: {lSwitches.values()}")
             for switch,address in lSwitches.items():
                 print (f"switch {switch} address: {address}")
                 switch_channels=lSwitchChannels[switch]
                 print(f"working with {switch}, @ adr {address}, it has {switch_channels} channels")
-                for channel in range(0,switch_channels):
+
+                for channel in range(0,7):
                     secho(f"Scanning with channel {channel} enabled", fg='cyan')
-                    lI2CBusNode.write_i2cPrimitive(address, [1<<channel])
+                    try:
+                        lI2CBusNode.write_i2cPrimitive(address, [1<<channel])
+                        #print("reset switch")
+                        #lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x0)
+                        #lDevice.dispatch()
+                        #lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x1)
+                        #lDevice.dispatch()
+                        print("switch channel set")
+                    #lIO.set_i2c_mux_channels(1<<channel)
+                    except:
+                        secho(f"failure configuring switch {address}")
                     lAddresses = lI2CBusNode.scan()
                     print("  '{}': {} devices found.\n  Addresses: {}".format(n, len(lAddresses), ', '.join((hex(a) for a in lAddresses))))
 

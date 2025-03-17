@@ -17,6 +17,7 @@
 #include "timing/SwitchyardNode.hpp"
 #include "timing/MIBV2IONode.hpp"
 #include "timing/GIBIONode.hpp"
+#include "timing/GIBV2IONode.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -196,6 +197,25 @@ register_io(py::module& m)
     .def("switch_sfp_soft_tx_control_bit", &timing::GIBIONode::switch_sfp_soft_tx_control_bit)
     .def("set_i2c_mux_channels", &timing::GIBIONode::set_i2c_mux_channels)
     .def("switch_sfp_tx", &timing::GIBIONode::switch_sfp_tx)
+    ;
+
+    py::class_<timing::GIBV2IONode, timing::IONode, uhal::Node>(m, "GIBV2IONode")
+    .def(py::init<const uhal::Node&>())
+    .def<void (timing::GIBV2IONode::*)(const std::string&) const>(
+      "reset", &timing::GIBV2IONode::reset, py::arg("clock_config_file"))
+    .def<void (timing::GIBV2IONode::*)(const timing::ClockSource&) const>(
+      "reset", &timing::GIBV2IONode::reset, py::arg("clock_source"))
+    .def("soft_reset", &timing::GIBV2IONode::soft_reset)
+    .def("read_firmware_frequency", &timing::GIBV2IONode::read_firmware_frequency)
+    .def("get_clock_frequencies_table", &timing::GIBV2IONode::get_clock_frequencies_table, py::arg("print_out") = false)
+    .def("get_status", &timing::GIBV2IONode::get_status, py::arg("print_out") = false)
+    .def("get_pll_status", &timing::GIBV2IONode::get_pll_status, py::arg("print_out") = false)
+    .def("get_pll", &timing::GIBV2IONode::get_pll)
+    .def("get_hardware_info", &timing::GIBV2IONode::get_hardware_info, py::arg("print_out") = false)
+    .def("get_sfp_status", &timing::GIBV2IONode::get_sfp_status, py::arg("sfp_id"), py::arg("print_out") = false)
+    .def("switch_sfp_soft_tx_control_bit", &timing::GIBV2IONode::switch_sfp_soft_tx_control_bit)
+    .def("set_i2c_mux_channels", &timing::GIBV2IONode::set_i2c_mux_channels)
+    .def("switch_sfp_tx", &timing::GIBV2IONode::switch_sfp_tx)
     ;
 
 } // NOLINT
