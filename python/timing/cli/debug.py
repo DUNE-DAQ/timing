@@ -198,7 +198,7 @@ def scan_i2c(obj):
                 switch_channels=lSwitchChannels[switch]
                 print(f"working with {switch}, @ adr {address}, it has {switch_channels} channels")
 
-                for channel in range(0,1):
+                for channel in range(0,switch_channels):
                     secho(f"Scanning with channel {channel} enabled", fg='cyan')
                     try:
                         lI2CBusNode.write_i2cPrimitive(address, [1<<channel])
