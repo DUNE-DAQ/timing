@@ -148,8 +148,6 @@ def sfpexpander(obj):
     for a,v in enumerate(lSFPExpStatus):
         echo("{} ({}): {}".format(lLabels[a], hex(a), hex(v)))
 # ------------------------------------------------------------------------------
-
-
 # ------------------------------------------------------------------------------
 @debug.command('scan-i2c', short_help="Debug.")
 @click.pass_obj
@@ -200,7 +198,7 @@ def scan_i2c(obj):
                 switch_channels=lSwitchChannels[switch]
                 print(f"working with {switch}, @ adr {address}, it has {switch_channels} channels")
 
-                for channel in range(0,7):
+                for channel in range(0,1):
                     secho(f"Scanning with channel {channel} enabled", fg='cyan')
                     try:
                         lI2CBusNode.write_i2cPrimitive(address, [1<<channel])

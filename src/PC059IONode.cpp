@@ -113,6 +113,13 @@ PC059IONode::reset(const std::string& clock_config_file) const
 
 //-----------------------------------------------------------------------------
 void
+PC059IONode::reset_pll() const
+{
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
 PC059IONode::switch_sfp_mux_channel(uint32_t mux_channel) const // NOLINT(build/unsigned)
 {
   getNode("csr.ctrl.mux").write(mux_channel);

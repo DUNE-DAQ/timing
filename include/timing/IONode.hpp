@@ -179,6 +179,11 @@ public:
   virtual void reset(const ClockSource& clock_source) const;
 
   /**
+   * @brief      Reset PLL.
+   */
+  virtual void reset_pll() const = 0;
+
+  /**
    * @brief     Clocks ready?
    */
   virtual bool clocks_ok() const = 0;

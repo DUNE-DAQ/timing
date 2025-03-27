@@ -57,6 +57,11 @@ public:
     void reset(const ClockSource& clock_source) const override;
 
     /**
+     * @brief      Reset PLL.
+     */
+    void reset_pll()  const override;
+    
+    /**
      * @brief      Print status of on-board SFP.
      */
     std::string get_sfp_status(uint32_t sfp_id, bool print_out=false) const override; // NOLINT(build/unsigned)

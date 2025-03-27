@@ -189,7 +189,7 @@ IONode::get_full_clock_config_file_path(const ClockSource& clock_source) const
       ers::warning(EnclustraSwitchFailure(ERS_HERE, e));
     }
   }
-
+  reset_pll();
   auto pll = get_pll();
   auto pll_model = pll->read_device_version();
   clock_config_key << std::hex << pll_model;

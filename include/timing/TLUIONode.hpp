@@ -61,6 +61,11 @@ public:
   using IONode::reset;
 
   /**
+   * @brief      Reset PLL.
+   */
+  void reset_pll()  const override;
+
+  /**
    * @brief      Configure on-board DAC
    */
   void configure_dac(uint32_t dac_id, uint32_t dac_value, bool internal_ref = false) const; // NOLINT(build/unsigned)

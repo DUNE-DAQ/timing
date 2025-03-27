@@ -70,6 +70,11 @@ public:
   using IONode::reset;
 
   /**
+   * @brief      Reset PLL.
+   */
+  void reset_pll()  const override;
+
+  /**
    * @brief      Print status of on-board SFP.
    */
   std::string get_sfp_status(uint32_t sfp_id, bool print_out = false) const override; // NOLINT(build/unsigned)

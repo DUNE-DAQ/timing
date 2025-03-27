@@ -44,6 +44,10 @@ GIBIONode::get_status(bool print_out) const
   auto subnodes = read_sub_nodes(getNode("csr.stat"));
   status << format_reg_table(subnodes, "GIB IO state");
 
+  auto subnodes_2 = read_sub_nodes(getNode("csr.ctrl"));
+  status << format_reg_table(subnodes_2, "GIB IO control");
+  
+
   if (print_out)
     TLOG() << std::endl << status.str();
   return status.str();
@@ -137,6 +141,15 @@ GIBIONode::reset(const std::string& clock_config_file) const
   sfp_expander_1->set_outputs(1, 0xC0);
 
   TLOG() << "Reset done";
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+GIBIONode::reset_pll() const
+{
+  getNode("csr.ctrl.clk_gen_rst").write(0x0);
+  getNode("csr.ctrl.clk_gen_rst").write(0x1);
 }
 //-----------------------------------------------------------------------------
 

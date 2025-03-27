@@ -71,6 +71,11 @@ public:
   using IONode::reset;
 
   /**
+   * @brief      Reset PLL.
+   */
+  void reset_pll()  const override;
+
+  /**
    * @brief     Switch the SFP mux channel
    */
   //void switch_downstream_mux_channel(uint32_t mux_channel) const override; // NOLINT(build/unsigned)

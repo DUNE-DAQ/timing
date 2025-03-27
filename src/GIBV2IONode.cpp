@@ -141,6 +141,12 @@ GIBV2IONode::reset(const std::string& clock_config_file) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+void GIBV2IONode::reset_pll() const
+{
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 std::string
 GIBV2IONode::get_sfp_status(uint32_t sfp_id, bool print_out) const { // NOLINT(build/unsigned)
   std::stringstream status;
