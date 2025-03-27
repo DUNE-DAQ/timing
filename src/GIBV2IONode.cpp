@@ -143,6 +143,8 @@ GIBV2IONode::reset(const std::string& clock_config_file) const
 //-----------------------------------------------------------------------------
 void GIBV2IONode::reset_pll() const
 {
+  getNode("csr.ctrl.clk_gen_rst").write(0x0);
+  getNode("csr.ctrl.clk_gen_rst").write(0x1);
 }
 //-----------------------------------------------------------------------------
 

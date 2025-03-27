@@ -118,7 +118,7 @@ def reset(ctx, obj, soft, clocksource, forcepllcfg):
             else:
                 lClockSource=ClockSource.__members__[clocksource]
 
-            lIO.reset_pll()
+            # lIO.reset_pll()
             # lIO.getNode("csr.ctrl.i2c_sw_rst").write(0x0)
             # lIO.getNode("csr.ctrl.i2c_exten_rst").write(0x0)
             # lIO.getNode("csr.ctrl.clk_gen_rst").write(0x0)
