@@ -66,6 +66,8 @@ enum DesignType
   kDesignBoreas,
   kDesignKerberos,
   kDesignGaia,
+  kDesignCharon,
+  kDesignHades,
   kDesignUnknown = 256
 };
 

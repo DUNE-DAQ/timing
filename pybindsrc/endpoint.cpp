@@ -42,7 +42,8 @@ register_endpoint(py::module& m)
          py::arg("read_all") = false,
          py::arg("print_out") = false)
     .def("read_buffer_warning", &timing::HSINode::reset_hsi)
-    .def("read_buffer_error", &timing::HSINode::reset_hsi);
+    .def("read_buffer_error", &timing::HSINode::reset_hsi)
+    .def<uhal::ValVector<uint32_t> (timing::HSINode::*)(uint16_t&, bool, bool) const>("read_data_buffer", &timing::HSINode::read_data_buffer);
 
     py::class_<timing::EndpointNode, uhal::Node>(m, "EndpointNode")
     .def(py::init<const uhal::Node&>())

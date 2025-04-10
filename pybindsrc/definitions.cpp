@@ -91,6 +91,8 @@ register_definitions(py::module& m)
         .value("kDesignBoreas", kDesignBoreas)
         .value("kDesignKerberos", kDesignKerberos)
         .value("kDesignGaia", kDesignGaia)
+        .value("kDesignCharon", kDesignCharon)
+        .value("kDesignHades", kDesignHades)
         .value("kDesignUnknown", kDesignUnknown)
         .export_values();
 

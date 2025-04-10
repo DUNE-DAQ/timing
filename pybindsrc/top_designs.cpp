@@ -14,6 +14,7 @@
 #include "timing/EndpointDesign.hpp"
 #include "timing/KerberosDesign.hpp"
 #include "timing/GaiaDesign.hpp"
+#include "timing/HadesDesign.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -242,6 +243,23 @@ register_top_designs(py::module& m)
          py::arg("rate"),
          py::arg("dispatch") = true)
      .def("configure", &timing::ChronosDesign::configure, py::arg("clock_source"))
+     ;
+
+  // Hades
+  py::class_<timing::HadesDesign, uhal::Node>(m, "HadesDesign")
+    .def("read_firmware_version", &timing::HadesDesign::read_firmware_version)
+    .def("validate_firmware_version", &timing::HadesDesign::validate_firmware_version)
+    .def("get_status", &timing::HadesDesign::get_status)
+    .def("get_hsi_node", &timing::HadesDesign::get_hsi_node)
+    .def("configure_hsi",
+         &timing::HadesDesign::configure_hsi,
+         py::arg("src"),
+         py::arg("re_mask"),
+         py::arg("fe_mask"),
+         py::arg("inv_mask"),
+         py::arg("rate"),
+         py::arg("dispatch") = true)
+     .def("configure", &timing::HadesDesign::configure, py::arg("clock_source"))
      ;
 
   // Kerberos
