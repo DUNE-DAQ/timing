@@ -19,8 +19,6 @@ UHAL_REGISTER_DERIVED_NODE(HadesDesign)
 HadesDesign::HadesDesign(const uhal::Node& node)
   : TopDesignInterface(node)
   , EndpointDesignInterface(node)
-//  , TopDesign(node)
-//  , HSIDesignInterface(node)
   , ChronosDesign(node)
 {}
 //-----------------------------------------------------------------------------
