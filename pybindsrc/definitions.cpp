@@ -10,6 +10,7 @@
 #include "timing/EndpointNode.hpp"
 #include "timing/MasterNode.hpp"
 #include "timing/IONode.hpp"
+#include "timing/HSINode.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -143,6 +144,7 @@ register_definitions(py::module& m)
 	m.attr("kLibrarySupportedBoards") = timing::IONode::get_library_supported_boards();
     m.attr("kLibrarySupportedDesigns") = timing::IONode::get_library_supported_designs();
     m.attr("kMasterFWMajorRequired") = MasterNode::required_major_firmware_version;
+    m.attr("kHSIWordsNumber") = HSINode::hsi_buffer_event_words_number;
 }
 
 } // namespace python

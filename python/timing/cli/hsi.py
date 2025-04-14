@@ -8,7 +8,7 @@ from datetime import datetime
 
 from . import toolbox
 import timing.common.definitions as defs
-from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
+from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns, kHSIWordsNumber
 
 from click import echo, style, secho
 import time
@@ -122,8 +122,8 @@ def configure(ctx, obj, src, re_mask, fe_mask, inv_mask, rate):
 
     lHSI.reset_hsi()
     lTopDesign.configure_hsi(src, re_mask, fe_mask, inv_mask, rate)
-    lHSI.start_hsi()
-    secho("HSI configured (and started)", fg='green')
+
+    secho("HSI configured", fg='green')
 
     time.sleep(0.1)
     ctx.invoke(status)
@@ -182,9 +182,6 @@ def read(ctx, obj, readall, continuous, print_out, read_period, save, file_name)
     '''
     lDevice = obj.mDevice
     lHSI = obj.mHSI
-
-    # TODO get from HSINode class
-    n_words_per_hsi_buffer_event=5
     
     read_events=0
     if continuous:
@@ -207,17 +204,17 @@ def read(ctx, obj, readall, continuous, print_out, read_period, save, file_name)
             while(True):
                 n_words=0
                 hsi_words = lHSI.read_data_buffer(n_words,False,False)
-                n_hsi_events = len(hsi_words) // n_words_per_hsi_buffer_event
+                n_hsi_events = len(hsi_words) // kHSIWordsNumber
 
                 if save:
                     hsi_dataset_start_index=hsi_dataset.shape[0]
                     hsi_dataset.resize(hsi_dataset_start_index+n_hsi_events, axis=0)
 
-                if (len(hsi_words) % n_words_per_hsi_buffer_event == 0 and hsi_words.size() > 0):
+                if (len(hsi_words) % kHSIWordsNumber == 0 and hsi_words.size() > 0):
 
                     for i in range(0,n_hsi_events):
-                        start_index = i * n_words_per_hsi_buffer_event
-                        end_index = start_index + n_words_per_hsi_buffer_event
+                        start_index = i * kHSIWordsNumber
+                        end_index = start_index + kHSIWordsNumber
                         raw_event=hsi_words[start_index:end_index]
 
                         header = raw_event[0]
