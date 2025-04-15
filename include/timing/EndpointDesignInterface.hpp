@@ -71,6 +71,8 @@ public:
   {
     get_endpoint_node_plain(ept_id)->get_info(mon_data);
   }
+
+  using TopDesignInterface::get_info;
 };
 
 } // namespace timing

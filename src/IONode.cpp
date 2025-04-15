@@ -173,7 +173,7 @@ IONode::get_full_clock_config_file_path(const ClockSource& clock_source) const
 //    const BoardRevision board_revision = get_board_revision();
   const CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
   const DesignType design_type = convert_value_to_design_type(read_design_type());
-  const uint32_t firmware_frequency = read_firmware_frequency(); // NOLINT(build/unsigned)
+  //const uint32_t firmware_frequency = read_firmware_frequency(); // NOLINT(build/unsigned)
 
   try {
     clock_config_key << get_board_type_map().at(board_type) << "_";
