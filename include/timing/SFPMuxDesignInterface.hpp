@@ -37,8 +37,8 @@ class SFPMuxDesignInterface : virtual public MuxDesignInterface
 
 public:
   explicit SFPMuxDesignInterface(const uhal::Node& node)
-  : MuxDesignInterface(node)
-  , TopDesignInterface(node) {}
+  : TopDesignInterface(node)
+  , MuxDesignInterface(node) {}
   virtual ~SFPMuxDesignInterface() {}
 
   /**

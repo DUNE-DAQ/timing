@@ -250,6 +250,8 @@ protected:
                                                                 { kDesignBoreas, "boreas" },
                                                                 { kDesignKerberos, "kerberos" },
                                                                 { kDesignGaia, "gaia" },
+                                                                { kDesignCharon, "charon" },
+                                                                { kDesignHades, "hades" },
                                                                 { kDesignUnknown, "unknown" },
   };
 
@@ -371,6 +373,12 @@ protected:
         { "fmc_5344_chronos_input_1", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
         { "fmc_5394_chronos_input_1", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
 
+        { "fmc_5344_charon_input_1", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
+        { "fmc_5394_charon_input_1", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
+
+        { "fmc_5344_hades_input_1", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
+        { "fmc_5394_hades_input_1", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
+
         { "tlu_5345_boreas_free_run", "nocdr/DUNE_TLU-4_45_M-Registers.txt" },
 
         { "pc059_5345_master_free_run", "devel/PDTS_PC059_FANOUT.txt" },
@@ -381,6 +389,8 @@ protected:
 
         { "pc069_5395_endpoint_input_1", "nocdr/Si5395-RevA-069a_ep-Registers.txt" },
         { "pc069_5395_chronos_input_1", "nocdr/Si5395-RevA-069a_ep-Registers.txt" },
+        { "pc069_5395_charon_input_1", "nocdr/Si5395-RevA-069a_ep-Registers.txt" },
+        { "pc069_5395_hades_input_1", "nocdr/Si5395-RevA-069a_ep-Registers.txt" },
 
         { "pc069_5345_master_free_run", "nocdr/Si5345-RevD-pc69bmst-Registers.txt" },
         { "pc069_5345_boreas_free_run", "nocdr/Si5345-RevD-pc69bmst-Registers.txt" },
@@ -388,6 +398,7 @@ protected:
         { "pc069_5345_chronos_input_1", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
         { "pc069_5345_charon_input_1", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
         { "pc069_5345_endpoint_input_1", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
+        { "pc069_5345_hades_input_1", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
 
         { "gib_5395_gaia_free_run", "nocdr/GIB_Debug_01.txt" },
 

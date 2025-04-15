@@ -354,6 +354,12 @@ ERS_DECLARE_ISSUE(timing,                                                       
                   " Applied delay " << delay << " to endpoint at address " << address << ", in state: " << state, ///< Message
                   ((uint32_t)delay)((uint16_t)address)((uint16_t)state)                                                               ///< Message parameters
 )
+
+ERS_DECLARE_ISSUE(timing,                       ///< Namespace
+  UnknownTimestampSource,                       ///< Issue class name
+  " Unknown timestamp source: " << ts_source, ///< Message
+  ((uint)ts_source)                             ///< Message parameters
+)
 } // namespace dunedaq
 
 #endif // TIMING_INCLUDE_TIMING_TIMINGISSUES_HPP_

@@ -175,7 +175,8 @@ GIBIONode::clocks_ok() const
   bool mmcm_ok = states.find("mmcm_ok")->second.value();
   bool mmcm_10_ok = states.find("mmcm_ok")->second.value();
 
-  TLOG_DEBUG(5) << "pll lol: " << pll_lol << ", mmcm ok: " << mmcm_ok << ", mmcm 10MHz ok: " << mmcm_10_ok;
+  TLOG_DEBUG(5) << "pll lol: " << pll_lol << ", pll intr: " << pll_interrupt
+                << ", mmcm ok: " << mmcm_ok << ", mmcm 10MHz ok: " << mmcm_10_ok;
 
   return !pll_lol && mmcm_ok && mmcm_10_ok;
 }
