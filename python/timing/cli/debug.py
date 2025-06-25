@@ -148,6 +148,7 @@ def sfpexpander(obj):
     for a,v in enumerate(lSFPExpStatus):
         echo("{} ({}): {}".format(lLabels[a], hex(a), hex(v)))
 # ------------------------------------------------------------------------------
+
 # ------------------------------------------------------------------------------
 @debug.command('scan-i2c', short_help="Debug.")
 @click.pass_obj
@@ -215,6 +216,35 @@ def scan_i2c(obj):
                     print("  '{}': {} devices found.\n  Addresses: {}".format(n, len(lAddresses), ', '.join((hex(a) for a in lAddresses))))
 
 
+# ------------------------------------------------------------------------------
+@debug.command('pll', short_help="Debug.")
+@click.pass_obj
+def pll(obj):
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+    lIO = lDevice.getNode('io')
+
+    lI2CBusNode = lDevice.getNode('io.i2c')
+    #lI2CBusNode.write_i2cPrimitive(0x70, [1])
+
+    #lDevice.getNode("io.csr.ctrl.clk_gen_rst").write(0x1)
+    #lDevice.dispatch()
+
+    lSIChip = SI534xSlave(lI2CBusNode, 0x68)
+    #lSIVersion = lSIChip.read_device_version()
+
+    #try:
+    lSIVersion = lSIChip.read_device_version()
+    #except:
+    #    secho(f"failure reading pll reg, rst: {0x1}")
+
+    #lDevice.getNode("io.csr.ctrl.clk_gen_rst").write(0x0)
+    #lDevice.dispatch()
+
+    #try:
+    #    lSIVersion = lSIChip.readDeviceVersion()
+    #except:
+    #    secho(f"failure reading pll reg, rst: {0x0}")
 
 # ------------------------------------------------------------------------------
 
