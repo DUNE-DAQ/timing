@@ -55,6 +55,8 @@ FIBV2IONode::get_status(bool print_out) const
 	auto subnodes = read_sub_nodes(getNode("csr.stat"));
 	status << format_reg_table(subnodes, "FIB IO state") << std::endl;
 
+	status << "Board temperature: " << read_board_temperature() << " [C]" << std::endl;
+
 	if (print_out)
 	  TLOG() << status.str();
 
