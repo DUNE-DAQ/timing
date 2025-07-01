@@ -81,6 +81,11 @@ public:
       */
     std::string get_pll_status(bool print_out = false) const override;
 
+    /**
+      * @brief      Read data from on-board temperature monitor.
+      */
+    float read_board_temperature() const;
+
     void get_info(timinghardwareinfo::TimingPLLMonitorData& mon_data) const override;
 
     ///**

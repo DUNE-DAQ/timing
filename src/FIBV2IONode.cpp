@@ -7,6 +7,7 @@
  */
 
 #include "timing/FIBV2IONode.hpp"
+#include "timing/LM75Node.hpp"
 
 #include <map>
 #include <string>
@@ -173,6 +174,16 @@ FIBV2IONode::get_pll_status(bool print_out) const
 
 	return status.str();
 }
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+float
+FIBV2IONode::read_board_temperature() const
+{
+	auto temp_mon = get_i2c_device<LM75Node>(m_pll_i2c_bus, "TEMP_MON");
+	return temp_mon->read_temperature();
+}
+//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 //std::unique_ptr<const CDCLVD110Node>

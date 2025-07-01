@@ -329,3 +329,19 @@ def print_hardware_info(ctx, obj):
         secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
         # do status printing here
 # ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@io.command('temp', short_help="Read board temperature")
+@click.pass_obj
+def temp(obj):
+
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+    lIO = lDevice.getNode('io')
+
+    if lBoardType in [kBoardFIB]: # strictly only FIB v2
+        temp = lIO.read_board_temperature()
+        echo(f"Board temp: {temp} [C]")
+    else:
+        raise RuntimeError('Board {} does not have a temp reading!'.format(kBoardNameMap[lBoardType]))
+# ------------------------------------------------------------------------------
