@@ -7,6 +7,7 @@
  */
 
 #include "timing/FIBV2IONode.hpp"
+#include "timing/LM75Node.hpp"
 
 #include <map>
 #include <string>
@@ -53,6 +54,8 @@ FIBV2IONode::get_status(bool print_out) const
 	std::stringstream status;
 	auto subnodes = read_sub_nodes(getNode("csr.stat"));
 	status << format_reg_table(subnodes, "FIB IO state") << std::endl;
+
+	status << "Board temperature: " << read_board_temperature() << " [C]" << std::endl;
 
 	if (print_out)
 	  TLOG() << status.str();
@@ -173,6 +176,16 @@ FIBV2IONode::get_pll_status(bool print_out) const
 
 	return status.str();
 }
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+float
+FIBV2IONode::read_board_temperature() const
+{
+	auto temp_mon = get_i2c_device<LM75Node>(m_pll_i2c_bus, "TEMP_MON");
+	return temp_mon->read_temperature();
+}
+//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 //std::unique_ptr<const CDCLVD110Node>
