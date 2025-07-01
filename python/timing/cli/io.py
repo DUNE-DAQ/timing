@@ -20,7 +20,7 @@ from timing.core import SI534xSlave, I2CExpanderSlave, DACSlave
 from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB, kBoardMIB, kBoardPC069, kBoardGIB, kFIBRev2
 from timing.common.definitions import kFMCRev1, kFMCRev2, kFMCRev3, kFMCRev4, kPC059Rev1, kTLURev1, kSIMRev1, kFIBRev1, kMIBRev1, kGIBRev1
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed, kCarrierNexusVideo, kCarrierTrenzTE0712
-from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignChronos, kDesignBoreas, kDesignTest, kDesignKerberos, kDesignGaia
+from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignChronos, kDesignBoreas, kDesignTest, kDesignKerberos, kDesignGaia, kDesignCharon, kDesignHades
 from timing.common.definitions import ClockSource, kFreeRun, kInput0, kInput1, kInput2, kInput3
 from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap, kUIDRevisionMap, kClockConfigMap
 from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
@@ -108,7 +108,7 @@ def reset(ctx, obj, soft, clocksource, forcepllcfg):
             if clocksource is None:
                 if lDesignType in [kDesignMaster, kDesignBoreas, kDesignOuroboros, kDesignOuroborosSim]:
                     lClockSource=kFreeRun
-                elif lDesignType in [kDesignEndpoint, kDesignChronos, kDesignFanout]:
+                elif lDesignType in [kDesignEndpoint, kDesignChronos, kDesignFanout, kDesignHades, kDesignCharon]:
                     lClockSource=kInput1
                 elif lDesignType in [kDesignGaia, kDesignKerberos]:
                     lClockSource=kInput0
@@ -336,4 +336,20 @@ def print_hardware_info(ctx, obj):
     else:
         secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
         # do status printing here
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@io.command('temp', short_help="Read board temperature")
+@click.pass_obj
+def temp(obj):
+
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+    lIO = lDevice.getNode('io')
+
+    if lBoardType in [kBoardFIB]: # strictly only FIB v2
+        temp = lIO.read_board_temperature()
+        echo(f"Board temp: {temp} [C]")
+    else:
+        raise RuntimeError('Board {} does not have a temp reading!'.format(kBoardNameMap[lBoardType]))
 # ------------------------------------------------------------------------------

@@ -100,7 +100,9 @@ register_io(py::module& m)
     .def("get_hardware_info", &timing::FIBV2IONode::get_hardware_info, py::arg("print_out") = false)
     .def("get_sfp_status", &timing::FIBV2IONode::get_sfp_status, py::arg("sfp_id"), py::arg("print_out") = false)
     .def("switch_sfp_soft_tx_control_bit", &timing::FIBV2IONode::switch_sfp_soft_tx_control_bit)
-    .def("switch_sfp_tx", &timing::FIBV2IONode::switch_sfp_tx);
+    .def("switch_sfp_tx", &timing::FIBV2IONode::switch_sfp_tx)
+    .def("read_board_temperature", &timing::FIBV2IONode::read_board_temperature)
+    ;
 
   py::class_<timing::TLUIONode, timing::IONode, uhal::Node>(m, "TLUIONode")
     .def(py::init<const uhal::Node&>())

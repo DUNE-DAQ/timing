@@ -7,6 +7,7 @@
  */
 
 #include "timing/FIBV2IONode.hpp"
+#include "timing/LM75Node.hpp"
 
 #include <map>
 #include <string>
@@ -39,12 +40,22 @@ FIBV2IONode::get_uid_address_parameter_name() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+void
+FIBV2IONode::configure_pll(const std::string& /*clock_config_file*/) const
+{
+	TLOG() << "No text config for CDCLVD110";
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 std::string
 FIBV2IONode::get_status(bool print_out) const
 {
 	std::stringstream status;
 	auto subnodes = read_sub_nodes(getNode("csr.stat"));
 	status << format_reg_table(subnodes, "FIB IO state") << std::endl;
+
+	status << "Board temperature: " << read_board_temperature() << " [C]" << std::endl;
 
 	if (print_out)
 	  TLOG() << status.str();
@@ -86,7 +97,6 @@ FIBV2IONode::reset(const ClockSource& clock_source) const {
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
 void FIBV2IONode::reset_pll() const
 {
@@ -113,7 +123,6 @@ FIBV2IONode::get_sfp_status(uint32_t sfp_id, bool print_out) const { // NOLINT(b
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
 void
 FIBV2IONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const { // NOLINT(build/unsigned)
@@ -125,7 +134,6 @@ FIBV2IONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const
 	sfp->switch_soft_tx_control_bit(turn_on);
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 void
@@ -160,6 +168,30 @@ FIBV2IONode::get_info(timinghardwareinfo::TimingPLLMonitorData& mon_data) const
 	mon_data.lol = false; // no monitoring of this in CDCLVD110
 	mon_data.los = false;
 }
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+std::string
+FIBV2IONode::get_pll_status(bool print_out) const
+{
+	std::stringstream status;
+	status << "No status yet for CDCLVD110 on FIBv2";
+
+	if (print_out)
+		TLOG() << status.str();
+
+	return status.str();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+float
+FIBV2IONode::read_board_temperature() const
+{
+	auto temp_mon = get_i2c_device<LM75Node>(m_pll_i2c_bus, "TEMP_MON");
+	return temp_mon->read_temperature();
+}
+//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 //std::unique_ptr<const CDCLVD110Node>

@@ -114,6 +114,11 @@ TimestampGeneratorNode::set_timestamp(TimestampSource source) const // NOLINT(bu
   {
     now_timestamp = get_seconds_since_epoch() * clock_frequency_hz ; // NOLINT(build/unsigned)
   }
+  else
+  {
+    throw UnknownTimestampSource(ERS_HERE, source);
+    now_timestamp=0;
+  }
 
   if (source != kUpstream)
   {

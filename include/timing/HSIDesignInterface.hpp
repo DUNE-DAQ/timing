@@ -94,6 +94,9 @@ public:
 
     get_hsi_node().get_info(mon_data);
   }
+
+  using EndpointDesignInterface::get_info;
+  using TopDesignInterface::get_info;
 };
 
 } // namespace timing

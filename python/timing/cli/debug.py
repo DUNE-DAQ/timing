@@ -16,7 +16,7 @@ from os.path import join, expandvars
 from timing.core import SI534xSlave, I2CExpanderSlave
 
 
-from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardMIB, kBoardGIB, kBoardPC069
+from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardMIB, kBoardGIB, kBoardPC069, kBoardFIB
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap
 
@@ -408,4 +408,28 @@ def readSFPStatus(aEEProm, aDiag, aLabel):
         # print (k, v)
 
     echo(toolbox.formatDictTable(lReadings, aHdr=False, aSort=False))
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@debug.command('lm75-temp-read', short_help="Read temp data from a LM75.")
+@click.pass_obj
+def lm75_temp_read(obj):
+
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+    lIO = lDevice.getNode('io')
+
+    if lBoardType != kBoardFIB:
+        secho(f'Only FIB (v2) supported. Board type is {lBoardType}', fg='red')
+        return
+
+    i2c_bus = lDevice.getNode('io.i2c')
+
+    lValues = i2c_bus.get_slave('TEMP_MON').read_i2cPrimitive(2)
+    temp_raw = (lValues[1] & 0x80) >> 7
+    temp_raw = temp_raw | (lValues[0] << 1)
+    echo(f"LM75 temp data")
+    echo(f" raw bytes: {hex(lValues[0])}, {hex(lValues[1])}")
+    echo(f" combined word: {hex(temp_raw)}")
+    echo(f" temp [C]: {toolbox.twos_complement(temp_raw,9)*0.5}")
 # ------------------------------------------------------------------------------

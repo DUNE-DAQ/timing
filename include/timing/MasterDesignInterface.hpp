@@ -103,6 +103,11 @@ public:
    */
   virtual void get_info(timingfirmwareinfo::MasterMonitorData& mon_data) const = 0;
 
+  using TopDesignInterface::get_info;
+
+private:
+  using TopDesignInterface::configure;
+
 };
 
 } // namespace timing

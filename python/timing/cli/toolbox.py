@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import re
+import signal
 
 import timing.common.definitions as defs
 import click
@@ -262,4 +263,48 @@ def tstamp2int( aRawTStamp ):
 def fmtEpState(aState):
     aState = aState.value()
     return '{} ({})'.format(defs.kEpStates[aState], hex(aState)) if aState in defs.kEpStates else hex(aState)
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+class InterruptHandler(object):
+
+    def __init__(self, sig=signal.SIGINT):
+        self.sig = sig
+
+    def __enter__(self):
+
+        self.interrupted = False
+        self.released = False
+
+        self.original_handler = signal.getsignal(self.sig)
+
+        def handler(signum, frame):
+            self.release()
+            self.interrupted = True
+
+        signal.signal(self.sig, handler)
+
+        return self
+
+    def __exit__(self, type, value, tb):
+        self.release()
+
+    def release(self):
+
+        if self.released:
+            return False
+
+        signal.signal(self.sig, self.original_handler)
+
+        self.released = True
+
+        return True
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+def twos_complement(value, n_bits):
+    if (value & (1 << (n_bits - 1))) != 0:
+        value = value - (1 << n_bits)
+    return value
 # ------------------------------------------------------------------------------

@@ -77,7 +77,7 @@ public:
    * @brief     Collect monitoring information for timing endpoint
    *
    */
-  virtual void get_info(timingendpointinfo::TimingEndpointInfo& mon_data) const {}
+  virtual void get_info(timingendpointinfo::TimingEndpointInfo& /*mon_data*/) const {}
   // TODO make pure virtual
 };
 

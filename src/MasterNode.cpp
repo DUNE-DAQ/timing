@@ -250,7 +250,7 @@ MasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned
                                         // packet to write coarse delay
                                         (0x1 << 7UL) | 0x72, // write transaction on 0x72
                                         (address_mode << 7UL) | 0x1, // transaction length of 0x1
-                                        ((fine_delay & 0xf) << 4UL) | coarse_delay & 0xf,
+                                        ((fine_delay & 0xf) << 4UL) | (coarse_delay & 0xf),
 
                                         // packet to write fine delay
                                         (0x1 << 7UL) | 0x73, // write transaction on 0x73

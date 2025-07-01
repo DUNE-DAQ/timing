@@ -84,7 +84,12 @@ public:
     /**
       * @brief      Print status of on-board PLL.
       */
-    std::string get_pll_status(bool print_out = false) const override {return "No status yet for CDCLVD110 on FIBv2";};
+    std::string get_pll_status(bool print_out = false) const override;
+
+    /**
+      * @brief      Read data from on-board temperature monitor.
+      */
+    float read_board_temperature() const;
 
     void get_info(timinghardwareinfo::TimingPLLMonitorData& mon_data) const override;
 
@@ -112,7 +117,7 @@ private:
     /**
      * @brief      No config file for FIB v2
      */
-    void reset(const std::string& clock_config_file) const override {}
+    void reset(const std::string& /*clock_config_file*/) const override {}
 
     /**
       * @brief      Get the PLL chip.
@@ -124,7 +129,7 @@ private:
     /**
      * @brief      Configure clock chip.
      */
-    void configure_pll(const std::string& clock_config_file = "") const override  {TLOG() << "No text config for CDCLVD110";}
+    void configure_pll(const std::string& clock_config_file = "") const override;
 
 };
 

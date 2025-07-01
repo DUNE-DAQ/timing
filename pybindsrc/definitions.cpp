@@ -10,6 +10,7 @@
 #include "timing/EndpointNode.hpp"
 #include "timing/MasterNode.hpp"
 #include "timing/IONode.hpp"
+#include "timing/HSINode.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -60,6 +61,8 @@ register_definitions(py::module& m)
         .value("kFIBRev1", kFIBRev1)
         .value("kMIBRev1", kMIBRev1)
         .value("kPC069a", kPC069a)
+        .value("kPC069b", kPC069b)
+        .value("kPC069c", kPC069c)
         .value("kMIBRev2", kMIBRev2)
         .value("kGIBRev1", kGIBRev1)
         .value("kFIBRev2", kFIBRev2)
@@ -89,6 +92,8 @@ register_definitions(py::module& m)
         .value("kDesignBoreas", kDesignBoreas)
         .value("kDesignKerberos", kDesignKerberos)
         .value("kDesignGaia", kDesignGaia)
+        .value("kDesignCharon", kDesignCharon)
+        .value("kDesignHades", kDesignHades)
         .value("kDesignUnknown", kDesignUnknown)
         .export_values();
 
@@ -139,6 +144,7 @@ register_definitions(py::module& m)
 	m.attr("kLibrarySupportedBoards") = timing::IONode::get_library_supported_boards();
     m.attr("kLibrarySupportedDesigns") = timing::IONode::get_library_supported_designs();
     m.attr("kMasterFWMajorRequired") = MasterNode::required_major_firmware_version;
+    m.attr("kHSIWordsNumber") = HSINode::hsi_buffer_event_words_number;
 }
 
 } // namespace python
