@@ -1,8 +1,7 @@
 /**
- * @file I2C9546SwitchNode.hpp
+ * @file LM75Node.hpp
  *
- * I2CExpanderSlave and I2C9546SwitchNode are classes providing an interface
- * to the I2C expander IC.
+ * LM75Node is a classes providing an interface to the LM75 temp mon IC.
  *
  * This is part of the DUNE DAQ Software Suite, copyright 2020.
  * Licensing/copyright details are in the COPYING file that you should have
@@ -40,4 +39,4 @@ public:
 } // namespace timing
 } // namespace dunedaq
 
-#endif // TIMING_INCLUDE_TIMING_I2C9546SWITCHNODE_HPP_
+#endif // TIMING_INCLUDE_TIMING_LM75NODE_HPP_
