@@ -60,6 +60,11 @@ public:
   std::string get_hardware_info(bool print_out) const override;
   
   /**
+   * @brief      Set up i2c buses, enable ICs.
+   */
+  void set_up_io_infrastructure() const override;
+
+  /**
    * @brief      Reset GIB IO.
    */
   void reset(const std::string& clock_config_file)  const override;

@@ -14,7 +14,7 @@
 
 // PDT Headers
 #include "TimingIssues.hpp"
-#include "timing/IONode.hpp"
+#include "timing/GIBIONode.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -29,7 +29,7 @@ namespace timing {
 /**
  * @brief      Class for the timing FMC board.
  */
-class GIBV2IONode : public IONode
+class GIBV2IONode : public GIBIONode
 {
   UHAL_DERIVEDNODE(GIBV2IONode)
 
@@ -38,79 +38,10 @@ public:
   virtual ~GIBV2IONode();
 
   /**
-   * @brief      Get the UID address parameter name.
-   *
-   * @return     { description_of_the_return_value }
-   */
-  std::string get_uid_address_parameter_name() const override;
-
-  /**
-   * @brief     Get status string, optionally print.
-   */
-  std::string get_status(bool print_out = false) const override;
-
-  /**
-   * @brief      GET PLL I2C interface.
-   */
-  std::unique_ptr<const SI534xSlave> get_pll() const override;
-
-  /**
-   * @brief      Print hardware information
-   */
-  std::string get_hardware_info(bool print_out) const override;
-  
-  /**
-   * @brief      Reset GIB IO.
-   */
-  void reset(const std::string& clock_config_file)  const override;
-
-  /**
-   * @brief     Reset timing node with clock file lookup
-   */
-  using IONode::reset;
-
-  /**
-   * @brief      Reset PLL.
-   */
-  void reset_pll()  const override;
-
-  /**
-   * @brief      Print status of on-board SFP.
-   */
-  std::string get_sfp_status(uint32_t sfp_id, bool print_out = false) const override; // NOLINT(build/unsigned)
-
-  /**
-   * @brief      control tx laser of on-board SFP softly (I2C command)
-   */
-  void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
-
-  /**
    * @brief     Clocks ready?
    */
   bool clocks_ok() const override;
 
-  /**
-   * @brief      control tx laser of on-board SFP softly (I2C command)
-   */
-  void switch_sfp_tx(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
-
-  /**
-   * @brief      Fill hardware monitoring structure.
-   */
-  //void get_info(timinghardwareinfo::TimingGIBMonitorData& mon_data) const;
-
-  // /**
-  //  * @brief    Give info to collector.
-  //  */
-  // void get_info(opmonlib::InfoCollector& ci, int level) const override;
-
-  /**
-   * @brief    Configure which mux channels are on using a bitmask
-   */
-  void set_i2c_mux_channels(uint8_t mux_channel_bitmask) const;
-
-private:
-  void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)
 };
 
 } // namespace timing

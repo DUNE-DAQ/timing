@@ -169,6 +169,11 @@ public:
   virtual void soft_reset() const;
 
   /**
+   * @brief      Set up i2c buses, enable ICs.
+   */
+  virtual void set_up_io_infrastructure() const {} // TODO make pure virtual
+
+  /**
    * @brief      Reset timing node.
    */
   virtual void reset(const std::string& clock_config_file) const = 0;

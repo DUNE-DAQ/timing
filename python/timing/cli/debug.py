@@ -190,8 +190,6 @@ def scan_i2c(obj):
         lDevice.dispatch()
         lAddresses = lI2CBusNode.scan()
         print("  '{}': {} devices found.\n  Addresses: {}".format(n, len(lAddresses), ', '.join((hex(a) for a in lAddresses))))
-        #if len(lSwitches):
-        #print(f" Found {len(lSwitches)} switches.\n  Addresses: {lSwitches.values()}")
 
         if n in lSwitches:
             for switch,address in lSwitches.items():
@@ -208,13 +206,12 @@ def scan_i2c(obj):
                         #lDevice.dispatch()
                         #lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x1)
                         #lDevice.dispatch()
-                        print("switch channel set")
-                    #lIO.set_i2c_mux_channels(1<<channel)
                     except:
                         secho(f"failure configuring switch {address}")
                     lAddresses = lI2CBusNode.scan()
                     print("  '{}': {} devices found.\n  Addresses: {}".format(n, len(lAddresses), ', '.join((hex(a) for a in lAddresses))))
 
+# ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
 @debug.command('pll', short_help="Debug.")
@@ -225,29 +222,20 @@ def pll(obj):
     lIO = lDevice.getNode('io')
 
     lI2CBusNode = lDevice.getNode('io.i2c')
-    #lI2CBusNode.write_i2cPrimitive(0x70, [1])
+    lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x1)
+    lDevice.getNode("io.csr.ctrl.clk_gen_rst").write(0x1)
+    lDevice.dispatch()
 
-    #lDevice.getNode("io.csr.ctrl.clk_gen_rst").write(0x1)
-    #lDevice.dispatch()
+    lI2CBusNode.write_i2cPrimitive(0x70, [1])
 
     lSIChip = SI534xSlave(lI2CBusNode, 0x68)
     #lSIVersion = lSIChip.read_device_version()
 
-    #try:
     lSIVersion = lSIChip.read_device_version()
-    #except:
-    #    secho(f"failure reading pll reg, rst: {0x1}")
-
-    #lDevice.getNode("io.csr.ctrl.clk_gen_rst").write(0x0)
-    #lDevice.dispatch()
-
-    #try:
-    #    lSIVersion = lSIChip.readDeviceVersion()
-    #except:
-    #    secho(f"failure reading pll reg, rst: {0x0}")
-
+    echo(f"PLL version {hex(lSIVersion)}")
 # ------------------------------------------------------------------------------
 
+# ------------------------------------------------------------------------------
 @debug.command('fanout-sfp-scan', short_help="Debug.")
 @click.pass_obj
 def fanout_sfpscan(obj):
