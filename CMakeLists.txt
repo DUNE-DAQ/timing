@@ -18,7 +18,7 @@ daq_codegen( timingfirmware.jsonnet timingfirmwareinfo.jsonnet timinghardwareinf
 daq_add_library(*.cpp LINK_LIBRARIES ers::ers logging::logging nlohmann_json::nlohmann_json uhal::uhal opmonlib::opmonlib)
 
 ##############################################################################
-daq_add_python_bindings(*.cpp LINK_LIBRARIES ${PROJECT_NAME})
+daq_add_python_bindings(*.cpp)
 
 
 ##############################################################################
