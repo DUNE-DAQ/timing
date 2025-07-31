@@ -57,9 +57,14 @@ public:
   uint64_t read_timestamp() const; // NOLINT(build/unsigned)
 
   /**
-   * @brief      Set IRIG epoch: TAI/UNIX
+   * @brief      Set epoch: UNIX/custom
    */
-  void set_irig_epoch(IRIGEpoch irig_epoch) const; // NOLINT(build/unsigned)
+  void set_ts_epoch(TimestampEpoch ts_epoch) const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Set timebase: TAI/UTC
+   */
+  void set_ts_timebase(TimestampTimebase ts_timebase) const; // NOLINT(build/unsigned)
 
   /**
    * @brief      Read the current pps ctr word.

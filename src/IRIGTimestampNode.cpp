@@ -78,10 +78,21 @@ IRIGTimestampNode::read_timestamp() const
 
 //-----------------------------------------------------------------------------
 void
-IRIGTimestampNode::set_irig_epoch(IRIGEpoch irig_epoch) const // NOLINT(build/unsigned)
+IRIGTimestampNode::set_ts_timebase(TimestampTimebase timebase) const // NOLINT(build/unsigned)
 {
   getNode("csr.ctrl.rst").write(0x1);
-  getNode("csr.ctrl.irig_epoch").write(irig_epoch);
+  getNode("csr.ctrl.ts_timebase").write(timebase);
+  getNode("csr.ctrl.rst").write(0x0);
+  getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+IRIGTimestampNode::set_ts_epoch(TimestampEpoch epoch) const // NOLINT(build/unsigned)
+{
+  getNode("csr.ctrl.rst").write(0x1);
+  getNode("csr.ctrl.ts_epoch").write(epoch);
   getNode("csr.ctrl.rst").write(0x0);
   getClient().dispatch();
 }
