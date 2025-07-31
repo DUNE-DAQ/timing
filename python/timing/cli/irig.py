@@ -5,7 +5,7 @@ import collections
 
 from . import toolbox
 import timing.common.definitions as defs
-from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns, IRIGEpoch
+from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns, TimestampEpoch, TimestampTimebase
 
 from click import echo, style, secho
 import time
