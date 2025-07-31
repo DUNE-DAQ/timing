@@ -69,14 +69,27 @@ def status(ctx, obj):
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-@irig.command('set-epoch', short_help="Set IRIG epoch: TAI or UNIX")
+@irig.command('set-epoch', short_help="Set ts epoch: UNIX or custom")
 @click.pass_obj
-@click.argument('epoch',  type=click.Choice(IRIGEpoch.__members__.keys()))
+@click.argument('epoch',  type=click.Choice(TimestampEpoch.__members__.keys()))
 def synctime(obj, epoch):
 
     lDevice = obj.mDevice
     lIRIG = obj.mIRIG
 
-    lEpoch=IRIGEpoch.__members__[epoch]
+    lEpoch=TimestampEpoch.__members__[epoch]
+    lIRIG.set_irig_epoch(lEpoch)
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@irig.command('set-timebase', short_help="Set ts timebase: TAI or UTC")
+@click.pass_obj
+@click.argument('timebase',  type=click.Choice(TimestampTimebase.__members__.keys()))
+def synctime(obj, epoch):
+
+    lDevice = obj.mDevice
+    lIRIG = obj.mIRIG
+
+    timebase=TimestampTimebase.__members__[timebase]
     lIRIG.set_irig_epoch(lEpoch)
 # ------------------------------------------------------------------------------
