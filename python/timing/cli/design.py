@@ -24,7 +24,7 @@ from timing.core import SI534xSlave, I2CExpanderSlave
 from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord, kDesignGaia, kDesignBoreas, kDesignKerberos, kDesignChronos, kDesignFanout
-from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap, TimestampEpoch, TimestampSource, ClockSource, kFreeRun, kInput0, kInput1, kInput2, kInput3, kUpstream, kSoftware
+from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap, TimestampTimebase, TimestampSource, ClockSource, kFreeRun, kInput0, kInput1, kInput2, kInput3, kUpstream, kSoftware
 from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
 
 from timing.common.toolbox import format_firmware_version
@@ -158,9 +158,9 @@ def cdrswitch(obj, source):
 @design.command('configure', short_help="configure a whole design")
 @click.option('--clock-source', type=click.Choice(ClockSource.__members__.keys()))
 @click.option('--ts-source', type=click.Choice(TimestampSource.__members__.keys()))
-@click.option('--epoch', type=click.Choice(TimestampEpoch.__members__.keys()))
+@click.option('--timebase', type=click.Choice(TimestampTimebase.__members__.keys()))
 @click.pass_obj
-def configure(obj, clock_source, ts_source, epoch):
+def configure(obj, clock_source, ts_source, timebase):
 
     lTopDesign = obj.mTopDesign
     lDesignType = obj.mDesignType
@@ -195,11 +195,11 @@ def configure(obj, clock_source, ts_source, epoch):
 
     if lDesignType in [kDesignMaster, kDesignBoreas, kDesignGaia, kDesignKerberos]:
         if lDesignType == kDesignGaia:
-            if epoch is not None:
-                lEpoch=IRIGEpoch.__members__[epoch]
-                lTopDesign.configure(lClockSource, lTimestampSource, lEpoch)
+            if timebase is not None:
+                lTimebase=TimestampTimebase.__members__[timebase]
+                lTopDesign.configure(lClockSource, lTimestampSource, lTimebase)
             else:
-                secho("Supply irig option for design Gaia!", fg='red')
+                secho("Supply ts timebase option for design Gaia!", fg='red')
         else:
             lTopDesign.configure(lClockSource, lTimestampSource)
     elif lDesignType in [kDesignEndpoint, kDesignChronos, kDesignFanout]:

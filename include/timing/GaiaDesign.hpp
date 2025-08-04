@@ -54,7 +54,7 @@ public:
    * @brief      Prepare the timing unit for data taking.
    *
    */
-  void configure(ClockSource clock_source, TimestampSource ts_source, TimestampEpoch epoch) const;
+  void configure(ClockSource clock_source, TimestampSource ts_source, TimestampTimebase timebase) const;
 
   /**
    * @brief    Give info to collector.
