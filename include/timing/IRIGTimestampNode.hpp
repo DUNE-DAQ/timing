@@ -62,9 +62,29 @@ public:
   void set_ts_epoch(TimestampEpoch ts_epoch) const; // NOLINT(build/unsigned)
 
   /**
+   * @brief      Set custom epoch value
+   */
+  void set_ts_epoch_value(uint64_t epoch_to_2000_seconds_tai, uint8_t epoch_to_2000_leap_seconds) const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Set custom epoch date
+   */
+  //void set_ts_epoch_date(uint64_t epoch_to_2000_seconds_tai, uint8_t epoch_to_2000_leap_seconds) const; // NOLINT(build/unsigned)
+
+  /**
    * @brief      Set timebase: TAI/UTC
    */
   void set_ts_timebase(TimestampTimebase ts_timebase) const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Set seconds offset
+   */
+  void set_ts_seconds_offset(int8_t seconds_offset) const; // NOLINT(build/signed)
+
+  /**
+   * @brief      Set ticks offset
+   */
+  void set_ts_ticks_offset(int16_t ticks_offset) const; // NOLINT(build/signed)
 
   /**
    * @brief      Read the current pps ctr word.

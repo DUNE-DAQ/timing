@@ -64,6 +64,9 @@ register_master(py::module& m)
     .def("get_status", &timing::IRIGTimestampNode::get_status, py::arg("print_out") = false)
     .def("set_ts_timebase", &timing::IRIGTimestampNode::set_ts_timebase, py::arg("ts_timebase"))
     .def("set_ts_epoch", &timing::IRIGTimestampNode::set_ts_epoch, py::arg("ts_epoch"))
+    .def("set_ts_epoch_value", &timing::IRIGTimestampNode::set_ts_epoch_value, py::arg("epoch_to_2000_seconds_tai"),  py::arg("epoch_to_2000_leap_seconds"))
+    .def("set_ts_seconds_offset", &timing::IRIGTimestampNode::set_ts_seconds_offset, py::arg("seconds_offset"))
+    .def("set_ts_ticks_offset", &timing::IRIGTimestampNode::set_ts_ticks_offset, py::arg("ticks_offset"))
     ;
 
 }

@@ -72,24 +72,61 @@ def status(ctx, obj):
 @irig.command('set-epoch', short_help="Set ts epoch: UNIX or custom")
 @click.pass_obj
 @click.argument('epoch',  type=click.Choice(TimestampEpoch.__members__.keys()))
-def synctime(obj, epoch):
+def set_epoch(obj, epoch):
 
     lDevice = obj.mDevice
     lIRIG = obj.mIRIG
 
     lEpoch=TimestampEpoch.__members__[epoch]
-    lIRIG.set_irig_epoch(lEpoch)
+    lIRIG.set_ts_epoch(lEpoch)
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@irig.command('set-epoch-value', short_help="Set ts epoch (custom mode)")
+@click.pass_obj
+@click.argument('epoch_to_2000_seconds_tai', type=int)
+@click.argument('epoch_to_2000_leap_seconds', type=int)
+def set_epoch_value(obj, epoch_to_2000_seconds_tai, epoch_to_2000_leap_seconds):
+
+    lDevice = obj.mDevice
+    lIRIG = obj.mIRIG
+
+    lIRIG.set_ts_epoch_value(epoch_to_2000_seconds_tai, epoch_to_2000_leap_seconds)
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
 @irig.command('set-timebase', short_help="Set ts timebase: TAI or UTC")
 @click.pass_obj
 @click.argument('timebase',  type=click.Choice(TimestampTimebase.__members__.keys()))
-def synctime(obj, epoch):
+def set_timebase(obj, timebase):
 
     lDevice = obj.mDevice
     lIRIG = obj.mIRIG
 
-    timebase=TimestampTimebase.__members__[timebase]
-    lIRIG.set_irig_epoch(lEpoch)
+    lTimebase=TimestampTimebase.__members__[timebase]
+    lIRIG.set_ts_timebase(lTimebase)
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@irig.command('set-seconds-offset', short_help="Set ts seconds offset")
+@click.pass_obj
+@click.argument('offset', type=click.IntRange(-128, 127))
+def set_seconds_offset(obj, offset):
+
+    lDevice = obj.mDevice
+    lIRIG = obj.mIRIG
+
+    lIRIG.set_ts_seconds_offset(offset)
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@irig.command('set-ticks-offset', short_help="Set ts ticks offset")
+@click.pass_obj
+@click.argument('offset', type=click.IntRange(-32768, 32767))
+def set_ticks_offset(obj, offset):
+
+    lDevice = obj.mDevice
+    lIRIG = obj.mIRIG
+
+    lIRIG.set_ts_ticks_offset(offset)
 # ------------------------------------------------------------------------------
