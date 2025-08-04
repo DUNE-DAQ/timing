@@ -58,6 +58,22 @@ I2CSlave::read_i2c(uint32_t i2c_reg_address) const // NOLINT(build/unsigned)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+uint8_t                                                                         // NOLINT(build/unsigned)
+I2CSlave::read_i2c_atomic(uint32_t i2c_device_address, uint32_t i2c_reg_address) const // NOLINT(build/unsigned)
+{
+  return m_i2c_master->read_i2c(i2c_device_address, i2c_reg_address, true);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+uint8_t                                            // NOLINT(build/unsigned)
+I2CSlave::read_i2c_atomic(uint32_t i2c_reg_address) const // NOLINT(build/unsigned)
+{
+  return m_i2c_master->read_i2c(m_i2c_device_address, i2c_reg_address, true);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 void
 I2CSlave::write_i2c(uint32_t i2c_device_address, // NOLINT(build/unsigned)
                     uint32_t i2c_reg_address,    // NOLINT(build/unsigned)
@@ -91,6 +107,24 @@ std::vector<uint8_t>                                                            
 I2CSlave::read_i2cArray(uint32_t i2c_reg_address, uint32_t number_of_words) const // NOLINT(build/unsigned)
 {
   return m_i2c_master->read_i2cArray(m_i2c_device_address, i2c_reg_address, number_of_words);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+std::vector<uint8_t>                                           // NOLINT(build/unsigned)
+I2CSlave::read_i2cArray_atomic(uint32_t i2c_device_address,    // NOLINT(build/unsigned)
+                        uint32_t i2c_reg_address,              // NOLINT(build/unsigned)
+                        uint32_t number_of_words) const        // NOLINT(build/unsigned)
+{
+  return m_i2c_master->read_i2cArray(i2c_device_address, i2c_reg_address, number_of_words, true);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+std::vector<uint8_t>                                                                     // NOLINT(build/unsigned)
+I2CSlave::read_i2cArray_atomic(uint32_t i2c_reg_address, uint32_t number_of_words) const // NOLINT(build/unsigned)
+{
+  return m_i2c_master->read_i2cArray(m_i2c_device_address, i2c_reg_address, number_of_words, true);
 }
 //-----------------------------------------------------------------------------
 

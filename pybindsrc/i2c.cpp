@@ -13,6 +13,7 @@
 #include "timing/DACNode.hpp"
 #include "timing/I2CExpanderNode.hpp"
 #include "timing/SI534xNode.hpp"
+#include "timing/LTC2945Node.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -34,14 +35,25 @@ register_i2c(py::module& m)
   py::class_<timing::I2CMasterNode, uhal::Node>(m, "I2CMasterNode")
     .def(py::init<const uhal::Node&>())
     .def("get_i2c_clock_prescale", &timing::I2CMasterNode::get_i2c_clock_prescale)
-    .def("read_i2c", &timing::I2CMasterNode::read_i2c)
+    .def("read_i2c",
+         &timing::I2CMasterNode::read_i2c,
+         py::arg("i2c_device_address"),
+         py::arg("i2c_reg_address"),
+         py::arg("atomic") = false
+        )
     .def("write_i2c",
          &timing::I2CMasterNode::write_i2c,
          py::arg("i2c_device_address"),
          py::arg("i2c_reg_address"),
          py::arg("data"),
          py::arg("send_stop") = true)
-    .def("read_i2cArray", &timing::I2CMasterNode::read_i2cArray)
+    .def("read_i2cArray",
+         &timing::I2CMasterNode::read_i2cArray,
+         py::arg("i2c_device_address"),
+         py::arg("i2c_reg_address"),
+         py::arg("number_of_words"),
+         py::arg("atomic") = false
+        )
     .def("write_i2cArray",
          &timing::I2CMasterNode::write_i2cArray,
          py::arg("i2c_device_address"),
@@ -68,6 +80,10 @@ register_i2c(py::module& m)
                                                         &timing::I2CSlave::read_i2c)
     .def<uint8_t (timing::I2CSlave::*)(uint32_t, uint32_t) const>("read_i2c", // NOLINT(build/unsigned)
                                                                   &timing::I2CSlave::read_i2c)
+    .def<uint8_t (timing::I2CSlave::*)(uint32_t) const>("read_i2c_atomic", // NOLINT(build/unsigned)
+                                                        &timing::I2CSlave::read_i2c_atomic)
+    .def<uint8_t (timing::I2CSlave::*)(uint32_t, uint32_t) const>("read_i2c_atomic", // NOLINT(build/unsigned)
+                                                                  &timing::I2CSlave::read_i2c_atomic)
     .def<void (timing::I2CSlave::*)(uint32_t, uint8_t, bool) const>("write_i2c", // NOLINT(build/unsigned)
                                                                     &timing::I2CSlave::write_i2c,
                                                                     py::arg("i2c_reg_address"),
@@ -85,6 +101,12 @@ register_i2c(py::module& m)
     .def<std::vector<uint8_t> (timing::I2CSlave::*)(uint32_t, uint32_t, uint32_t) const>( // NOLINT(build/unsigned)
       "read_i2cArray",
       &timing::I2CSlave::read_i2cArray)
+    .def<std::vector<uint8_t> (timing::I2CSlave::*)(uint32_t, uint32_t) const>( // NOLINT(build/unsigned)
+      "read_i2cArray_atomic",
+      &timing::I2CSlave::read_i2cArray_atomic)
+    .def<std::vector<uint8_t> (timing::I2CSlave::*)(uint32_t, uint32_t, uint32_t) const>( // NOLINT(build/unsigned)
+      "read_i2cArray_atomic",
+      &timing::I2CSlave::read_i2cArray_atomic)
     .def<void (timing::I2CSlave::*)(uint32_t, std::vector<uint8_t>, bool) const>( // NOLINT(build/unsigned)
       "write_i2cArray",
       &timing::I2CSlave::write_i2cArray,
@@ -144,7 +166,15 @@ register_i2c(py::module& m)
 
   // Wrap DACNode
   py::class_<timing::DACNode, timing::DACSlave, timing::I2CMasterNode>(m, "DACNode").def(py::init<const uhal::Node&>());
-} // NOLINT(readability/fn_size)
+ // NOLINT(readability/fn_size)
+
+  py::class_<timing::LTC2945Node, timing::I2CSlave>(m, "LTC2945Node")
+    .def(py::init<const timing::I2CMasterNode*, uint8_t, double>()) // NOLINT(build/unsigned)
+    .def("read_v_in", &timing::LTC2945Node::read_v_in)
+    .def("read_delta_sense_v", &timing::LTC2945Node::read_delta_sense_v)
+    .def("read_power", &timing::LTC2945Node::read_power)
+    ;
+}
 
 } // namespace python
 } // namespace timing
