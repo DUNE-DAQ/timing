@@ -7,6 +7,7 @@
  */
 
 #include "timing/GIBIONode.hpp"
+#include "timing/LM75Node.hpp"
 
 #include <string>
 #include <math.h>
@@ -46,7 +47,8 @@ GIBIONode::get_status(bool print_out) const
 
   auto subnodes_2 = read_sub_nodes(getNode("csr.ctrl"));
   status << format_reg_table(subnodes_2, "GIB IO control");
-  
+
+  status << "Board temperature: " << read_board_temperature() << " [C]" << std::endl;
 
   if (print_out)
     TLOG() << std::endl << status.str();
@@ -270,5 +272,13 @@ GIBIONode::set_i2c_mux_channels(uint8_t mux_channel_bitmask) const { // NOLINT(b
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+float
+GIBIONode::read_board_temperature() const
+{
+	auto temp_mon = get_i2c_device<LM75Node>(m_pll_i2c_bus, "TEMP_MON");
+	return temp_mon->read_temperature();
+}
+//-----------------------------------------------------------------------------
 } // namespace timing
 } // namespace dunedaq

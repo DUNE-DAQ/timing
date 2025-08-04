@@ -114,6 +114,11 @@ public:
    */
   void set_i2c_mux_channels(uint8_t mux_channel_bitmask) const;
 
+  /**
+   * @brief    Read board temp
+   */
+  float read_board_temperature() const;
+
 private:
   void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)
 };
