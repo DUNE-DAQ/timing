@@ -50,6 +50,9 @@ public:
   uint8_t read_i2c(uint32_t i2c_device_address, uint32_t i2c_reg_address) const; // NOLINT(build/unsigned)
   uint8_t read_i2c(uint32_t i2c_reg_address) const;                              // NOLINT(build/unsigned)
 
+  uint8_t read_i2c_atomic(uint32_t i2c_device_address, uint32_t i2c_reg_address) const; // NOLINT(build/unsigned)
+  uint8_t read_i2c_atomic(uint32_t i2c_reg_address) const;                              // NOLINT(build/unsigned)
+
   void write_i2c(uint32_t i2c_device_address, // NOLINT(build/unsigned)
                  uint32_t i2c_reg_address,    // NOLINT(build/unsigned)
                  uint8_t data,                // NOLINT(build/unsigned)
@@ -61,7 +64,11 @@ public:
                                      uint32_t number_of_words) const; // NOLINT(build/unsigned)
   std::vector<uint8_t> read_i2cArray(uint32_t i2c_reg_address,        // NOLINT(build/unsigned)
                                      uint32_t number_of_words) const; // NOLINT(build/unsigned)
-
+  std::vector<uint8_t> read_i2cArray_atomic(uint32_t i2c_reg_address,        // NOLINT(build/unsigned)
+                                            uint32_t number_of_words) const; // NOLINT(build/unsigned)
+  std::vector<uint8_t> read_i2cArray_atomic(uint32_t i2c_device_address,     // NOLINT(build/unsigned)
+                                            uint32_t i2c_reg_address,        // NOLINT(build/unsigned)
+                                            uint32_t number_of_words) const; // NOLINT(build/unsigned)
   void write_i2cArray(uint32_t i2c_device_address, // NOLINT(build/unsigned)
                       uint32_t i2c_reg_address,    // NOLINT(build/unsigned)
                       std::vector<uint8_t> data,   // NOLINT(build/unsigned)

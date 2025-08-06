@@ -181,15 +181,6 @@ IONode::get_full_clock_config_file_path(const ClockSource& clock_source) const
     throw MissingBoardTypeMapEntry(ERS_HERE, format_reg_value(board_type), e);
   }
 
-  // enclustra i2c switch stuff
-  if (carrier_type == kCarrierEnclustraA35) {
-    try {
-      getNode<I2CMasterNode>(m_uid_i2c_bus).get_slave("AX3_Switch").write_i2c(0x01, 0x7f);
-    } catch (const std::exception& e) {
-      ers::warning(EnclustraSwitchFailure(ERS_HERE, e));
-    }
-  }
-
   auto pll = get_pll();
   auto pll_model = pll->read_device_version();
   clock_config_key << std::hex << pll_model;
@@ -313,6 +304,9 @@ IONode::soft_reset() const
 void
 IONode::reset(const ClockSource& clock_source) const
 {
+  TLOG() << "Setting IO preliminaries: I2C access, etc..";
+  set_up_io_infrastructure();
+
   // Find the right pll config file
   std::string clock_config = get_full_clock_config_file_path(clock_source);
   reset(clock_config);

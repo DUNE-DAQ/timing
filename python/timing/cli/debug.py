@@ -13,7 +13,7 @@ import timing.common.definitions as defs
 
 from click import echo, style, secho
 from os.path import join, expandvars
-from timing.core import SI534xSlave, I2CExpanderSlave
+from timing.core import SI534xSlave, I2CExpanderSlave, LTC2945Node
 
 
 from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardMIB, kBoardGIB, kBoardPC069, kBoardFIB
@@ -110,7 +110,8 @@ def uuid(obj):
         lDevice.dispatch()
         lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x1)
         lDevice.dispatch()
-        lIO.set_i2c_mux_channels(0x1)
+        print("switch reset")
+    #    lIO.set_i2c_mux_channels(0x1)
 
     lValues = lUID.get_slave(lPROMSlave).read_i2cArray(0xfa, 6)
     lUniqueID = 0x0
@@ -148,14 +149,14 @@ def sfpexpander(obj):
         echo("{} ({}): {}".format(lLabels[a], hex(a), hex(v)))
 # ------------------------------------------------------------------------------
 
-
 # ------------------------------------------------------------------------------
 @debug.command('scan-i2c', short_help="Debug.")
 @click.pass_obj
-def sfp_status(obj):
+def scan_i2c(obj):
     lDevice = obj.mDevice
     lBoardType = obj.mBoardType
-
+    lIO = lDevice.getNode('io')
+    
     lNodes = []
     lSwitches={}
     lSwitchChannels={}
@@ -182,24 +183,54 @@ def sfp_status(obj):
     for n in lNodes:
         lI2CBusNode = lDevice.getNode(n)
         echo('Scanning '+style(n,fg='cyan'))
+        print("reset switch")
+        lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x0)
+        lDevice.dispatch()
+        lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x1)
+        lDevice.dispatch()
         lAddresses = lI2CBusNode.scan()
         print("  '{}': {} devices found.\n  Addresses: {}".format(n, len(lAddresses), ', '.join((hex(a) for a in lAddresses))))
+
         if n in lSwitches:
-            print(f" Found {len(lSwitches)} switches.\n  Addresses: {lSwitches.values()}")
             for switch,address in lSwitches.items():
                 print (f"switch {switch} address: {address}")
                 switch_channels=lSwitchChannels[switch]
                 print(f"working with {switch}, @ adr {address}, it has {switch_channels} channels")
+
                 for channel in range(0,switch_channels):
                     secho(f"Scanning with channel {channel} enabled", fg='cyan')
-                    lI2CBusNode.write_i2cPrimitive(address, [1<<channel])
+                    try:
+                        lI2CBusNode.write_i2cPrimitive(address, [1<<channel])
+                    except:
+                        secho(f"failure configuring switch {address}")
                     lAddresses = lI2CBusNode.scan()
                     print("  '{}': {} devices found.\n  Addresses: {}".format(n, len(lAddresses), ', '.join((hex(a) for a in lAddresses))))
 
-
-
 # ------------------------------------------------------------------------------
 
+# ------------------------------------------------------------------------------
+@debug.command('pll', short_help="Debug.")
+@click.pass_obj
+def pll(obj):
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+    lIO = lDevice.getNode('io')
+
+    lI2CBusNode = lDevice.getNode('io.i2c')
+    lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x1)
+    lDevice.getNode("io.csr.ctrl.clk_gen_rst").write(0x1)
+    lDevice.dispatch()
+
+    lI2CBusNode.write_i2cPrimitive(0x70, [1])
+
+    lSIChip = SI534xSlave(lI2CBusNode, 0x68)
+    #lSIVersion = lSIChip.read_device_version()
+
+    lSIVersion = lSIChip.read_device_version()
+    echo(f"PLL version {hex(lSIVersion)}")
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 @debug.command('fanout-sfp-scan', short_help="Debug.")
 @click.pass_obj
 def fanout_sfpscan(obj):
@@ -384,4 +415,74 @@ def lm75_temp_read(obj):
     echo(f" raw bytes: {hex(lValues[0])}, {hex(lValues[1])}")
     echo(f" combined word: {hex(temp_raw)}")
     echo(f" temp [C]: {toolbox.twos_complement(temp_raw,9)*0.5}")
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@debug.command('ltc2945', short_help="Read data from a LTC2945.")
+@click.pass_obj
+def lm75_temp_read(obj):
+
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+    lIO = lDevice.getNode('io')
+
+    if lBoardType != kBoardGIB:
+        secho(f'Only GIB (v2 (not checked)) supported. Board type is {lBoardType}', fg='red')
+        return
+
+    i2c_bus = lDevice.getNode('io.i2c')
+
+    voltage_power_mon_i2c_addr_map = {"5": 0x67, "3.3": 0x6a, "2.5": 0x69}
+    voltage_sense_resistance_map   = {"5": 0.005, "3.3": 0.02, "2.5": 0.02}
+
+    for v,addr in voltage_power_mon_i2c_addr_map.items():
+        sense_r = voltage_sense_resistance_map[v]
+        lLTC2945 = LTC2945Node(i2c_bus, addr, sense_r)
+
+        lLTC2945.write_i2c(0x0, 0x05)
+
+        delta_sense_v = lLTC2945.read_delta_sense_v()
+        v_in = lLTC2945.read_v_in()
+        power = lLTC2945.read_power()
+
+        echo(f"LTC2945 {v}V data is:")
+        echo(f"deltaSenseV : {delta_sense_v*1000} mV")
+        echo(f"Vin : {v_in} V")
+        echo(f"power is: {power*1000} mW\n")
+
+    #lLTC2945_5v = LTC2945Node(i2c_bus, ic_addr_5v_mon, 0.005)
+    #lLTC2945_3v3 = LTC2945Node(i2c_bus, ic_addr_3v3_mon, 0.02)
+
+    #lLTC2945_5v.write_i2c(0x0, 0x05)
+    #lLTC2945_3v3.write_i2c(0x0, 0x05)
+
+    #delta_sense_v_5v = lLTC2945_5v.read_delta_sense_v()
+    #echo(f"LTC2945 5V deltaSense V is: {delta_sense_v_5v*1000} mV\n")
+
+    #delta_sense_v_3v3 = lLTC2945_3v3.read_delta_sense_v()
+    #echo(f"LTC2945 3.3V deltaSense V is: {delta_sense_v_3v3*1000} mV\n")
+
+    #v_in_5v = lLTC2945_5v.read_v_in()
+    #echo(f"LTC2945 5V Vin is: {v_in_5v} V\n")
+
+    #v_in_3v3 = lLTC2945_3v3.read_v_in()
+    #echo(f"LTC2945 3.3V Vin is: {v_in_3v3} V\n")
+
+    #power_5v = lLTC2945_5v.read_power()
+    #echo(f"LTC2945 5V power is: {power_5v*1000} mW\n")
+
+    #power_3v3 = lLTC2945_3v3.read_power()
+    #echo(f"LTC2945 3.3V power is: {power_3v3*1000} mW\n")
+
+    #regs=i2c_bus.read_i2cArray(ic_addr_5v_mon, 0x0, 40, True)
+    #echo(f"LTC2945 5V regs: {regs}\n")
+
+    #v_in_raw = (regs[0x1e] & 0xf) << 4
+    #v_in_raw = v_in_raw | (regs[0x1f] >> 4)
+
+    #v_in_resolution = 0.025
+    #echo("LTC2945 Vin data - ")
+    #echo(f"raw bytes: {regs[0x1e]} {regs[0x1f]}")
+    #echo(f"combined word: {v_in_raw}")
+    #echo(f"Vin [V]: {v_in_raw*v_in_resolution}")
 # ------------------------------------------------------------------------------

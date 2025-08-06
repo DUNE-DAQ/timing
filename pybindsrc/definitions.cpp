@@ -129,9 +129,14 @@ register_definitions(py::module& m)
         .value("kMixed", kMixed)
         .export_values();
 
-    py::enum_<IRIGEpoch>(m, "IRIGEpoch")
-        .value("kTAI", kTAI)
+    py::enum_<TimestampEpoch>(m, "TimestampEpoch")
         .value("kUNIX", kUNIX)
+        .value("kCustom", kCustom)
+        .export_values();
+
+    py::enum_<TimestampTimebase>(m, "TimestampTimebase")
+        .value("kTAI", kTAI)
+        .value("kUTC", kUTC)
         .export_values();
 
 	m.attr("kBoardNameMap") = timing::IONode::get_board_type_map();

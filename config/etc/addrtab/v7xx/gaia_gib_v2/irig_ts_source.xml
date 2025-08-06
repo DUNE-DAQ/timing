@@ -2,16 +2,7 @@
   <node id="csr" address="0x0" fwinfo="endpoint;width=4">
     <node id="ctrl" address="0x0">
       <node id="rst" mask="0x1"/>
-      <node id="ts_epoch" mask="0x2"/>
-      <node id="ts_timebase" mask="0x4"/>
-      <node id="irig_timebase" mask="0x8"/>
-    </node>
-    <node id="seconds_from_sw_epoch_l" address="0x1"/>
-    <node id="seconds_from_sw_epoch_h" address="0x2"/>
-    <node id="offsets" address="0x3">
-      <node id="leap_seconds_from_sw_epoch" mask="0xff"/>
-      <node id="seconds_offset" mask="0xff00"/>
-      <node id="ticks_offset" mask="0xffff0000"/>
+      <node id="irig_epoch" mask="0x2"/>
     </node>
 		<node id="stat" address="0x4">
       <node id="valid" mask="0x1"/>
@@ -24,9 +15,6 @@
       <node id="hour" mask="0x1f"/>
       <node id="minute" mask="0x7e0"/>
       <node id="second" mask="0x1f800"/>
-    </node>
-    <node id="irig_sbs" address="0x7">
-      <node id="sbs" mask="0x1ffff"/>
     </node>
   </node>
   <node id="pps_ctr" mode="block" size="0x1" address="0x10" fwinfo="endpoint;width=1"/>

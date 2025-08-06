@@ -126,10 +126,16 @@ enum TimestampSource
   kMixed = 2
 };
 
-enum IRIGEpoch
+enum TimestampEpoch
+{
+  kUNIX = 0,
+  kCustom = 1
+};
+
+enum TimestampTimebase
 {
   kTAI = 0,
-  kUNIX = 1
+  kUTC = 1
 };
 
 struct ActiveEndpointConfig

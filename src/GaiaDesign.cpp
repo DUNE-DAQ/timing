@@ -41,11 +41,11 @@ GaiaDesign::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-GaiaDesign::configure(ClockSource clock_source, TimestampSource ts_source, IRIGEpoch epoch) const
+GaiaDesign::configure(ClockSource clock_source, TimestampSource ts_source, TimestampTimebase timebase) const
 {
   TopDesign::configure(clock_source);
 
-  getNode<IRIGTimestampNode>("irig_time_source").set_irig_epoch(epoch);
+  getNode<IRIGTimestampNode>("irig_time_source").set_ts_timebase(timebase);
 
   // TODO temporary, wait for irig lock and date
   std::this_thread::sleep_for(std::chrono::milliseconds(1000));

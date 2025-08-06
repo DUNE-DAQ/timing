@@ -7,6 +7,7 @@
  */
 
 #include "timing/GIBIONode.hpp"
+#include "timing/LM75Node.hpp"
 
 #include <string>
 #include <math.h>
@@ -44,6 +45,11 @@ GIBIONode::get_status(bool print_out) const
   auto subnodes = read_sub_nodes(getNode("csr.stat"));
   status << format_reg_table(subnodes, "GIB IO state");
 
+  auto subnodes_2 = read_sub_nodes(getNode("csr.ctrl"));
+  status << format_reg_table(subnodes_2, "GIB IO control");
+
+  status << "Board temperature: " << read_board_temperature() << " [C]" << std::endl;
+
   if (print_out)
     TLOG() << std::endl << status.str();
   return status.str();
@@ -72,10 +78,17 @@ GIBIONode::get_hardware_info(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-GIBIONode::reset(const std::string& clock_config_file) const
+GIBIONode::set_up_io_infrastructure() const
 {
-  
-  write_soft_reset_register();
+  // enclustra i2c switch stuff
+  CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
+  if (carrier_type == kCarrierEnclustraA35) {
+    try {
+      getNode<I2CMasterNode>(m_uid_i2c_bus).get_slave("AX3_Switch").write_i2c(0x01, 0x7f);
+    } catch (const std::exception& e) {
+      ers::warning(EnclustraSwitchFailure(ERS_HERE, e));
+    }
+  }
 
   // Reset I2C switch and expander, active low
   getNode("csr.ctrl.i2c_sw_rst").write(0x0);
@@ -90,17 +103,20 @@ GIBIONode::reset(const std::string& clock_config_file) const
   getNode("csr.ctrl.i2c_exten_rst").write(0x1);
   getNode("csr.ctrl.clk_gen_rst").write(0x1);
   getClient().dispatch();
-  
-  CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
 
-  // enclustra i2c switch stuff
-  if (carrier_type == kCarrierEnclustraA35) {
-    try {
-      getNode<I2CMasterNode>(m_uid_i2c_bus).get_slave("AX3_Switch").write_i2c(0x01, 0x7f);
-    } catch (const std::exception& e) {
-      ers::warning(EnclustraSwitchFailure(ERS_HERE, e));
-    }
-  }
+  set_i2c_mux_channels(0x1);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+GIBIONode::reset(const std::string& clock_config_file) const
+{
+  getNode("csr.ctrl.rst").write(0x1);
+  getNode("csr.ctrl.rst").write(0x0);
+  getClient().dispatch();
+
+  set_up_io_infrastructure();
 
   getNode("csr.ctrl.gps_clk_en").write(0x0);
 
@@ -111,10 +127,6 @@ GIBIONode::reset(const std::string& clock_config_file) const
 
   // Upload config file to PLL
   configure_pll(clock_config_file);
-
-  getNode("csr.ctrl.rst").write(0x1);
-  getNode("csr.ctrl.rst").write(0x0);
-  getClient().dispatch();
 
   auto sfp_expander_0 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "SFPExpander0");
   auto sfp_expander_1 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "SFPExpander1");
@@ -137,6 +149,15 @@ GIBIONode::reset(const std::string& clock_config_file) const
   sfp_expander_1->set_outputs(1, 0xC0);
 
   TLOG() << "Reset done";
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+GIBIONode::reset_pll() const
+{
+  getNode("csr.ctrl.clk_gen_rst").write(0x0);
+  getNode("csr.ctrl.clk_gen_rst").write(0x1);
 }
 //-----------------------------------------------------------------------------
 
@@ -251,5 +272,13 @@ GIBIONode::set_i2c_mux_channels(uint8_t mux_channel_bitmask) const { // NOLINT(b
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+float
+GIBIONode::read_board_temperature() const
+{
+	auto temp_mon = get_i2c_device<LM75Node>(m_pll_i2c_bus, "TEMP_MON");
+	return temp_mon->read_temperature();
+}
+//-----------------------------------------------------------------------------
 } // namespace timing
 } // namespace dunedaq

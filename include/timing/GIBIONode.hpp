@@ -60,6 +60,11 @@ public:
   std::string get_hardware_info(bool print_out) const override;
   
   /**
+   * @brief      Set up i2c buses, enable ICs.
+   */
+  void set_up_io_infrastructure() const override;
+
+  /**
    * @brief      Reset GIB IO.
    */
   void reset(const std::string& clock_config_file)  const override;
@@ -68,6 +73,11 @@ public:
    * @brief     Reset timing node with clock file lookup
    */
   using IONode::reset;
+
+  /**
+   * @brief      Reset PLL.
+   */
+  void reset_pll()  const override;
 
   /**
    * @brief      Print status of on-board SFP.
@@ -103,6 +113,11 @@ public:
    * @brief    Configure which mux channels are on using a bitmask
    */
   void set_i2c_mux_channels(uint8_t mux_channel_bitmask) const;
+
+  /**
+   * @brief    Read board temp
+   */
+  float read_board_temperature() const;
 
 private:
   void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)

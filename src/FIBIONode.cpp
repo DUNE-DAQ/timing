@@ -136,7 +136,6 @@ FIBIONode::reset(const std::string& clock_config_file) const {
 	TLOG() << "Reset done";
 }
 //-----------------------------------------------------------------------------
-
 //-----------------------------------------------------------------------------
 void
 FIBIONode::switch_sfp_mux_channel(uint32_t mux_channel) const { // NOLINT(build/unsigned)
