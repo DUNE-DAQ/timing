@@ -93,6 +93,8 @@ FIBV2IONode::reset(const ClockSource& clock_source) const {
 		// TODO :throw something here
 	}
 
+	getClient().dispatch();
+
 	TLOG() << "Reset done";
 }
 //-----------------------------------------------------------------------------
