@@ -10,10 +10,10 @@ UHAL_REGISTER_DERIVED_NODE(FanoutDesign)
 //-----------------------------------------------------------------------------
 FanoutDesign::FanoutDesign(const uhal::Node& node)
   : TopDesignInterface(node)
-  , MuxDesignInterface(node)
   , TopDesign(node)
   , EndpointDesignInterface(node)
-  , CDRMuxDesignInterface(node)
+  , MuxDesignInterface(node)
+  , DCSKMuxDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 

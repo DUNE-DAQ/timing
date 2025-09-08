@@ -58,6 +58,11 @@ public:
   void switch_endpoint_sfp(uint32_t address, bool turn_on) const override; // NOLINT(build/unsigned)
 
   /**
+   * @brief     Use the endpoint in the AFC to set data mux
+   */
+  void set_fanout_mux(uint16_t fanout_endpoint_address, uint8_t fanout_mux_slot) const override; // NOLINT(build/unsigned)
+
+  /**
    * @brief     Enable RTT endpoint
    */
   void enable_upstream_endpoint() const override;
@@ -68,25 +73,42 @@ public:
   void send_fl_cmd(uint32_t command,                                // NOLINT(build/unsigned)
                    uint32_t channel,                                // NOLINT(build/unsigned)
                    uint32_t number_of_commands = 1) const override; // NOLINT(build/unsigned)
-  
+
   /**
    * @brief      Measure the endpoint round trip time.
    *
    * @return     { description_of_the_return_value }
    */
-  uint32_t measure_endpoint_rtt(uint32_t address, bool control_sfp = true) const override; // NOLINT(build/unsigned)
+  void setup_endpoint_rx(uint16_t address) const override; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Measure the endpoint round trip time.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  uint32_t measure_endpoint_rtt(uint16_t address, bool control_sfp = true) const override; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Measure the endpoint round trip time.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  uint32_t measure_endpoint_rtt(uint16_t address,
+                                                   uint16_t fanout_endpoint_address,
+                                                   uint8_t fanout_mux,
+                                                   bool control_sfp = true) const override; // NOLINT(build/unsigned)
 
   /**
    * @brief     Apply delay to endpoint
    */
-  void apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned)
-                            uint32_t coarse_delay, // NOLINT(build/unsigned)
-                            uint32_t fine_delay,   // NOLINT(build/unsigned)
-                            uint32_t phase_delay,  // NOLINT(build/unsigned)
-                            bool measure_rtt = false,
-                            bool control_sfp = true) const override;
+  void apply_endpoint_delay(uint16_t address,      // NOLINT(build/unsigned)
+                            uint8_t cycle_delay, // NOLINT(build/unsigned)
+                            uint16_t phase) const override;  // NOLINT(build/unsigned)
 
-  using MasterNodeInterface::apply_endpoint_delay;
+  /**
+   * @brief     Apply delay to endpoint
+   */
+  void resync_endpoint(uint16_t address) const;  // NOLINT(build/unsigned)
 
   /**
    * @brief     Set timestamp to current machine time
@@ -123,12 +145,12 @@ public:
   /**
    * @brief    Write some data to endpoint registers
    */
-  void write_endpoint_data(uint16_t endpoint_address, uint8_t reg_address, std::vector<uint8_t> data, bool address_mode) const;
+  void write_endpoint_data(uint16_t endpoint_address, uint8_t reg_address, std::vector<uint8_t> data, bool address_mode, int timeout=500) const;
 
   /**
    * @brief    Read some data from endpoint registers
    */
-  std::vector<uint32_t> read_endpoint_data(uint16_t endpoint_address, uint8_t reg_address, uint8_t data_length, bool address_mode) const;
+  std::vector<uint32_t> read_endpoint_data(uint16_t endpoint_address, uint8_t reg_address, uint8_t data_length, bool address_mode, int timeout=500) const;
 
   /**
    * @brief    Disable timestamp sending

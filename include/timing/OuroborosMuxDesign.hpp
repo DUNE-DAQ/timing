@@ -43,6 +43,8 @@ public:
    */
   std::string get_status(bool print_out = false) const override;
 
+  using MasterMuxDesignInterface::measure_endpoint_rtt;
+
   // /**
   //  * @brief    Give info to collector.
   //  */  

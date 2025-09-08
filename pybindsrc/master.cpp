@@ -9,6 +9,7 @@
 #include "timing/MasterNode.hpp"
 #include "timing/UpstreamCDRNode.hpp"
 #include "timing/IRIGTimestampNode.hpp"
+#include "timing/PhaseMeasurementNode.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -29,7 +30,9 @@ register_master(py::module& m)
     .def("reset_command_counters", &timing::MasterNode::reset_command_counters)
     .def("transmit_async_packet", &timing::MasterNode::transmit_async_packet, py::arg("packet"), py::arg("timeout") = 500) //timeout [us]
     .def("write_endpoint_data", &timing::MasterNode::write_endpoint_data)
-    .def("read_endpoint_data", &timing::MasterNode::read_endpoint_data)
+    .def("read_endpoint_data", &timing::MasterNode::read_endpoint_data
+    , py::arg("endpoint_address"), py::arg("reg_address"), py::arg("data_length"), py::arg("address_mode") 
+    , py::arg("timeout") = 500)
     .def("send_fl_cmd",
          &timing::MasterNode::send_fl_cmd,
          py::arg("command"),
@@ -52,7 +55,33 @@ register_master(py::module& m)
     .def("configure_endpoint_command_decoder", &timing::MasterNode::configure_endpoint_command_decoder,
      py::arg("endpoint_address"),
      py::arg("slot"),
-     py::arg("command"));
+     py::arg("command"))
+    .def<uint32_t (timing::MasterNode::*)(uint16_t, uint16_t, uint8_t, bool) const>("measure_endpoint_rtt",
+      &timing::MasterNode::measure_endpoint_rtt,
+      py::arg("address"),
+      py::arg("fanout_ept_address"),
+      py::arg("fanout_mux"),
+      py::arg("control_sfp") = true)
+    .def<uint32_t (timing::MasterNode::*)(uint16_t, bool) const>("measure_endpoint_rtt",
+      &timing::MasterNode::measure_endpoint_rtt,
+      py::arg("address"),
+      py::arg("control_sfp") = true)
+    .def("apply_endpoint_delay",
+      &timing::MasterNode::apply_endpoint_delay,
+      py::arg("address"),
+      py::arg("cycle_delay"),
+      py::arg("phase_delay")
+      )
+    .def("resync_endpoint",
+      &timing::MasterNode::resync_endpoint,
+      py::arg("address")
+      )
+    .def("set_fanout_mux",
+      &timing::MasterNode::set_fanout_mux,
+      py::arg("fanout_ept_adr"),
+      py::arg("fanout_mux")
+      )
+    ;
 
   py::class_<timing::UpstreamCDRNode, uhal::Node>(m, "UpstreamCDRNode")
     .def(py::init<const uhal::Node&>())
@@ -67,6 +96,12 @@ register_master(py::module& m)
     .def("set_ts_epoch_value", &timing::IRIGTimestampNode::set_ts_epoch_value, py::arg("epoch_to_2000_seconds_tai"),  py::arg("epoch_to_2000_leap_seconds"))
     .def("set_ts_seconds_offset", &timing::IRIGTimestampNode::set_ts_seconds_offset, py::arg("seconds_offset"))
     .def("set_ts_ticks_offset", &timing::IRIGTimestampNode::set_ts_ticks_offset, py::arg("ticks_offset"))
+    ;
+
+  py::class_<timing::PhaseMeasurementNode, uhal::Node>(m, "PhaseMeasurementNode")
+    .def(py::init<const uhal::Node&>())
+    .def("measure_phase", &timing::PhaseMeasurementNode::measure_phase, py::arg("ref_clk") = 255)
+    .def("measure_phases", &timing::PhaseMeasurementNode::measure_phases)
     ;
 
 }

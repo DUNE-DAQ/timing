@@ -402,13 +402,23 @@ protected:
         { "pc069_5395_charon_input_1", "nocdr/Si5395-RevA-069a_ep-Registers.txt" },
         { "pc069_5395_hades_input_1", "nocdr/Si5395-RevA-069a_ep-Registers.txt" },
 
+        { "pc069_5395_endpoint_input_2", "nocdr/Si5395-RevA-069A_IN2-Registers.txt" },
+        { "pc069_5395_chronos_input_2", "nocdr/Si5395-RevA-069A_IN2-Registers.txt" },
+        { "pc069_5395_charon_input_2", "nocdr/Si5395-RevA-069A_IN2-Registers.txt" },
+        { "pc069_5395_hades_input_2", "nocdr/Si5395-RevA-069A_IN2-Registers.txt" },
+
         { "pc069_5345_master_free_run", "nocdr/Si5345-RevD-pc69bmst-Registers.txt" },
         { "pc069_5345_boreas_free_run", "nocdr/Si5345-RevD-pc69bmst-Registers.txt" },
 
+        { "pc069_5345_endpoint_input_1", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
         { "pc069_5345_chronos_input_1", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
         { "pc069_5345_charon_input_1", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
-        { "pc069_5345_endpoint_input_1", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
         { "pc069_5345_hades_input_1", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
+
+        { "pc069_5345_endpoint_input_2", "nocdr/Si5345-RevD-069B_IN2-Registers.txt" },
+        { "pc069_5345_chronos_input_2", "nocdr/Si5345-RevD-069B_IN2-Registers.txt" },
+        { "pc069_5345_charon_input_2", "nocdr/Si5345-RevD-069B_IN2-Registers.txt" },
+        { "pc069_5345_hades_input_2", "nocdr/Si5345-RevD-069B_IN2-Registers.txt" },
 
         { "gib_5395_gaia_free_run", "nocdr/GIB_Debug_01.txt" },
 

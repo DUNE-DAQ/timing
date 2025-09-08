@@ -95,7 +95,7 @@ def status(obj):
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-@design.command('cdr-switch', short_help="switch upstream CDR")
+@design.command('switch-mux', short_help="switch mux (SFP, upstream CDR, or DCSK)")
 @click.argument('mux', type=int)
 @click.pass_obj
 def cdrswitch(obj, mux):
@@ -104,7 +104,18 @@ def cdrswitch(obj, mux):
     lTopDesign.switch_mux(mux)
     active_mux=lTopDesign.read_active_mux()
 
-    echo(f"cdr mux set to {active_mux}")
+    echo(f"mux set to {active_mux}")
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@design.command('read-active-mux', short_help="switch mux (SFP, upstream CDR, or DCSK)")
+@click.pass_obj
+def cdrswitch(obj):
+
+    lTopDesign = obj.mTopDesign
+    active_mux=lTopDesign.read_active_mux()
+
+    echo(f"active mux: {active_mux}")
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
@@ -206,4 +217,35 @@ def configure(obj, clock_source, ts_source, timebase):
         lTopDesign.configure(lClockSource)
     else:
         secho("Configure not supported for design {}.\nConfigure failed!".format(lDesignName), fg='red')
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@design.command('measure-rtt', short_help="Measure endpoint round trip time")
+@click.argument('addr', type=toolbox.IntRange(0x0,0xffff))
+@click.option('--fanout-ept-address', '-a', type=click.IntRange(0,65535), help='fanout endpoint address')
+@click.option('--fanout-mux', '-f', type=click.IntRange(0,8), help='Mux select (fanout only), 8 - internal endpoint in fanout')
+@click.option('--master-mux', '-m', type=click.IntRange(0,12), help='Mux select (fanout only)')
+@click.option('--sfp-control/--no-sfp-control', default=True, help='Control SFP or not')
+@click.pass_obj
+@click.pass_context
+def measurertt(ctx, obj, addr, fanout_ept_address, fanout_mux, master_mux, sfp_control):
+
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+    lTopDesign = obj.mTopDesign
+    lMaster = lDevice.getNode('master')
+
+    rtt=0
+    if fanout_mux is not None and fanout_ept_address is not None:
+        if master_mux is not None:
+            rtt=lTopDesign.measure_endpoint_rtt(addr, fanout_ept_address, fanout_mux, master_mux, sfp_control)
+        else:
+            rtt=lMaster.measure_endpoint_rtt(addr, fanout_ept_address, fanout_mux, sfp_control)
+    elif fanout_mux is not None and fanout_ept_address is None:
+        raise RuntimeError('Fanout mux slot provided, but no fanout endpoint address, please provide the fanout endpoint address')
+    elif fanout_mux is None and fanout_ept_address is not None:
+        raise RuntimeError('Fanout endpoint address provided, but no fanout mux slot, please provide the fanout mux slot')
+    else:
+        rtt=lMaster.measure_endpoint_rtt(addr, sfp_control)
+    echo(f"RTT: {rtt} endpoint adr: {addr} fanout mux: {fanout_mux} fanout ept address: {fanout_ept_address}")
 # ------------------------------------------------------------------------------

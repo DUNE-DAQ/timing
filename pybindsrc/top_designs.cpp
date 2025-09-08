@@ -45,20 +45,19 @@ register_top_designs(py::module& m)
          py::arg("channel"),
          py::arg("rate"),
          py::arg("poisson"))
-    .def("apply_endpoint_delay", 
+     .def("apply_endpoint_delay", 
           &timing::BoreasDesign::apply_endpoint_delay,
           py::arg("address"),
-          py::arg("coarse_delay"),
-          py::arg("fine_delay"),
-          py::arg("phase_delay"),
-          py::arg("measure_rtt") = false,
-          py::arg("control_sfp") = true,
-          py::arg("sfp_mux") = -1)
-    .def("measure_endpoint_rtt", 
+          py::arg("cycle_delay"),
+          py::arg("phase")
+          )
+     .def<uint32_t (timing::BoreasDesign::*)(uint16_t, uint16_t, uint8_t, bool) const>("measure_endpoint_rtt",
           &timing::BoreasDesign::measure_endpoint_rtt,
           py::arg("address"),
-          py::arg("control_sfp") = true,
-          py::arg("sfp_mux") = -1)
+          py::arg("fanout_endpoint_address"),
+          py::arg("fanout_mux"),
+          py::arg("control_sfp") = true
+     )
     .def("get_hsi_node", &timing::BoreasDesign::get_hsi_node)
     .def("configure_hsi", 
          &timing::BoreasDesign::configure_hsi,
@@ -101,18 +100,18 @@ register_top_designs(py::module& m)
     .def("apply_endpoint_delay", 
           &timing::OuroborosMuxDesign::apply_endpoint_delay,
           py::arg("address"),
-          py::arg("coarse_delay"),
-          py::arg("fine_delay"),
-          py::arg("phase_delay"),
-          py::arg("measure_rtt") = false,
-          py::arg("control_sfp") = true,
-          py::arg("sfp_mux") = -1)
-    .def("measure_endpoint_rtt", 
+          py::arg("cycle_delay"),
+          py::arg("phase")
+          )
+     .def<uint32_t (timing::OuroborosMuxDesign::*)(uint16_t, uint16_t, uint8_t, uint8_t, bool) const>("measure_endpoint_rtt",
           &timing::OuroborosMuxDesign::measure_endpoint_rtt,
           py::arg("address"),
-          py::arg("control_sfp") = true,
-          py::arg("sfp_mux") = -1)
-    .def("scan_sfp_mux", &timing::OuroborosMuxDesign::scan_sfp_mux)
+          py::arg("fanout_endpoint_address"),
+          py::arg("fanout_mux"),
+          py::arg("master_mux"),
+          py::arg("control_sfp") = true
+          )
+    //.def("scan_sfp_mux", &timing::OuroborosMuxDesign::scan_sfp_mux)
     .def("configure", &timing::OuroborosMuxDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
     ;
 
@@ -137,18 +136,18 @@ register_top_designs(py::module& m)
     .def("apply_endpoint_delay", 
           &timing::MasterMuxDesign::apply_endpoint_delay,
           py::arg("address"),
-          py::arg("coarse_delay"),
-          py::arg("fine_delay"),
-          py::arg("phase_delay"),
-          py::arg("measure_rtt") = false,
-          py::arg("control_sfp") = true,
-          py::arg("sfp_mux") = -1)
-    .def("measure_endpoint_rtt", 
+          py::arg("cycle_delay"),
+          py::arg("phase")
+          )
+     .def<uint32_t (timing::MasterMuxDesign::*)(uint16_t, uint16_t, uint8_t, uint8_t, bool) const>("measure_endpoint_rtt",
           &timing::MasterMuxDesign::measure_endpoint_rtt,
           py::arg("address"),
-          py::arg("control_sfp") = true,
-          py::arg("sfp_mux") = -1)
-    .def("scan_sfp_mux", &timing::MasterMuxDesign::scan_sfp_mux)
+          py::arg("fanout_endpoint_address"),
+          py::arg("fanout_mux"),
+          py::arg("master_mux"),
+          py::arg("control_sfp") = true
+          )
+    //.def("scan_sfp_mux", &timing::MasterMuxDesign::scan_sfp_mux)
     .def("configure", &timing::MasterMuxDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
     ;
 
@@ -172,17 +171,16 @@ register_top_designs(py::module& m)
     .def("apply_endpoint_delay", 
           &timing::MasterDesign::apply_endpoint_delay,
           py::arg("address"),
-          py::arg("coarse_delay"),
-          py::arg("fine_delay"),
-          py::arg("phase_delay"),
-          py::arg("measure_rtt") = false,
-          py::arg("control_sfp") = true,
-          py::arg("sfp_mux") = -1)
-    .def("measure_endpoint_rtt", 
+          py::arg("cycle_delay"),
+          py::arg("phase")
+          )
+     .def<uint32_t (timing::MasterDesign::*)(uint16_t, uint16_t, uint8_t, bool) const>("measure_endpoint_rtt",
           &timing::MasterDesign::measure_endpoint_rtt,
           py::arg("address"),
-          py::arg("control_sfp") = true,
-          py::arg("sfp_mux") = -1)
+          py::arg("fanout_endpoint_address"),
+          py::arg("fanout_mux"),
+          py::arg("control_sfp") = true
+     )
      .def("configure", &timing::MasterDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
      ;
 
@@ -206,17 +204,16 @@ register_top_designs(py::module& m)
     .def("apply_endpoint_delay", 
           &timing::OuroborosDesign::apply_endpoint_delay,
           py::arg("address"),
-          py::arg("coarse_delay"),
-          py::arg("fine_delay"),
-          py::arg("phase_delay"),
-          py::arg("measure_rtt") = false,
-          py::arg("control_sfp") = true,
-          py::arg("sfp_mux") = -1)
-    .def("measure_endpoint_rtt", 
+          py::arg("cycle_delay"),
+          py::arg("phase")
+          )
+     .def<uint32_t (timing::OuroborosDesign::*)(uint16_t, uint16_t, uint8_t, bool) const>("measure_endpoint_rtt",
           &timing::OuroborosDesign::measure_endpoint_rtt,
           py::arg("address"),
-          py::arg("control_sfp") = true,
-          py::arg("sfp_mux") = -1)
+          py::arg("fanout_endpoint_address"),
+          py::arg("fanout_mux"),
+          py::arg("control_sfp") = true
+     )
      .def("configure", &timing::OuroborosDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
      ;
 
@@ -281,17 +278,17 @@ register_top_designs(py::module& m)
      .def("apply_endpoint_delay",
           &timing::KerberosDesign::apply_endpoint_delay,
           py::arg("address"),
-          py::arg("coarse_delay"),
-          py::arg("fine_delay"),
-          py::arg("phase_delay"),
-          py::arg("measure_rtt") = false,
-          py::arg("control_sfp") = true,
-          py::arg("sfp_mux") = -1)
-    .def("measure_endpoint_rtt",
+          py::arg("cycle_delay"),
+          py::arg("phase")
+          )
+     .def<uint32_t (timing::KerberosDesign::*)(uint16_t, uint16_t, uint8_t, uint8_t, bool) const>("measure_endpoint_rtt",
           &timing::KerberosDesign::measure_endpoint_rtt,
           py::arg("address"),
-          py::arg("control_sfp") = true,
-          py::arg("sfp_mux") = -1)
+          py::arg("fanout_endpoint_address"),
+          py::arg("fanout_mux"),
+          py::arg("master_mux"),
+          py::arg("control_sfp") = true
+          )
     .def("switch_mux", &timing::KerberosDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
     .def("read_active_mux", &timing::KerberosDesign::read_active_mux)
     .def("configure", &timing::KerberosDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
@@ -316,17 +313,17 @@ register_top_designs(py::module& m)
     .def("apply_endpoint_delay",
           &timing::GaiaDesign::apply_endpoint_delay,
           py::arg("address"),
-          py::arg("coarse_delay"),
-          py::arg("fine_delay"),
-          py::arg("phase_delay"),
-          py::arg("measure_rtt") = false,
-          py::arg("control_sfp") = true,
-          py::arg("sfp_mux") = -1)
-    .def("measure_endpoint_rtt",
+          py::arg("cycle_delay"),
+          py::arg("phase")
+          )
+     .def<uint32_t (timing::GaiaDesign::*)(uint16_t, uint16_t, uint8_t, uint8_t, bool) const>("measure_endpoint_rtt",
           &timing::GaiaDesign::measure_endpoint_rtt,
           py::arg("address"),
-          py::arg("control_sfp") = true,
-          py::arg("sfp_mux") = -1)
+          py::arg("fanout_endpoint_address"),
+          py::arg("fanout_mux"),
+          py::arg("master_mux"),
+          py::arg("control_sfp") = true
+          )
     .def("switch_mux", &timing::GaiaDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
     .def("read_active_mux", &timing::GaiaDesign::read_active_mux)
     .def<void (timing::GaiaDesign::*)(ClockSource, TimestampSource, TimestampTimebase) const>("configure", &timing::GaiaDesign::configure, py::arg("clock_source"), py::arg("ts_source"), py::arg("timebase"))

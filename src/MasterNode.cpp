@@ -127,6 +127,14 @@ MasterNode::switch_endpoint_sfp(uint32_t address, bool turn_on) const // NOLINT(
 
 //-----------------------------------------------------------------------------
 void
+MasterNode::set_fanout_mux(uint16_t fanout_endpoint_address, uint8_t fanout_mux_slot) const // NOLINT(build/unsigned)
+{
+  write_endpoint_data(fanout_endpoint_address, 0x50, {fanout_mux_slot}, 1, -1);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
 MasterNode::enable_upstream_endpoint() const
 {
   auto global = getNode<MasterGlobalNode>("global");
@@ -161,34 +169,37 @@ MasterNode::send_fl_cmd(uint32_t command,
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-uint32_t                                                                      // NOLINT(build/unsigned)
-MasterNode::measure_endpoint_rtt(uint32_t address, bool control_sfp) const // NOLINT(build/unsigned)
+void
+MasterNode::setup_endpoint_rx(uint16_t address) const // NOLINT(build/unsigned)
 {
-
   auto global = getNode<MasterGlobalNode>("global");
+
+  // Turn on the current target
+  switch_endpoint_sfp(address, true);
+
+  millisleep(100);
+
+  try
+  {
+    global.enable_upstream_endpoint();
+  }
+  catch (const timing::ReceiverNotReady& e)
+  {
+    switch_endpoint_sfp(address, false);
+    throw e;
+  }
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+uint32_t                                                                      // NOLINT(build/unsigned)
+MasterNode::measure_endpoint_rtt(uint16_t address, bool control_sfp) const // NOLINT(build/unsigned)
+{
   auto echo = getNode<EchoMonitorNode>("echo_mon");
 
   if (control_sfp)
   {
-    // Switch off all TX SFPs
-    //switch_endpoint_sfp(0xffff, false);
-
-    // Turn on the current target
-    switch_endpoint_sfp(address, true);
-
-    millisleep(100);
-
-    try
-    {
-      global.enable_upstream_endpoint();
-    }
-    catch (const timing::ReceiverNotReady& e)
-    {
-      if (control_sfp) {
-        switch_endpoint_sfp(address, false);
-      }
-      throw e;
-    }
+    setup_endpoint_rx(address);
   }
 
   uint32_t endpoint_rtt = echo.send_echo_and_measure_delay(); // NOLINT(build/unsigned)
@@ -201,45 +212,25 @@ MasterNode::measure_endpoint_rtt(uint32_t address, bool control_sfp) const // NO
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-MasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned)
-                                    uint32_t coarse_delay, // NOLINT(build/unsigned)
-                                    uint32_t fine_delay,   // NOLINT(build/unsigned)
-                                    uint32_t /*phase_delay*/,  // NOLINT(build/unsigned)
-                                    bool measure_rtt,
-                                    bool control_sfp) const
+uint32_t
+MasterNode::measure_endpoint_rtt(uint16_t address,
+                                            uint16_t fanout_endpoint_address,
+                                            uint8_t fanout_mux,
+                                            bool control_sfp) const // NOLINT(build/unsigned)
 {
+  TLOG () << "before mux set";
+  set_fanout_mux(fanout_endpoint_address, fanout_mux);
+  TLOG () << "after mux set";
+  return measure_endpoint_rtt(address, control_sfp);
+}
+//-----------------------------------------------------------------------------
 
-  auto global = getNode<MasterGlobalNode>("global");
-  auto echo = getNode<EchoMonitorNode>("echo_mon");
-
-  if (measure_rtt) {
-    if (control_sfp) {
-      // Switch off all TX SFPs
-      // switch_endpoint_sfp(0xffff, false);
-
-      // Turn on the current target
-      switch_endpoint_sfp(address, true);
-
-      millisleep(100);
-    }
-
-    try
-    {
-      global.enable_upstream_endpoint();
-    }
-    catch (const timing::ReceiverNotReady& e)
-    {
-      if (control_sfp) {
-        switch_endpoint_sfp(address, false);
-      }
-      throw e;
-    }
-
-    uint64_t endpoint_rtt = echo.send_echo_and_measure_delay(); // NOLINT(build/unsigned)
-    TLOG() << "Pre delay adjustment RTT:  " << format_reg_value(endpoint_rtt, 10);
-  }
-
+//-----------------------------------------------------------------------------
+void
+MasterNode::apply_endpoint_delay(uint16_t address,      // NOLINT(build/unsigned)
+                                    uint8_t cycle_delay, // NOLINT(build/unsigned)
+                                    uint16_t phase_delay) const   // NOLINT(build/unsigned)
+{
   uint32_t sequence = 0xab;
   uint32_t address_mode = 1;
     
@@ -250,17 +241,17 @@ MasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned
                                         // packet to write coarse delay
                                         (0x1 << 7UL) | 0x72, // write transaction on 0x72
                                         (address_mode << 7UL) | 0x1, // transaction length of 0x1
-                                        ((fine_delay & 0xf) << 4UL) | (coarse_delay & 0xf),
+                                        ((phase_delay & 0xf) << 4UL) | (cycle_delay & 0xf),
 
                                         // packet to write fine delay
                                         (0x1 << 7UL) | 0x73, // write transaction on 0x73
                                         (address_mode << 7UL) | 0x1, // transaction length of 0x1
-                                        (fine_delay >> 4UL) & 0xff,
+                                        (phase_delay >> 4UL) & 0xff,
 
                                         // packet to set skew done
-                                        (0x1 << 7UL) | 0x70, // write transaction on 0x70
-                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
-				                                0x3, // deskew done
+                                        //(0x1 << 7UL) | 0x70, // write transaction on 0x70
+                                        //(address_mode << 7UL) | 0x1, // transaction length of 0x1
+				                                //0x3, // deskew done
 
                                         // packet to resync
                                         (0x1 << 7UL) | 0x70, // write transaction on 0x70
@@ -270,28 +261,45 @@ MasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned
 
   tx_packet.back() = tx_packet.back() | (0x1 << 8UL);
 
+  transmit_async_packet(tx_packet, -1); // TODO check result of command - should not break link
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+MasterNode::resync_endpoint(uint16_t address) const   // NOLINT(build/unsigned)
+{
+  uint32_t sequence = 0xab;
+  uint32_t address_mode = 1;
+    
+  std::vector<uint32_t> tx_packet = { address & 0xff, 
+                                        address >> 8UL, 
+                                        sequence,
+/*
+                                        // packet to write coarse delay
+                                        (0x1 << 7UL) | 0x72, // write transaction on 0x72
+                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
+                                        ((phase_delay & 0xf) << 4UL) | cycle_delay & 0xf,
+
+                                        // packet to write fine delay
+                                        (0x1 << 7UL) | 0x73, // write transaction on 0x73
+                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
+                                        (phase_delay >> 4UL) & 0xff,
+
+                                        // packet to set skew done
+                                        (0x1 << 7UL) | 0x70, // write transaction on 0x70
+                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
+				                                0x3, // deskew done
+*/
+                                        // packet to resync
+                                        (0x1 << 7UL) | 0x70, // write transaction on 0x70
+                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
+				                                0x4, // resync
+                                    };
+
+  tx_packet.back() = tx_packet.back() | (0x1 << 8UL);
+
   transmit_async_packet(tx_packet, -1);
-
-  if (measure_rtt) {
-    try
-    {
-      global.enable_upstream_endpoint();
-    }
-    catch (const timing::ReceiverNotReady& e)
-    {
-      if (control_sfp)
-      {
-        switch_endpoint_sfp(address, false);
-      }
-      throw e;
-    }
-
-    uint64_t endpoint_rtt = echo.send_echo_and_measure_delay(); // NOLINT(build/unsigned)
-    TLOG() << "Post delay adjustment RTT: " << format_reg_value(endpoint_rtt, 10);
-
-    if (control_sfp)
-      switch_endpoint_sfp(address, false);
-  }
 }
 //-----------------------------------------------------------------------------
 
@@ -442,7 +450,7 @@ MasterNode::transmit_async_packet(const std::vector<uint32_t>& packet, int timeo
 
 //-----------------------------------------------------------------------------
 void
-MasterNode::write_endpoint_data(uint16_t endpoint_address, uint8_t reg_address, std::vector<uint8_t> data, bool address_mode) const
+MasterNode::write_endpoint_data(uint16_t endpoint_address, uint8_t reg_address, std::vector<uint8_t> data, bool address_mode, int timeout) const
 {
   auto data_length = data.size();
   if (data_length > 0x3f || data_length == 0)
@@ -463,13 +471,13 @@ MasterNode::write_endpoint_data(uint16_t endpoint_address, uint8_t reg_address, 
   tx_packet.insert(tx_packet.end(), data.begin(), data.end());
   tx_packet.back() = tx_packet.back() | (0x1 << 8UL);
 
-  auto result = transmit_async_packet(tx_packet);
+  auto result = transmit_async_packet(tx_packet, timeout);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 std::vector<uint32_t>
-MasterNode::read_endpoint_data(uint16_t endpoint_address, uint8_t reg_address, uint8_t data_length, bool address_mode) const
+MasterNode::read_endpoint_data(uint16_t endpoint_address, uint8_t reg_address, uint8_t data_length, bool address_mode, int timeout) const
 {
   if (data_length > 0x3f || data_length == 0)
   {
@@ -487,7 +495,7 @@ MasterNode::read_endpoint_data(uint16_t endpoint_address, uint8_t reg_address, u
                                       static_cast<uint32_t>((0x1 << 8UL) | (address_mode << 7UL) | (0x3f & data_length))
                                       };
 
-  auto result = transmit_async_packet(tx_packet);
+  auto result = transmit_async_packet(tx_packet, timeout);
 
   // get parts we actually want
   std::vector<uint32_t> result_data (result.begin()+3, result.begin()+3+data_length);
@@ -528,6 +536,7 @@ MasterNode::scan_endpoint(uint16_t endpoint_address, bool control_sfp) const
 
   // is endpoint sfp switched on?
   // are any relevant muxes set to correct channel?
+  // migrate to setup_endpoint_rx
   if (control_sfp)
   {
     switch_endpoint_sfp(endpoint_address, true);
@@ -560,7 +569,7 @@ MasterNode::scan_endpoint(uint16_t endpoint_address, bool control_sfp) const
   {
     TLOG_DEBUG(5) << "Endpoint at address " << endpoint_address << ", applying delays of: " << 0x0;
     ers::info(MonitoredEndpointDelaySet(ERS_HERE, 0x0, endpoint_address, ept_state));
-    apply_endpoint_delay(endpoint_address, 0x0, 0x0, 0x0, false, false);
+    apply_endpoint_delay(endpoint_address, 0x0, 0x0);
       
     endpoint_result.applied_delay = 0x0;
 

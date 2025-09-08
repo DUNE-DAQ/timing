@@ -65,7 +65,7 @@ public:
   /**
    * @brief     Scan SFP for alive timing transmitters
    */
-  virtual std::vector<uint32_t> scan_sfp_mux() const = 0;// NOLINT(build/unsigned)
+  //virtual std::vector<uint32_t> scan_sfp_mux() const = 0;// NOLINT(build/unsigned) // TODO should be SFP specific name?
 };
 
 } // namespace timing

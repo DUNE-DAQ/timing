@@ -14,6 +14,7 @@
 
 // PDT Headers
 #include "timing/MasterDesign.hpp"
+#include "timing/MasterMuxDesignInterface.hpp"
 #include "timing/EndpointDesignInterface.hpp"
 #include "timing/CDRMuxDesignInterface.hpp"
 
@@ -33,7 +34,9 @@ namespace timing {
 /**
  * @brief      Class for timing fanout designs.
  */
-class GaiaDesign : public MasterDesign, public EndpointDesignInterface, public CDRMuxDesignInterface //TODO check use ept intf
+class GaiaDesign : public MasterDesign,
+public MasterMuxDesignInterface,
+public EndpointDesignInterface, public CDRMuxDesignInterface //TODO check use ept intf
 {
   UHAL_DERIVEDNODE(GaiaDesign)
 public:
@@ -49,6 +52,8 @@ public:
   //  * @brief    Give info to collector.
   //  */  
   // void get_info(opmonlib::InfoCollector& ci, int level) const override;
+
+  using MasterMuxDesignInterface::measure_endpoint_rtt;
 
   /**
    * @brief      Prepare the timing unit for data taking.

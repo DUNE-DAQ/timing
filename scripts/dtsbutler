@@ -26,6 +26,7 @@ import timing.cli.debug as debug
 import timing.cli.hsi as hsi
 import timing.cli.design as design
 import timing.cli.irig as irig
+import timing.cli.phase as phase
 
 from click import echo, style, secho
 from os.path import join, expandvars
@@ -96,6 +97,7 @@ if __name__ == '__main__':
     cli.add_command(hsi.hsi)
     cli.add_command(design.design)
     cli.add_command(irig.irig)
+    cli.add_command(phase.phase)
 
     try:
         cli(obj=DTSContext())

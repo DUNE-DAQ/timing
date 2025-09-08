@@ -1,0 +1,11 @@
+<node id="pdts_dcsk_mux" description="Switch between different downstream timing endpoints and pass upstream" fwinfo="endpoint" class="DCSKMuxNode">
+		<node id="csr" address="0x0" fwinfo="endpoint;width=1">
+			<node id="ctrl" address="0x0">
+				<node id="sel_source" mask="0x1"/>
+				<node id="sel" mask="0x1e"/>
+			</node>
+			<node id="stat" address="0x1">
+				<node id="sel" mask="0xf"/>
+			</node>
+		</node>
+</node>

@@ -21,7 +21,7 @@ UHAL_REGISTER_DERIVED_NODE(FIBV2IONode)
 
 //-----------------------------------------------------------------------------
 FIBV2IONode::FIBV2IONode(const uhal::Node& aNode) :
-	IONode(aNode, "i2c", "i2c", "SI5345", {"PLL", "BKP DATA"}, {"i2c_sfp0", "i2c_sfp1", "i2c_sfp2", "i2c_sfp3", "i2c_sfp4", "i2c_sfp5", "i2c_sfp6", "i2c_sfp7"}) {
+	IONode(aNode, "i2c", "i2c", "SI5345", {"PLL", "BKP DATA", "MUX"}, {"i2c_sfp0", "i2c_sfp1", "i2c_sfp2", "i2c_sfp3", "i2c_sfp4", "i2c_sfp5", "i2c_sfp6", "i2c_sfp7"}) {
 }
 //-----------------------------------------------------------------------------
 

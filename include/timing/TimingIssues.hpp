@@ -259,6 +259,12 @@ ERS_DECLARE_ISSUE(timing,                                                       
                   ((uint32_t)cdr_locked)((uint32_t)rx_ready)                                    ///< Message parameters // NOLINT
 )
 
+ERS_DECLARE_ISSUE(timing,                                                                 ///< Namespace
+                  PhaseMeasurementNotReady,                                                       ///< Issue class name
+                  " Phase measurment not ready. los : " << los << ", valid : " << valid, ///< Message
+                  ((uint32_t)los)((uint32_t)valid)                                    ///< Message parameters // NOLINT
+)
+
 ERS_DECLARE_ISSUE(timing,                                  ///< Namespace
                   ClocksNotReady,                          //< Issue class name
                   clocks_description << " clocks not ready.", ///< Message

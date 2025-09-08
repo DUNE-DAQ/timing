@@ -34,53 +34,45 @@ def align(obj):
 @align.command('apply-delay', short_help="Send delay adjust command endpoint")
 @click.argument('addr', type=toolbox.IntRange(0x0,0xffff))
 @click.argument('cdelay', type=toolbox.IntRange(0x0,0xf))
-@click.argument('fdelay', type=toolbox.IntRange(0x0,0xfff))
-@click.option('--mux', '-m', type=click.IntRange(0,12), help='Mux select')
-@click.option('--force', '-f', is_flag=True, default=False, help='Skip RTT measurement')
+@click.argument('phase', type=toolbox.IntRange(0x0,0xfff))
 @click.pass_obj
 @click.pass_context
-def applydelay(ctx, obj, addr, cdelay, fdelay, mux, force):
+def applydelay(ctx, obj, addr, cdelay, phase):
 
     lDevice = obj.mDevice
     lBoardType = obj.mBoardType
     lTopDesign = obj.mTopDesign
+    lMaster = obj.mMaster
 
-    # Are we working with a board with a return path mux (i.e. a fanout board)?
-    if lBoardType in [kBoardPC059, kBoardFIB]:
-        if mux is None:
-            if force == True:
-                lTopDesign.apply_endpoint_delay(addr, cdelay, fdelay, 0, not force, True, 0)
-            else:
-                raise RuntimeError('MUX board: please supply an SFP mux channel')
-        else:
-            lTopDesign.apply_endpoint_delay(addr, cdelay, fdelay, 0, not force, True, mux)
-            
-    else:
-        lTopDesign.apply_endpoint_delay(addr, cdelay, fdelay, 0, not force, True)
+    lMaster.apply_endpoint_delay(addr, cdelay, phase)
 # ------------------------------------------------------------------------------
 
 
 # ------------------------------------------------------------------------------
-@align.command('measure-delay', short_help="Measure endpoint round trip time")
+@align.command('measure-rtt', short_help="Measure endpoint round trip time")
 @click.argument('addr', type=toolbox.IntRange(0x0,0xffff))
-@click.option('--mux', '-m', type=click.IntRange(0,12), help='Mux select (fanout only)')
+@click.option('--fanout-ept-address', '-a', type=click.IntRange(0,65535), help='fanout endpoint address')
+@click.option('--fanout-mux', '-f', type=click.IntRange(0,7), help='Mux select (fanout only)')
 @click.option('--sfp-control/--no-sfp-control', default=True, help='Control SFP or not')
 @click.pass_obj
 @click.pass_context
-def measuredelay(ctx, obj, addr, mux, sfp_control):
+def measure_rtt(ctx, obj, addr, fanout_ept_address, fanout_mux, sfp_control):
 
     lDevice = obj.mDevice
     lBoardType = obj.mBoardType
     lTopDesign = obj.mTopDesign
-    
-    # or a different type of fanout board
-    if lBoardType in [kBoardPC059, kBoardFIB] and sfp_control == True:
-        if mux is not None:
-            echo("Endpoint (adr: {}, mux: {}) RTT: {}".format(addr,mux,lTopDesign.measure_endpoint_rtt(addr, sfp_control, mux)))
-        else:
-            raise RuntimeError('MUX board: please supply an SFP mux channel')
+    lMaster = obj.mMaster
+
+    rtt=0
+    if fanout_mux is not None and fanout_ept_address is not None:
+        rtt=lMaster.measure_endpoint_rtt(addr, fanout_ept_address, fanout_mux, sfp_control)
+    elif fanout_mux is not None and fanout_ept_address is None:
+        raise RuntimeError('Fanout mux slot provided, but no fanout endpoint address, please provide the fanout endpoint address')
+    elif fanout_mux is None and fanout_ept_address is not None:
+        raise RuntimeError('Fanout endpoint address provided, but no fanout mux slot, please provide the fanout mux slot')
     else:
-        echo("Endpoint (adr: {}) RTT: {}".format(addr,lTopDesign.measure_endpoint_rtt(addr, sfp_control)))
+        rtt=lMaster.measure_endpoint_rtt(addr, sfp_control)
+    echo(f"RTT: {rtt} endpoint adr: {addr} fanout mux: {fanout_mux} fanout ept address: {fanout_ept_address}")
 # ------------------------------------------------------------------------------
 
 
@@ -97,18 +89,18 @@ def toggletx(obj, addr, on):
 
 
 # ------------------------------------------------------------------------------
-@align.command('scan-mux', short_help="Scan SFP mux for transmitting SFPs")
-@click.pass_obj
-def scanmux(obj):
-
-    lDevice = obj.mDevice
-    lTopDesign = obj.mTopDesign
-    lBoardType = obj.mBoardType
-
-    if lBoardType in [kBoardPC059, kBoardFIB]:
-        lTopDesign.scan_sfp_mux()
-    else:
-        raise RuntimeError('Mux scan is only available on MUX boards')
+#@align.command('scan-mux', short_help="Scan SFP mux for transmitting SFPs")
+#@click.pass_obj
+#def scanmux(obj):
+#
+#    lDevice = obj.mDevice
+#    lTopDesign = obj.mTopDesign
+#    lBoardType = obj.mBoardType
+#
+#    if lBoardType in [kBoardPC059, kBoardFIB]:
+#        lTopDesign.scan_sfp_mux()
+#    else:
+#        raise RuntimeError('Mux scan is only available on MUX boards')
 # ------------------------------------------------------------------------------
 
 
