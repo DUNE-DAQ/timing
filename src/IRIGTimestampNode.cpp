@@ -47,6 +47,9 @@ IRIGTimestampNode::get_status(bool print_out) const
   auto time_subnodes = read_sub_nodes(getNode("csr.irig_time"));
   status << format_reg_table(time_subnodes, "IRIG time");
 
+  auto sbs_subnodes = read_sub_nodes(getNode("csr.irig_sbs"));
+  status << format_reg_table(sbs_subnodes, "IRIG SBS");
+
   status << "PPS counter: 0x" << std::hex << read_pps_counter() << std::endl;
 
   status << "Seconds since epoch: 0x" << std::hex << read_seconds_since_epoch() << std::endl;
@@ -78,11 +81,31 @@ IRIGTimestampNode::read_timestamp() const
 
 //-----------------------------------------------------------------------------
 void
-IRIGTimestampNode::set_irig_epoch(IRIGEpoch irig_epoch) const // NOLINT(build/unsigned)
+IRIGTimestampNode::set_ts_timebase(TimestampTimebase timebase) const // NOLINT(build/unsigned)
 {
-  getNode("csr.ctrl.rst").write(0x1);
-  getNode("csr.ctrl.irig_epoch").write(irig_epoch);
-  getNode("csr.ctrl.rst").write(0x0);
+  getNode("csr.ctrl.ts_timebase").write(timebase);
+  getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+IRIGTimestampNode::set_ts_epoch(TimestampEpoch epoch) const // NOLINT(build/unsigned)
+{
+  getNode("csr.ctrl.ts_epoch").write(epoch);
+  getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+IRIGTimestampNode::set_ts_epoch_value(uint64_t epoch_to_2000_seconds_tai, uint8_t epoch_to_2000_leap_seconds) const // NOLINT(build/unsigned)
+{
+  uint32_t epoch_l = epoch_to_2000_seconds_tai;
+  uint32_t epoch_h = epoch_to_2000_seconds_tai >> 32;
+  getNode("csr.seconds_from_sw_epoch_l").write(epoch_l);
+  getNode("csr.seconds_from_sw_epoch_h").write(epoch_h);
+  getNode("csr.offsets.leap_seconds_from_sw_epoch").write(epoch_to_2000_leap_seconds);
   getClient().dispatch();
 }
 //-----------------------------------------------------------------------------
@@ -106,5 +129,26 @@ IRIGTimestampNode::read_seconds_since_epoch() const
   return tstamp2int(seconds_since_epoch);
 }
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+IRIGTimestampNode::set_ts_seconds_offset(int8_t seconds_offset) const // NOLINT(build/signed)
+{
+  // cast to uint8_t to avoid erroneous auto conversion
+  getNode("csr.offsets.seconds_offset").write((uint8_t)seconds_offset);
+  getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+IRIGTimestampNode::set_ts_ticks_offset(int16_t ticks_offset) const // NOLINT(build/signed)
+{
+  // cast to uint16_t to avoid erroneous auto conversion
+  getNode("csr.offsets.ticks_offset").write((uint16_t)ticks_offset); // NOLINT(build/unsigned)
+  getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
 } // namespace timing
 } // namespace dunedaq

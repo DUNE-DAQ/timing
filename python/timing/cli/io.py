@@ -98,26 +98,43 @@ def reset(ctx, obj, soft, clocksource, forcepllcfg):
         if soft:
             lIO.soft_reset()
             return
-        
+
         if forcepllcfg is not None:
             if clocksource is not None:
                 secho("You specified both a clock source for automatic clock config file look-up, and an explicit clock config file. Explicit clock config file will take precedence.", fg='yellow')
-            
+
             lIO.reset(forcepllcfg)
         else:
+            lClockSource = None
             if clocksource is None:
                 if lDesignType in [kDesignMaster, kDesignBoreas, kDesignOuroboros, kDesignOuroborosSim]:
                     lClockSource=kFreeRun
-                elif lDesignType in [kDesignEndpoint, kDesignChronos, kDesignFanout, kDesignHades, kDesignCharon]:
+                elif lDesignType in [kDesignEndpoint, kDesignChronos, kDesignHades, kDesignCharon]:
                     lClockSource=kInput1
+                elif lDesignType == kDesignFanout:
+                    if lBoardType == kBoardFIB: #technically only fib v2
+                        lClockSource=kInput0
+                    elif lBoardType == kBoardPC059:
+                        lClockSource=kInput1
                 elif lDesignType in [kDesignGaia, kDesignKerberos]:
                     lClockSource=kInput0
-                else:
-                    secho("Unable to match a default clock source for design {}\nReset failed!".format(lDesignType), fg='red')
+
+                if lClockSource is None:
+                    secho(f"Unable to match a default clock source for {kDesignNameMap[lDesignType]} on {kBoardNameMap[lBoardType]}\nReset failed!".format(), fg='red')
                     return
+                else:
+                    secho(f"Default clock config selected for {kDesignNameMap[lDesignType]} on {kBoardNameMap[lBoardType]} is: {lClockSource}", fg='yellow')
             else:
                 lClockSource=ClockSource.__members__[clocksource]
 
+            # lIO.reset_pll()
+            # lIO.getNode("csr.ctrl.i2c_sw_rst").write(0x0)
+            # lIO.getNode("csr.ctrl.i2c_exten_rst").write(0x0)
+            # lIO.getNode("csr.ctrl.clk_gen_rst").write(0x0)
+
+            # lIO.getNode("csr.ctrl.i2c_sw_rst").write(0x1)
+            # lIO.getNode("csr.ctrl.i2c_exten_rst").write(0x1)
+            # lIO.getNode("csr.ctrl.clk_gen_rst").write(0x1)
             lIO.reset(lClockSource)
         ctx.invoke(clkstatus)
     else:

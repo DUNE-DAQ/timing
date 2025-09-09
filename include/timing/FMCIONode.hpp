@@ -60,6 +60,11 @@ public:
   using IONode::reset;
 
   /**
+   * @brief      Reset PLL.
+   */
+  void reset_pll()  const override;
+
+  /**
     * @brief      Read frequencies of on-board clocks.
     */
   std::vector<double> read_clock_frequencies() const override;

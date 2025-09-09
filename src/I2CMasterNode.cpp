@@ -143,14 +143,14 @@ I2CMasterNode::get_slave(const std::string& name) const
 
 //-----------------------------------------------------------------------------
 uint8_t                                                                             // NOLINT(build/unsigned)
-I2CMasterNode::read_i2c(uint8_t i2c_device_address, uint32_t i2c_reg_address) const // NOLINT(build/unsigned)
+I2CMasterNode::read_i2c(uint8_t i2c_device_address, uint32_t i2c_reg_address, bool atomic) const // NOLINT(build/unsigned)
 {
   // // write one word containing the address
   // std::vector<uint8_t> array(1, i2c_reg_address & 0x7f);
   // this->write_block_i2c(i2c_device_address, array);
   // // request the content at the specific address
   // return this->read_block_i2c(i2c_device_address, 1) [0];
-  return this->read_i2cArray(i2c_device_address, i2c_reg_address, 1)[0];
+  return this->read_i2cArray(i2c_device_address, i2c_reg_address, 1, atomic)[0];
 }
 //-----------------------------------------------------------------------------
 
@@ -174,13 +174,18 @@ I2CMasterNode::write_i2c(uint8_t i2c_device_address, // NOLINT(build/unsigned)
 std::vector<uint8_t>                                         // NOLINT(build/unsigned)
 I2CMasterNode::read_i2cArray(uint8_t i2c_device_address,     // NOLINT(build/unsigned)
                              uint32_t i2c_reg_address,       // NOLINT(build/unsigned)
-                             uint32_t number_of_words) const // NOLINT(build/unsigned)
+                             uint32_t number_of_words,       // NOLINT(build/unsigned)
+                             bool atomic) const              // NOLINT(build/unsigned)
 {
   // write one word containing the address
   std::vector<uint8_t> lArray{ (uint8_t)(i2c_reg_address & 0xff) }; // NOLINT(build/unsigned)
-  this->write_block_i2c(i2c_device_address, lArray);
-  // request the content at the specific address
-  return this->read_block_i2c(i2c_device_address, number_of_words);
+
+  // do not send stop if read transaction is atomic
+  this->write_block_i2c(i2c_device_address, lArray, !atomic);
+
+  // request the content at the specific address, 
+  // and do not reset bus at begining of transaction (atomic)
+  return this->read_block_i2c(i2c_device_address, number_of_words, !atomic);
 }
 //-----------------------------------------------------------------------------
 
@@ -261,7 +266,7 @@ I2CMasterNode::write_block_i2c(uint8_t i2c_device_address,         // NOLINT(bui
 
 //-----------------------------------------------------------------------------
 std::vector<uint8_t>                                                                // NOLINT(build/unsigned)
-I2CMasterNode::read_block_i2c(uint8_t i2c_device_address, uint32_t number_of_bytes) const // NOLINT(build/unsigned)
+I2CMasterNode::read_block_i2c(uint8_t i2c_device_address, uint32_t number_of_bytes, bool send_reset) const // NOLINT(build/unsigned)
 {
   // transmit reg definitions
   // bits 7-1: 7-bit slave address during address transfer
@@ -279,7 +284,10 @@ I2CMasterNode::read_block_i2c(uint8_t i2c_device_address, uint32_t number_of_byt
   // bit 0:   Interrupt acknowledge. When set, clears a pending interrupt
 
   // Reset bus before beginning
-  reset();
+  if (send_reset)
+  {
+    reset();
+  }
 
   // Open the connection & send the target i2c address. Bit 0 set to 1 (read)
   send_i2c_command_and_write_data(kStartCmd, (i2c_device_address << 1) | 0x01);

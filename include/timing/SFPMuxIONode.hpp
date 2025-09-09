@@ -51,6 +51,11 @@ public:
    * @brief     Read the active SFP mux channel
    */
   virtual uint32_t read_active_sfp_mux_channel() const = 0; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Reset PLL.
+   */
+  void reset_pll()  const override;
 };
 
 } // namespace timing

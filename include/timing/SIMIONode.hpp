@@ -73,6 +73,11 @@ public:
   using IONode::reset;
 
   /**
+   * @brief      Reset PLL.
+   */
+  void reset_pll()  const override;
+  
+  /**
    * @brief      Read the word containing the timing board UID.
    *
    * @return     { description_of_the_return_value }

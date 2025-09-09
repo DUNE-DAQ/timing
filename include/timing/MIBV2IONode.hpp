@@ -60,6 +60,11 @@ public:
   void reset(const ClockSource& clock_source) const override;
 
   /**
+   * @brief      Reset PLL.
+   */
+  void reset_pll()  const override;
+
+  /**
    * @brief      Switch clock input, with clock file look up and upload if necessary
    */
   void switch_clock_source(const ClockSource& clock_source) const;

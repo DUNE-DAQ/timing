@@ -46,6 +46,7 @@ register_master(py::module& m)
     .def("get_status", &timing::MasterNode::get_status, py::arg("print_out") = false)
     .def("get_status_with_date", &timing::MasterNode::get_status_with_date, py::arg("clock_frequency_hz"), py::arg("print_out") = false)
     .def("sync_timestamp", &timing::MasterNode::sync_timestamp, py::arg("source"))
+    .def("read_timestamp", &timing::MasterNode::read_timestamp)
     .def("disable_timestamp_broadcast", &timing::MasterNode::disable_timestamp_broadcast)
     .def("enable_timestamp_broadcast", &timing::MasterNode::enable_timestamp_broadcast)
     .def("configure_endpoint_command_decoder", &timing::MasterNode::configure_endpoint_command_decoder,
@@ -61,7 +62,11 @@ register_master(py::module& m)
   py::class_<timing::IRIGTimestampNode, uhal::Node>(m, "IRIGTimestampNode")
     .def(py::init<const uhal::Node&>())
     .def("get_status", &timing::IRIGTimestampNode::get_status, py::arg("print_out") = false)
-    .def("set_irig_epoch", &timing::IRIGTimestampNode::set_irig_epoch, py::arg("irig_epoch"))
+    .def("set_ts_timebase", &timing::IRIGTimestampNode::set_ts_timebase, py::arg("ts_timebase"))
+    .def("set_ts_epoch", &timing::IRIGTimestampNode::set_ts_epoch, py::arg("ts_epoch"))
+    .def("set_ts_epoch_value", &timing::IRIGTimestampNode::set_ts_epoch_value, py::arg("epoch_to_2000_seconds_tai"),  py::arg("epoch_to_2000_leap_seconds"))
+    .def("set_ts_seconds_offset", &timing::IRIGTimestampNode::set_ts_seconds_offset, py::arg("seconds_offset"))
+    .def("set_ts_ticks_offset", &timing::IRIGTimestampNode::set_ts_ticks_offset, py::arg("ticks_offset"))
     ;
 
 }

@@ -55,7 +55,7 @@ public:
   void reset() const;
 
   /// commodity functions
-  virtual uint8_t read_i2c(uint8_t i2c_device_address, uint32_t i2c_reg_address) const; // NOLINT(build/unsigned)
+  virtual uint8_t read_i2c(uint8_t i2c_device_address, uint32_t i2c_reg_address, bool atomic = false) const; // NOLINT(build/unsigned)
   virtual void write_i2c(uint8_t i2c_device_address,                                    // NOLINT(build/unsigned)
                          uint32_t i2c_reg_address,                                      // NOLINT(build/unsigned)
                          uint8_t data,                                                  // NOLINT(build/unsigned)
@@ -63,7 +63,8 @@ public:
 
   virtual std::vector<uint8_t> read_i2cArray(uint8_t i2c_device_address,      // NOLINT(build/unsigned)
                                              uint32_t i2c_reg_address,        // NOLINT(build/unsigned)
-                                             uint32_t number_of_words) const; // NOLINT(build/unsigned)
+                                             uint32_t number_of_words,        // NOLINT(build/unsigned)
+                                             bool atomic = false) const;      // NOLINT(build/unsigned)
   virtual void write_i2cArray(uint8_t i2c_device_address,                     // NOLINT(build/unsigned)
                               uint32_t i2c_reg_address,                       // NOLINT(build/unsigned)
                               std::vector<uint8_t> data,                      // NOLINT(build/unsigned)
@@ -82,7 +83,8 @@ public:
 protected:
   // low level i2c functions
   std::vector<uint8_t> virtual read_block_i2c(uint8_t i2c_device_address,      // NOLINT(build/unsigned)
-                                              uint32_t number_of_bytes) const; // NOLINT(build/unsigned)
+                                              uint32_t number_of_bytes,        // NOLINT(build/unsigned)
+                                              bool send_reset = true) const;
   void virtual write_block_i2c(uint8_t i2c_device_address,                     // NOLINT(build/unsigned)
                                const std::vector<uint8_t>& data,               // NOLINT(build/unsigned)
                                bool send_stop = true) const;
