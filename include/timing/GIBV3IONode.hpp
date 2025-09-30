@@ -40,7 +40,7 @@ public:
   /**
    * @brief     Get status string, optionally print.
    */
-  std::string get_status() const override;
+  std::string get_status(bool print_out = false) const override;
 
 };
 

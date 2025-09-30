@@ -47,7 +47,5 @@ GIBV3IONode::get_status(bool print_out) const
 }
 //-----------------------------------------------------------------------------
 
-
-
 } // namespace timing
 } // namespace dunedaq
