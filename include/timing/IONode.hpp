@@ -227,6 +227,7 @@ protected:
                                                             { kBoardMIB, "mib" },
                                                             { kBoardPC069, "pc069" },
                                                             { kBoardGIB, "gib" },
+                                                            { kBoardGIBV3, "gibv3" },
                                                             { kBoardUnknown, "unknown" }
                                                             };
 
@@ -240,11 +241,14 @@ protected:
                                                                 { kCarrierUnknown, "unknown" }
                                                                 };
   static inline const std::map<BoardRevision, std::string> board_revision_map = {
-                                                                { kFMCRev1, "kFMCRev1" },     { kFMCRev2, "kFMCRev2" }, { kFMCRev3, "kFMCRev3" },
-                                                                { kPC059Rev1, "kPC059Rev1" }, { kTLURev1, "kTLURev1" }, { kSIMRev1, "kSIMRev1" },
-                                                                { kFIBRev1, "kFIBRev1" }, { kFMCRev4, "kFMCRev4" }, { kMIBRev1, "kMIBRev1" },
-                                                                { kPC069a, "pc069a" }, { kPC069b, "pc069b" }, { kPC069c, "pc069c" }, { kMIBRev2, "kMIBRev2" }, { kGIBRev1, "kGIBRev1" },
-                                                                { kFIBRev2, "kFIBRev2" }, { kBoardRevisionUnknown, "unknown" }
+                                                                { kFMCRev1, "kFMCRev1" },     { kFMCRev2, "kFMCRev2" }, { kFMCRev3, "kFMCRev3" }, { kFMCRev4, "kFMCRev4" },
+                                                                { kPC059Rev1, "kPC059Rev1" }, { kTLURev1, "kTLURev1" },
+                                                                { kSIMRev1, "kSIMRev1" },
+                                                                { kFIBRev1, "kFIBRev1" }, { kFIBRev2, "kFIBRev2" },
+                                                                { kMIBRev1, "kMIBRev1" }, { kMIBRev2, "kMIBRev2" },
+                                                                { kPC069a, "pc069a" }, { kPC069b, "pc069b" }, { kPC069c, "pc069c" },
+                                                                { kGIBRev1, "kGIBRev1" },
+                                                                { kBoardRevisionUnknown, "unknown" }
   };
 
   static inline const std::map<DesignType, std::string> design_type_map = {
@@ -428,7 +432,7 @@ protected:
   };
 
   static inline const std::vector<BoardType> library_supported_boards = {
-    kBoardFMC, kBoardPC059, kBoardTLU, kBoardSim, kBoardFIB, kBoardMIB, kBoardPC069, kBoardGIB
+    kBoardFMC, kBoardPC059, kBoardTLU, kBoardSim, kBoardFIB, kBoardMIB, kBoardPC069, kBoardGIB, kBoardGIBV3
   };
 
   static inline const std::vector<DesignType> library_supported_designs = {

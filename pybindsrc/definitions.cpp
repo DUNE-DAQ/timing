@@ -47,6 +47,7 @@ register_definitions(py::module& m)
         .value("kBoardMIB", kBoardMIB)
         .value("kBoardPC069", kBoardPC069)
         .value("kBoardGIB", kBoardGIB)
+        .value("kBoardGIBV3", kBoardGIBV3)
         .value("kBoardUnknown", kBoardUnknown)
         .export_values();
 

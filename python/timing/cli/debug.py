@@ -16,7 +16,7 @@ from os.path import join, expandvars
 from timing.core import SI534xSlave, I2CExpanderSlave, LTC2945Node
 
 
-from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardMIB, kBoardGIB, kBoardPC069, kBoardFIB
+from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardMIB, kBoardGIB, kBoardGIBV3, kBoardPC069, kBoardFIB
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap
 
@@ -98,14 +98,14 @@ def uuid(obj):
     lIO = lDevice.getNode('io')
 
     # Detect the on-board eprom and read the board UID
-    if lBoardType in [kBoardPC059, kBoardTLU, kBoardMIB, kBoardGIB]:
+    if lBoardType in [kBoardPC059, kBoardTLU, kBoardMIB, kBoardGIB, kBoardGIBV3]:
         lUID = lDevice.getNode('io.i2c')
     else:
         lUID = lDevice.getNode('io.uid_i2c')
 
-    lPROMSlave = 'UID_PROM' if lBoardType in [kBoardTLU,kBoardMIB,kBoardGIB] else 'FMC_UID_PROM'
+    lPROMSlave = 'UID_PROM' if lBoardType in [kBoardTLU,kBoardMIB,kBoardGIB,kBoardGIBV3] else 'FMC_UID_PROM'
 
-    if lBoardType == kBoardGIB:
+    if lBoardType in [kBoardGIB, kBoardGIBV3]:
         lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x0)
         lDevice.dispatch()
         lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x1)
@@ -167,11 +167,14 @@ def scan_i2c(obj):
         switch_address=lDevice.getNode('io.i2c').get_slave_address('SFP_Switch')
         lSwitches={"io.i2c": switch_address}
         lSwitchChannels={"io.i2c": 8}
-    elif lBoardType in [kBoardTLU, kBoardMIB, kBoardGIB]:
+    elif lBoardType in [kBoardTLU, kBoardMIB, kBoardGIB,kBoardGIBV3]:
         lNodes = ['io.i2c']
-        if lBoardType == kBoardGIB:
+        if lBoardType == kBoardGIBV3:
             lSwitches={"io.i2c": 0x70}
-            lSwitchChannels={"io.i2c": 7}
+            lSwitchChannels={"io.i2c": 8}
+        elif lBoardType == kBoardGIB:
+            lSwitches={"io.i2c": 0x70}
+            lSwitchChannels={"io.i2c": 7} 
     else:
         secho(f"Error I don't know about board {lBoardType} : {kBoardNameMap[lBoardType]}", fg='red')
     # if lBoardType == kBoardPC059:
@@ -426,7 +429,7 @@ def lm75_temp_read(obj):
     lBoardType = obj.mBoardType
     lIO = lDevice.getNode('io')
 
-    if lBoardType != kBoardGIB:
+    if lBoardType not in [kBoardGIB, kBoardGIBV3]:
         secho(f'Only GIB (v2 (not checked)) supported. Board type is {lBoardType}', fg='red')
         return
 

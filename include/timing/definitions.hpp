@@ -37,6 +37,7 @@ enum BoardType
   kBoardMIB,
   kBoardPC069,
   kBoardGIB,
+  kBoardGIBV3,
   kBoardUnknown = 256
 };
 
