@@ -38,7 +38,7 @@ public:
   virtual ~GIBV3IONode();
 
   /**
-   * @brief     Clocks ready?
+   * @brief     Get status string, optionally print.
    */
   std::string get_status() const override;
 
