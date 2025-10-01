@@ -415,8 +415,11 @@ protected:
         { "pc069_5345_hades_input_1", "nocdr/Si5345-RevD-pc69bept-Registers.txt" },
 
         { "gib_5395_gaia_free_run", "nocdr/GIB_Debug_01.txt" },
+        { "gibv3_5395_gaia_free_run", "nocdr/GIB_Debug_01.txt" },
 
         { "gib_5395_gaia_input_0", "nocdr/Si5395-RevA-GIB10MHZ-Registers.txt" },
+        { "gibv3_5395_gaia_input_0", "nocdr/Si5395-RevA-GIB10MHZ-Registers.txt" },
+        
 
         { "mib_5395_kerberos_free_run",
           "nocdr/Si5395-RevA-MIB_FREE-Registers.txt" },
