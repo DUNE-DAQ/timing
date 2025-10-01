@@ -120,7 +120,7 @@ public:
   float read_board_temperature() const;
 
 private:
-  void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)
+  virtual void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)
 };
 
 } // namespace timing

@@ -42,6 +42,8 @@ public:
    */
   bool clocks_ok() const override;
 
+private:
+  void validate_sfp_id(uint32_t sfp_id) const override; // NOLINT(build/unsigned)
 };
 
 } // namespace timing
