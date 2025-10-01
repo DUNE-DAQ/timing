@@ -262,9 +262,9 @@ def sfpstatus(ctx, obj, sfp_id):
                 elif lBoardType == kBoardMIB:
                     lSFPIDRange = 3
                 elif lBoardType == kBoardGIB:
-                    lSFPIDRange = 7
+                    lSFPIDRange = 6
                 elif lBoardType == kBoardGIBV3:
-                    lSFPIDRange = 8
+                    lSFPIDRange = 7
                 for i in range(lSFPIDRange):
                     try:
                         echo(lIO.get_sfp_status(i))
