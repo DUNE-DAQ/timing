@@ -18,7 +18,7 @@ UHAL_REGISTER_DERIVED_NODE(GIBV2IONode)
 
 //-----------------------------------------------------------------------------
 GIBV2IONode::GIBV2IONode(const uhal::Node& node)
-  : GIBIONode(node)
+  : GIBIONode(node, "i2c", "i2c", { "PLL" }, { "PLL", "SFP CDR 0", "SFP CDR 1", "SFP CDR 2", "SFP CDR 3", "SFP CDR 4", "SFP CDR 5", "10 MHz" }, { "i2c", "i2c", "i2c", "i2c", "i2c", "i2c", "i2c" })
 {
 }
 //-----------------------------------------------------------------------------
@@ -84,6 +84,7 @@ GIBV2IONode::switch_sfp_tx(uint32_t sfp_id, bool turn_on) const { // NOLINT(buil
 	validate_sfp_id(sfp_id);
 
   // A-CLK is the 7th SFP, but is in slot 7 not 6
+  // TODO make this a map dlindebaum 25/10/02
   sfp_id = sfp_id + (sfp_id/6);
 
   auto sfp_expander_1 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "SFPExpander1");

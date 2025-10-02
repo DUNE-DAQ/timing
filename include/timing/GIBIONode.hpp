@@ -35,6 +35,12 @@ class GIBIONode : public IONode
 
 public:
   explicit GIBIONode(const uhal::Node& node);
+  explicit GIBIONode(const uhal::Node& node,
+                     std::string uid_i2c_bus,
+                     std::string pll_i2c_bus,
+                     std::string pll_i2c_device,
+                     std::vector<std::string> clock_names,
+                     std::vector<std::string> sfp_i2c_buses);
   virtual ~GIBIONode();
 
   /**
