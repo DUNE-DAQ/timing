@@ -269,9 +269,16 @@ def sfpstatus(ctx, obj, sfp_id):
                     try:
                         echo(lIO.get_sfp_status(i))
                         #echo()
-                    except:
-                        secho(f"SFP {i} status gather failed\n", fg='red')
-                        pass
+                    except Exception as e:
+                        if isinstance(e, RuntimeError) and str(e) == " I2C bus: i2c error. Transfer finished but bus still busy I2CException on bus: i2c":
+                            secho(f"Bad SFP {i} found, resetting i2c after failure\n", fg='yellow')
+                            lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x0)
+                            lDevice.dispatch()
+                            lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x1)
+                            lDevice.dispatch()
+                        else:
+                            secho(f"SFP {i} status gather failed\n", fg='red')
+                            pass
             else:
                 secho(f"I don't know how many SFPs there are for board: {timing.common.definitions.BoardType(lBoardType)}\n", fg='red')
 
