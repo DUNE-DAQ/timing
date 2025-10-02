@@ -1,4 +1,4 @@
-<node id="irig_ts_source" description="DTS IRIG Timestamp source" fwinfo="endpoint" class="IRIGTimestampNode">
+`<node id="irig_ts_source" description="DTS IRIG Timestamp source" fwinfo="endpoint" class="IRIGTimestampNode">
   <node id="csr" address="0x0" fwinfo="endpoint;width=4">
     <node id="ctrl" address="0x0">
       <node id="rst" mask="0x1"/>
