@@ -85,6 +85,16 @@ public:
   std::string get_sfp_status(uint32_t sfp_id, bool print_out = false) const override; // NOLINT(build/unsigned)
 
   /**
+   * @brief      Retrive SFP LOS status for all SFPs.
+   */
+  virtual uint8_t read_sfps_los() const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Retrive SFP fault status for all SFPs.
+   */
+  virtual uint8_t read_sfps_fault() const; // NOLINT(build/unsigned)
+
+  /**
    * @brief      control tx laser of on-board SFP softly (I2C command)
    */
   void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
@@ -119,7 +129,11 @@ public:
    */
   float read_board_temperature() const;
 
-private:
+protected:
+  static const uint8_t sfp_tx_disable_bitmap = 0xC0;
+
+  virtual uint32_t read_io_expanders() const;
+
   virtual void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)
 };
 

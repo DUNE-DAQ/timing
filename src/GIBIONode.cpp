@@ -146,7 +146,7 @@ GIBIONode::reset(const std::string& clock_config_file) const
 
   // Set SFP disable 
   // Set pins 1-6 low, i.e. enable SFP 1-6 (pins 7,8 unused)
-  sfp_expander_1->set_outputs(1, 0xC0);
+  sfp_expander_1->set_outputs(1, sfp_tx_disable_bitmap);
 
   TLOG() << "Reset done";
 }
@@ -181,6 +181,52 @@ GIBIONode::get_sfp_status(uint32_t sfp_id, bool print_out) const { // NOLINT(bui
     TLOG() << status.str();
 
   return status.str();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+uint32_t
+GIBIONode::read_io_expanders() const { // NOLINT(build/unsigned)
+  auto sfp_expander_0 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "SFPExpander0");
+  auto sfp_expander_1 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "SFPExpander1");
+
+  uint32_t expander_bits = sfp_expander_1->read_outputs_config(0);
+  expander_bits = (expander_bits << 8) + sfp_expander_0->read_outputs_config(1);
+  expander_bits = (expander_bits << 8) + sfp_expander_0->read_outputs_config(0);
+
+  return expander_bits;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+uint8_t
+GIBIONode::read_sfps_los() const { // NOLINT(build/unsigned)
+  uint32_t expander_bits = read_io_expanders();
+
+  uint8_t los_bits = 0x00;
+
+  for (uint8_t sfp = 0; sfp<6; sfp++) {
+    // Each SFP has 4 bits, the 3rd bit is the LOS
+    los_bits = (los_bits << 1) + (expander_bits & (1 << (2 + 20 - 4*sfp)));
+  }
+
+  return los_bits;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+uint8_t
+GIBIONode::read_sfps_fault() const { // NOLINT(build/unsigned)
+  uint32_t expander_bits = read_io_expanders();
+
+  uint8_t fault_bits = 0x00;
+
+  for (uint8_t sfp = 0; sfp<6; sfp++) {
+    // Each SFP has 4 bits, the 4th bit is the fault
+    fault_bits = (fault_bits << 1) + (expander_bits & (1 << (3 + 20 - 4*sfp)));
+  }
+
+  return fault_bits;
 }
 //-----------------------------------------------------------------------------
 
