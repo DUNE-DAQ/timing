@@ -71,7 +71,7 @@ GIBIONode::get_status(bool print_out) const
     sfp_vec.push_back(to_string(i));
     // L is 0x4C, H is L - 4
     los_vec.push_back(0x4C - 4*((sfp_los >> i) & 1));
-    fault_vec.push_back(0x4C - ((sfp_fault >> (i-2)) & 4));
+    fault_vec.push_back(0x4C - 4*((sfp_fault >> i) & 1));
   }
   
   status << "------IO expander----" << std::endl;
@@ -221,9 +221,9 @@ GIBIONode::read_io_expanders() const { // NOLINT(build/unsigned)
   auto sfp_expander_0 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "SFPExpander0");
   auto sfp_expander_1 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "SFPExpander1");
 
-  uint32_t expander_bits = sfp_expander_1->read_outputs_config(0);
-  expander_bits = (expander_bits << 8) + sfp_expander_0->read_outputs_config(1);
-  expander_bits = (expander_bits << 8) + sfp_expander_0->read_outputs_config(0);
+  uint32_t expander_bits = sfp_expander_1->read_inputs(0);
+  expander_bits = (expander_bits << 8) + sfp_expander_0->read_inputs(1);
+  expander_bits = (expander_bits << 8) + sfp_expander_0->read_inputs(0);
 
   return expander_bits;
 }
@@ -238,7 +238,8 @@ GIBIONode::read_sfps_los() const { // NOLINT(build/unsigned)
 
   for (uint8_t sfp = 0; sfp<6; sfp++) {
     // Each SFP has 4 bits, the 3rd bit is the LOS
-    los_bits = (los_bits << 1) + (expander_bits & (1 << (2 + 20 - 4*sfp)));
+    // Adds the SFPs in inverse order
+    los_bits = (los_bits << 1) + ((expander_bits >> (2 + 20 - 4*sfp)) & 1);
   }
 
   return los_bits;
@@ -254,7 +255,8 @@ GIBIONode::read_sfps_fault() const { // NOLINT(build/unsigned)
 
   for (uint8_t sfp = 0; sfp<6; sfp++) {
     // Each SFP has 4 bits, the 4th bit is the fault
-    fault_bits = (fault_bits << 1) + (expander_bits & (1 << (3 + 20 - 4*sfp)));
+    // Adds the SFPs in inverse order
+    fault_bits = (fault_bits << 1) + ((expander_bits >> (3 + 20 - 4*sfp)) & 1);
   }
 
   return fault_bits;

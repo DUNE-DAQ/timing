@@ -37,7 +37,8 @@ GIBV2IONode::read_sfps_los() const { // NOLINT(build/unsigned)
 
   for (uint8_t sfp = 0; sfp<6; sfp++) {
     // Each SFP has 4 bits, the 3rd bit is the LOS
-    los_bits = (los_bits << 1) + (expander_bits & (1 << (2 + 20 - 4*sfp)));
+    // Adds the SFPs in inverse order
+    los_bits = (los_bits << 1) + ((expander_bits >> (2 + 20 - 4*sfp)) & 1);
   }
 
   return los_bits;
@@ -54,7 +55,8 @@ GIBV2IONode::read_sfps_fault() const { // NOLINT(build/unsigned)
 
   for (uint8_t sfp = 0; sfp<6; sfp++) {
     // Each SFP has 4 bits, the 4th bit is the fault
-    fault_bits = (fault_bits << 1) + (expander_bits & (1 << (3 + 20 - 4*sfp)));
+    // Adds the SFPs in inverse order
+    fault_bits = (fault_bits << 1) + ((expander_bits >> (3 + 20 - 4*sfp)) & 1);
   }
 
   return fault_bits;

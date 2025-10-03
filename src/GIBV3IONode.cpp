@@ -50,7 +50,7 @@ GIBV3IONode::get_status(bool print_out) const
     sfp_vec.push_back(to_string(i));
     // L is 0x4C, H is L - 4
     los_vec.push_back(0x4C - 4*((sfp_los >> i) & 1));
-    fault_vec.push_back(0x4C - ((sfp_fault >> (i-2)) & 4));
+    fault_vec.push_back(0x4C - 4*((sfp_fault >> i) & 1));
   }
   
   status << "-----IO expander------" << std::endl;
@@ -71,8 +71,8 @@ uint32_t
 GIBV3IONode::read_io_expanders() const { // NOLINT(build/unsigned)
   auto sfp_expander_0 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "SFPExpander0");
 
-  uint32_t expander_bits = sfp_expander_0->read_outputs_config(1);
-  expander_bits = (expander_bits << 8) + sfp_expander_0->read_outputs_config(0);
+  uint32_t expander_bits = sfp_expander_0->read_inputs(1);
+  expander_bits = (expander_bits << 8) + sfp_expander_0->read_inputs(0);
 
   return expander_bits;
 }
@@ -107,7 +107,8 @@ GIBV3IONode::read_sfps_fault() const { // NOLINT(build/unsigned)
 
   for (uint8_t sfp = 0; sfp<6; sfp++) {
     // SFP faults are 0-5 on second bus of first expander
-    fault_bits = (fault_bits << 1) + (expander_bits & (1 << (8 + 5 - sfp)));
+    // Adds the SFPs in reverse order
+    fault_bits = (fault_bits << 1) + ((expander_bits >> (8 + 5 - sfp)) & 1);
   }
 
   return fault_bits;
