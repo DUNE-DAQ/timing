@@ -136,11 +136,13 @@ public:
   float read_board_temperature() const;
 
 protected:
+  static const uint8_t n_sfps = 6;
+
   static const uint8_t sfp_tx_disable_bitmap = 0xC0;
 
   virtual uint32_t read_io_expanders() const;
 
-  virtual void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)
+  void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)
 };
 
 } // namespace timing

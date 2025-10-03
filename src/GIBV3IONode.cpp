@@ -39,6 +39,24 @@ GIBV3IONode::get_status(bool print_out) const
   auto subnodes_2 = read_sub_nodes(getNode("csr.ctrl"));
   status << format_reg_table(subnodes_2, "GIB IO control");
 
+  uint8_t sfp_los = read_sfps_los();
+  uint8_t sfp_fault = read_sfps_fault();
+
+  std::vector<std::string> sfp_vec;
+  std::vector<std::string> los_vec;
+  std::vector<std::string> fault_vec;
+
+  for (int i=0; i<n_sfps; i++) {
+    sfp_vec.push_back(to_string(i));
+    los_vec.push_back(to_string((sfp_los >> i) & 1));
+    fault_vec.push_back(to_string((sfp_fault >> i) & 1));
+  }
+  
+  status << "-----IO expander------" << std::endl;
+  status << "SFP:   " << vec_fmt(sfp_vec) << std::endl;
+  status << "LOS:   " << vec_fmt(los_vec) << std::endl;
+  status << "Fault: " << vec_fmt(fault_vec) << std::endl;
+
   // removed temperature readout
 
   if (print_out)
@@ -70,6 +88,7 @@ GIBV3IONode::read_sfps_los() const { // NOLINT(build/unsigned)
   uint32_t los_bitmask = 0x003f;
 
   uhal::ValWord<uint32_t> los_reg_data = getNode("csr.stat.sfp_los").read();
+  getClient().dispatch();
 
   los_bits = (los_bits << 6) + static_cast<uint8_t>(los_reg_data & los_bitmask);
 

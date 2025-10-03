@@ -104,15 +104,5 @@ GIBV2IONode::switch_sfp_tx(uint32_t sfp_id, bool turn_on) const { // NOLINT(buil
 }
 //-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-void
-GIBV2IONode::validate_sfp_id(uint32_t sfp_id) const { // NOLINT(build/unsigned)
-  // on this board we have 7 SFPs
-  if (sfp_id > 6) {
-        throw InvalidSFPId(ERS_HERE, format_reg_value(sfp_id));
-  }
-}
-//-----------------------------------------------------------------------------
-
 } // namespace timing
 } // namespace dunedaq

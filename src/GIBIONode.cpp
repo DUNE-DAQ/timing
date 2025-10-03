@@ -60,6 +60,24 @@ GIBIONode::get_status(bool print_out) const
   auto subnodes_2 = read_sub_nodes(getNode("csr.ctrl"));
   status << format_reg_table(subnodes_2, "GIB IO control");
 
+  uint8_t sfp_los = read_sfps_los();
+  uint8_t sfp_fault = read_sfps_fault();
+
+  std::vector<std::string> sfp_vec;
+  std::vector<std::string> los_vec;
+  std::vector<std::string> fault_vec;
+
+  for (int i=0; i<n_sfps; i++) {
+    sfp_vec.push_back(to_string(i));
+    los_vec.push_back(to_string((sfp_los >> i) & 1));
+    fault_vec.push_back(to_string((sfp_fault >> i) & 1));
+  }
+  
+  status << "------IO expander----" << std::endl;
+  status << "SFP:   " << vec_fmt(sfp_vec) << std::endl;
+  status << "LOS:   " << vec_fmt(los_vec) << std::endl;
+  status << "Fault: " << vec_fmt(fault_vec) << std::endl;
+
   status << "Board temperature: " << read_board_temperature() << " [C]" << std::endl;
 
   if (print_out)
@@ -312,8 +330,8 @@ GIBIONode::switch_sfp_tx(uint32_t sfp_id, bool turn_on) const { // NOLINT(build/
 //-----------------------------------------------------------------------------
 void
 GIBIONode::validate_sfp_id(uint32_t sfp_id) const { // NOLINT(build/unsigned)
-  // on this board we have 6 SFPs
-  if (sfp_id > 5) {
+  // number of sfps on board defined by n_sfps
+  if (sfp_id >= n_sfps) {
         throw InvalidSFPId(ERS_HERE, format_reg_value(sfp_id));
   }
 }
