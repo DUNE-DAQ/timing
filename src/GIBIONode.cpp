@@ -64,13 +64,14 @@ GIBIONode::get_status(bool print_out) const
   uint8_t sfp_fault = read_sfps_fault();
 
   std::vector<std::string> sfp_vec;
-  std::vector<std::string> los_vec;
-  std::vector<std::string> fault_vec;
+  std::vector<uint8_t> los_vec;
+  std::vector<uint8_t> fault_vec;
 
   for (int i=0; i<n_sfps; i++) {
     sfp_vec.push_back(to_string(i));
-    los_vec.push_back(to_string((sfp_los >> i) & 1));
-    fault_vec.push_back(to_string((sfp_fault >> i) & 1));
+    // L is 0x4C, H is L - 4
+    los_vec.push_back(0x4C - 4*((sfp_los >> i) & 1));
+    fault_vec.push_back(0x4C - ((sfp_fault >> (i-2)) & 4));
   }
   
   status << "------IO expander----" << std::endl;
