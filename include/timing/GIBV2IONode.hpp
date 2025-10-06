@@ -58,7 +58,7 @@ public:
   void switch_sfp_tx(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
 
 protected:
-  static const uint8_t n_sfps = 7;
+  static const uint8_t num_sfps = 7;
 
   static const uint8_t sfp_tx_disable_bitmap = 0x40;
 

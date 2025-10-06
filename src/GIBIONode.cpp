@@ -67,7 +67,7 @@ GIBIONode::get_status(bool print_out) const
   std::vector<uint8_t> los_vec;
   std::vector<uint8_t> fault_vec;
 
-  for (int i=0; i<n_sfps; i++) {
+  for (int i=0; i<num_sfps; i++) {
     sfp_vec.push_back(to_string(i));
     // L is 0x4C, H is L - 4
     los_vec.push_back(0x4C - 4*((sfp_los >> i) & 1));
@@ -333,8 +333,8 @@ GIBIONode::switch_sfp_tx(uint32_t sfp_id, bool turn_on) const { // NOLINT(build/
 //-----------------------------------------------------------------------------
 void
 GIBIONode::validate_sfp_id(uint32_t sfp_id) const { // NOLINT(build/unsigned)
-  // number of sfps on board defined by n_sfps
-  if (sfp_id >= n_sfps) {
+  // number of sfps on board defined by num_sfps
+  if (sfp_id >= num_sfps) {
         throw InvalidSFPId(ERS_HERE, format_reg_value(sfp_id));
   }
 }
