@@ -13,7 +13,7 @@ import timing.common.definitions as defs
 
 from click import echo, style, secho
 from os.path import join, expandvars
-from timing.core import SI534xSlave, I2CExpanderSlave, LTC2945Node
+from timing.core import SI534xSlave, I2CExpanderSlave, LTC2945Node, I2C9546SwitchSlave
 
 
 from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardMIB, kBoardGIB, kBoardGIBV3, kBoardPC069, kBoardFIB
@@ -488,4 +488,32 @@ def lm75_temp_read(obj):
     #echo(f"raw bytes: {regs[0x1e]} {regs[0x1f]}")
     #echo(f"combined word: {v_in_raw}")
     #echo(f"Vin [V]: {v_in_raw*v_in_resolution}")
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@debug.command('reset-switch', short_help="Debug.")
+@click.pass_obj
+def reset_switch(obj):
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+
+    if lBoardType not in [kBoardGIB, kBoardGIBV3]:
+        secho('Only checked up for GIB(v3) address tables, stopping...')
+        return
+
+    lI2CBusNode = lDevice.getNode("io.i2c")
+    lI2CSwitch = I2C9546SwitchSlave(lI2CBusNode, lI2CBusNode.get_slave('I2CSwitch').get_i2c_address())
+
+    echo(f"Initial switch status:\t{lI2CSwitch.read_channels_states():08b}")
+    lI2CSwitch.enable_channel(0)
+    echo(f"Enabled channel 0:\t{lI2CSwitch.read_channels_states():08b}")
+    echo()
+
+    echo("reset switch")
+    lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x0)
+    lDevice.dispatch()
+    lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x1)
+    lDevice.dispatch()
+
+    echo(f"State after switch:\t{lI2CSwitch.read_channels_states():08b}")
 # ------------------------------------------------------------------------------
