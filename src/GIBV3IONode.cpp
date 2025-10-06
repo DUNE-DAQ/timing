@@ -84,7 +84,7 @@ GIBV3IONode::read_sfps_los() const { // NOLINT(build/unsigned)
   uint32_t expander_bits = read_io_expanders();
 
   // A-CLK LOS is 1st bit
-  uint8_t los_bits = static_cast<uint8_t>(expander_bits & 0b01);
+  uint8_t los_bits = static_cast<uint8_t>(expander_bits & 1);
 
   uint32_t los_bitmask = 0x003f;
 
@@ -103,7 +103,7 @@ GIBV3IONode::read_sfps_fault() const { // NOLINT(build/unsigned)
   uint32_t expander_bits = read_io_expanders();
 
   // A-CLK fault is 2nd bit
-  uint8_t fault_bits = static_cast<uint8_t>(expander_bits & 0b10);
+  uint8_t fault_bits = static_cast<uint8_t>((expander_bits >> 1) & 1);
 
   for (uint8_t sfp = 0; sfp<6; sfp++) {
     // SFP faults are 0-5 on second bus of first expander
