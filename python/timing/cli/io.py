@@ -277,7 +277,8 @@ def sfpstatus(ctx, obj, sfp_id):
                             lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x1)
                             lDevice.dispatch()
                         else:
-                            secho(f"SFP {i} status gather failed\n", fg='red')
+                            secho(f"SFP {i} status gather failed with exception:", fg='red')
+                            secho(str(e))
                             pass
             else:
                 secho(f"I don't know how many SFPs there are for board: {timing.common.definitions.BoardType(lBoardType)}\n", fg='red')
