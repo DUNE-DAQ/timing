@@ -159,6 +159,16 @@ GIBIONode::reset(const std::string& clock_config_file) const
   // Upload config file to PLL
   configure_pll(clock_config_file);
 
+  configure_expander();
+
+  TLOG() << "Reset done";
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+GIBIONode::configure_expander() const
+{
   auto sfp_expander_0 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "SFPExpander0");
   auto sfp_expander_1 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "SFPExpander1");
   
@@ -176,10 +186,9 @@ GIBIONode::reset(const std::string& clock_config_file) const
   sfp_expander_1->set_io(1, 0x00); // set all pins of bank 1 as outputs
 
   // Set SFP disable 
-  // Set pins 1-6 low, i.e. enable SFP 1-6 (pins 7,8 unused)
+  // Set tx disable pins low, i.e. enable the pins given in the bitmap
+  //   (different between v1 and v2/3)
   sfp_expander_1->set_outputs(1, sfp_tx_disable_bitmap);
-
-  TLOG() << "Reset done";
 }
 //-----------------------------------------------------------------------------
 

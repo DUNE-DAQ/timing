@@ -76,6 +76,11 @@ public:
   void reset(const std::string& clock_config_file)  const override;
 
   /**
+   * @brief      Configure the GIB expander.
+   */
+  void configure_expander()  const;
+
+  /**
    * @brief     Reset timing node with clock file lookup
    */
   using IONode::reset;
@@ -89,6 +94,11 @@ public:
    * @brief      Print status of on-board SFP.
    */
   std::string get_sfp_status(uint32_t sfp_id, bool print_out = false) const override; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Read the contents of the IO expanders.
+   */
+  virtual uint32_t read_io_expanders() const; // NOLINT(build/unsigned)
 
   /**
    * @brief      Retrive SFP LOS status for all SFPs.
@@ -139,8 +149,6 @@ protected:
   static const uint8_t num_sfps = 6;
 
   static const uint8_t sfp_tx_disable_bitmap = 0xC0;
-
-  virtual uint32_t read_io_expanders() const;
 
   void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)
 };

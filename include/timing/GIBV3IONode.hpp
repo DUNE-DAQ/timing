@@ -43,6 +43,11 @@ public:
   std::string get_status(bool print_out = false) const override;
 
   /**
+   * @brief      Read the contents of the IO expanders.
+   */
+  uint32_t read_io_expanders() const override; // NOLINT(build/unsigned)
+
+  /**
    * @brief      Retrive SFP LOS status for all SFPs.
    */
   uint8_t read_sfps_los() const override; // NOLINT(build/unsigned)
@@ -51,9 +56,6 @@ public:
    * @brief      Retrive SFP fault status for all SFPs.
    */
   uint8_t read_sfps_fault() const override; // NOLINT(build/unsigned)
-
-  protected:
-    uint32_t read_io_expanders() const override;
 };
 
 } // namespace timing
