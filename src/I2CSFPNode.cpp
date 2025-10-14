@@ -32,7 +32,7 @@ I2CSFPSlave::~I2CSFPSlave() {}
 void
 I2CSFPSlave::sfp_reachable() const
 {
-  if (!this->ping()) {
+  if (!this->ping(true)) {
     throw SFPUnreachable(ERS_HERE, get_master_id());
   }
 }

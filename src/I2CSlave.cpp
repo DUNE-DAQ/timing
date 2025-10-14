@@ -168,9 +168,9 @@ I2CSlave::write_i2cPrimitive(const std::vector<uint8_t>& data, bool send_stop) c
 
 //-----------------------------------------------------------------------------
 bool
-I2CSlave::ping() const
+I2CSlave::ping(bool throw_excp) const
 {
-  return m_i2c_master->ping(m_i2c_device_address);
+  return m_i2c_master->ping(m_i2c_device_address, throw_excp);
 }
 //-----------------------------------------------------------------------------
 

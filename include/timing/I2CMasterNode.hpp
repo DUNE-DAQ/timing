@@ -76,7 +76,7 @@ public:
                                   const std::vector<uint8_t>& data,               // NOLINT(build/unsigned)
                                   bool send_stop = true) const;
 
-  bool ping(uint8_t i2c_device_address) const; // NOLINT(build/unsigned)
+  bool ping(uint8_t i2c_device_address, bool throw_excp = false) const; // NOLINT(build/unsigned)
 
   std::vector<uint8_t> scan() const; // NOLINT(build/unsigned)
 

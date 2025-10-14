@@ -105,20 +105,9 @@ def reset(ctx, obj, soft, clocksource, forcepllcfg):
 
             lIO.reset(forcepllcfg)
         else:
-            lClockSource = None
             if clocksource is None:
-                if lDesignType in [kDesignMaster, kDesignBoreas, kDesignOuroboros, kDesignOuroborosSim]:
-                    lClockSource=kFreeRun
-                elif lDesignType in [kDesignEndpoint, kDesignChronos, kDesignHades, kDesignCharon]:
-                    lClockSource=kInput1
-                elif lDesignType == kDesignFanout:
-                    if lBoardType == kBoardFIB: #technically only fib v2
-                        lClockSource=kInput0
-                    elif lBoardType == kBoardPC059:
-                        lClockSource=kInput1
-                elif lDesignType in [kDesignGaia, kDesignKerberos]:
-                    lClockSource=kInput0
-
+                lClockSource = toolbox.get_default_clock_source(
+                    lDesignType, lBoardType)
                 if lClockSource is None:
                     secho(f"Unable to match a default clock source for {kDesignNameMap[lDesignType]} on {kBoardNameMap[lBoardType]}\nReset failed!".format(), fg='red')
                     return
@@ -271,11 +260,14 @@ def sfpstatus(ctx, obj, sfp_id):
                         #echo()
                     except Exception as e:
                         if isinstance(e, RuntimeError) and str(e) == " I2C bus: i2c error. Transfer finished but bus still busy I2CException on bus: i2c":
-                            secho(f"Bad SFP {i} found, resetting i2c after failure\n", fg='yellow')
-                            lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x0)
-                            lDevice.dispatch()
-                            lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x1)
-                            lDevice.dispatch()
+                            secho(f"Bad SFP {i} found with exception:")
+                            secho(str(e))
+                            if lBoardType in [kBoardGIB, kBoardGIBV3]:
+                                secho("resetting i2c after failure\n", fg='yellow')
+                                lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x0)
+                                lDevice.dispatch()
+                                lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x1)
+                                lDevice.dispatch()
                         else:
                             secho(f"SFP {i} status gather failed with exception:", fg='red')
                             secho(str(e))

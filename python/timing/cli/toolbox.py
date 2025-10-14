@@ -10,6 +10,25 @@ import time
 from click import echo, style, secho
 
 # ------------------------------------------------------------------------------
+def get_default_clock_source(lDesign, lBoard):
+    lClockSource = None
+    if lDesign in [defs.kDesignMaster, defs.kDesignBoreas,
+                   defs.kDesignOuroboros, defs.kDesignOuroborosSim]:
+        lClockSource = defs.kFreeRun
+    elif lDesign in [defs.kDesignEndpoint, defs.kDesignChronos,
+                     defs.kDesignHades, defs.kDesignCharon]:
+        lClockSource = defs.kInput1
+    elif lDesign == defs.kDesignFanout:
+        if lBoard == defs.kBoardFIB: #technically only fib v2
+            lClockSource = defs.kInput0
+        elif lBoardType == defs.kBoardPC059:
+            lClockSource = defs.kInput1
+    elif lDesign in [defs.kDesignGaia, defs.kDesignKerberos]:
+        lClockSource = defs.kInput0
+    return lClockSource
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def hookDebugger(debugger='gdb'):
     '''debugging helper, hooks debugger to running interpreter process'''
 

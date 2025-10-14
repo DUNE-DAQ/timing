@@ -139,6 +139,7 @@ register_i2c(py::module& m)
     .def(py::init<const timing::I2CMasterNode*, uint8_t>()) // NOLINT(build/unsigned)
     .def("configure", &timing::SI534xSlave::configure)
     .def("read_config_id", &timing::SI534xSlave::read_config_id)
+    .def("get_status", &timing::SI534xSlave::get_status, py::arg("print_out"))
     // .def("registers", &timing::SI534xSlave::registers)
     ;
 
@@ -153,6 +154,7 @@ register_i2c(py::module& m)
     .def("set_inversion", &timing::I2CExpanderSlave::set_inversion)
     .def("set_outputs", &timing::I2CExpanderSlave::set_outputs)
     .def("read_inputs", &timing::I2CExpanderSlave::read_inputs)
+    .def("read_outputs_config", &timing::I2CExpanderSlave::read_outputs_config)
     .def("debug", &timing::I2CExpanderSlave::debug);
 
 //  // Wrap I2CExpanderNode
