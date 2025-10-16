@@ -295,6 +295,8 @@ register_top_designs(py::module& m)
     .def("switch_mux", &timing::KerberosDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
     .def("read_active_mux", &timing::KerberosDesign::read_active_mux)
     .def("configure", &timing::KerberosDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
+    .def("switch_timing_source_mux", &timing::KerberosDesign::switch_timing_source_mux, py::arg("mux_channel"))
+    .def("read_active_timing_source_mux", &timing::KerberosDesign::read_active_timing_source_mux)
     ;
 
   // Gaia
