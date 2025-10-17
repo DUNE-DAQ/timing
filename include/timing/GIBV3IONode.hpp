@@ -9,8 +9,8 @@
  * received with this code.
  */
 
-#ifndef TIMING_INCLUDE_TIMING_GIBV3IONode_HPP_
-#define TIMING_INCLUDE_TIMING_GIBV3IONode_HPP_
+#ifndef TIMING_INCLUDE_TIMING_GIBV3IONODE_HPP_
+#define TIMING_INCLUDE_TIMING_GIBV3IONODE_HPP_
 
 // PDT Headers
 #include "TimingIssues.hpp"
@@ -61,4 +61,4 @@ public:
 } // namespace timing
 } // namespace dunedaq
 
-#endif // TIMING_INCLUDE_TIMING_GIBV3IONode_HPP_
+#endif // TIMING_INCLUDE_TIMING_GIBV3IONODE_HPP_
