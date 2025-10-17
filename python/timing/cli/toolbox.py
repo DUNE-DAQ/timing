@@ -21,7 +21,7 @@ def get_default_clock_source(lDesign, lBoard):
     elif lDesign == defs.kDesignFanout:
         if lBoard == defs.kBoardFIB: #technically only fib v2
             lClockSource = defs.kInput0
-        elif lBoardType == defs.kBoardPC059:
+        elif lBoard == defs.kBoardPC059:
             lClockSource = defs.kInput1
     elif lDesign in [defs.kDesignGaia, defs.kDesignKerberos]:
         lClockSource = defs.kInput0
