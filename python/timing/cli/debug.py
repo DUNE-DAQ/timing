@@ -168,7 +168,7 @@ def scan_i2c(obj):
         switch_address=lDevice.getNode('io.i2c').get_slave_address('SFP_Switch')
         lSwitches={"io.i2c": switch_address}
         lSwitchChannels={"io.i2c": 8}
-    elif lBoardType in [kBoardTLU, kBoardMIB, kBoardGIB,kBoardGIBV3]:
+    elif lBoardType in [kBoardTLU, kBoardMIB, kBoardGIB, kBoardGIBV3]:
         lNodes = ['io.i2c']
         if lBoardType == kBoardGIBV3:
             lSwitches={"io.i2c": 0x70}
