@@ -7,14 +7,12 @@
 					<node id="clk_select" mask="0x8"/>
 					<node id="clk_enable" mask="0x10"/>
 					<node id="sfp_tx_disable" mask="0xff00"/>
-					<node id="bp_tx_edge" mask="0x10000"/>
-					<node id="sfp_tx_edge" mask="0x20000"/>
 				</node>
 				<node id="stat" address="0x1">
 					<node id="mmcm_ok" mask="0x1"/>
-					<node id="pll_ok" mask="0x2"/>
-					<node id="mmcm_sticky" mask="0x4"/>
-					<node id="pll_sticky" mask="0x8"/>
+					<node id="mmcm_sticky" mask="0x2"/>
+					<node id="q_sfp_mmcm_ok" mask="0x4"/>
+					<node id="q_sfp_mmcm_sticky" mask="0x8"/>
 					<node id="sfp_los" mask="0xff00"/>
 					<node id="sfp_fault" mask="0xff0000"/>
 				</node>
