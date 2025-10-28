@@ -146,9 +146,9 @@ public:
   float read_board_temperature() const;
 
 protected:
-  static const uint8_t num_sfps = 6;
+  virtual uint8_t get_sfp_tx_disable_bitmap() const; // NOLINT(build/unsigned)
 
-  static const uint8_t sfp_tx_disable_bitmap = 0xC0;
+  virtual uint8_t get_num_sfps() const; // NOLINT(build/unsigned)
 
   void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)
 };

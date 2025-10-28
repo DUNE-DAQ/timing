@@ -106,5 +106,21 @@ GIBV2IONode::switch_sfp_tx(uint32_t sfp_id, bool turn_on) const { // NOLINT(buil
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+uint8_t
+GIBV2IONode::get_sfp_tx_disable_bitmap() const { // NOLINT(build/unsigned)
+  // First 6 bits and the 8th bit are tx disable for GIBv2/3
+  return 0x40;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+uint8_t
+GIBV2IONode::get_num_sfps() const { // NOLINT(build/unsigned)
+  // 7 SFPs on GIBv2/3
+  return 7;
+}
+//-----------------------------------------------------------------------------
+
 } // namespace timing
 } // namespace dunedaq
