@@ -18,6 +18,7 @@
 #include "timing/MIBV2IONode.hpp"
 #include "timing/GIBIONode.hpp"
 #include "timing/GIBV2IONode.hpp"
+#include "timing/GIBV3IONode.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -182,20 +183,30 @@ register_io(py::module& m)
     .def("switch_sfp_tx", &timing::MIBV2IONode::switch_sfp_tx)
     ;
 
+    // TODO fix missing binding and add GIBv2/3 inheritance, dlindebaum, 2025.10.06
     py::class_<timing::GIBIONode, timing::IONode, uhal::Node>(m, "GIBIONode")
     .def(py::init<const uhal::Node&>())
     .def<void (timing::GIBIONode::*)(const std::string&) const>(
       "reset", &timing::GIBIONode::reset, py::arg("clock_config_file"))
     .def<void (timing::GIBIONode::*)(const timing::ClockSource&) const>(
       "reset", &timing::GIBIONode::reset, py::arg("clock_source"))
+    .def("configure_pll", &timing::GIBIONode::configure_pll, py::arg("clock_config_file"))
     .def("soft_reset", &timing::GIBIONode::soft_reset)
     .def("read_firmware_frequency", &timing::GIBIONode::read_firmware_frequency)
     .def("get_clock_frequencies_table", &timing::GIBIONode::get_clock_frequencies_table, py::arg("print_out") = false)
+    .def("get_full_clock_config_file_path", &timing::GIBIONode::get_full_clock_config_file_path, py::arg("clock_source"))
     .def("get_status", &timing::GIBIONode::get_status, py::arg("print_out") = false)
     .def("get_pll_status", &timing::GIBIONode::get_pll_status, py::arg("print_out") = false)
     .def("get_pll", &timing::GIBIONode::get_pll)
     .def("get_hardware_info", &timing::GIBIONode::get_hardware_info, py::arg("print_out") = false)
+    .def("set_up_io_infrastructure", &timing::GIBIONode::set_up_io_infrastructure)
+    .def("configure_expander", &timing::GIBIONode::configure_expander)
+    .def("reset_pll", &timing::GIBIONode::reset_pll)
     .def("get_sfp_status", &timing::GIBIONode::get_sfp_status, py::arg("sfp_id"), py::arg("print_out") = false)
+    .def("read_io_expanders", &timing::GIBIONode::read_io_expanders)
+    .def("read_sfps_los", &timing::GIBIONode::read_sfps_los)
+    .def("read_sfps_fault", &timing::GIBIONode::read_sfps_fault)
+    .def("clocks_ok", &timing::GIBIONode::clocks_ok)
     .def("switch_sfp_soft_tx_control_bit", &timing::GIBIONode::switch_sfp_soft_tx_control_bit)
     .def("set_i2c_mux_channels", &timing::GIBIONode::set_i2c_mux_channels)
     .def("switch_sfp_tx", &timing::GIBIONode::switch_sfp_tx)
@@ -207,17 +218,54 @@ register_io(py::module& m)
       "reset", &timing::GIBV2IONode::reset, py::arg("clock_config_file"))
     .def<void (timing::GIBV2IONode::*)(const timing::ClockSource&) const>(
       "reset", &timing::GIBV2IONode::reset, py::arg("clock_source"))
+    .def("configure_pll", &timing::GIBV2IONode::configure_pll, py::arg("clock_config_file"))
     .def("soft_reset", &timing::GIBV2IONode::soft_reset)
     .def("read_firmware_frequency", &timing::GIBV2IONode::read_firmware_frequency)
+    .def("get_full_clock_config_file_path", &timing::GIBV2IONode::get_full_clock_config_file_path, py::arg("clock_source"))
     .def("get_clock_frequencies_table", &timing::GIBV2IONode::get_clock_frequencies_table, py::arg("print_out") = false)
     .def("get_status", &timing::GIBV2IONode::get_status, py::arg("print_out") = false)
     .def("get_pll_status", &timing::GIBV2IONode::get_pll_status, py::arg("print_out") = false)
     .def("get_pll", &timing::GIBV2IONode::get_pll)
     .def("get_hardware_info", &timing::GIBV2IONode::get_hardware_info, py::arg("print_out") = false)
+    .def("set_up_io_infrastructure", &timing::GIBV2IONode::set_up_io_infrastructure)
+    .def("configure_expander", &timing::GIBV2IONode::configure_expander)
+    .def("reset_pll", &timing::GIBV2IONode::reset_pll)
     .def("get_sfp_status", &timing::GIBV2IONode::get_sfp_status, py::arg("sfp_id"), py::arg("print_out") = false)
+    .def("read_io_expanders", &timing::GIBV2IONode::read_io_expanders)
+    .def("read_sfps_los", &timing::GIBV2IONode::read_sfps_los)
+    .def("read_sfps_fault", &timing::GIBV2IONode::read_sfps_fault)
+    .def("clocks_ok", &timing::GIBV2IONode::clocks_ok)
     .def("switch_sfp_soft_tx_control_bit", &timing::GIBV2IONode::switch_sfp_soft_tx_control_bit)
     .def("set_i2c_mux_channels", &timing::GIBV2IONode::set_i2c_mux_channels)
     .def("switch_sfp_tx", &timing::GIBV2IONode::switch_sfp_tx)
+    ;
+
+    py::class_<timing::GIBV3IONode, timing::IONode, uhal::Node>(m, "GIBV3IONode")
+    .def(py::init<const uhal::Node&>())
+    .def<void (timing::GIBV3IONode::*)(const std::string&) const>(
+      "reset", &timing::GIBV3IONode::reset, py::arg("clock_config_file"))
+    .def<void (timing::GIBV3IONode::*)(const timing::ClockSource&) const>(
+      "reset", &timing::GIBV3IONode::reset, py::arg("clock_source"))
+    .def("configure_pll", &timing::GIBV3IONode::configure_pll, py::arg("clock_config_file"))
+    .def("soft_reset", &timing::GIBV3IONode::soft_reset)
+    .def("read_firmware_frequency", &timing::GIBV3IONode::read_firmware_frequency)
+    .def("get_full_clock_config_file_path", &timing::GIBV3IONode::get_full_clock_config_file_path, py::arg("clock_source"))
+    .def("get_clock_frequencies_table", &timing::GIBV3IONode::get_clock_frequencies_table, py::arg("print_out") = false)
+    .def("get_status", &timing::GIBV3IONode::get_status, py::arg("print_out") = false)
+    .def("get_pll_status", &timing::GIBV3IONode::get_pll_status, py::arg("print_out") = false)
+    .def("get_pll", &timing::GIBV3IONode::get_pll)
+    .def("get_hardware_info", &timing::GIBV3IONode::get_hardware_info, py::arg("print_out") = false)
+    .def("set_up_io_infrastructure", &timing::GIBV3IONode::set_up_io_infrastructure)
+    .def("configure_expander", &timing::GIBV3IONode::configure_expander)
+    .def("reset_pll", &timing::GIBV3IONode::reset_pll)
+    .def("get_sfp_status", &timing::GIBV3IONode::get_sfp_status, py::arg("sfp_id"), py::arg("print_out") = false)
+    .def("read_io_expanders", &timing::GIBV3IONode::read_io_expanders)
+    .def("read_sfps_los", &timing::GIBV3IONode::read_sfps_los)
+    .def("read_sfps_fault", &timing::GIBV3IONode::read_sfps_fault)
+    .def("clocks_ok", &timing::GIBV3IONode::clocks_ok)
+    .def("switch_sfp_soft_tx_control_bit", &timing::GIBV3IONode::switch_sfp_soft_tx_control_bit)
+    .def("set_i2c_mux_channels", &timing::GIBV3IONode::set_i2c_mux_channels)
+    .def("switch_sfp_tx", &timing::GIBV3IONode::switch_sfp_tx)
     ;
 
 } // NOLINT

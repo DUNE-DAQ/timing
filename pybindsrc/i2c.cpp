@@ -14,6 +14,7 @@
 #include "timing/I2CExpanderNode.hpp"
 #include "timing/SI534xNode.hpp"
 #include "timing/LTC2945Node.hpp"
+#include "timing/I2C9546SwitchNode.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -138,6 +139,7 @@ register_i2c(py::module& m)
     .def(py::init<const timing::I2CMasterNode*, uint8_t>()) // NOLINT(build/unsigned)
     .def("configure", &timing::SI534xSlave::configure)
     .def("read_config_id", &timing::SI534xSlave::read_config_id)
+    .def("get_status", &timing::SI534xSlave::get_status, py::arg("print_out"))
     // .def("registers", &timing::SI534xSlave::registers)
     ;
 
@@ -152,6 +154,7 @@ register_i2c(py::module& m)
     .def("set_inversion", &timing::I2CExpanderSlave::set_inversion)
     .def("set_outputs", &timing::I2CExpanderSlave::set_outputs)
     .def("read_inputs", &timing::I2CExpanderSlave::read_inputs)
+    .def("read_outputs_config", &timing::I2CExpanderSlave::read_outputs_config)
     .def("debug", &timing::I2CExpanderSlave::debug);
 
 //  // Wrap I2CExpanderNode
@@ -174,6 +177,14 @@ register_i2c(py::module& m)
     .def("read_delta_sense_v", &timing::LTC2945Node::read_delta_sense_v)
     .def("read_power", &timing::LTC2945Node::read_power)
     ;
+
+  // Wrap I2C9546SwitchNode
+  py::class_<timing::I2C9546SwitchSlave, timing::I2CSlave>(m, "I2C9546SwitchSlave")
+    .def(py::init<const timing::I2CMasterNode*, uint8_t>()) // NOLINT(build/unsigned)
+    .def("enable_channel", &timing::I2C9546SwitchSlave::enable_channel)
+    .def("disable_channel", &timing::I2C9546SwitchSlave::disable_channel)
+    .def("read_channels_states", &timing::I2C9546SwitchSlave::read_channels_states)
+    .def("set_channels_states", &timing::I2C9546SwitchSlave::set_channels_states);
 }
 
 } // namespace python

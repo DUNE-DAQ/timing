@@ -306,7 +306,7 @@ I2CMasterNode::read_block_i2c(uint8_t i2c_device_address, uint32_t number_of_byt
 
 //-----------------------------------------------------------------------------
 bool
-I2CMasterNode::ping(uint8_t i2c_device_address) const // NOLINT(build/unsigned)
+I2CMasterNode::ping(uint8_t i2c_device_address, bool throw_excp) const // NOLINT(build/unsigned)
 {
   // Reset bus before beginning
   reset();
@@ -316,6 +316,9 @@ I2CMasterNode::ping(uint8_t i2c_device_address) const // NOLINT(build/unsigned)
     send_i2c_command_and_read_data(kStopCmd | kAckCmd);
     return true;
   } catch (const timing::I2CException& excp) {
+    if (throw_excp) {
+      throw excp;
+    }
     return false;
   }
 }

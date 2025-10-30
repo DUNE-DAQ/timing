@@ -35,6 +35,12 @@ class GIBIONode : public IONode
 
 public:
   explicit GIBIONode(const uhal::Node& node);
+  explicit GIBIONode(const uhal::Node& node,
+                     std::string uid_i2c_bus,
+                     std::string pll_i2c_bus,
+                     std::string pll_i2c_device,
+                     std::vector<std::string> clock_names,
+                     std::vector<std::string> sfp_i2c_buses);
   virtual ~GIBIONode();
 
   /**
@@ -70,6 +76,11 @@ public:
   void reset(const std::string& clock_config_file)  const override;
 
   /**
+   * @brief      Configure the GIB expander.
+   */
+  void configure_expander()  const;
+
+  /**
    * @brief     Reset timing node with clock file lookup
    */
   using IONode::reset;
@@ -83,6 +94,21 @@ public:
    * @brief      Print status of on-board SFP.
    */
   std::string get_sfp_status(uint32_t sfp_id, bool print_out = false) const override; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Read the contents of the IO expanders.
+   */
+  virtual uint32_t read_io_expanders() const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Retrive SFP LOS status for all SFPs.
+   */
+  virtual uint8_t read_sfps_los() const; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Retrive SFP fault status for all SFPs.
+   */
+  virtual uint8_t read_sfps_fault() const; // NOLINT(build/unsigned)
 
   /**
    * @brief      control tx laser of on-board SFP softly (I2C command)
@@ -119,7 +145,11 @@ public:
    */
   float read_board_temperature() const;
 
-private:
+protected:
+  virtual uint8_t get_sfp_tx_disable_bitmap() const; // NOLINT(build/unsigned)
+
+  virtual uint8_t get_num_sfps() const; // NOLINT(build/unsigned)
+
   void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)
 };
 

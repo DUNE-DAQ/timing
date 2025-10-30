@@ -17,7 +17,7 @@ from click import echo, style, secho
 from os.path import join, expandvars, basename
 from timing.core import SI534xSlave, I2CExpanderSlave, DACSlave
 
-from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB, kBoardMIB, kBoardPC069, kBoardGIB, kFIBRev2
+from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB, kBoardMIB, kBoardPC069, kBoardGIB, kBoardGIBV3, kFIBRev2
 from timing.common.definitions import kFMCRev1, kFMCRev2, kFMCRev3, kFMCRev4, kPC059Rev1, kTLURev1, kSIMRev1, kFIBRev1, kMIBRev1, kGIBRev1
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed, kCarrierNexusVideo, kCarrierTrenzTE0712
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignChronos, kDesignBoreas, kDesignTest, kDesignKerberos, kDesignGaia, kDesignCharon, kDesignHades
@@ -105,20 +105,9 @@ def reset(ctx, obj, soft, clocksource, forcepllcfg):
 
             lIO.reset(forcepllcfg)
         else:
-            lClockSource = None
             if clocksource is None:
-                if lDesignType in [kDesignMaster, kDesignBoreas, kDesignOuroboros, kDesignOuroborosSim]:
-                    lClockSource=kFreeRun
-                elif lDesignType in [kDesignEndpoint, kDesignChronos, kDesignHades, kDesignCharon]:
-                    lClockSource=kInput1
-                elif lDesignType == kDesignFanout:
-                    if lBoardType == kBoardFIB: #technically only fib v2
-                        lClockSource=kInput0
-                    elif lBoardType == kBoardPC059:
-                        lClockSource=kInput1
-                elif lDesignType in [kDesignGaia, kDesignKerberos]:
-                    lClockSource=kInput0
-
+                lClockSource = toolbox.get_default_clock_source(
+                    lDesignType, lBoardType)
                 if lClockSource is None:
                     secho(f"Unable to match a default clock source for {kDesignNameMap[lDesignType]} on {kBoardNameMap[lBoardType]}\nReset failed!".format(), fg='red')
                     return
@@ -252,7 +241,8 @@ def sfpstatus(ctx, obj, sfp_id):
         else:
             if lBoardType in [kBoardFMC, kBoardTLU, kBoardPC069]:
                 echo(lIO.get_sfp_status(0))
-            elif lBoardType in [ kBoardPC059, kBoardFIB, kBoardMIB, kBoardGIB ]:
+            elif lBoardType in [ kBoardPC059, kBoardFIB, kBoardMIB,
+                                 kBoardGIB, kBoardGIBV3 ]:
                 # PC059 sfp id 0 is upstream sfp
                 if lBoardType == kBoardPC059:
                     lSFPIDRange = 9
@@ -262,13 +252,26 @@ def sfpstatus(ctx, obj, sfp_id):
                     lSFPIDRange = 3
                 elif lBoardType == kBoardGIB:
                     lSFPIDRange = 6
+                elif lBoardType == kBoardGIBV3:
+                    lSFPIDRange = 7
                 for i in range(lSFPIDRange):
                     try:
                         echo(lIO.get_sfp_status(i))
                         #echo()
-                    except:
-                        secho(f"SFP {i} status gather failed\n", fg='red')
-                        pass
+                    except Exception as e:
+                        if isinstance(e, RuntimeError) and str(e) == " I2C bus: i2c error. Transfer finished but bus still busy I2CException on bus: i2c":
+                            secho(f"Bad SFP {i} found with exception:")
+                            secho(str(e))
+                            if lBoardType in [kBoardGIB, kBoardGIBV3]:
+                                secho("resetting i2c after failure\n", fg='yellow')
+                                lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x0)
+                                lDevice.dispatch()
+                                lDevice.getNode("io.csr.ctrl.i2c_sw_rst").write(0x1)
+                                lDevice.dispatch()
+                        else:
+                            secho(f"SFP {i} status gather failed with exception:", fg='red')
+                            secho(str(e))
+                            pass
             else:
                 secho(f"I don't know how many SFPs there are for board: {timing.common.definitions.BoardType(lBoardType)}\n", fg='red')
 

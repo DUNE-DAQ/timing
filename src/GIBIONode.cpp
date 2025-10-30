@@ -25,6 +25,18 @@ GIBIONode::GIBIONode(const uhal::Node& node)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+GIBIONode::GIBIONode(const uhal::Node& node,
+               std::string uid_i2c_bus,
+               std::string pll_i2c_bus,
+               std::string pll_i2c_device,
+               std::vector<std::string> clock_names,
+               std::vector<std::string> sfp_i2c_buses)
+  : IONode(node, uid_i2c_bus, pll_i2c_bus, pll_i2c_device, clock_names, sfp_i2c_buses)
+{
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 GIBIONode::~GIBIONode() {}
 //-----------------------------------------------------------------------------
 
@@ -47,6 +59,25 @@ GIBIONode::get_status(bool print_out) const
 
   auto subnodes_2 = read_sub_nodes(getNode("csr.ctrl"));
   status << format_reg_table(subnodes_2, "GIB IO control");
+
+  uint8_t sfp_los = read_sfps_los();
+  uint8_t sfp_fault = read_sfps_fault();
+
+  std::vector<std::string> sfp_vec;
+  std::vector<uint8_t> los_vec;
+  std::vector<uint8_t> fault_vec;
+
+  for (int i=0; i<get_num_sfps(); i++) {
+    sfp_vec.push_back(to_string(i));
+    // L is 0x4C, H is L - 4
+    los_vec.push_back(0x4C - 4*((sfp_los >> i) & 1));
+    fault_vec.push_back(0x4C - 4*((sfp_fault >> i) & 1));
+  }
+  
+  status << "------IO expander----" << std::endl;
+  status << "SFP:   " << vec_fmt(sfp_vec) << std::endl;
+  status << "LOS:   " << vec_fmt(los_vec) << std::endl;
+  status << "Fault: " << vec_fmt(fault_vec) << std::endl;
 
   status << "Board temperature: " << read_board_temperature() << " [C]" << std::endl;
 
@@ -128,6 +159,16 @@ GIBIONode::reset(const std::string& clock_config_file) const
   // Upload config file to PLL
   configure_pll(clock_config_file);
 
+  configure_expander();
+
+  TLOG() << "Reset done";
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+GIBIONode::configure_expander() const
+{
   auto sfp_expander_0 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "SFPExpander0");
   auto sfp_expander_1 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "SFPExpander1");
   
@@ -145,10 +186,9 @@ GIBIONode::reset(const std::string& clock_config_file) const
   sfp_expander_1->set_io(1, 0x00); // set all pins of bank 1 as outputs
 
   // Set SFP disable 
-  // Set pins 1-6 low, i.e. enable SFP 1-6 (pins 7,8 unused)
-  sfp_expander_1->set_outputs(1, 0xC0);
-
-  TLOG() << "Reset done";
+  // Set tx disable pins low, i.e. enable the pins given in the bitmap
+  //   (different between v1 and v2/3)
+  sfp_expander_1->set_outputs(1, get_sfp_tx_disable_bitmap());
 }
 //-----------------------------------------------------------------------------
 
@@ -181,6 +221,54 @@ GIBIONode::get_sfp_status(uint32_t sfp_id, bool print_out) const { // NOLINT(bui
     TLOG() << status.str();
 
   return status.str();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+uint32_t
+GIBIONode::read_io_expanders() const { // NOLINT(build/unsigned)
+  auto sfp_expander_0 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "SFPExpander0");
+  auto sfp_expander_1 = get_i2c_device<I2CExpanderSlave>(m_uid_i2c_bus, "SFPExpander1");
+
+  uint32_t expander_bits = sfp_expander_1->read_inputs(0);
+  expander_bits = (expander_bits << 8) + sfp_expander_0->read_inputs(1);
+  expander_bits = (expander_bits << 8) + sfp_expander_0->read_inputs(0);
+
+  return expander_bits;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+uint8_t
+GIBIONode::read_sfps_los() const { // NOLINT(build/unsigned)
+  uint32_t expander_bits = read_io_expanders();
+
+  uint8_t los_bits = 0x00;
+
+  for (uint8_t sfp = 0; sfp<6; sfp++) {
+    // Each SFP has 4 bits, the 3rd bit is the LOS
+    // Adds the SFPs in inverse order
+    los_bits = (los_bits << 1) + ((expander_bits >> (2 + 20 - 4*sfp)) & 1);
+  }
+
+  return los_bits;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+uint8_t
+GIBIONode::read_sfps_fault() const { // NOLINT(build/unsigned)
+  uint32_t expander_bits = read_io_expanders();
+
+  uint8_t fault_bits = 0x00;
+
+  for (uint8_t sfp = 0; sfp<6; sfp++) {
+    // Each SFP has 4 bits, the 4th bit is the fault
+    // Adds the SFPs in inverse order
+    fault_bits = (fault_bits << 1) + ((expander_bits >> (3 + 20 - 4*sfp)) & 1);
+  }
+
+  return fault_bits;
 }
 //-----------------------------------------------------------------------------
 
@@ -252,10 +340,26 @@ GIBIONode::switch_sfp_tx(uint32_t sfp_id, bool turn_on) const { // NOLINT(build/
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+uint8_t
+GIBIONode::get_sfp_tx_disable_bitmap() const { // NOLINT(build/unsigned)
+  // First 6 bits are tx disable on GIBv1
+  return 0xC0;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+uint8_t
+GIBIONode::get_num_sfps() const { // NOLINT(build/unsigned)
+  // 6 SFPs on GIBv1
+  return 6;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 void
 GIBIONode::validate_sfp_id(uint32_t sfp_id) const { // NOLINT(build/unsigned)
-  // on this board we have 6 SFPs
-  if (sfp_id > 5) {
+  // number of sfps on board defined by get_num_sfps
+  if (sfp_id >= get_num_sfps()) {
         throw InvalidSFPId(ERS_HERE, format_reg_value(sfp_id));
   }
 }

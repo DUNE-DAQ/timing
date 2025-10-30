@@ -80,7 +80,7 @@ public:
   std::vector<uint8_t> read_i2cPrimitive(uint32_t number_of_bytes) const;                 // NOLINT(build/unsigned)
   void write_i2cPrimitive(const std::vector<uint8_t>& data, bool send_stop = true) const; // NOLINT(build/unsigned)
 
-  bool ping() const;
+  bool ping(bool throw_excp = false) const;
 
   std::string get_master_id() const;
 

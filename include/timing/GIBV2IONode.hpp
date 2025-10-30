@@ -38,9 +38,29 @@ public:
   virtual ~GIBV2IONode();
 
   /**
+   * @brief      Retrive SFP LOS status for all SFPs.
+   */
+  uint8_t read_sfps_los() const override; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Retrive SFP fault status for all SFPs.
+   */
+  uint8_t read_sfps_fault() const override; // NOLINT(build/unsigned)
+
+  /**
    * @brief     Clocks ready?
    */
   bool clocks_ok() const override;
+
+  /**
+   * @brief      control tx laser of on-board SFP softly (I2C command)
+   */
+  void switch_sfp_tx(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
+
+protected:
+  uint8_t get_sfp_tx_disable_bitmap() const override; // NOLINT(build/unsigned)
+
+  uint8_t get_num_sfps() const override; // NOLINT(build/unsigned)
 
 };
 

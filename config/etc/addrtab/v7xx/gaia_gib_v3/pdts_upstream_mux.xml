@@ -1,0 +1,7 @@
+<node id="pdts_upstream_mux" description="Switch between different downstream timing sources and pass upstream" fwinfo="endpoint">
+		<node id="csr" address="0x0" fwinfo="endpoint;width=0">
+			<node id="ctrl" address="0x0">
+				<node id="src" mask="0x7"/>
+			</node>
+		</node>
+</node>
