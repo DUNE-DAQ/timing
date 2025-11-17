@@ -692,7 +692,7 @@ def reset_pll(obj, clocksource):
     if clocksource is None:
         lClockSource = toolbox.get_default_clock_source(
             lDesignType, lBoardType)
-        print(f"Default clock config selected for {kDesignNameMap[lDesignType]} on {kBoardNameMap[lBoardType]} is: {lClockSource}", fg='yellow')
+        secho(f"Default clock config selected for {kDesignNameMap[lDesignType]} on {kBoardNameMap[lBoardType]} is: {lClockSource}", fg='yellow')
     else:
         lClockSource=ClockSource.__members__[clocksource]
 
