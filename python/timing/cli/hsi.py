@@ -75,34 +75,6 @@ def status(ctx, obj):
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-@hsi.command('enable', short_help="Configure the HSI endpoint for running")
-@click.pass_obj
-@click.pass_context
-@click.argument('action', default='on', type=click.Choice(['on', 'off', 'reset']))
-@click.option('--partition', '-p', type=click.IntRange(0,4), help='Partition', default=0)
-@click.option('--address', '-a', type=toolbox.IntRange(0x0,0x100), help='Address', default=0)
-def enable(ctx, obj, action, partition, address):
-    '''
-    Activate the timing endpoint in the hsi design. Left in for compatibility reasons
-    '''
-
-    lDevice = obj.mDevice
-    lEndpoint = obj.mEndpoint
-    lHSI = obj.mHSI
-    
-    if action == 'off':
-        lEndpoint.disable()
-    elif action == 'on':
-        lEndpoint.enable(address=address,partition=partition)
-    elif action == 'reset':
-        lEndpoint.reset(address=address,partition=partition)
-        lHSI.reset_hsi()
-
-    time.sleep(0.1)
-    ctx.invoke(status)
-# ------------------------------------------------------------------------------
-
-# ------------------------------------------------------------------------------
 @hsi.command('configure', short_help="Configure the HSI block for running")
 @click.pass_obj
 @click.pass_context
