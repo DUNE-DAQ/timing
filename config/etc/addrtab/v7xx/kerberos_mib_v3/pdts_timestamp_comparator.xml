@@ -1,0 +1,18 @@
+<node id="pdts_timestamp_comparator" description="Comparator of 64b timestamps" fwinfo="endpoint" class="TimestampComparator">
+		<node id="csr" address="0x0" fwinfo="endpoint;width=5">
+			<node id="ctrl" address="0x0">
+				<node id="rst" mask="0x1"/>
+				<node id="go" mask="0x2"/>
+			</node>
+			<node id="stat" address="0x8">
+				<node id="err_sticky" mask="0x1"/>
+				<node id="valid" mask="0x2"/>
+			</node>
+			<node id="ts_0_lo" address="0x9"/>
+			<node id="ts_0_hi" address="0xA"/>
+			<node id="ts_1_lo" address="0xB"/>
+			<node id="ts_1_hi" address="0xC"/>
+			<node id="ts_2_lo" address="0xD"/>
+			<node id="ts_2_hi" address="0xE"/>
+		</node>
+</node>

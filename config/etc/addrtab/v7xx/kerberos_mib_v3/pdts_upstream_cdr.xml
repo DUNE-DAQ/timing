@@ -1,0 +1,12 @@
+<node id="upstream_cdr" description="CDR block for upstream rx" fwinfo="endpoint;width=1" class="UpstreamCDRNode">
+	<node id="ctrl" address="0x0">
+		<node id="resync" mask="0x1"/>
+	</node>
+	<node id="stat" address="0x1">
+		<node id="locked" mask="0x1"/>
+		<node id="los" mask="0x2"/>
+		<node id="phase" mask="0x70"/>
+		<node id="err" mask="0x80"/>
+		<node id="valid" mask="0xff00"/>
+	</node>
+</node>
