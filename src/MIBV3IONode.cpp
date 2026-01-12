@@ -15,7 +15,7 @@ UHAL_REGISTER_DERIVED_NODE(MIBV3IONode)
 
 //-----------------------------------------------------------------------------
 MIBV3IONode::MIBV3IONode(const uhal::Node& node)
-  : IONode(node, "i2c", "i2c", { "PLL" }, { "OSC", "PLL", "EP 0", "EP 1", "EP 2" }, { "sfp0_i2c", "sfp1_i2c", "sfp2_i2c" })
+  : MIBV2IONode(node)
 {
 }
 //-----------------------------------------------------------------------------
