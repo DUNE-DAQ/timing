@@ -1,5 +1,5 @@
 <node id="TOP" class="KerberosDesign">
-    <node id="io" address="0x0" module="file://pdts_mib_v2_io.xml"/>
+    <node id="io" address="0x0" module="file://pdts_mib_v3_io.xml"/>
     <node id="endpoint0" address="0x100" module="file://pdts_ep_mon.xml"/>
     <node id="endpoint1" address="0x200" module="file://pdts_ep_mon.xml"/>
     <node id="endpoint2" address="0x300" module="file://pdts_ep_mon.xml"/>

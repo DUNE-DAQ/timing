@@ -1,7 +1,7 @@
 /**
- * @file MIBV2IONode.hpp
+ * @file MIBV3IONode.hpp
  *
- * MIBV2IONode is a class providing an interface
+ * MIBV3IONode is a class providing an interface
  * to the MIB V2 IO firmware block.
  *
  * This is part of the DUNE DAQ Software Suite, copyright 2020.
@@ -9,8 +9,8 @@
  * received with this code.
  */
 
-#ifndef TIMING_INCLUDE_TIMING_MIBV2IONODE_HPP_
-#define TIMING_INCLUDE_TIMING_MIBV2IONODE_HPP_
+#ifndef TIMING_INCLUDE_TIMING_MIBV3IONODE_HPP_
+#define TIMING_INCLUDE_TIMING_MIBV3IONODE_HPP_
 
 // PDT Headers
 #include "TimingIssues.hpp"
@@ -29,13 +29,13 @@ namespace timing {
 /**
  * @brief      Class for the timing FMC board.
  */
-class MIBV2IONode : public IONode
+class MIBV3IONode : public IONode
 {
-  UHAL_DERIVEDNODE(MIBV2IONode)
+  UHAL_DERIVEDNODE(MIBV3IONode)
 
 public:
-  explicit MIBV2IONode(const uhal::Node& node);
-  virtual ~MIBV2IONode();
+  explicit MIBV3IONode(const uhal::Node& node);
+  virtual ~MIBV3IONode();
 
   /**
    * @brief      Get the UID address parameter name.
@@ -92,7 +92,7 @@ public:
   /**
    * @brief      Fill hardware monitoring structure.
    */
-  //void get_info(timinghardwareinfo::TimingMIBV2MonitorData& mon_data) const;
+  //void get_info(timinghardwareinfo::TimingMIBV3MonitorData& mon_data) const;
 
   /**
    * @brief    Give info to collector.
@@ -107,4 +107,4 @@ private:
 } // namespace timing
 } // namespace dunedaq
 
-#endif // TIMING_INCLUDE_TIMING_MIBV2IONODE_HPP_
+#endif // TIMING_INCLUDE_TIMING_MIBV3IONODE_HPP_

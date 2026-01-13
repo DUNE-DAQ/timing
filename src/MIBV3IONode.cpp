@@ -1,12 +1,12 @@
 /**
- * @file MIBV2IONode.cpp
+ * @file MIBV3IONode.cpp
  *
  * This is part of the DUNE DAQ Software Suite, copyright 2020.
  * Licensing/copyright details are in the COPYING file that you should have
  * received with this code.
  */
 
-#include "timing/MIBV2IONode.hpp"
+#include "timing/MIBV3IONode.hpp"
 
 #include <string>
 #include <math.h>
@@ -14,22 +14,22 @@
 namespace dunedaq {
 namespace timing {
 
-UHAL_REGISTER_DERIVED_NODE(MIBV2IONode)
+UHAL_REGISTER_DERIVED_NODE(MIBV3IONode)
 
 //-----------------------------------------------------------------------------
-MIBV2IONode::MIBV2IONode(const uhal::Node& node)
+MIBV3IONode::MIBV3IONode(const uhal::Node& node)
   : IONode(node, "i2c", "i2c", { "PLL" }, { "OSC", "PLL", "EP 0", "EP 1", "EP 2" }, { "sfp0_i2c", "sfp1_i2c", "sfp2_i2c" })
 {
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-MIBV2IONode::~MIBV2IONode() {}
+MIBV3IONode::~MIBV3IONode() {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 std::string
-MIBV2IONode::get_uid_address_parameter_name() const
+MIBV3IONode::get_uid_address_parameter_name() const
 {
   return "UID_PROM";
 }
@@ -37,7 +37,7 @@ MIBV2IONode::get_uid_address_parameter_name() const
 
 //-----------------------------------------------------------------------------
 std::string
-MIBV2IONode::get_status(bool print_out) const
+MIBV3IONode::get_status(bool print_out) const
 {
   std::stringstream status;
 
@@ -52,7 +52,7 @@ MIBV2IONode::get_status(bool print_out) const
 
 //-----------------------------------------------------------------------------
 void
-MIBV2IONode::reset(const std::string& clock_config_file) const
+MIBV3IONode::reset(const std::string& clock_config_file) const
 {
   write_soft_reset_register();
 
@@ -73,7 +73,7 @@ MIBV2IONode::reset(const std::string& clock_config_file) const
 
 //-----------------------------------------------------------------------------
 void
-MIBV2IONode::reset(const ClockSource& clock_source) const
+MIBV3IONode::reset(const ClockSource& clock_source) const
 {
   IONode::reset(clock_source);
 
@@ -82,14 +82,14 @@ MIBV2IONode::reset(const ClockSource& clock_source) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void MIBV2IONode::reset_pll() const
+void MIBV3IONode::reset_pll() const
 {
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void
-MIBV2IONode::switch_clock_source(const ClockSource& clock_source) const
+MIBV3IONode::switch_clock_source(const ClockSource& clock_source) const
 {
   if (clock_source != kFreeRun)
   {
@@ -101,7 +101,7 @@ MIBV2IONode::switch_clock_source(const ClockSource& clock_source) const
 
 //-----------------------------------------------------------------------------
 std::string
-MIBV2IONode::get_sfp_status(uint32_t sfp_id, bool print_out) const { // NOLINT(build/unsigned)
+MIBV3IONode::get_sfp_status(uint32_t sfp_id, bool print_out) const { // NOLINT(build/unsigned)
   std::stringstream status;
   
   validate_sfp_id(sfp_id);
@@ -120,7 +120,7 @@ MIBV2IONode::get_sfp_status(uint32_t sfp_id, bool print_out) const { // NOLINT(b
 
 //-----------------------------------------------------------------------------
 bool
-MIBV2IONode::clocks_ok() const
+MIBV3IONode::clocks_ok() const
 {
   std::stringstream status;
 
@@ -136,7 +136,7 @@ MIBV2IONode::clocks_ok() const
 
 //-----------------------------------------------------------------------------
 void
-MIBV2IONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const { // NOLINT(build/unsigned)
+MIBV3IONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const { // NOLINT(build/unsigned)
   validate_sfp_id(sfp_id);
 
   auto sfp = get_i2c_device<I2CSFPSlave>(m_sfp_i2c_buses.at(sfp_id), "SFP_EEProm");
@@ -146,7 +146,7 @@ MIBV2IONode::switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const
 
 //-----------------------------------------------------------------------------
 void
-MIBV2IONode::switch_sfp_tx(uint32_t /*sfp_id*/, bool /*turn_on*/) const // NOLINT(build/unsigned)
+MIBV3IONode::switch_sfp_tx(uint32_t /*sfp_id*/, bool /*turn_on*/) const // NOLINT(build/unsigned)
 {
   // TODO firmware support needed
   //validate_sfp_id(sfp_id);
@@ -171,7 +171,7 @@ MIBV2IONode::switch_sfp_tx(uint32_t /*sfp_id*/, bool /*turn_on*/) const // NOLIN
 
 //-----------------------------------------------------------------------------
 //void
-//MIBV2IONode::get_info(timinghardwareinfo::TimingMIBV2MonitorData& mon_data) const
+//MIBV3IONode::get_info(timinghardwareinfo::TimingMIBV3MonitorData& mon_data) const
 //{
   // TODO
 //}
@@ -179,7 +179,7 @@ MIBV2IONode::switch_sfp_tx(uint32_t /*sfp_id*/, bool /*turn_on*/) const // NOLIN
 
 //-----------------------------------------------------------------------------
 // void
-// MIBV2IONode::get_info(opmonlib::InfoCollector& /*ci*/, int /*level*/) const
+// MIBV3IONode::get_info(opmonlib::InfoCollector& /*ci*/, int /*level*/) const
 // {
 //   // TO DO
 // }
@@ -187,7 +187,7 @@ MIBV2IONode::switch_sfp_tx(uint32_t /*sfp_id*/, bool /*turn_on*/) const // NOLIN
 
 //-----------------------------------------------------------------------------
 void
-MIBV2IONode::validate_sfp_id(uint32_t sfp_id) const { // NOLINT(build/unsigned)
+MIBV3IONode::validate_sfp_id(uint32_t sfp_id) const { // NOLINT(build/unsigned)
   // on this board we have 3 upstream SFPs
   if (sfp_id > 2) {
         throw InvalidSFPId(ERS_HERE, format_reg_value(sfp_id));
@@ -197,7 +197,7 @@ MIBV2IONode::validate_sfp_id(uint32_t sfp_id) const { // NOLINT(build/unsigned)
 
 //-----------------------------------------------------------------------------
 void
-MIBV2IONode::validate_amc_slot(uint32_t amc_slot) const { // NOLINT(build/unsigned)
+MIBV3IONode::validate_amc_slot(uint32_t amc_slot) const { // NOLINT(build/unsigned)
   if (amc_slot < 1 || amc_slot > 12) {
         throw InvalidAMCSlot(ERS_HERE, format_reg_value(amc_slot, 10));
   }
