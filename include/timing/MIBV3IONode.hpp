@@ -2,18 +2,19 @@
  * @file MIBV3IONode.hpp
  *
  * MIBV3IONode is a class providing an interface
- * to the MIB V3 IO firmware block.
+ * to the MIB V2 IO firmware block.
  *
  * This is part of the DUNE DAQ Software Suite, copyright 2020.
  * Licensing/copyright details are in the COPYING file that you should have
  * received with this code.
  */
 
-#ifndef TIMING_INCLUDE_TIMING_MIBV3IONODE_HPP_
-#define TIMING_INCLUDE_TIMING_MIBV3IONODE_HPP_
+#ifndef TIMING_INCLUDE_TIMING_MIBV3IONode_HPP_
+#define TIMING_INCLUDE_TIMING_MIBV3IONode_HPP_
 
 // PDT Headers
-#include "timing/MIBV2IONode.hpp"
+#include "TimingIssues.hpp"
+#include "timing/IONode.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -28,16 +29,82 @@ namespace timing {
 /**
  * @brief      Class for the timing FMC board.
  */
-class MIBV3IONode : public MIBV2IONode
+class MIBV3IONode : public IONode
 {
   UHAL_DERIVEDNODE(MIBV3IONode)
 
 public:
   explicit MIBV3IONode(const uhal::Node& node);
   virtual ~MIBV3IONode();
+
+  /**
+   * @brief      Get the UID address parameter name.
+   *
+   * @return     { description_of_the_return_value }
+   */
+  std::string get_uid_address_parameter_name() const override;
+
+  /**
+   * @brief     Get status string, optionally print.
+   */
+  std::string get_status(bool print_out = false) const override;
+
+  /**
+   * @brief      Reset MIB v2 IO.
+   */
+  void reset(const std::string& clock_config_file) const override;
+
+  /**
+   * @brief      Reset IO, with clock file look up.
+   */
+  void reset(const ClockSource& clock_source) const override;
+
+  /**
+   * @brief      Reset PLL.
+   */
+  void reset_pll()  const override;
+
+  /**
+   * @brief      Switch clock input, with clock file look up and upload if necessary
+   */
+  void switch_clock_source(const ClockSource& clock_source) const;
+
+  /**
+   * @brief      Print status of on-board SFP.
+   */
+  std::string get_sfp_status(uint32_t sfp_id, bool print_out = false) const override; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      control tx laser of on-board SFP softly (I2C command)
+   */
+  void switch_sfp_soft_tx_control_bit(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
+
+  /**
+   * @brief     Clocks ready?
+   */
+  bool clocks_ok() const override;
+
+  /**
+   * @brief      control tx laser of on-board SFP
+   */
+  void switch_sfp_tx(uint32_t sfp_id, bool turn_on) const override; // NOLINT(build/unsigned)
+
+  /**
+   * @brief      Fill hardware monitoring structure.
+   */
+  //void get_info(timinghardwareinfo::TimingMIBV3MonitorData& mon_data) const;
+
+  /**
+   * @brief    Give info to collector.
+   */
+  //  void get_info(opmonlib::InfoCollector& ci, int level) const override;
+
+private:
+  void validate_sfp_id(uint32_t sfp_id) const; // NOLINT(build/unsigned)
+  void validate_amc_slot(uint32_t amc_slot) const; // NOLINT(build/unsigned)
 };
 
 } // namespace timing
 } // namespace dunedaq
 
-#endif // TIMING_INCLUDE_TIMING_MIBV3IONODE_HPP_
+#endif // TIMING_INCLUDE_TIMING_MIBV3IONode_HPP_
