@@ -125,6 +125,7 @@ def reset(ctx, obj, soft, clocksource, forcepllcfg):
             # lIO.getNode("csr.ctrl.i2c_exten_rst").write(0x1)
             # lIO.getNode("csr.ctrl.clk_gen_rst").write(0x1)
             lIO.reset(lClockSource)
+        time.sleep(0.5)
         ctx.invoke(clkstatus)
     else:
         secho("Board identifier {} not supported by timing library".format(lBoardType), fg='yellow')
@@ -173,6 +174,52 @@ def status(ctx, obj, verbose):
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
+@io.command('configure-pll', short_help="Configure board PLL.")
+@click.option('--clock-source', 'clocksource', type=click.Choice(ClockSource.__members__.keys()), help='Manually specify clock source, free-running, upstream, etc..')
+@click.option('--force-pll-cfg', 'forcepllcfg', type=click.Path(exists=True), help='Manually specify clock config file' )
+@click.pass_obj
+@click.pass_context
+def configure_pll(ctx, obj, clocksource, forcepllcfg):
+    '''
+    Perform a pll configuration
+
+    \b
+    - pll and pll configuration
+    '''
+
+    echo('PLL configuration ' + click.style(obj.mDevice.id(), fg='blue'))
+
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+    lDesignType = obj.mDesignType
+
+    lIO = lDevice.getNode('io')
+
+    if lBoardType in kLibrarySupportedBoards:
+        if forcepllcfg is not None:
+            if clocksource is not None:
+                secho("You specified both a clock source for automatic clock config file look-up, and an explicit clock config file. Explicit clock config file will take precedence.", fg='yellow')
+
+            lIO.configure_pll(forcepllcfg)
+        else:
+            if clocksource is None:
+                lClockSource = toolbox.get_default_clock_source(
+                    lDesignType, lBoardType)
+                if lClockSource is None:
+                    secho(f"Unable to match a default clock source for {kDesignNameMap[lDesignType]} on {kBoardNameMap[lBoardType]}\nReset failed!".format(), fg='red')
+                    return
+                else:
+                    secho(f"Default clock config selected for {kDesignNameMap[lDesignType]} on {kBoardNameMap[lBoardType]} is: {lClockSource}", fg='yellow')
+            else:
+                lClockSource=ClockSource.__members__[clocksource]
+            lIO.configure_pll(lClockSource)
+        ctx.invoke(clkstatus)
+    else:
+        secho("Board identifier {} not supported by timing library".format(lBoardType), fg='yellow')
+        # board not supported by library, do reset here
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 @io.command('clk-status')
 @click.pass_obj
 @click.pass_context
@@ -187,14 +234,15 @@ def clkstatus(ctx, obj, verbose):
     ctx.invoke(status)
 
     echo()
-    ctx.invoke(freq)
-    echo()
 
     if lBoardType in kLibrarySupportedBoards:    
         echo(lIO.get_pll_status())
     else:
         secho("Board {} not supported by timing library".format(lBoardType), fg='yellow')
         # do freq measurement here
+    echo()
+
+    ctx.invoke(freq)
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------

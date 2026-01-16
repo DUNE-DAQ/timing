@@ -251,6 +251,16 @@ IONode::configure_pll(const std::string& clock_config_file) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+void
+IONode::configure_pll(const ClockSource& clock_source) const
+{
+  // Find the right pll config file
+  std::string clock_config = get_full_clock_config_file_path(clock_source);
+  configure_pll(clock_config);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 std::vector<double>
 IONode::read_clock_frequencies() const
 {
@@ -296,7 +306,7 @@ void
 IONode::soft_reset() const
 {
   write_soft_reset_register();
-  TLOG_DEBUG(0) << "Soft reset done";
+  TLOG_DEBUG(0) << "IPBus soft reset done (register values cleared)";
 }
 //-----------------------------------------------------------------------------
 
