@@ -89,25 +89,6 @@ FMCIONode::reset(const std::string& clock_config_file) const
 
   // Enable sfp tx laser
   getNode("csr.ctrl.sfp_tx_dis").write(0x0);
-
-  // rx edges
-  uint32_t cdr_rx_edge = 0x0; // NOLINT(build/unsigned)
-  uint32_t sfp_rx_edge = 0x0; // NOLINT(build/unsigned)
-  uint32_t rj45_rx_edge = 0x0; // NOLINT(build/unsigned)
-
-  // tx edges
-  uint32_t sfp_tx_edge = 0x0; // NOLINT(build/unsigned)
-  uint32_t rj45_tx_edge = 0x0; // NOLINT(build/unsigned)
-
-  // rx edges
-  getNode("csr.ctrl.cdr_rx_edge").write(cdr_rx_edge);
-  getNode("csr.ctrl.sfp_rx_edge").write(sfp_rx_edge);
-  getNode("csr.ctrl.rj45_rx_edge").write(rj45_rx_edge);
-
-  // tx edges
-  getNode("csr.ctrl.sfp_tx_edge").write(sfp_tx_edge);
-  getNode("csr.ctrl.rj45_tx_edge").write(rj45_tx_edge);
-
   getClient().dispatch();
 
   TLOG() << "Reset done";
