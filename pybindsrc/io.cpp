@@ -190,7 +190,10 @@ register_io(py::module& m)
       "reset", &timing::GIBIONode::reset, py::arg("clock_config_file"))
     .def<void (timing::GIBIONode::*)(const timing::ClockSource&) const>(
       "reset", &timing::GIBIONode::reset, py::arg("clock_source"))
-    .def("configure_pll", &timing::GIBIONode::configure_pll, py::arg("clock_config_file"))
+    .def<void (timing::GIBIONode::*)(const std::string&) const>(
+      "configure_pll", &timing::GIBIONode::configure_pll, py::arg("clock_config_file"))
+    .def<void (timing::GIBIONode::*)(const timing::ClockSource&) const>(
+      "configure_pll", &timing::GIBIONode::configure_pll, py::arg("clock_source"))
     .def("soft_reset", &timing::GIBIONode::soft_reset)
     .def("read_firmware_frequency", &timing::GIBIONode::read_firmware_frequency)
     .def("get_clock_frequencies_table", &timing::GIBIONode::get_clock_frequencies_table, py::arg("print_out") = false)
@@ -218,7 +221,10 @@ register_io(py::module& m)
       "reset", &timing::GIBV2IONode::reset, py::arg("clock_config_file"))
     .def<void (timing::GIBV2IONode::*)(const timing::ClockSource&) const>(
       "reset", &timing::GIBV2IONode::reset, py::arg("clock_source"))
-    .def("configure_pll", &timing::GIBV2IONode::configure_pll, py::arg("clock_config_file"))
+    .def<void (timing::GIBV2IONode::*)(const std::string&) const>(
+      "configure_pll", &timing::GIBV2IONode::configure_pll, py::arg("clock_config_file"))
+    .def<void (timing::GIBV2IONode::*)(const timing::ClockSource&) const>(
+      "configure_pll", &timing::GIBV2IONode::configure_pll, py::arg("clock_source"))
     .def("soft_reset", &timing::GIBV2IONode::soft_reset)
     .def("read_firmware_frequency", &timing::GIBV2IONode::read_firmware_frequency)
     .def("get_full_clock_config_file_path", &timing::GIBV2IONode::get_full_clock_config_file_path, py::arg("clock_source"))
@@ -246,7 +252,10 @@ register_io(py::module& m)
       "reset", &timing::GIBV3IONode::reset, py::arg("clock_config_file"))
     .def<void (timing::GIBV3IONode::*)(const timing::ClockSource&) const>(
       "reset", &timing::GIBV3IONode::reset, py::arg("clock_source"))
-    .def("configure_pll", &timing::GIBV3IONode::configure_pll, py::arg("clock_config_file"))
+    .def<void (timing::GIBV3IONode::*)(const std::string&) const>(
+      "configure_pll", &timing::GIBV3IONode::configure_pll, py::arg("clock_config_file"))
+    .def<void (timing::GIBV3IONode::*)(const timing::ClockSource&) const>(
+      "configure_pll", &timing::GIBV3IONode::configure_pll, py::arg("clock_source"))
     .def("soft_reset", &timing::GIBV3IONode::soft_reset)
     .def("read_firmware_frequency", &timing::GIBV3IONode::read_firmware_frequency)
     .def("get_full_clock_config_file_path", &timing::GIBV3IONode::get_full_clock_config_file_path, py::arg("clock_source"))

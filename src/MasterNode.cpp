@@ -299,6 +299,9 @@ MasterNode::apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned
 void
 MasterNode::sync_timestamp(TimestampSource source) const // NOLINT(build/unsigned)
 {
+  disable_timestamp_broadcast();
+  TLOG() << "Timestamp broadcast disabled";
+
   set_timestamp(source);
 
   enable_timestamp_broadcast();

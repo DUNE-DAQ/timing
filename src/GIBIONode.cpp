@@ -121,18 +121,16 @@ GIBIONode::set_up_io_infrastructure() const
     }
   }
 
-  // Reset I2C switch and expander, active low
+  // Disable ICs
+  //getNode("csr.ctrl.i2c_sw_rst").write(0x1);
+  //getNode("csr.ctrl.i2c_exten_rst").write(0x1);
+  //getNode("csr.ctrl.clk_gen_rst").write(0x1);
+  //getClient().dispatch();
+
+  // Enable ICs
   getNode("csr.ctrl.i2c_sw_rst").write(0x0);
   getNode("csr.ctrl.i2c_exten_rst").write(0x0);
   getNode("csr.ctrl.clk_gen_rst").write(0x0);
-  getClient().dispatch();
-
-  millisleep(1);
-
-  // End reset 
-  getNode("csr.ctrl.i2c_sw_rst").write(0x1);
-  getNode("csr.ctrl.i2c_exten_rst").write(0x1);
-  getNode("csr.ctrl.clk_gen_rst").write(0x1);
   getClient().dispatch();
 
   set_i2c_mux_channels(0x1);
@@ -143,10 +141,10 @@ GIBIONode::set_up_io_infrastructure() const
 void
 GIBIONode::reset(const std::string& clock_config_file) const
 {
-  getNode("csr.ctrl.rst").write(0x1);
-  getNode("csr.ctrl.rst").write(0x0);
-  getClient().dispatch();
+  // Clear IPBus regs
+  soft_reset();
 
+  // In case this method is called directly, TODO refactor
   set_up_io_infrastructure();
 
   getNode("csr.ctrl.gps_clk_en").write(0x0);
@@ -160,6 +158,12 @@ GIBIONode::reset(const std::string& clock_config_file) const
   configure_pll(clock_config_file);
 
   configure_expander();
+
+  // reset dts logic
+  getNode("csr.ctrl.rst").write(0x1);
+  getClient().dispatch();
+  getNode("csr.ctrl.rst").write(0x0);
+  getClient().dispatch();
 
   TLOG() << "Reset done";
 }
@@ -196,8 +200,8 @@ GIBIONode::configure_expander() const
 void
 GIBIONode::reset_pll() const
 {
-  getNode("csr.ctrl.clk_gen_rst").write(0x0);
   getNode("csr.ctrl.clk_gen_rst").write(0x1);
+  getNode("csr.ctrl.clk_gen_rst").write(0x0);
 }
 //-----------------------------------------------------------------------------
 

@@ -134,6 +134,11 @@ public:
   virtual void configure_pll(const std::string& clock_config_file = "") const;
 
   /**
+   * @brief      Configure clock chip.
+   */
+  virtual void configure_pll(const ClockSource& clock_source) const;
+
+  /**
    * @brief      Read frequencies of on-board clocks.
    */
   virtual std::vector<double> read_clock_frequencies() const;
