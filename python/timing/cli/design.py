@@ -26,6 +26,7 @@ from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarr
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout, kDesignOverlord, kDesignGaia, kDesignBoreas, kDesignKerberos, kDesignChronos, kDesignFanout
 from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap, TimestampTimebase, TimestampSource, ClockSource, kFreeRun, kInput0, kInput1, kInput2, kInput3, kUpstream, kSoftware
 from timing.common.definitions import kLibrarySupportedBoards, kLibrarySupportedDesigns
+from timing.common.definitions import ClockSource, kFreeRun, kInput0, kInput1, kInput2, kInput3
 
 from timing.common.toolbox import format_firmware_version
 # ------------------------------------------------------------------------------
@@ -142,7 +143,7 @@ def cdrresync(ctx, obj, id):
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-@design.command('switch-timing-source', short_help="switch timing source")
+@design.command('switch-timing-source-mux', short_help="switch timing source mux (no pll input re-config)")
 @click.argument('source', type=int)
 @click.pass_obj
 def cdrswitch(obj, source):
@@ -152,6 +153,17 @@ def cdrswitch(obj, source):
     active_source=lTopDesign.read_active_timing_source_mux()
 
     echo(f"timing source mux set to {active_source}")
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@design.command('switch-timing-source', short_help="switch timing source mux and pll input")
+@click.argument('source', type=click.Choice(ClockSource.__members__.keys()))
+@click.pass_obj
+def cdrswitch(obj, source):
+
+    lTopDesign = obj.mTopDesign
+    lClockSource=ClockSource.__members__[source]
+    lTopDesign.switch_timing_source(lClockSource)
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
