@@ -83,7 +83,10 @@ GIBV2IONode::clocks_ok() const
 //-----------------------------------------------------------------------------
 void
 GIBV2IONode::switch_sfp_tx(uint32_t sfp_id, bool turn_on) const { // NOLINT(build/unsigned)
-	validate_sfp_id(sfp_id);
+
+  validate_sfp_id(sfp_id);
+
+  set_i2c_mux_channels(0x1);
 
   // A-CLK is the 7th SFP, but is in slot 7 not 6
   // TODO make this a map dlindebaum 25/10/02
