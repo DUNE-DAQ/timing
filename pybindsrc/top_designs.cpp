@@ -296,6 +296,7 @@ register_top_designs(py::module& m)
     .def("read_active_mux", &timing::KerberosDesign::read_active_mux)
     .def("configure", &timing::KerberosDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
     .def("switch_timing_source_mux", &timing::KerberosDesign::switch_timing_source_mux, py::arg("mux_channel"))
+    .def("switch_timing_source", &timing::KerberosDesign::switch_timing_source, py::arg("clock_source"))
     .def("read_active_timing_source_mux", &timing::KerberosDesign::read_active_timing_source_mux)
     ;
 
