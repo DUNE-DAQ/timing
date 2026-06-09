@@ -399,6 +399,7 @@ protected:
         { "fmc_5394_hades_input_1", "devel/ENDPOINT-Si5344-50MHzRef.txt" },
 
         { "tlu_5345_boreas_free_run", "nocdr/DUNE_TLU-4_45_M-Registers.txt" },
+        { "tlu_5395_boreas_free_run", "nocdr/DUNE_TLU-4_45_M-Registers.txt" },
 
         { "pc059_5345_master_free_run", "devel/PDTS_PC059_FANOUT.txt" },
         { "pc059_5345_fanout_input_1", "devel/PDTS_PC059_FANOUT_SFP_IN.txt" },
