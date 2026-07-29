@@ -50,7 +50,9 @@ register_endpoint(py::module& m)
     .def("disable", &timing::EndpointNode::disable)
     .def("enable", &timing::EndpointNode::enable, py::arg("address") = 0, py::arg("partition") = 0)
     .def("reset", &timing::EndpointNode::reset, py::arg("address") = 0, py::arg("partition") = 0)
-    .def("get_status", &timing::EndpointNode::get_status, py::arg("print_out") = false);
+    .def("get_status", &timing::EndpointNode::get_status, py::arg("print_out") = false)
+    .def("endpoint_ready", &timing::EndpointNode::endpoint_ready)
+    .def("read_endpoint_state", &timing::EndpointNode::read_endpoint_state);
 }
 
 } // namespace python

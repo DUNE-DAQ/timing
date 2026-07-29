@@ -52,7 +52,7 @@ def master(obj, device):
 
     lTopDesign = lDevice.getNode('')
     
-    lMaster = lDevice.getNode('master')    
+    lMaster = lDevice.getNode('master')
     lBoardInfo = toolbox.readSubNodes(lDevice.getNode('io.config'), False)
     lNCmdchannels = lMaster.getNode('global.config.n_chan').read()
     lDevice.dispatch()
@@ -185,13 +185,16 @@ def faketrigclear(obj, chan):
 @click.argument('reg', type=toolbox.IntRange(0x0,0x7b))
 @click.argument('data', callback=toolbox.split_ints)
 @click.argument('mode', type=bool)
-def writeeptreg(obj, adr, reg, data, mode):
+@click.option('--no-reply', is_flag=True, default=False, help="Randomize time interval between consecutive triggers.")
+def writeeptreg(obj, adr, reg, data, mode, no_reply):
     '''
     Write data from endpoint
     '''
     lMaster = obj.mMaster
-    rx_data = lMaster.write_endpoint_data(adr, reg, data, mode)
-    #secho( "Fake triggers disabled; chan: {}".format(chan), fg='green')
+    timeout=500
+    if no_reply:
+        timeout=-1
+    rx_data = lMaster.write_endpoint_data(adr, reg, data, mode, timeout)
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
@@ -255,6 +258,19 @@ def controltimestampbroadcast(obj, on):
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
+@master.command('reset-ept', short_help='Reset an endpoint.')
+@click.pass_obj
+@click.argument('address', type=toolbox.IntRange(0x0,0xffff))
+def resetept(obj, address):
+    '''
+    Reset an endpoint
+    '''
+
+    lMaster = obj.mMaster
+    lMaster.reset_endpoint(address)
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 @master.group('part', invoke_without_command=True)
 @click.pass_obj
 def partition(obj):
@@ -263,7 +279,6 @@ def partition(obj):
     """
     secho("New partition concept not yet supported", fg='yellow')
 # ------------------------------------------------------------------------------
-
 
 # ------------------------------------------------------------------------------
 @partition.command('status', short_help='Display the status of the timing master.')

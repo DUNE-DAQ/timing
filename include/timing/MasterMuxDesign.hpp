@@ -15,6 +15,7 @@
 // PDT Headers
 #include "timing/SFPMuxDesignInterface.hpp"
 #include "timing/MasterDesign.hpp"
+#include "timing/MasterMuxDesignInterface.hpp"
 
 // uHal Headers
 #include "uhal/DerivedNode.hpp"
@@ -32,7 +33,7 @@ namespace timing {
  * @brief      Class for PDI timing master design on mux board
  */
 class MasterMuxDesign
-  : public SFPMuxDesignInterface, public MasterDesign
+  : public MasterDesign, public SFPMuxDesignInterface, public MasterMuxDesignInterface
 {
   UHAL_DERIVEDNODE(MasterMuxDesign)
 public:
@@ -44,30 +45,7 @@ public:
    */
   std::string get_status(bool print_out = false) const override;
 
-
-  /**
-   * @brief      Measure the endpoint round trip time.
-   *
-   * @return     { description_of_the_return_value }
-   */
-  uint32_t measure_endpoint_rtt(uint32_t address, // NOLINT(build/unsigned)
-                                        bool control_sfp = true,
-                                        int sfp_mux = -1) const override;
-  /**
-   * @brief      Apply delay to endpoint
-   */
-  void apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned)
-                                    uint32_t coarse_delay, // NOLINT(build/unsigned)
-                                    uint32_t fine_delay,   // NOLINT(build/unsigned)
-                                    uint32_t phase_delay,  // NOLINT(build/unsigned)
-                                    bool measure_rtt = false,
-                                    bool control_sfp = true,
-                                    int sfp_mux = -1) const override; 
-
-  /**
-   * @brief     Scan SFP for alive timing transmitters
-   */
-  std::vector<uint32_t> scan_sfp_mux() const override; // NOLINT(build/unsigned)
+  using MasterMuxDesignInterface::measure_endpoint_rtt;
 
   /**
    * @brief      Resync active cdr

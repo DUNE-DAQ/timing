@@ -24,16 +24,16 @@ MasterNodeInterface::~MasterNodeInterface() {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void
-MasterNodeInterface::apply_endpoint_delay(const ActiveEndpointConfig& ept_config, bool measure_rtt) const
-{
-  std::string lEptIdD = ept_config.id;
-  uint32_t ept_address = ept_config.adr;    // NOLINT(build/unsigned)
-  uint32_t coarse_Delay = ept_config.cdelay; // NOLINT(build/unsigned)
-  uint32_t fine_delay = ept_config.fdelay; // NOLINT(build/unsigned)
-  uint32_t phase_delay = ept_config.pdelay; // NOLINT(build/unsigned)
-  apply_endpoint_delay(ept_address, coarse_Delay, fine_delay, phase_delay, measure_rtt);
-}
+//void
+//MasterNodeInterface::apply_endpoint_delay(const ActiveEndpointConfig& ept_config, bool measure_rtt) const
+//{
+//  std::string lEptIdD = ept_config.id;
+//  uint32_t ept_address = ept_config.adr;    // NOLINT(build/unsigned)
+//  uint32_t coarse_Delay = ept_config.cdelay; // NOLINT(build/unsigned)
+//  uint32_t fine_delay = ept_config.fdelay; // NOLINT(build/unsigned)
+//  uint32_t phase_delay = ept_config.pdelay; // NOLINT(build/unsigned)
+//  apply_endpoint_delay(ept_address, coarse_Delay, fine_delay, phase_delay, measure_rtt);
+//}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

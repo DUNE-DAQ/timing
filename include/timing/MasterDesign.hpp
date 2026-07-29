@@ -60,25 +60,17 @@ public:
    *
    */
   void sync_timestamp(TimestampSource source) const override;
-  
-  /**
-   * @brief      Measure the endpoint round trip time.
-   *
-   * @return     { description_of_the_return_value }
-   */
-  uint32_t measure_endpoint_rtt(uint32_t address, // NOLINT(build/unsigned)
-                                        bool control_sfp = true,
-                                        int sfp_mux = -1) const override;
+
+  uint32_t measure_endpoint_rtt(uint16_t address, // NOLINT(build/unsigned)
+                                        bool control_sfp = true) const override;
+
   /**
    * @brief      Apply delay to endpoint
    */
-  void apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned)
-                                    uint32_t coarse_delay, // NOLINT(build/unsigned)
-                                    uint32_t fine_delay,   // NOLINT(build/unsigned)
-                                    uint32_t phase_delay,  // NOLINT(build/unsigned)
-                                    bool measure_rtt = false,
-                                    bool control_sfp = true,
-                                    int sfp_mux = -1) const override;
+  void apply_endpoint_delay(uint16_t address,      // NOLINT(build/unsigned)
+                            uint8_t cycle_delay, // NOLINT(build/unsigned)
+                            uint16_t phase_delay) const override;  // NOLINT(build/unsigned)
+
   /**
    * @brief     Configure fake trigger generator
    */

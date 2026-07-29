@@ -72,26 +72,29 @@ public:
   virtual void enable_upstream_endpoint() const = 0;
 
   /**
+   * @brief      Set up rx
+   *
+   */
+  virtual void setup_endpoint_rx(uint16_t address) const = 0; // NOLINT(build/unsigned)
+
+  /**
    * @brief      Measure the endpoint round trip time.
    *
    * @return     { description_of_the_return_value }
    */
-  virtual uint32_t measure_endpoint_rtt(uint32_t address, bool control_sfp = true) const = 0; // NOLINT(build/unsigned)
+  virtual uint32_t measure_endpoint_rtt(uint16_t address, bool control_sfp = true) const = 0; // NOLINT(build/unsigned)
+
+   /**
+   * @brief     Apply delay to endpoint
+   */
+  virtual void apply_endpoint_delay(uint16_t address,      // NOLINT(build/unsigned)
+                                    uint8_t cycle_delay, // NOLINT(build/unsigned)
+                                    uint16_t phase_delay) const = 0;  // NOLINT(build/unsigned)
 
   /**
    * @brief     Apply delay to endpoint
    */
-  virtual void apply_endpoint_delay(uint32_t address,      // NOLINT(build/unsigned)
-                                    uint32_t coarse_delay, // NOLINT(build/unsigned)
-                                    uint32_t fine_delay,   // NOLINT(build/unsigned)
-                                    uint32_t phase_delay,  // NOLINT(build/unsigned)
-                                    bool measure_rtt = false,
-                                    bool control_sfp = true) const = 0;
-
-  /**
-   * @brief     Apply delay to endpoint
-   */
-  virtual void apply_endpoint_delay(const ActiveEndpointConfig& ept_config, bool measure_rtt = false) const;
+  //virtual void apply_endpoint_delay(const ActiveEndpointConfig& ept_config, bool measure_rtt = false) const;
 
   /**
    * @brief     Send a fixed length command

@@ -61,11 +61,6 @@ public:
   {
     return TopDesignInterface::get_io_node<timing::SFPMuxIONode>()->read_active_sfp_mux_channel();
   }
-
-  /**
-   * @brief     Scan SFP for alive timing transmitters
-   */
-  virtual std::vector<uint32_t> scan_sfp_mux() const = 0;// NOLINT(build/unsigned)
 };
 
 } // namespace timing

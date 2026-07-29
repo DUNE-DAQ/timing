@@ -9,7 +9,7 @@ import timing.cli.toolbox as toolbox
 import timing.common.definitions as defs
 
 from click import echo, style, secho
-from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB, kBoardMIB
+from timing.common.definitions import kBoardSim, kBoardFMC, kBoardPC059, kBoardMicrozed, kBoardTLU, kBoardFIB, kBoardMIB, kBoardGIB
 from timing.common.definitions import kCarrierEnclustraA35, kCarrierKC705, kCarrierMicrozed
 from timing.common.definitions import kDesignMaster, kDesignOuroboros, kDesignOuroborosSim, kDesignEndpoint, kDesignFanout
 from timing.common.definitions import kBoardNameMap, kCarrierNameMap, kDesignNameMap
@@ -29,60 +29,46 @@ def align(obj):
     #bj.mIO = lDevice.getNode('io')
 # ------------------------------------------------------------------------------
 
-
 # ------------------------------------------------------------------------------
 @align.command('apply-delay', short_help="Send delay adjust command endpoint")
 @click.argument('addr', type=toolbox.IntRange(0x0,0xffff))
 @click.argument('cdelay', type=toolbox.IntRange(0x0,0xf))
-@click.argument('fdelay', type=toolbox.IntRange(0x0,0xfff))
-@click.option('--mux', '-m', type=click.IntRange(0,12), help='Mux select')
-@click.option('--force', '-f', is_flag=True, default=False, help='Skip RTT measurement')
+@click.argument('phase', type=toolbox.IntRange(0x0,0xfff))
 @click.pass_obj
 @click.pass_context
-def applydelay(ctx, obj, addr, cdelay, fdelay, mux, force):
+def applydelay(ctx, obj, addr, cdelay, phase):
 
     lDevice = obj.mDevice
     lBoardType = obj.mBoardType
     lTopDesign = obj.mTopDesign
+    lMaster = obj.mMaster
 
-    # Are we working with a board with a return path mux (i.e. a fanout board)?
-    if lBoardType in [kBoardPC059, kBoardFIB]:
-        if mux is None:
-            if force == True:
-                lTopDesign.apply_endpoint_delay(addr, cdelay, fdelay, 0, not force, True, 0)
-            else:
-                raise RuntimeError('MUX board: please supply an SFP mux channel')
-        else:
-            lTopDesign.apply_endpoint_delay(addr, cdelay, fdelay, 0, not force, True, mux)
-            
-    else:
-        lTopDesign.apply_endpoint_delay(addr, cdelay, fdelay, 0, not force, True)
+    lMaster.apply_endpoint_delay(addr, cdelay, phase)
 # ------------------------------------------------------------------------------
 
-
 # ------------------------------------------------------------------------------
-@align.command('measure-delay', short_help="Measure endpoint round trip time")
+@align.command('measure-rtt', short_help="Measure endpoint round trip time")
 @click.argument('addr', type=toolbox.IntRange(0x0,0xffff))
-@click.option('--mux', '-m', type=click.IntRange(0,12), help='Mux select (fanout only)')
 @click.option('--sfp-control/--no-sfp-control', default=True, help='Control SFP or not')
 @click.pass_obj
 @click.pass_context
-def measuredelay(ctx, obj, addr, mux, sfp_control):
+def measure_rtt(ctx, obj, addr, sfp_control):
 
-    lDevice = obj.mDevice
-    lBoardType = obj.mBoardType
-    lTopDesign = obj.mTopDesign
-    
-    # or a different type of fanout board
-    if lBoardType in [kBoardPC059, kBoardFIB] and sfp_control == True:
-        if mux is not None:
-            echo("Endpoint (adr: {}, mux: {}) RTT: {}".format(addr,mux,lTopDesign.measure_endpoint_rtt(addr, sfp_control, mux)))
-        else:
-            raise RuntimeError('MUX board: please supply an SFP mux channel')
-    else:
-        echo("Endpoint (adr: {}) RTT: {}".format(addr,lTopDesign.measure_endpoint_rtt(addr, sfp_control)))
+    lMaster = obj.mMaster
+
+    rtt=lMaster.measure_endpoint_rtt(addr, sfp_control)
+    echo(f"Endpoint ({addr}) RTT: {rtt}")
 # ------------------------------------------------------------------------------
 
+# ------------------------------------------------------------------------------
+@align.command('set-deskew-done', short_help="Set the endpoint deskew flag high")
+@click.argument('addr', type=toolbox.IntRange(0x0,0xffff))
+@click.pass_obj
+def seteptdeskewdone(obj, addr):
+
+    lMaster = obj.mMaster
+    lMaster.set_endpoint_deskew_done(addr)
+# ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
 @align.command('toggle-tx', short_help="Control the endpoint SFP Tx laser")
@@ -95,6 +81,62 @@ def toggletx(obj, addr, on):
     lMaster.switch_endpoint_sfp(addr, on)
 # ------------------------------------------------------------------------------
 
+# ------------------------------------------------------------------------------
+@align.command('resync-ept', short_help='Resync an endpoint.')
+@click.pass_obj
+@click.argument('address', type=toolbox.IntRange(0x0,0xffff))
+def resyncept(obj, address):
+    '''
+    Resync an endpoint
+    '''
+
+    lMaster = obj.mMaster
+    lMaster.resync_endpoint(address)
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@align.command('deskew-ept', short_help="Align endpoint")
+@click.argument('addr', type=toolbox.IntRange(0x0,0xffff))
+@click.argument('cdelay', type=toolbox.IntRange(0x0,0xf))
+@click.argument('phase', type=toolbox.IntRange(0x0,0xfff))
+@click.option('--sfp-control/--no-sfp-control', default=True, help='Control SFP or not')
+@click.option('--skip-done', is_flag=True, default=False, help='Do not set deskew done flag in the endpoint.')
+@click.pass_obj
+@click.pass_context
+def deskewept(ctx, obj, addr, cdelay, phase, sfp_control, skip_done):
+
+    lDevice = obj.mDevice
+    lBoardType = obj.mBoardType
+    lTopDesign = obj.mTopDesign
+    lMaster = obj.mMaster
+
+    if (sfp_control):
+        # turn on sfp if controlling it
+        lMaster.setup_endpoint_rx(addr)
+    else:
+        # only reset mst rx if not controlling sfp
+        lMaster.enable_upstream_endpoint()
+
+    # first measure
+    rtt_before_deskew=lMaster.measure_endpoint_rtt(addr, False)
+    echo(f"Endpoint ({addr}) RTT before deskew: {rtt_before_deskew}")
+
+    lMaster.apply_endpoint_delay(addr, cdelay, phase)
+
+    ## reset mst cdr after adjust
+    if (sfp_control):
+        lMaster.enable_upstream_endpoint()
+
+    # re measure after adjust
+    rtt_after_deskew=lMaster.measure_endpoint_rtt(addr, False)
+    echo(f"Endpoint ({addr}) RTT after deskew:  {rtt_after_deskew}")
+
+    if not skip_done:
+        lMaster.set_endpoint_deskew_done(addr)
+
+    if (sfp_control):
+        lMaster.switch_endpoint_sfp(addr, False)
+# ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
 @align.command('scan-mux', short_help="Scan SFP mux for transmitting SFPs")
@@ -105,31 +147,9 @@ def scanmux(obj):
     lTopDesign = obj.mTopDesign
     lBoardType = obj.mBoardType
 
+    # TODO: add bindings
     if lBoardType in [kBoardPC059, kBoardFIB]:
-        lTopDesign.scan_sfp_mux()
+        lTopDesign.scan_mux()
     else:
         raise RuntimeError('Mux scan is only available on MUX boards')
-# ------------------------------------------------------------------------------
-
-
-# ------------------------------------------------------------------------------
-@align.command('switch-n-lock', short_help="Wait for RTT endpoint to become ready")
-@click.option('--mux', '-m', type=click.IntRange(0,12), help='Mux select (fanout only)')
-@click.pass_obj
-def switchnlock(obj, mux):
-    
-    lDevice = obj.mDevice
-    lTopDesign = obj.mTopDesign
-    lBoardType = obj.mBoardType
-    lMaster = obj.mMaster
-    
-    # or a different type of fanout board
-    if lBoardType in [kBoardPC059, kBoardFIB]: #TODO: don't include fib v2
-        if mux is not None:
-            lTopDesign.switch_mux(mux)
-            lMaster.enable_upstream_endpoint()
-        else:
-            raise RuntimeError('MUX board: please supply an SFP mux channel')
-    else:
-        lMaster.enable_upstream_endpoint()
 # ------------------------------------------------------------------------------

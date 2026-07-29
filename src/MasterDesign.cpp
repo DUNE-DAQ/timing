@@ -63,7 +63,7 @@ MasterDesign::sync_timestamp(TimestampSource source) const
 
 //-----------------------------------------------------------------------------
 uint32_t
-MasterDesign::measure_endpoint_rtt(uint32_t address, bool control_sfp, int /*sfp_mux*/) const
+MasterDesign::measure_endpoint_rtt(uint16_t address, bool control_sfp) const
 {
   return get_master_node_plain()->measure_endpoint_rtt(address, control_sfp);
 }
@@ -71,15 +71,11 @@ MasterDesign::measure_endpoint_rtt(uint32_t address, bool control_sfp, int /*sfp
 
 //-----------------------------------------------------------------------------
 void
-MasterDesign::apply_endpoint_delay(uint32_t address,
-                                            uint32_t coarse_delay,
-                                            uint32_t fine_delay,
-                                            uint32_t phase_delay,
-                                            bool measure_rtt,
-                                            bool control_sfp,
-                                            int /*sfp_mux*/) const
+MasterDesign::apply_endpoint_delay(uint16_t address,
+                                   uint8_t cycle_delay,
+                                   uint16_t phase_delay) const
 {
-  get_master_node_plain()->apply_endpoint_delay(address, coarse_delay, fine_delay, phase_delay, measure_rtt, control_sfp);
+  get_master_node_plain()->apply_endpoint_delay(address, cycle_delay, phase_delay);
 }
 //-----------------------------------------------------------------------------
 
