@@ -5,6 +5,7 @@ find_package(daq-cmake REQUIRED)
 
 daq_setup_environment()
 
+find_package(Boost COMPONENTS filesystem format thread REQUIRED)
 find_package(ers REQUIRED)     
 find_package(logging REQUIRED)
 find_package(pybind11 REQUIRED)
@@ -14,7 +15,7 @@ find_package(uhal REQUIRED)
 
 
 ##############################################################################
-daq_add_library(*.cpp LINK_LIBRARIES ers::ers logging::logging nlohmann_json::nlohmann_json uhal::uhal opmonlib::opmonlib)
+daq_add_library(*.cpp LINK_LIBRARIES ers::ers logging::logging nlohmann_json::nlohmann_json uhal::uhal opmonlib::opmonlib Boost::filesystem Boost::format Boost::thread)
 
 ##############################################################################
 daq_add_python_bindings(*.cpp)
