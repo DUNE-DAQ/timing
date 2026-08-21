@@ -104,7 +104,7 @@ def sanitizeConnectionPaths(aConnectionPaths):
 
     lConnectionList = aConnectionPaths.split(';')
     for i,c in enumerate(lConnectionList):
-        if re.match('^\w+://.*', c) is None:
+        if re.match(r'^\w+://.*', c) is None:
             lConnectionList[i] = 'file://'+c
     return ';'.join(lConnectionList)
 # ------------------------------------------------------------------------------
