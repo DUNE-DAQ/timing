@@ -84,12 +84,18 @@ register_master(py::module& m)
       &timing::MasterNode::setup_endpoint_rx,
       py::arg("address")
       )
+    .def("read_endpoint_state",
+      &timing::MasterNode::read_endpoint_state,
+      py::arg("address")
+      )
     ;
 
   py::class_<timing::UpstreamCDRNode, uhal::Node>(m, "UpstreamCDRNode")
     .def(py::init<const uhal::Node&>())
     .def("get_status", &timing::UpstreamCDRNode::get_status, py::arg("print_out") = false)
-    .def("resync", &timing::UpstreamCDRNode::resync);
+    .def("resync", &timing::UpstreamCDRNode::resync)
+    .def("is_locked", &timing::UpstreamCDRNode::is_locked)
+    ;
 
   py::class_<timing::IRIGTimestampNode, uhal::Node>(m, "IRIGTimestampNode")
     .def(py::init<const uhal::Node&>())

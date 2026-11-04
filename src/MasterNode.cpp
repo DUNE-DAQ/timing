@@ -304,6 +304,15 @@ MasterNode::reset_endpoint(uint16_t address) const   // NOLINT(build/unsigned)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+uint32_t
+MasterNode::read_endpoint_state(uint16_t address) const   // NOLINT(build/unsigned)
+{
+auto ept_state = read_endpoint_data(address, 0x71, 0x1, 0x1).at(0) & 0xf;
+  return ept_state;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 void
 MasterNode::sync_timestamp(TimestampSource source) const // NOLINT(build/unsigned)
 {

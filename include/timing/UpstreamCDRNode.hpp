@@ -42,6 +42,11 @@ public:
    * @brief     Reync CDR.
    */
   void resync() const;
+
+  /**
+   * @brief     Read locked flag
+   */
+  bool is_locked() const;
 };
 
 } // namespace timing

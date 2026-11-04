@@ -53,5 +53,15 @@ UpstreamCDRNode::resync() const
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+bool
+UpstreamCDRNode::is_locked() const
+{
+  auto locked = getNode("stat.locked").read();
+  getClient().dispatch();
+  return locked.value();
+}
+//-----------------------------------------------------------------------------
+
 } // namespace timing
 } // namespace dunedaq

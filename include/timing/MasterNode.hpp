@@ -106,6 +106,11 @@ public:
   void reset_endpoint(uint16_t address) const;  // NOLINT(build/unsigned)
 
   /**
+   * @brief     Read endpoint FSM state
+   */
+  uint32_t read_endpoint_state(uint16_t address) const;  // NOLINT(build/unsigned)
+
+  /**
    * @brief     Set timestamp to current machine time
    */
   void sync_timestamp(TimestampSource source) const override; // NOLINT(build/unsigned)
