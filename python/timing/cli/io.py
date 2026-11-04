@@ -416,12 +416,14 @@ def temp(obj):
 
 # ------------------------------------------------------------------------------
 @io.command('configure-clk-driver', short_help="Configure clock driver on FIB")
-@click.argument('bits', type=click.IntRange(0,0x7ff),
-                help=("11 bits defining configuration. First bit is source, "
-                      + "final 10 bits control outputs, 1 to enable, 0 to disable."))
+@click.argument('bits', type=toolbox.IntRange(0,0x7ff))
 @click.pass_obj
 @click.pass_context
 def configure_clk_driver(ctx, obj, bits):
+    """BITS are 11 bits defining the configuration. First 10 bits
+    control output. 1 is on, 0 is off. 1st bit is U.FL, 2nd is clock
+    loopback to AFC, 3-9 count down from SFP 7. Last bit is clock
+    source, 0 upstream, 1 local."""
 
     lDevice = obj.mDevice
     lDesignType = obj.mDesignType

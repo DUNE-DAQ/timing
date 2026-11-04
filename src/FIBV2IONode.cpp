@@ -189,16 +189,23 @@ void
 FIBV2IONode::configure_clk_driver(uint16_t bits) const { // NOLINT(build/unsigned)
 	getNode("csr.ctrl.clk_enable").write(0x1);
 	getClient().dispatch();
-	auto ck_node = getNode("csr.ctrl.clk_clock");
-	auto serial_node = getNode("csr.ctrl.clk_select");
-	for (uint i = 10; i >= 0; --i) {
-		ck_node.write(0x1);
+	// auto ck_node = getNode("csr.ctrl.clk_clock");
+	// auto serial_node = getNode("csr.ctrl.clk_select");
+	for (int i = 10; i >= 0; --i) {
+		getNode("csr.ctrl.clk_select").write((bits >> i) & 1);
 		getClient().dispatch();
-		serial_node.write(bits << i & 1)
+		getNode("csr.ctrl.clk_clock").write(0x1);
 		getClient().dispatch();
-		ck_node.write(0x0);
+		getNode("csr.ctrl.clk_clock").write(0x0);
 		getClient().dispatch();
 	}
+	// Keep 0 as default
+	getNode("csr.ctrl.clk_select").write(0x0);
+	// Final ck pulse to load configuration
+	getNode("csr.ctrl.clk_clock").write(0x1);
+	getClient().dispatch();
+	getNode("csr.ctrl.clk_clock").write(0x0);
+	getClient().dispatch();
 }
 //-----------------------------------------------------------------------------
 
