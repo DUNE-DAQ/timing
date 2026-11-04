@@ -93,6 +93,12 @@ public:
 
     void get_info(timinghardwareinfo::TimingPLLMonitorData& mon_data) const override;
 
+    void configure_clk_driver(uint16_t bits) const;
+
+    void reset_clk_driver() const;
+
+    void set_clk_driver_source(const ClockSource& clock_source) const;
+
     ///**
     // * @brief      Get the PLL chip.
     // *
