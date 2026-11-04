@@ -413,3 +413,57 @@ def temp(obj):
     else:
         raise RuntimeError('Board {} does not have a temp reading!'.format(kBoardNameMap[lBoardType]))
 # ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@io.command('configure-clk-driver', short_help="Configure clock driver on FIB")
+@click.argument('bits', type=toolbox.IntRange(0,0x7ff))
+@click.pass_obj
+@click.pass_context
+def configure_clk_driver(ctx, obj, bits):
+    """BITS are 11 bits defining the configuration. First 10 bits
+    control output. 1 is on, 0 is off. 1st bit is U.FL, 2nd is clock
+    loopback to AFC, 3-9 count down from SFP 7. Last bit is clock
+    source, 0 upstream, 1 local."""
+
+    lDevice = obj.mDevice
+    lDesignType = obj.mDesignType
+    lIO = lDevice.getNode('io')
+    lBoardType = obj.mBoardType
+
+    if lBoardType != kBoardFIB:
+        print('Only supported for FIB, found ', lBoardType, '. Exiting.')
+        return
+    
+    lIO.configure_clk_driver(bits)
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+@io.command('reset-clk-driver', short_help="Reset clock driver on FIB")
+@click.option('--clock-source', 'clocksource', type=click.Choice(ClockSource.__members__.keys()), help='Manually specify clock source, free-running, upstream, etc..')
+@click.pass_obj
+@click.pass_context
+def reset_clk_driver(ctx, obj, clocksource):
+
+    lDevice = obj.mDevice
+    lDesignType = obj.mDesignType
+    lIO = lDevice.getNode('io')
+    lBoardType = obj.mBoardType
+
+    if lBoardType != kBoardFIB:
+        print('Only supported for FIB, found ', lBoardType, '. Exiting.')
+        return
+    
+    if clocksource is None:
+        lClockSource = toolbox.get_default_clock_source(
+            lDesignType, lBoardType)
+        if lClockSource is None:
+            secho(f"Unable to match a default clock source for {kDesignNameMap[lDesignType]} on {kBoardNameMap[lBoardType]}\nReset failed!".format(), fg='red')
+            return
+        else:
+            secho(f"Default clock config selected for {kDesignNameMap[lDesignType]} on {kBoardNameMap[lBoardType]} is: {lClockSource}", fg='yellow')
+    else:
+        lClockSource=ClockSource.__members__[clocksource]
+    
+    lIO.reset_clk_driver()
+    lIO.set_clk_driver_source(lClockSource)
+# ------------------------------------------------------------------------------

@@ -80,18 +80,7 @@ FIBV2IONode::reset(const ClockSource& clock_source) const {
 
 	getNode("csr.ctrl.clk_enable").write(0x0);
 
-	if (clock_source == kInput0)
-	{
-		getNode("csr.ctrl.clk_select").write(0x0);
-	}
-	else if (clock_source == kInput1)
-	{
-		getNode("csr.ctrl.clk_select").write(0x1);
-	}
-	else
-	{
-		// TODO :throw something here
-	}
+	set_clk_driver_source(clock_source);
 
 	getClient().dispatch();
 
@@ -192,6 +181,62 @@ FIBV2IONode::read_board_temperature() const
 {
 	auto temp_mon = get_i2c_device<LM75Node>(m_pll_i2c_bus, "TEMP_MON");
 	return temp_mon->read_temperature();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+FIBV2IONode::configure_clk_driver(uint16_t bits) const { // NOLINT(build/unsigned)
+	getNode("csr.ctrl.clk_enable").write(0x1);
+	getClient().dispatch();
+	// auto ck_node = getNode("csr.ctrl.clk_clock");
+	// auto serial_node = getNode("csr.ctrl.clk_select");
+	for (int i = 10; i >= 0; --i) {
+		getNode("csr.ctrl.clk_select").write((bits >> i) & 1);
+		getClient().dispatch();
+		getNode("csr.ctrl.clk_clock").write(0x1);
+		getClient().dispatch();
+		getNode("csr.ctrl.clk_clock").write(0x0);
+		getClient().dispatch();
+	}
+	// Keep 0 as default
+	getNode("csr.ctrl.clk_select").write(0x0);
+	// Final ck pulse to load configuration
+	getNode("csr.ctrl.clk_clock").write(0x1);
+	getClient().dispatch();
+	getNode("csr.ctrl.clk_clock").write(0x0);
+	getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+FIBV2IONode::reset_clk_driver() const { // NOLINT(build/unsigned)
+	getNode("csr.ctrl.clk_enable").write(0x0);
+	getClient().dispatch();
+	getNode("csr.ctrl.clk_clock").write(0x1);
+	getClient().dispatch();
+	getNode("csr.ctrl.clk_clock").write(0x0);
+	getClient().dispatch();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+FIBV2IONode::set_clk_driver_source(const ClockSource& clock_source) const { // NOLINT(build/unsigned)
+	if (clock_source == kInput0)
+	{
+		getNode("csr.ctrl.clk_select").write(0x0);
+	}
+	else if (clock_source == kInput1)
+	{
+		getNode("csr.ctrl.clk_select").write(0x1);
+	}
+	else
+	{
+		// TODO :throw something here
+	}
+	getClient().dispatch();
 }
 //-----------------------------------------------------------------------------
 

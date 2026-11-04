@@ -103,6 +103,9 @@ register_io(py::module& m)
     .def("switch_sfp_soft_tx_control_bit", &timing::FIBV2IONode::switch_sfp_soft_tx_control_bit)
     .def("switch_sfp_tx", &timing::FIBV2IONode::switch_sfp_tx)
     .def("read_board_temperature", &timing::FIBV2IONode::read_board_temperature)
+    .def("configure_clk_driver", &timing::FIBV2IONode::configure_clk_driver, py::arg("bits"))
+    .def("reset_clk_driver", &timing::FIBV2IONode::reset_clk_driver)
+    .def("set_clk_driver_source", &timing::FIBV2IONode::set_clk_driver_source, py::arg("clock_source"))
     ;
 
   py::class_<timing::TLUIONode, timing::IONode, uhal::Node>(m, "TLUIONode")
