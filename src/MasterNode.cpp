@@ -105,28 +105,6 @@ MasterNode::get_status_with_date(uint32_t clock_frequency_hz, bool print_out) co
 
 //-----------------------------------------------------------------------------
 void
-MasterNode::switch_endpoint_sfp(uint32_t address, bool turn_on) const // NOLINT(build/unsigned)
-{
-    uint32_t sequence = 0xab;
-    uint32_t address_mode = 1;
-    
-    std::vector<uint32_t> tx_packet = { address & 0xff, 
-                                        address >> 8UL, 
-                                        sequence,
-
-                                        // packet to reset rx
-                                        (0x1 << 7UL) | 0x70, // write transaction on 0x70
-                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
-                                        turn_on,
-                                      };
-  tx_packet.back() = tx_packet.back() | (0x1 << 8UL);
-
-  auto result = transmit_async_packet(tx_packet, -1);
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
 MasterNode::enable_upstream_endpoint() const
 {
   auto global = getNode<MasterGlobalNode>("global");
@@ -209,30 +187,33 @@ MasterNode::apply_endpoint_delay(uint16_t address,      // NOLINT(build/unsigned
                                     uint8_t cycle_delay, // NOLINT(build/unsigned)
                                     uint16_t phase_delay) const   // NOLINT(build/unsigned)
 {
-  uint32_t sequence = 0xab;
-  uint32_t address_mode = 1;
+  std::vector<uint32_t> payload = {
+                                    // packet to write coarse delay
+                                    (0x1 << 7UL) | 0x72, // write transaction on 0x72
+                                    (0x1 << 7UL) | 0x1, // transaction length of 0x1
+                                    static_cast<uint32_t>( ((phase_delay & 0xf) << 4UL) | (cycle_delay & 0xf) ),
 
-  std::vector<uint32_t> tx_packet = { address & 0xff, 
-                                        address >> 8UL, 
-                                        sequence,
+                                    // packet to write fine delay
+                                    (0x1 << 7UL) | 0x73, // write transaction on 0x73
+                                    (0x1 << 7UL) | 0x1, // transaction length of 0x1
+                                    static_cast<uint32_t>( (phase_delay >> 4UL) & 0xff ),
 
-                                        // packet to write coarse delay
-                                        (0x1 << 7UL) | 0x72, // write transaction on 0x72
-                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
-                                        ((phase_delay & 0xf) << 4UL) | (cycle_delay & 0xf),
+                                    // packet to resync
+                                    (0x1 << 7UL) | 0x70, // write transaction on 0x70
+                                    (0x1 << 7UL) | 0x1, // transaction length of 0x1
+				                            0x4, // resync
+                                  };
 
-                                        // packet to write fine delay
-                                        (0x1 << 7UL) | 0x73, // write transaction on 0x73
-                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
-                                        (phase_delay >> 4UL) & 0xff,
+  auto tx_packet = make_endpoint_packet(address, payload);
+  transmit_async_packet(tx_packet, -1);
+}
+//-----------------------------------------------------------------------------
 
-                                        // packet to resync
-                                        (0x1 << 7UL) | 0x70, // write transaction on 0x70
-                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
-				                                0x4, // resync
-                                    };
-
-  tx_packet.back() = tx_packet.back() | (0x1 << 8UL);
+//-----------------------------------------------------------------------------
+void
+MasterNode::switch_endpoint_sfp(uint32_t address, bool turn_on) const // NOLINT(build/unsigned)
+{
+  auto tx_packet = make_endpoint_command_packet(address, turn_on);
   transmit_async_packet(tx_packet, -1);
 }
 //-----------------------------------------------------------------------------
@@ -241,20 +222,7 @@ MasterNode::apply_endpoint_delay(uint16_t address,      // NOLINT(build/unsigned
 void
 MasterNode::set_endpoint_deskew_done(uint16_t address) const   // NOLINT(build/unsigned)
 {
-  uint32_t sequence = 0xab;
-  uint32_t address_mode = 1;
-
-  std::vector<uint32_t> tx_packet = { address & 0xff,
-                                        address >> 8UL,
-                                        sequence,
-                                        // packet to set deskew done
-                                        (0x1 << 7UL) | 0x70, // write transaction on 0x70
-                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
-				                                0x3, // deskew done
-                                    };
-
-  tx_packet.back() = tx_packet.back() | (0x1 << 8UL);
-
+  auto tx_packet = make_endpoint_command_packet(address, 0x3);
   transmit_async_packet(tx_packet, -1); // TODO check result of command - should not break link
 }
 //-----------------------------------------------------------------------------
@@ -263,20 +231,7 @@ MasterNode::set_endpoint_deskew_done(uint16_t address) const   // NOLINT(build/u
 void
 MasterNode::resync_endpoint(uint16_t address) const   // NOLINT(build/unsigned)
 {
-  uint32_t sequence = 0xab;
-  uint32_t address_mode = 1;
-
-  std::vector<uint32_t> tx_packet = { address & 0xff,
-                                        address >> 8UL,
-                                        sequence,
-                                        // packet to resync
-                                        (0x1 << 7UL) | 0x70, // write transaction on 0x70
-                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
-				                                0x4, // resync
-                                    };
-
-  tx_packet.back() = tx_packet.back() | (0x1 << 8UL);
-
+  auto tx_packet = make_endpoint_command_packet(address, 0x4);
   transmit_async_packet(tx_packet, -1);
 }
 //-----------------------------------------------------------------------------
@@ -285,20 +240,7 @@ MasterNode::resync_endpoint(uint16_t address) const   // NOLINT(build/unsigned)
 void
 MasterNode::reset_endpoint(uint16_t address) const   // NOLINT(build/unsigned)
 {
-  uint32_t sequence = 0xab;
-  uint32_t address_mode = 1;
-
-  std::vector<uint32_t> tx_packet = { address & 0xff,
-                                        address >> 8UL,
-                                        sequence,
-                                        // packet to reset ept sm
-                                        (0x1 << 7UL) | 0x70, // write transaction on 0x70
-                                        (address_mode << 7UL) | 0x1, // transaction length of 0x1
-				                                0x5, // reset
-                                    };
-
-  tx_packet.back() = tx_packet.back() | (0x1 << 8UL);
-
+  auto tx_packet = make_endpoint_command_packet(address, 0x5);
   transmit_async_packet(tx_packet, -1);
 }
 //-----------------------------------------------------------------------------
@@ -307,7 +249,7 @@ MasterNode::reset_endpoint(uint16_t address) const   // NOLINT(build/unsigned)
 uint32_t
 MasterNode::read_endpoint_state(uint16_t address) const   // NOLINT(build/unsigned)
 {
-auto ept_state = read_endpoint_data(address, 0x71, 0x1, 0x1).at(0) & 0xf;
+  auto ept_state = read_endpoint_data(address, 0x71, 0x1, 0x1).at(0) & 0xf;
   return ept_state;
 }
 //-----------------------------------------------------------------------------
@@ -469,20 +411,13 @@ MasterNode::write_endpoint_data(uint16_t endpoint_address, uint8_t reg_address, 
   {
     TLOG() << "invalid data length";
   }
-
-  // TODO make sequence a function argument?
-  uint32_t sequence = 0xab;
   
-  std::vector<uint32_t> tx_packet = { static_cast<uint32_t>(endpoint_address & 0xff), 
-                                      static_cast<uint32_t>(endpoint_address >> 8UL), 
-                                      sequence, 
-                                      // bit 7 = 1 -> write
-                                      static_cast<uint32_t>((0x1 << 7UL) | reg_address),
-                                       static_cast<uint32_t>((address_mode << 7UL) | (0x3f & data_length))
-                                    };
-  tx_packet.insert(tx_packet.end(), data.begin(), data.end());
-  tx_packet.back() = tx_packet.back() | (0x1 << 8UL);
-
+  std::vector<uint32_t> payload = {
+                                    // bit 7 = 1 -> write
+                                    static_cast<uint32_t>((0x1 << 7UL) | reg_address),
+                                    static_cast<uint32_t>((address_mode << 7UL) | (0x3f & data_length))
+                                  };
+  auto tx_packet = make_endpoint_packet(endpoint_address, payload);
   auto result = transmit_async_packet(tx_packet, timeout);
 }
 //-----------------------------------------------------------------------------
@@ -497,16 +432,13 @@ MasterNode::read_endpoint_data(uint16_t endpoint_address, uint8_t reg_address, u
     // TODO throw something
   }
 
-  // TODO make sequence a function argument?
-  uint32_t sequence = 0xab;
-  std::vector<uint32_t> tx_packet = { static_cast<uint32_t>(endpoint_address & 0xff), 
-                                      static_cast<uint32_t>(endpoint_address >> 8UL), 
-                                      sequence,
-                                      // bit 7 = 0 -> read
-                                      reg_address,
-                                      static_cast<uint32_t>((0x1 << 8UL) | (address_mode << 7UL) | (0x3f & data_length))
-                                      };
+  std::vector<uint32_t> payload = {
+                                    // bit 7 = 0 -> read
+                                    reg_address,
+                                    static_cast<uint32_t>((0x1 << 8UL) | (address_mode << 7UL) | (0x3f & data_length))
+                                  };
 
+  auto tx_packet = make_endpoint_packet(endpoint_address, payload);
   auto result = transmit_async_packet(tx_packet, timeout);
 
   // get parts we actually want
@@ -614,6 +546,38 @@ MasterNode::scan_endpoint(uint16_t endpoint_address, bool control_sfp) const
 void MasterNode::configure_endpoint_command_decoder(uint16_t endpoint_address, uint8_t slot, uint8_t command) const
 {
   write_endpoint_data(endpoint_address, 0x60+slot, {command}, true);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+std::vector<uint32_t>
+MasterNode::make_endpoint_packet(uint16_t endpoint_address, std::vector<uint32_t>& payload)
+{
+  uint32_t sequence = 0xab;
+  std::vector<uint32_t> tx_packet = { static_cast<uint16_t>(endpoint_address & 0xff),
+                                      static_cast<uint16_t>(endpoint_address >> 8UL),
+                                      sequence
+                                    };
+
+  tx_packet.insert(tx_packet.end(), payload.begin(), payload.end());
+  tx_packet.back() = tx_packet.back() | (0x1 << 8UL);
+
+  return tx_packet;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+std::vector<uint32_t>
+MasterNode::make_endpoint_command_packet(uint16_t endpoint_address, uint8_t command)
+{
+  std::vector<uint32_t> payload = {
+                                    // packet to reset ept sm
+                                    (0x1 << 7UL) | 0x70, // write transaction on 0x70
+                                    (0x1 << 7UL) | 0x1, // transaction length of 0x1
+				                            command,
+                                  };
+
+  return make_endpoint_packet(endpoint_address, payload);
 }
 //-----------------------------------------------------------------------------
 } // namespace timing

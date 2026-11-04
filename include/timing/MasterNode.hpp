@@ -195,6 +195,9 @@ private:
   * @brief     Get the status tables.
   */
   std::string get_status_tables() const;
+protected:
+  static std::vector<uint32_t> make_endpoint_packet(uint16_t endpoint_address, std::vector<uint32_t>& payload);
+  static std::vector<uint32_t> make_endpoint_command_packet(uint16_t endpoint_address, uint8_t command);
 };
 
 } // namespace timing

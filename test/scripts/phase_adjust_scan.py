@@ -20,7 +20,7 @@ def perform_phase_scan(master_device, endpoint_address, step_size, pause_after_s
     for fine_phase_setting in range(0,897,step_size):
 
         mst.apply_endpoint_delay(endpoint_address, 0, fine_phase_setting)
-        time.sleep(0.01)
+        time.sleep(0.1)
         mst.setup_endpoint_rx(endpoint_address)
 
         ept_state_before_deskew_done = mst.read_endpoint_state(endpoint_address)
