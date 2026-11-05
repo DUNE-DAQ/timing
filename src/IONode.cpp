@@ -170,8 +170,6 @@ IONode::get_full_clock_config_file_path(const ClockSource& clock_source) const
   std::stringstream clock_config_key;
 
   const BoardType board_type = convert_value_to_board_type(read_board_type());
-//    const BoardRevision board_revision = get_board_revision();
-  const CarrierType carrier_type = convert_value_to_carrier_type(read_carrier_type());
   const DesignType design_type = convert_value_to_design_type(read_design_type());
   //const uint32_t firmware_frequency = read_firmware_frequency(); // NOLINT(build/unsigned)
 
@@ -184,12 +182,6 @@ IONode::get_full_clock_config_file_path(const ClockSource& clock_source) const
   auto pll = get_pll();
   auto pll_model = pll->read_device_version();
   clock_config_key << std::hex << pll_model;
-
-//    try {
-//      clock_config_key = clock_config_key + get_carrier_type_map().at(carrier_type) + "_";
-//    } catch (const std::out_of_range& e) {
-//      throw MissingCarrierTypeMapEntry(ERS_HERE, format_reg_value(carrier_type), e);
-//    }
 
   try {
     clock_config_key << "_" << get_design_type_map().at(design_type);
