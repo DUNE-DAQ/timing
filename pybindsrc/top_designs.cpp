@@ -28,45 +28,92 @@ namespace python {
 void
 register_top_designs(py::module& m)
 {
+  // Master interface
+  py::class_<timing::MasterDesignInterface, uhal::Node>(m, "MasterDesignInterface")
+    .def("measure_endpoint_rtt",
+      &timing::MasterDesignInterface::measure_endpoint_rtt,
+      py::arg("address"),
+      py::arg("control_sfp") = true
+    )
+  ;
+
+  // Endpoint interface
+  py::class_<timing::EndpointDesignInterface, uhal::Node>(m, "EndpointDesignInterface")
+    .def("get_endpoint_node_plain", &timing::EndpointDesignInterface::get_endpoint_node_plain)
+    .def("get_number_of_endpoint_nodes", &timing::EndpointDesignInterface::get_number_of_endpoint_nodes)
+  ;
+
+  // Endpoint
+  py::class_<timing::EndpointDesign, timing::EndpointDesignInterface, uhal::Node>(m, "EndpointDesign", py::multiple_inheritance())
+    .def("read_firmware_version", &timing::EndpointDesign::read_firmware_version)
+    .def("validate_firmware_version", &timing::EndpointDesign::validate_firmware_version)
+    .def("get_status", &timing::EndpointDesign::get_status)
+    .def("configure", &timing::EndpointDesign::configure, py::arg("clock_source"))
+  ;
+
+  // Master
+  py::class_<timing::MasterDesign, timing::MasterDesignInterface, uhal::Node>(m, "MasterDesign", py::multiple_inheritance())
+    .def("read_firmware_version", &timing::MasterDesign::read_firmware_version)
+    .def("validate_firmware_version", &timing::MasterDesign::validate_firmware_version)
+    .def("sync_timestamp", &timing::MasterDesign::sync_timestamp)
+    .def("get_status", &timing::MasterDesign::get_status)
+    .def<void (timing::MasterDesign::*)(uint32_t, double, bool) const>("enable_periodic_fl_cmd",
+      &timing::MasterDesign::enable_periodic_fl_cmd,
+      py::arg("channel"),
+      py::arg("rate"),
+      py::arg("poisson"))
+    .def<void (timing::MasterDesign::*)(uint32_t, uint32_t, double, bool) const>("enable_periodic_fl_cmd",
+      &timing::MasterDesign::enable_periodic_fl_cmd,
+      py::arg("command"),
+      py::arg("channel"),
+      py::arg("rate"),
+      py::arg("poisson"))
+    .def("apply_endpoint_delay",
+      &timing::MasterDesign::apply_endpoint_delay,
+      py::arg("address"),
+      py::arg("cycle_delay"),
+      py::arg("phase")
+      )
+    .def("configure", &timing::MasterDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
+  ;
+
+  // HSI interface
+  py::class_<timing::HSIDesignInterface, timing::EndpointDesignInterface, uhal::Node>(m, "HSIDesignInterface")
+    .def("get_hsi_node", &timing::HSIDesignInterface::get_hsi_node)
+    .def("configure_hsi",
+      &timing::ChronosDesign::configure_hsi,
+      py::arg("src"),
+      py::arg("re_mask"),
+      py::arg("fe_mask"),
+      py::arg("inv_mask"),
+      py::arg("rate"),
+      py::arg("dispatch") = true)
+  ;
+
   // Boreas
-  py::class_<timing::BoreasDesign, uhal::Node>(m, "BoreasDesign")
-    .def("read_firmware_version", &timing::BoreasDesign::read_firmware_version)
-    .def("validate_firmware_version", &timing::BoreasDesign::validate_firmware_version)
-    .def("sync_timestamp", &timing::BoreasDesign::sync_timestamp)
+  py::class_<timing::BoreasDesign, timing::MasterDesign,
+  timing::MasterDesignInterface, timing::HSIDesignInterface,
+  uhal::Node>(m, "BoreasDesign", py::multiple_inheritance())
     .def("get_status", &timing::BoreasDesign::get_status)
-    .def<void (timing::BoreasDesign::*)(uint32_t, double, bool) const>("enable_periodic_fl_cmd",
-         &timing::BoreasDesign::enable_periodic_fl_cmd,
-         py::arg("channel"),
-         py::arg("rate"),
-         py::arg("poisson"))
-    .def<void (timing::BoreasDesign::*)(uint32_t, uint32_t, double, bool) const>("enable_periodic_fl_cmd",
-         &timing::BoreasDesign::enable_periodic_fl_cmd,
-         py::arg("command"),
-         py::arg("channel"),
-         py::arg("rate"),
-         py::arg("poisson"))
-     .def("apply_endpoint_delay",
-          &timing::BoreasDesign::apply_endpoint_delay,
-          py::arg("address"),
-          py::arg("cycle_delay"),
-          py::arg("phase")
-          )
-     .def("measure_endpoint_rtt",
-          &timing::BoreasDesign::measure_endpoint_rtt,
-          py::arg("address"),
-          py::arg("control_sfp") = true
-          )
-    .def("get_hsi_node", &timing::BoreasDesign::get_hsi_node)
-    .def("configure_hsi", 
-         &timing::BoreasDesign::configure_hsi,
-         py::arg("src"),
-         py::arg("re_mask"),
-         py::arg("fe_mask"),
-         py::arg("inv_mask"),
-         py::arg("rate"),
-         py::arg("dispatch") = true)
-     .def("configure", &timing::BoreasDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
-     ;
+    .def("configure", &timing::BoreasDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
+  ;
+
+  // Ouroboros
+  py::class_<timing::OuroborosDesign, uhal::Node>(m, "OuroborosDesign")
+    .def("get_status", &timing::OuroborosDesign::get_status)
+    .def("configure", &timing::OuroborosDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
+  ;
+
+  // Mux
+  py::class_<timing::MasterMuxDesignInterface, uhal::Node>(m, "MasterMuxDesignInterface", py::multiple_inheritance())
+    .def<uint32_t (timing::MasterMuxDesignInterface::*)(uint16_t, uint8_t, bool) const>("measure_endpoint_rtt",
+      &timing::MasterMuxDesignInterface::measure_endpoint_rtt,
+      py::arg("address"),
+      py::arg("master_mux"),
+      py::arg("control_sfp") = true
+    )
+    //.def("scan_sfp_mux", &timing::MasterMuxDesign::scan_sfp_mux)
+  ;
 
   // Fanout
   py::class_<timing::FanoutDesign, uhal::Node>(m, "FanoutDesign")
@@ -77,246 +124,55 @@ register_top_designs(py::module& m)
     .def("configure", &timing::FanoutDesign::configure, py::arg("clock_source"))
     ;
 
-  // Ouroboros mux
-  py::class_<timing::OuroborosMuxDesign, uhal::Node>(m, "OuroborosMuxDesign")
-    .def("read_firmware_version", &timing::OuroborosMuxDesign::read_firmware_version)
-    .def("validate_firmware_version", &timing::OuroborosMuxDesign::validate_firmware_version)
-    .def("sync_timestamp", &timing::OuroborosMuxDesign::sync_timestamp)
-    .def<void (timing::OuroborosMuxDesign::*)(uint32_t, double, bool) const>("enable_periodic_fl_cmd",
-         &timing::OuroborosMuxDesign::enable_periodic_fl_cmd,
-         py::arg("channel"),
-         py::arg("rate"),
-         py::arg("poisson"))
-    .def<void (timing::OuroborosMuxDesign::*)(uint32_t, uint32_t, double, bool) const>("enable_periodic_fl_cmd",
-         &timing::OuroborosMuxDesign::enable_periodic_fl_cmd,
-         py::arg("command"),
-         py::arg("channel"),
-         py::arg("rate"),
-         py::arg("poisson"))
-    .def("switch_mux", &timing::OuroborosMuxDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
-    .def("read_active_mux", &timing::OuroborosMuxDesign::read_active_mux)
-    .def("apply_endpoint_delay", 
-          &timing::OuroborosMuxDesign::apply_endpoint_delay,
-          py::arg("address"),
-          py::arg("cycle_delay"),
-          py::arg("phase")
-          )
-      .def("measure_endpoint_rtt",
-          &timing::OuroborosMuxDesign::measure_endpoint_rtt,
-          py::arg("address"),
-          py::arg("master_mux"),
-          py::arg("control_sfp") = true
-          )
-    //.def("scan_sfp_mux", &timing::OuroborosMuxDesign::scan_sfp_mux)
-    .def("configure", &timing::OuroborosMuxDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
-    ;
-
   // Master mux
-  py::class_<timing::MasterMuxDesign, uhal::Node>(m, "MasterMuxDesign")
-    .def("read_firmware_version", &timing::MasterMuxDesign::read_firmware_version)
-    .def("validate_firmware_version", &timing::MasterMuxDesign::validate_firmware_version)
-    .def("sync_timestamp", &timing::MasterMuxDesign::sync_timestamp)
-    .def<void (timing::MasterMuxDesign::*)(uint32_t, double, bool) const>("enable_periodic_fl_cmd",
-         &timing::MasterMuxDesign::enable_periodic_fl_cmd,
-         py::arg("channel"),
-         py::arg("rate"),
-         py::arg("poisson"))
-    .def<void (timing::MasterMuxDesign::*)(uint32_t, uint32_t, double, bool) const>("enable_periodic_fl_cmd",
-         &timing::MasterMuxDesign::enable_periodic_fl_cmd,
-         py::arg("command"),
-         py::arg("channel"),
-         py::arg("rate"),
-         py::arg("poisson"))
+  py::class_<timing::MasterMuxDesign, timing::MasterDesign, timing::MasterMuxDesignInterface, uhal::Node>(m, "MasterMuxDesign", py::multiple_inheritance())
     .def("switch_mux", &timing::MasterMuxDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
     .def("read_active_mux", &timing::MasterMuxDesign::read_active_mux)
-    .def("apply_endpoint_delay",
-          &timing::MasterMuxDesign::apply_endpoint_delay,
-          py::arg("address"),
-          py::arg("cycle_delay"),
-          py::arg("phase")
-          )
-     .def("measure_endpoint_rtt",
-          &timing::MasterMuxDesign::measure_endpoint_rtt,
-          py::arg("address"),
-          py::arg("master_mux"),
-          py::arg("control_sfp") = true
-          )
-    //.def("scan_sfp_mux", &timing::MasterMuxDesign::scan_sfp_mux)
     .def("configure", &timing::MasterMuxDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
     ;
 
-  // Master
-  py::class_<timing::MasterDesign, uhal::Node>(m, "MasterDesign")
-    .def("read_firmware_version", &timing::MasterDesign::read_firmware_version)
-    .def("validate_firmware_version", &timing::MasterDesign::validate_firmware_version)
-    .def("sync_timestamp", &timing::MasterDesign::sync_timestamp)
-    .def("get_status", &timing::MasterDesign::get_status)
-    .def<void (timing::MasterDesign::*)(uint32_t, double, bool) const>("enable_periodic_fl_cmd",
-         &timing::MasterDesign::enable_periodic_fl_cmd,
-         py::arg("channel"),
-         py::arg("rate"),
-         py::arg("poisson"))
-    .def<void (timing::MasterDesign::*)(uint32_t, uint32_t, double, bool) const>("enable_periodic_fl_cmd",
-         &timing::MasterDesign::enable_periodic_fl_cmd,
-         py::arg("command"),
-         py::arg("channel"),
-         py::arg("rate"),
-         py::arg("poisson"))
-    .def("apply_endpoint_delay", 
-          &timing::MasterDesign::apply_endpoint_delay,
-          py::arg("address"),
-          py::arg("cycle_delay"),
-          py::arg("phase")
-          )
-     .def("measure_endpoint_rtt",
-          &timing::MasterDesign::measure_endpoint_rtt,
-          py::arg("address"),
-          py::arg("control_sfp") = true
-          )
-     .def("configure", &timing::MasterDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
-     ;
-
-  // Ouroboros
-  py::class_<timing::OuroborosDesign, uhal::Node>(m, "OuroborosDesign")
-    .def("read_firmware_version", &timing::OuroborosDesign::read_firmware_version)
-    .def("validate_firmware_version", &timing::OuroborosDesign::validate_firmware_version)
-    .def("sync_timestamp", &timing::OuroborosDesign::sync_timestamp)
-    .def("get_status", &timing::OuroborosDesign::get_status)
-    .def<void (timing::OuroborosDesign::*)(uint32_t, double, bool) const>("enable_periodic_fl_cmd",
-         &timing::OuroborosDesign::enable_periodic_fl_cmd,
-         py::arg("channel"),
-         py::arg("rate"),
-         py::arg("poisson"))
-    .def<void (timing::OuroborosDesign::*)(uint32_t, uint32_t, double, bool) const>("enable_periodic_fl_cmd",
-         &timing::OuroborosDesign::enable_periodic_fl_cmd,
-         py::arg("command"),
-         py::arg("channel"),
-         py::arg("rate"),
-         py::arg("poisson"))
-    .def("apply_endpoint_delay", 
-          &timing::OuroborosDesign::apply_endpoint_delay,
-          py::arg("address"),
-          py::arg("cycle_delay"),
-          py::arg("phase")
-          )
-     .def("measure_endpoint_rtt", 
-          &timing::OuroborosDesign::measure_endpoint_rtt,
-          py::arg("address"),
-          py::arg("control_sfp") = true
-     )
-     .def("configure", &timing::OuroborosDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
-     ;
-
-  // Endpoint
-  py::class_<timing::EndpointDesign, uhal::Node>(m, "EndpointDesign")
-    .def("read_firmware_version", &timing::EndpointDesign::read_firmware_version)
-    .def("validate_firmware_version", &timing::EndpointDesign::validate_firmware_version)
-    .def("get_status", &timing::EndpointDesign::get_status)
-    .def("configure", &timing::EndpointDesign::configure, py::arg("clock_source"))
+  // Ouroboros mux
+  py::class_<timing::OuroborosMuxDesign, timing::MasterMuxDesign, timing::MasterDesign, timing::MasterMuxDesignInterface, uhal::Node>(m, "OuroborosMuxDesign", py::multiple_inheritance())
+    .def("switch_mux", &timing::OuroborosMuxDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
+    .def("read_active_mux", &timing::OuroborosMuxDesign::read_active_mux)
+    .def("configure", &timing::OuroborosMuxDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
     ;
 
   // Chronos
-  py::class_<timing::ChronosDesign, uhal::Node>(m, "ChronosDesign")
+  py::class_<timing::ChronosDesign, timing::HSIDesignInterface, uhal::Node>(m, "ChronosDesign", py::multiple_inheritance())
     .def("read_firmware_version", &timing::ChronosDesign::read_firmware_version)
     .def("validate_firmware_version", &timing::ChronosDesign::validate_firmware_version)
     .def("get_status", &timing::ChronosDesign::get_status)
-    .def("get_hsi_node", &timing::ChronosDesign::get_hsi_node)
-    .def("configure_hsi", 
-         &timing::ChronosDesign::configure_hsi,
-         py::arg("src"),
-         py::arg("re_mask"),
-         py::arg("fe_mask"),
-         py::arg("inv_mask"),
-         py::arg("rate"),
-         py::arg("dispatch") = true)
-     .def("configure", &timing::ChronosDesign::configure, py::arg("clock_source"))
-     ;
+    .def("configure", &timing::ChronosDesign::configure, py::arg("clock_source"))
+  ;
 
   // Hades
-  py::class_<timing::HadesDesign, uhal::Node>(m, "HadesDesign")
-    .def("read_firmware_version", &timing::HadesDesign::read_firmware_version)
-    .def("validate_firmware_version", &timing::HadesDesign::validate_firmware_version)
-    .def("get_status", &timing::HadesDesign::get_status)
-    .def("get_hsi_node", &timing::HadesDesign::get_hsi_node)
-    .def("configure_hsi",
-         &timing::HadesDesign::configure_hsi,
-         py::arg("src"),
-         py::arg("re_mask"),
-         py::arg("fe_mask"),
-         py::arg("inv_mask"),
-         py::arg("rate"),
-         py::arg("dispatch") = true)
-     .def("configure", &timing::HadesDesign::configure, py::arg("clock_source"))
-     ;
+  py::class_<timing::HadesDesign, timing::ChronosDesign, uhal::Node>(m, "HadesDesign", py::multiple_inheritance())
+  ;
 
   // Kerberos
-  py::class_<timing::KerberosDesign, uhal::Node>(m, "KerberosDesign")
-    .def("read_firmware_version", &timing::KerberosDesign::read_firmware_version)
-    .def("validate_firmware_version", &timing::KerberosDesign::validate_firmware_version)
-    .def("sync_timestamp", &timing::KerberosDesign::sync_timestamp)
-    .def<void (timing::KerberosDesign::*)(uint32_t, double, bool) const>("enable_periodic_fl_cmd",
-         &timing::KerberosDesign::enable_periodic_fl_cmd,
-         py::arg("channel"),
-         py::arg("rate"),
-         py::arg("poisson"))
-    .def<void (timing::KerberosDesign::*)(uint32_t, uint32_t, double, bool) const>("enable_periodic_fl_cmd",
-         &timing::KerberosDesign::enable_periodic_fl_cmd,
-         py::arg("command"),
-         py::arg("channel"),
-         py::arg("rate"),
-         py::arg("poisson"))
-     .def("apply_endpoint_delay",
-          &timing::KerberosDesign::apply_endpoint_delay,
-          py::arg("address"),
-          py::arg("cycle_delay"),
-          py::arg("phase")
-          )
-     .def("measure_endpoint_rtt",
-          &timing::KerberosDesign::measure_endpoint_rtt,
-          py::arg("address"),
-          py::arg("master_mux"),
-          py::arg("control_sfp") = true
-     )
+  py::class_<timing::KerberosDesign, timing::MasterDesign,
+  timing::MasterMuxDesignInterface, timing::EndpointDesignInterface, uhal::Node>(m, "KerberosDesign", py::multiple_inheritance())
     .def("switch_mux", &timing::KerberosDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
     .def("read_active_mux", &timing::KerberosDesign::read_active_mux)
     .def("configure", &timing::KerberosDesign::configure, py::arg("clock_source"), py::arg("ts_source"))
     .def("switch_timing_source_mux", &timing::KerberosDesign::switch_timing_source_mux, py::arg("mux_channel"))
     .def("switch_timing_source", &timing::KerberosDesign::switch_timing_source, py::arg("clock_source"))
     .def("read_active_timing_source_mux", &timing::KerberosDesign::read_active_timing_source_mux)
-    ;
+  ;
 
   // Gaia
-  py::class_<timing::GaiaDesign, uhal::Node>(m, "GaiaDesign")
-    .def("read_firmware_version", &timing::GaiaDesign::read_firmware_version)
-    .def("validate_firmware_version", &timing::GaiaDesign::validate_firmware_version)
-    .def("sync_timestamp", &timing::GaiaDesign::sync_timestamp)
-    .def<void (timing::GaiaDesign::*)(uint32_t, double, bool) const>("enable_periodic_fl_cmd",
-         &timing::GaiaDesign::enable_periodic_fl_cmd,
-         py::arg("channel"),
-         py::arg("rate"),
-         py::arg("poisson"))
-    .def<void (timing::GaiaDesign::*)(uint32_t, uint32_t, double, bool) const>("enable_periodic_fl_cmd",
-         &timing::GaiaDesign::enable_periodic_fl_cmd,
-         py::arg("command"),
-         py::arg("channel"),
-         py::arg("rate"),
-         py::arg("poisson"))
-    .def("apply_endpoint_delay",
-          &timing::GaiaDesign::apply_endpoint_delay,
-          py::arg("address"),
-          py::arg("cycle_delay"),
-          py::arg("phase")
-          )
-     .def("measure_endpoint_rtt",
-          &timing::GaiaDesign::measure_endpoint_rtt,
-          py::arg("address"),
-          py::arg("master_mux"),
-          py::arg("control_sfp") = true
-     )
+  py::class_<timing::GaiaDesign, timing::MasterDesign,
+  timing::MasterMuxDesignInterface, timing::EndpointDesignInterface,
+  uhal::Node>(m, "GaiaDesign", py::multiple_inheritance())
     .def("switch_mux", &timing::GaiaDesign::switch_mux, py::arg("mux"), py::arg("resync_cdr") = false)
     .def("read_active_mux", &timing::GaiaDesign::read_active_mux)
-    .def<void (timing::GaiaDesign::*)(ClockSource, TimestampSource, TimestampTimebase) const>("configure", &timing::GaiaDesign::configure, py::arg("clock_source"), py::arg("ts_source"), py::arg("timebase"))
-    ;
+    .def<void (timing::GaiaDesign::*)(ClockSource, TimestampSource, TimestampTimebase) const>
+    ("configure", &timing::GaiaDesign::configure,
+      py::arg("clock_source"),
+      py::arg("ts_source"),
+      py::arg("timebase"))
+  ;
 } // NOLINT
 
 } // namespace python
