@@ -35,8 +35,9 @@ namespace timing {
  * @brief      Class for timing fanout designs.
  */
 class GaiaDesign : public MasterDesign,
-public MasterMuxDesignInterface,
-public EndpointDesignInterface, public CDRMuxDesignInterface //TODO check use ept intf
+                   public MasterMuxDesignInterface,
+                   public CDRMuxDesignInterface,
+                   public EndpointDesignInterface //TODO check use ept intf
 {
   UHAL_DERIVEDNODE(GaiaDesign)
 public:
@@ -53,7 +54,7 @@ public:
   //  */  
   // void get_info(opmonlib::InfoCollector& ci, int level) const override;
 
-  using MasterMuxDesignInterface::measure_endpoint_rtt;
+  //using MasterMuxDesignInterface::measure_endpoint_rtt;
 
   /**
    * @brief      Prepare the timing unit for data taking.

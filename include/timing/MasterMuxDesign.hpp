@@ -32,8 +32,10 @@ namespace timing {
 /**
  * @brief      Class for PDI timing master design on mux board
  */
-class MasterMuxDesign
-  : public MasterDesign, public SFPMuxDesignInterface, public MasterMuxDesignInterface
+class MasterMuxDesign :
+                      public MasterDesign,
+                      public MasterMuxDesignInterface,
+                      public SFPMuxDesignInterface
 {
   UHAL_DERIVEDNODE(MasterMuxDesign)
 public:
@@ -45,7 +47,7 @@ public:
    */
   std::string get_status(bool print_out = false) const override;
 
-  using MasterMuxDesignInterface::measure_endpoint_rtt;
+  //using MasterMuxDesignInterface::measure_endpoint_rtt;
 
   /**
    * @brief      Resync active cdr

@@ -59,7 +59,10 @@ public:
    * @return     { description_of_the_return_value }
    */
   virtual uint32_t measure_endpoint_rtt(uint16_t address, // NOLINT(build/unsigned)
-                                        bool control_sfp = true) const = 0;
+                                        bool control_sfp = true) const
+                                        {
+                                          return get_master_node_plain()->measure_endpoint_rtt(address, control_sfp);
+                                        }
 
   /**
    * @brief      Apply delay to endpoint
@@ -102,6 +105,7 @@ public:
 
   using TopDesignInterface::get_info;
 
+// supress virtual function hidden warning, and make non-ts_source version of configure unavailable
 private:
   using TopDesignInterface::configure;
 

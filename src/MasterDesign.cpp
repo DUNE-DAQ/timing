@@ -62,14 +62,6 @@ MasterDesign::sync_timestamp(TimestampSource source) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-uint32_t
-MasterDesign::measure_endpoint_rtt(uint16_t address, bool control_sfp) const
-{
-  return get_master_node_plain()->measure_endpoint_rtt(address, control_sfp);
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
 void
 MasterDesign::apply_endpoint_delay(uint16_t address,
                                    uint8_t cycle_delay,

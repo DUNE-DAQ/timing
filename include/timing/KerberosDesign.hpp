@@ -35,9 +35,12 @@ namespace timing {
 /**
  * @brief      Class for timing fanout designs.
  */
-class KerberosDesign : public MasterDesign,
-public MasterMuxDesignInterface,
-public CDRMuxDesignInterface, public TimingSourceMuxDesignInterface, public EndpointDesignInterface
+class KerberosDesign :
+                      public MasterDesign,
+                      public MasterMuxDesignInterface,
+                      public CDRMuxDesignInterface,
+                      public TimingSourceMuxDesignInterface,
+                      public EndpointDesignInterface
 {
   UHAL_DERIVEDNODE(KerberosDesign)
 public:
@@ -49,7 +52,7 @@ public:
    */
   std::string get_status(bool print_out = false) const override;
 
-  using MasterMuxDesignInterface::measure_endpoint_rtt;
+  //using MasterMuxDesignInterface::measure_endpoint_rtt;
   // /**
   //  * @brief    Give info to collector.
   //  */  

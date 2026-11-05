@@ -10,11 +10,11 @@ UHAL_REGISTER_DERIVED_NODE(MasterMuxDesign)
 //-----------------------------------------------------------------------------
 MasterMuxDesign::MasterMuxDesign(const uhal::Node& node)
   : TopDesignInterface(node)
-  , MasterMuxDesignInterface(node)
   , MasterDesignInterface(node)
   , MuxDesignInterface(node)
-  , SFPMuxDesignInterface(node)
   , MasterDesign(node)
+  , MasterMuxDesignInterface(node)
+  , SFPMuxDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 

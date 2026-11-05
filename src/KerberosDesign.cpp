@@ -13,10 +13,10 @@ KerberosDesign::KerberosDesign(const uhal::Node& node)
   , MasterDesignInterface(node)
   , MuxDesignInterface(node)
   , MasterDesign(node)
-  , EndpointDesignInterface(node)
-  , CDRMuxDesignInterface(node)
   , MasterMuxDesignInterface(node)
+  , CDRMuxDesignInterface(node)
   , TimingSourceMuxDesignInterface(node)
+  , EndpointDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 

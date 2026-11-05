@@ -31,13 +31,15 @@ namespace timing {
 /**
  * @brief      Class for PDI timing master design on mux board
  */
-class MasterMuxDesignInterface
-  : virtual public MuxDesignInterface, virtual public MasterDesignInterface
+class MasterMuxDesignInterface :
+                                virtual public MasterDesignInterface,
+                                virtual public MuxDesignInterface
 {
 public:
   explicit MasterMuxDesignInterface(const uhal::Node& node)
-  : MuxDesignInterface(node)
-  , MasterDesignInterface(node) {}
+  : MasterDesignInterface(node)
+  , MuxDesignInterface(node)
+  {}
   virtual ~MasterMuxDesignInterface() {}
   
   /**
@@ -56,6 +58,10 @@ public:
       }
       return dynamic_cast<const MasterDesignInterface*>(this)->measure_endpoint_rtt(address, control_sfp);
     }
+
+// supress virtual function hidden warning, and make non-mux version of measure_endpoint_rtt unavailable
+private:
+  using MasterDesignInterface::measure_endpoint_rtt;
 };
 
 } // namespace timing

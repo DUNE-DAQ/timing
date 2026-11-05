@@ -13,11 +13,11 @@ UHAL_REGISTER_DERIVED_NODE(GaiaDesign)
 GaiaDesign::GaiaDesign(const uhal::Node& node)
   : TopDesignInterface(node)
   , MasterDesignInterface(node)
-  , MasterDesign(node)
-  , EndpointDesignInterface(node)
-  , MasterMuxDesignInterface(node)
   , MuxDesignInterface(node)
+  , MasterDesign(node)
+  , MasterMuxDesignInterface(node)
   , CDRMuxDesignInterface(node)
+  , EndpointDesignInterface(node)
 {}
 //-----------------------------------------------------------------------------
 

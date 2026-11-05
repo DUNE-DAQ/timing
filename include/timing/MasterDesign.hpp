@@ -61,9 +61,6 @@ public:
    */
   void sync_timestamp(TimestampSource source) const override;
 
-  uint32_t measure_endpoint_rtt(uint16_t address, // NOLINT(build/unsigned)
-                                        bool control_sfp = true) const override;
-
   /**
    * @brief      Apply delay to endpoint
    */

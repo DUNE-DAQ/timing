@@ -18,8 +18,8 @@ UHAL_REGISTER_DERIVED_NODE(OuroborosMuxDesign)
 //-----------------------------------------------------------------------------
 OuroborosMuxDesign::OuroborosMuxDesign(const uhal::Node& node)
   : TopDesignInterface(node)
-  , MuxDesignInterface(node)
   , MasterDesignInterface(node)
+  , MuxDesignInterface(node)
   , MasterMuxDesign(node)
   , EndpointDesignInterface(node)
 

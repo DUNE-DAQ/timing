@@ -63,7 +63,7 @@ public:
   /**
    * @brief     Scan SFP for alive timing transmitters
    */
-  virtual std::vector<bool> scan_mux() const {/*TODO pure virt*/} // NOLINT(build/unsigned)
+  virtual std::vector<bool> scan_mux() const {/*TODO pure virt*/ return {};} // NOLINT(build/unsigned)
 
 };
 
