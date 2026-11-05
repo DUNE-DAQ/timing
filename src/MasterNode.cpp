@@ -417,6 +417,8 @@ MasterNode::write_endpoint_data(uint16_t endpoint_address, uint8_t reg_address, 
                                     static_cast<uint32_t>((0x1 << 7UL) | reg_address),
                                     static_cast<uint32_t>((address_mode << 7UL) | (0x3f & data_length))
                                   };
+
+  payload.insert(payload.end(), data.begin(), data.end());
   auto tx_packet = make_endpoint_packet(endpoint_address, payload);
   auto result = transmit_async_packet(tx_packet, timeout);
 }
