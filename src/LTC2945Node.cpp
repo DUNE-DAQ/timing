@@ -21,8 +21,8 @@ namespace timing {
 
 //-----------------------------------------------------------------------------
 LTC2945Node::LTC2945Node(const I2CMasterNode* i2c_master, uint8_t address, double sense_resistance) // NOLINT(build/unsigned)
-  : m_sense_resistance(sense_resistance)
-  , I2CSlave(i2c_master, address)
+  : I2CSlave(i2c_master, address)
+  , m_sense_resistance(sense_resistance)
 {}
 //-----------------------------------------------------------------------------
 
